@@ -30,9 +30,9 @@ from TreeGraphModel import TreeGraphModel
 # Reading in data fro testing
 #===========================#
 
-winlter = 'C:\\Users\\MillerLab\\Dropbox\\database-development\\\
-data\\lter_table_test.csv'
-lterdf = pd.read_csv(winlter)
+winmeta = 'C:\\Users\\MillerLab\\Dropbox\\database-development\\\
+data\\meta_file_test.csv'
+metadf = pd.read_csv(winmeta, encoding = 'iso-8859-1')
 
 
 winraw = 'C:\\Users\MillerLab\\Dropbox\\database-development\\\
@@ -55,8 +55,8 @@ if __name__ == '__main__':
     # Create lter Table View Widget
     #============================#
     
-    lterView = QtGui.QTableView()
-    lterView.show()
+    metaView = QtGui.QTableView()
+    metaView.show()
 
     #============================#
     # Create raw data Table View Widget
@@ -144,13 +144,13 @@ if __name__ == '__main__':
     #===========================#
     # Implementing the model view designs
     #============================#
-    model = PandasTableModel(lterdf)
+    model = PandasTableModel(metadf)
     model2= PandasTableModel(rawdf)
     model3 = TreeGraphModel(Root)
     #========================#
     # Set model classes
     #========================#
-    lterView.setModel(model)
+    metaView.setModel(model)
     rawView.setModel(model2)
     treeView.setModel(model3)
 
