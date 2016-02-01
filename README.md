@@ -8,12 +8,17 @@ The goal of this project is to develop an open source database that wil contain 
  This information will not be made public until the completion of the project
 
 ## Database Schema
- See Schema folder 
+ See Schema folder.
+ 
+ Using Postgresql 9.4.
 
 ## Populating the Database
   1) Data transfer Protocal: This protocol is directly tied to the GUI development. 
   
-  2) GUI Development: PyQt and python
+  2) GUI Development: PyQt 4.8 and Python 3.4
   
   3) UML Design Layout: To do
+  
+## Web Application to Access Database
+  1) To be continued
    
