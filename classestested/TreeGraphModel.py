@@ -1,21 +1,23 @@
 # Implementing a Qt.AbstractTableModel using
 # TreeGraphModel modeified from:
 # http://www.yasinuludag.com/blog/?p=98
+from PyQt4 import QtGui, QtCore, uic
+
 
 #=================================#
 # Creating a custom class to actually visualize the tree
 # structure created by our 'Node' class
 #=================================#
 class TreeGraphModel (QtCore.QAbstractItemModel):
-'''
-This class is used to visualize a hierarchy tree structre (i.e.
-the TreeGraph) that is constructed with the node class
+    '''
+    This class is used to visualize a hierarchy tree structre (i.e.
+    the TreeGraph) that is constructed with the node class
 
-TO DO: Determine how to place icons next to each node
-index and place little pictures of tables, foreign keys,
-and primary keys... maybe add some color.
+    TO DO: Determine how to place icons next to each node
+    index and place little pictures of tables, foreign keys,
+    and primary keys... maybe add some color.
 
-'''
+    '''
     # Input Constructor
     def __init__(self, root, parent=None):
         super(TreeGraphModel, self).__init__(parent)

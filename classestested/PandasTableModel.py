@@ -7,19 +7,22 @@
 # TreeGraphModel modeified from:
 # http://www.yasinuludag.com/blog/?p=98
 
+from PyQt4 import QtGui, QtCore, uic
+import numpy as np
+import pandas as pd
 #=================================#
 # Defining a custom class for PyQt4
 #=================================#
 class PandasTableModel(QtCore.QAbstractTableModel):
-'''
-This class is an abstract table class from Qt to visualize
-data in a table format and using the pandas dataframe
-\as object that supply the data to be visualized.
+    '''
+    This class is an abstract table class from Qt to visualize
+    data in a table format and using the pandas dataframe
+    as object that supply the data to be visualized.
 
-To Do: Nothing
+    To Do: Nothing
 
-Last edit: Removed the ability to edit the table
-'''
+    Last edit: Removed the ability to edit the table
+    '''
     #============================#
     # Constructors
     #============================#

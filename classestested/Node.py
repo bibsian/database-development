@@ -1,5 +1,6 @@
 # Node class modeified from:
 # http://www.yasinuludag.com/blog/?p=98
+from PyQt4 import QtGui, QtCore, uic
 
 
 #=========================#
@@ -7,14 +8,14 @@
 # of the database that will be used as a visualization tool
 #=========================#
 class Node(object):
-''' This class creates the Node object or tree hierarchy that is  
-visually represented with the TreeGraphModel class. Note, to
-use this class you must hard code parent and child nodes on a
-'boilerplate' script.
+    ''' This class creates the Node object or tree hierarchy that is  
+    visually represented with the TreeGraphModel class. Note, to
+    use this class you must hard code parent and child nodes on a
+    'boilerplate' script.
 
-To Do: Try and change this code so that a tree hierarchy can be
-created from the metaData object that you can derive with SQLAlchemy
-'''
+    To Do: Try and change this code so that a tree hierarchy can be
+    created from the metaData object that you can derive with SQLAlchemy
+    '''
     # Constructor portion
     def __init__(self, name, parent=None):
         self._name= name
