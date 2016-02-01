@@ -15,7 +15,7 @@ The goal of this project is to develop an open source database that wil contain 
 ## Populating the Database
   1) Data transfer Protocal: This protocol is directly tied to the GUI development. 
   
-  2) GUI Development: PyQt 4.8 and Python 3.4
+  2) GUI Development: PyQt4 and Python 3.4
   
   3) UML Design Layout: To do
   
