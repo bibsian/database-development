@@ -1,2 +1,4 @@
 /*.py~
-/*.DS_Store
+GUI/.DS_Store
+GUI/qtdesigner/.DS_Store
+.DS_Store
