@@ -1,13 +1,11 @@
 autopep8==1.2.1
 colorama==0.3.6
 coverage==4.1b1
-dropbox==4.0
 easygui==0.97.4
 importmagic==0.1.3
 jedi==0.9.0
 numpy==1.10.4
 pandas==0.17.1
-pandas-qt==0.2.0
 pep8==1.7.0
 pprintpp==0.2.3
 psycopg2==2.6.1
