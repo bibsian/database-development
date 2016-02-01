@@ -5,7 +5,8 @@
 # December 21, 2015 with Aldo, Tom, and myself
 # In addition rather than using psycopg2 as a module
 # to populate the database, we are strictly using
-# sqlalchemy as our module for talking to postgresql
+# sqlalchemy with a psycog
+# interpreter as our module for talking to postgresql
 # THIS ASSUMES YOU HAVE THE DATABASE ALREADY CREATED
 # IN POSTGRESQL
 from sqlalchemy import create_engine
