@@ -10,7 +10,7 @@ The goal of this project is to develop an open source database that wil contain 
 ## Database Schema
  See Schema folder.
  
- Using Postgresql 9.4.
+ Using PostgreSQL 9.4.
 
 ## Populating the Database
   1) Data transfer Protocal: This protocol is directly tied to the GUI development. 
