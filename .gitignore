@@ -6,5 +6,4 @@ GUI/qtdesigner/.DS_Store
 __pycache__
 /classestest/__pycache__/Node.cpython-34.py
 development/.DS_Store
-*.#*
-*.#modelview2d_pdnp.py
+development/classesdev/.#modelview2d_pdnp.py
