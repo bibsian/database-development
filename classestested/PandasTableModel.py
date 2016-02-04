@@ -18,9 +18,7 @@ class PandasTableModel(QtCore.QAbstractTableModel):
     This class is an abstract table class from Qt to visualize
     data in a table format and using the pandas dataframe
     as object that supply the data to be visualized.
-
     To Do: Nothing
-
     Last edit: Removed the ability to edit the table
     '''
     #============================#
@@ -102,17 +100,17 @@ class PandasTableModel(QtCore.QAbstractTableModel):
     # of the program. 
     def flags(self, index):
         #
-        return QtCore.Qt.ItemIsEditable|QtCore.Qt.ItemIsSelectable
+        return QtCore.Qt.ItemIsEnabled|QtCore.Qt.ItemIsSelectable
 
     #=============================#
     # Editing Implimentation
     #=============================#
-    def setData(self, index, value, role = QtCore.Qt.EditRole):
-
-        if role == QtCore.Qt.EditRole:
-            row= index.row()
-            col= index.column()
-            self.__data[index.row(), index.column()] = value
-            self.dataChanged.emit(index,index)
-            return True
-        return False
+#    def setData(self, index, value, role = QtCore.Qt.EditRole):
+#
+#        if role == QtCore.Qt.EditRole:
+#            row= index.row()
+#            col= index.column()
+#            self.__data[index.row(), index.column()] = value
+#            self.dataChanged.emit(index,index)
+#            return True
+#        return False
