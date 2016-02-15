@@ -1,9 +1,11 @@
-/*.py~
+*/*.py~
 *.py~
+
 GUI/.DS_Store
 GUI/qtdesigner/.DS_Store
 .DS_Store
-__pycache__
-/classestest/__pycache__/Node.cpython-34.py
+
+*/__pycache__/
+*/__pycache__/*
 development/.DS_Store
 development/classesdev/.#modelview2d_pdnp.py
