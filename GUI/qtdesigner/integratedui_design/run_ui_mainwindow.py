@@ -97,13 +97,13 @@ class DialogPopUp(QtGui.QDialog, td.Ui_Dialog):
 # and the user interface module we created (ui_mainwindow)
 
 
+
 class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
-
-
     '''
-    Description:
     This class displays the user interface that was created with
+
     QtDesigner. We're multiply inheriting the user interface
+    Description:
     and the QMainWindow to integrate them into a class that
     we can enable signal and designate slots.
 
@@ -177,10 +177,10 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
         # specific signals to perform database operations with
         self.w = None
         self.colView = None
-        self.siteDialog = None
-        self.mainDialog = None
-        self.taxaDialog = None
-        self.rawDialog = None
+        self.siteDialog = DialogPreview() 
+        self.mainDialog = DialogPreview()
+        self.taxaDialog = DialogPreview()
+        self.rawDialog = DialogPreview()
 
         #=====================#
         # Catching MENU BAR actions from user interface
@@ -311,8 +311,10 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                 self.w = QtGui.QErrorMessage()
                 self.w.showMessage(
                     "You entered a string that does not match" +
-                    " any column name in the raw data table. Please re-enter" +
-                    " the column name again.")
+                    " any column name in the raw data table. Please"
+                    " re-enter the column name again. Addtionally"+
+                    " make sure a raw data file is loaded into the"+
+                    " program.")
                 self.w.show()
                 return
             finally:
@@ -493,36 +495,55 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
     # back to the method convert_string_to_decimal
     #=======================#
     def site_coord_check(self):
+        # Identifying sender
         sender = self.sender()
-       
+        # Creating generic error messages that will be required
+        # for looking at the number of entries (lengthError)
+        # and the type of entries (coordinateError)
+        coordinateError = (
+            "The list of coordinates you entered did not"+
+            " contain decimal numbers. Please"+
+            " enter them again.")
+        lengthError = (
+            'Number of coordinates entered'+
+            'is not the same as number of'+
+            'sites')
+        self.w = QtGui.QErrorMessage()
+
         if sender == self.lnedSiteformlat:
             try:
+                # Extract the user input from the latitude
+                # line edit form
                 siteLatrecord = str(self.lnedSiteformlat.text())
+                # Convert the user input into a list of
+                # decimate values
                 self.siteLatdec = self.convert_string_to_decimal(
                     siteLatrecord)
-
+                
+                # Check for length errors
                 if len(self.siteLatdec) == self.numsite:
                     pass
                 else:
-                    raise ValueError('Number of coordinates entered'+
-                                     'is not the same as number of'+
-                                     'sites')
-
+                   self.w.showMessage(lengthError)
+                # IF check for length passes clear the linedit
+                # and disable the line edit box
                 self.lnedSiteformlat.clear()
                 self.lnedSiteformlat.setEnabled(False)
+                # Send pop up message regarding the status of the
+                # users entry (i.e. it was recorded in the program)
                 QtGui.QMessageBox.about(
                     self, "Message Box", "The site lattitudes have"+
                     " been recorded in the program")
                 return
+            # If any of the steps above failed (likely the converting
+            # user input into decimals) then throw our decimal
+            # value error (coordinateError)
             except:
-                self.w = QtGui.QErrorMessage()
-                self.w.showMessage(
-                    "The list of coordinates you entered did not"+
-                    " contain the correct number of entries or"+
-                    " did not contain decimal numbers. Please"+
-                    " enter them again.")
+                self.w.showMessage(coordinateError)
                 return
-            
+
+        # Same instructions as above except to handle user inputs
+        # for longitute rather than lattitude
         elif sender == self.lnedSiteformlong:
             try:
                 
@@ -533,23 +554,17 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                 if len(self.siteLongdec) == self.numsite:
                     pass
                 else:
-                    raise ValueError('Number of coordinates entered'+
-                                     'is not the same as number of'+
-                                     'sites')
-                
+                    self.w.showMessage(lengthError)
                 self.lnedSiteformlong.clear()
                 self.lnedSiteformlong.setEnabled(False)
+
                 QtGui.QMessageBox.about(
                     self, "Message Box", "The site longitudes have"+
                     " been recorded in the program")
                 return 
             except:
                 self.w = QtGui.QErrorMessage()
-                self.w.showMessage(
-                    "The list of coordinates you entered did not"+
-                    " contain the correct number of entries or"+
-                    " did not contain decimal numbers. Please"+
-                    " enter them again.")
+                self.w.showMessage(coordinateError)
                 return
         else:
             pass
@@ -623,7 +638,7 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
         else:
             pass
 
-        self.siteDialog = DialogPreview()
+        
         siteDataAllmodel = ptbE.PandasTableModel(self.siteDataAll)
         self.siteDialog.tblList.setModel( siteDataAllmodel)
         self.siteDialog.show()
@@ -636,6 +651,8 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
     def upload_to_database(self):
         # Identifying the sender of the signal
         sender = self.sender()
+        print(sender)
+        self.w = QtGui.QErrorMessage()
         # Establishing a generic response for failures
         # to load to database based on quality assurance
         # checks
@@ -645,51 +662,56 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
         # If the sender is from siteDialog perform those
         # opertations given the arguments our 'uow' classes
         if sender == self.siteDialog.btnPush:
-            try:
-                # Creating an instance of our class
-                # that will do quieres to check data before
-                # pushing to databse
-                # Supplying the following arguments:
-                # dataframe, config classes, tablename,
-                # list of unique site abbreviations, current LTER
-                # that we're working with
-                dbhandle = uow.UploadToDatabase(
-                    self.siteDataAll, config, 'sitetable',
-                    sitelist= self.sitelisttoadd,
-                    lter = self.cboxselectlter.currentText())
+            # Creating an instance of our class
+            # that will do quieres to check data before
+            # pushing to databse
+            # Supplying the following arguments:
+            # dataframe, config classes, tablename,
+            # list of unique site abbreviations, current LTER
+            # that we're working with
+            dbhandle = uow.UploadToDatabase(
+                self.siteDataAll, config, 'sitetable',
+                sitelist= self.sitelisttoadd,
+                lter = self.cboxselectlter.currentText())
 
+        elif sender == self.mainDialog.btnPush:            
+            dbhandle = uow.UploadToDatabase(
+                self.mainDataAll , config, 'maintable',
+                sitelist= self.sitelisttoadd,
+                lter = self.cboxselectlter.currentText())
+        else:
+            pass
+
+        if sender == self.siteDialog.btnPush or\
+           sender == self.mainDialog.btnPush:
+            try:
+                
                 # Use the method with our database handler
                 # to perform queries and checks given our
                 # arguments; if returned TRUE
                 # then procees to push the information to
                 # the database.
-                sitecheck = dbhandle.check_previous_entries() 
+                sitecheck = dbhandle.check_previous_sites()
+
+                print(sitecheck)
+                
                 if (sitecheck == True):
                     dbhandle.push_table_to_postgres()
 
-                # If False is returned than the data is likely
-                # already present based on the checks that were
-                # built into the UploadToDatabase class
+                    # If False is returned than the data is likely
+                    # already present based on the checks that were
+                    # built into the UploadToDatabase class
+                
+
                 else:
-                    self.w = QtGui.QErrorMessage()
                     self.w.showMessage(errormessage)
             except Exception as e:
                 print(str(e))
-            finally:
-                self.siteDialog.close()
 
-        # If the sender is from mainDialog perform the
-        # operations within given the argumnets to our
-        # 'uow' classes
-        if sender == self.mainDialog.btnPush:
-            try:
-                pass
-            except:
-                pass
-            finally:
-                pass
-        else:
-            pass
+        if sender == self.siteDialog.btnPush:
+            self.siteDialog.close()
+        elif sender == self.mainDialog.btnPush:            
+            self.mainDialog.close()
 
 
     #====================#
@@ -699,11 +721,22 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
     # if this is wrong then the information will be wrong
     #====================#
     def main_concat(self):
+        self.w = QtGui.QErrorMessage()
+
         # These are the columns that contain information that we're
         # interested in.
         maincolumns = ['title', 'data_type', 'start_date', 'end_date',
                        'temp_int', 'comm_data', 'study_type',
                        'site_metadata', 'portal_id']
+        
+        try :
+            required = self.sitelisttoadd
+        except:
+            self.w.showMessage(
+                " Establish the unique site abbreviations by "+
+                " completing the Site Infomation from Raw Data box."+
+                " This box is on the previous form.")
+            return
 
         # Trying to take a subset of the meta data columns
         # based on user input of the globalid value
@@ -711,39 +744,32 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
             submain = self.metadf[self.globalid-1:self.globalid][
                 maincolumns]
 
-        # If subsetting the metadata fails because there is no
-        # globalid value, throw error 
-        except:
-            self.w = QtGui.QErrorMessage()
-            self.w.showMessage("The globalID value is not set")
-            return
-        finally:
-            print(submain)
+            # If subsetting the metadata fails because there is no
+            # globalid value, throw error 
 
-        # Try to parse the dates for start and end date information
-        # from the metadata. We only want to extract the
-        # year information
-        try:
-            self.startyr = pd.to_datetime(
-                submain['start_date'],format="%m/%d/%Y").dt.year
+            # Try to parse the dates for start and end date information
+            # from the metadata. We only want to extract the
+            # year information
+            try:
+                self.startyr = pd.to_datetime(
+                    submain['start_date'],format="%m/%d/%Y").dt.year
+                    
+                self.endyr = pd.to_datetime(
+                    submain['end_date'],format="%m/%d/%Y").dt.year
+                print(self.startyr, self.endyr)
+            # If the parsing fails through an error 
+            except:
+                self.w.showMessage("Date information can not be parsed")
+                return
 
-            self.endyr = pd.to_datetime(
-                submain['end_date'],format="%m/%d/%Y").dt.year
-            print(self.startyr, self.endyr)
-        # If the parsing fails through an error 
-        except:
-            self.w = QtGui.QErrorMessage()
-            self.w.showMessage("Date information can not be parsed")
-            return
-
-        # Try to create a preliminary main datatable based on
-        # the information already provided in the meta data. 
-        try:
-            # This command creates a single row with all the metadata
-            # information and parsed dates and fills NULL values
-            # where the user will have to input information
-            self.mainDataSingle = pd.DataFrame(
-                {
+            # Try to create a preliminary main datatable based on
+            # the information already provided in the meta data. 
+            try:
+                # This command creates a single row with all the metadata
+                # information and parsed dates and fills NULL values
+                # where the user will have to input information
+                self.mainDataSingle = pd.DataFrame(
+                    {
                     'title':submain['title'],
                     'samplingunits':'NULL',
                     'samplingprotocol': submain['data_type'],
@@ -754,63 +780,77 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                     'studytype': submain['study_type'],
                     'community': submain['comm_data'],
                     'siteID': 'NULL',
+                    'sp_rep1_ext': 'NULL',
                     'sp_rep2_ext': 'NULL',
                     'sp_rep3_ext': 'NULL',
-                    'sp_rep4_ext': 'NULL',
+                    'sp_rep4_ext': 'NULL', 
                     'metalink': submain['site_metadata'],
                     'knbID': submain['portal_id']
-                },
-                columns = [
-                    'title', 'samplingunits', 'samplingprotocol',
-                    'startyr', 'endyr', 'samplefreq',
-                    'totalobs', 'community', 'siteID',
-                    'sp_rep2_ext','sp_rep3_ext', 'sp_rep4_ext',
-                    'metalink', 'knbID'])
-        # If for some reason the that dataframe above could not
-        # be created then throw and error
+                        },
+                    columns = [
+                        'title', 'samplingunits', 'samplingprotocol',
+                        'startyr', 'endyr', 'samplefreq',
+                        'totalobs', 'community', 'siteID','sp_rep1_ext',
+                        'sp_rep2_ext','sp_rep3_ext', 'sp_rep4_ext',
+                        'metalink', 'knbID'])
+            # If for some reason the that dataframe above could not
+            # be created then throw and error
+            except:
+                self.w.showMessage("Couldn't extract metadata information")
+                return
+            finally:
+                print(self.mainDataSingle)
+                    
+            # From the single row with metadata information,
+            # create an expanded version of that row that has
+            # informatoin about all the unique sites that are
+            # present in the study being described by the meta data
+            try:
+                self.mainDataAll = pd.concat(
+                    [self.mainDataSingle]*len(self.sitelisttoadd),
+                    ignore_index=True)
+
+                convertcolumns = [
+                    'samplefreq', 'totalobs', 'sp_rep1_ext',
+                    'sp_rep2_ext','sp_rep3_ext','sp_rep4_ext']
+
+                for i in convertcolumns:
+                    self.mainDataAll[i] = pd.to_numeric(
+                        self.mainDataAll[i], errors='coerce')
+
+                # This step is depedent on accurate information
+                # provided from the siteView/ sitelisttoadd
+                # attribute
+                for i in range(len(self.sitelisttoadd)):
+                    self.mainDataAll.loc[i,'siteID']\
+                        = self.sitelisttoadd[i]
+                            
+                self.mainDataAllModel = ptbE.PandasTableModel(
+                    self.mainDataAll)
+                            
+                self.mainDialog = DialogPreview()
+                self.mainDialog.tblList.setModel(self.mainDataAllModel)
+                self.mainDialog.show()
+                self.mainDialog.btnPush.clicked.connect(
+                    self.upload_to_database)
+                            
+            except Exception as  e:
+                print(str(e))
+                        
+            finally:
+                print(self.mainDataAll.dtypes)
+                        
+            # If the data is change in the main table model
+            # then record the changes
+            self.mainDataAllModel.dataChanged.connect(
+                self.update_main_table)
         except:
-            self.w = QtGui.QErrorMessage()
-            self.w.showMessage("Couldn't extract metadata information")
+            self.w.showMessage("The globalID value is not set")
             return
         finally:
-            print(self.mainDataSingle)
+            print(submain)
 
-        # From the single row with metadata information,
-        # create an expanded version of that row that has
-        # informatoin about all the unique sites that are
-        # present in the study being described by the meta data
-        try:
-            self.mainDataAll = pd.concat(
-                [self.mainDataSingle]*len(self.sitelisttoadd),
-                ignore_index=True)
-
-            # This step is depedent on accurate information
-            # provided from the siteView/ sitelisttoadd
-            # attribute
-            for i in range(len(self.sitelisttoadd)):
-                self.mainDataAll.loc[i,'siteID']\
-                    = self.sitelisttoadd[i]
-
-            self.mainDataAllModel = ptbE.PandasTableModel(
-                self.mainDataAll)
-
-            self.mainDialog = DialogPreview()
-            self.mainDialog.tblList.setModel(self.mainDataAllModel)
-            self.mainDialog.show()
-            self.mainDialog.btnPush.clicked.connect(
-                self.upload_to_database)
-
-        except Exception as  e:
-            print(str(e))
-
-        finally:
-            print(self.mainDataAll)
-
-        # If the data is change in the main table model
-        # then record the changes
-        self.mainDataAllModel.dataChanged.connect(
-            self.update_main_table)
-    
+            
     def update_main_table(self):
         print( self.mainDataAllModel.data(None, QtCore.Qt.UserRole))  
 
