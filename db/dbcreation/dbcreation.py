@@ -15,6 +15,26 @@ from sqlalchemy import Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import *
 from sqlalchemy.dialects.postgresql import *
+import pandas as pd
+import sys
+
+from sys import platform as _platform
+if _platform == "darwin":
+    sys.path.insert(
+        0, "/Users/bibsian/Dropbox/database-development/data/")
+    path = "/Users/bibsian/Dropbox/database-development/data/"
+elif _platform == "win32":
+    sys.path.insert(
+        0, 'C:\\Users\\MillerLab\\Dropbox\\database-development\\data\\')
+    path = 'C:\\Users\\MillerLab\\Dropbox\\database-development\\data\\'
+
+
+lterex = pd.read_csv((path+'lter_table_test.csv'))
+ltertablename = 'lter'
+mainex = pd.read_csv((path+'main_table_test.csv'))
+maintablename = 'main_data'
+siteex = pd.read_csv((path+'siteID_table_test.csv'))
+sitetablename = 'siteID'
 
 
 # Here we are using the packageage sqlalchemy
@@ -54,7 +74,7 @@ metadata = MetaData()
 # lter_info: This is the initial table that will contain information
 # regarding the LTER sites themselves. Column names
 # should be self explanatory.
-lter = Table('lter', metadata,
+lter = Table(ltertablename, metadata,
              Column('lterID', VARCHAR(5), primary_key=True),
              Column('lter_name', TEXT),
              Column('currently_funded', TEXT),
@@ -66,7 +86,7 @@ lter = Table('lter', metadata,
 # the 'foreign key'= lterID/'lterID'
 # (i.e. no entries are allowed in this table unless the site
 # information originates at a given lter_id)
-site_info = Table('siteID', metadata,
+site_info = Table(sitetablename, metadata,
                   Column('siteID', VARCHAR(10), primary_key=True),
                   Column('lterID', None, ForeignKey('lter.lterID')),
                   Column('lat', NUMERIC),
@@ -114,7 +134,7 @@ taxa = Table('taxa', metadata,
 # This is in case there is a project that does not give a specific
 # 'siteID' that can be used in the schema and to ensure that
 # any site data entered comes from
-maindata = Table('main_data', metadata,
+maindata = Table(maintablename, metadata,
                  Column('projID', Integer, primary_key=True),
                  Column('title', TEXT),
                  # This column specifies the type of information
@@ -155,6 +175,7 @@ maindata = Table('main_data', metadata,
                  # spatial extent at that level of spatial
                  # replication
                  Column('siteID', None, ForeignKey('siteID.siteID')),
+                 Column('sp_rep1_ext', NUMERIC),
                  Column('sp_rep2_ext', NUMERIC),
                  Column('sp_rep3_ext', NUMERIC),
                  Column('sp_rep4_ext', NUMERIC),
@@ -212,3 +233,8 @@ climateobs = Table('climateobs', metadata,
 # metadata catalog and uses it to populate the database that
 # we connected to with our engine (user=postgres, databse=LTER)
 metadata.create_all(engine)
+
+
+lterex.to_sql(ltertablename, con=engine, if_exists="append", index=False)
+siteex.to_sql(sitetablename, con=engine, if_exists="append", index=False)
+mainex.to_sql(maintablename, con=engine, if_exists="append", index=False)
