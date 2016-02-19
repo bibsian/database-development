@@ -25,7 +25,11 @@ except AttributeError:
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
+<<<<<<< HEAD
         MainWindow.resize(1336, 900)
+=======
+        MainWindow.resize(1409, 900)
+>>>>>>> 90b613de8d404a03f95d6eff36c970fc497466db
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -45,12 +49,21 @@ class Ui_MainWindow(object):
         MainWindow.setAutoFillBackground(False)
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
+<<<<<<< HEAD
         self.horizontalLayout_17 = QtGui.QHBoxLayout(self.centralwidget)
         self.horizontalLayout_17.setObjectName(_fromUtf8("horizontalLayout_17"))
         self.horizontalLayout_16 = QtGui.QHBoxLayout()
         self.horizontalLayout_16.setObjectName(_fromUtf8("horizontalLayout_16"))
         self.tabWviewerdb = QtGui.QTabWidget(self.centralwidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
+=======
+        self.verticalLayout_16 = QtGui.QVBoxLayout(self.centralwidget)
+        self.verticalLayout_16.setObjectName(_fromUtf8("verticalLayout_16"))
+        self.horizontalLayout_13 = QtGui.QHBoxLayout()
+        self.horizontalLayout_13.setObjectName(_fromUtf8("horizontalLayout_13"))
+        self.tabWviewerdb = QtGui.QTabWidget(self.centralwidget)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Expanding)
+>>>>>>> 90b613de8d404a03f95d6eff36c970fc497466db
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.tabWviewerdb.sizePolicy().hasHeightForWidth())
@@ -98,10 +111,17 @@ class Ui_MainWindow(object):
         self.labviewerraw.setSizePolicy(sizePolicy)
         self.labviewerraw.setObjectName(_fromUtf8("labviewerraw"))
         self.layHviewerraw.addWidget(self.labviewerraw)
+<<<<<<< HEAD
         spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.layHviewerraw.addItem(spacerItem1)
         self.btnloadrawview = QtGui.QPushButton(self.tabWviewer)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
+=======
+        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Minimum)
+        self.layHviewerraw.addItem(spacerItem)
+        self.btnloadrawview = QtGui.QPushButton(self.tabWviewer)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
+>>>>>>> 90b613de8d404a03f95d6eff36c970fc497466db
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.btnloadrawview.sizePolicy().hasHeightForWidth())
@@ -360,6 +380,7 @@ class Ui_MainWindow(object):
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
+<<<<<<< HEAD
         sizePolicy.setHeightForWidth(self.groupBox_3.sizePolicy().hasHeightForWidth())
         self.groupBox_3.setSizePolicy(sizePolicy)
         self.groupBox_3.setObjectName(_fromUtf8("groupBox_3"))
@@ -369,6 +390,73 @@ class Ui_MainWindow(object):
         self.verticalLayout_24.setObjectName(_fromUtf8("verticalLayout_24"))
         self.label_3 = QtGui.QLabel(self.groupBox_3)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
+=======
+        sizePolicy.setHeightForWidth(self.treeWidget.sizePolicy().hasHeightForWidth())
+        self.treeWidget.setSizePolicy(sizePolicy)
+        self.treeWidget.setObjectName(_fromUtf8("treeWidget"))
+        item_0 = QtGui.QTreeWidgetItem(self.treeWidget)
+        item_1 = QtGui.QTreeWidgetItem(item_0)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        item_1 = QtGui.QTreeWidgetItem(item_0)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        item_1 = QtGui.QTreeWidgetItem(item_0)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        item_1 = QtGui.QTreeWidgetItem(item_0)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        item_1 = QtGui.QTreeWidgetItem(item_0)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        item_2 = QtGui.QTreeWidgetItem(item_1)
+        self.verticalLayout_5.addWidget(self.treeWidget)
+        self.tabWviewerdb.addTab(self.tabWdb, _fromUtf8(""))
+        self.horizontalLayout_13.addWidget(self.tabWviewerdb)
+        self.tabWforms = QtGui.QTabWidget(self.centralwidget)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Expanding)
+>>>>>>> 90b613de8d404a03f95d6eff36c970fc497466db
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.label_3.sizePolicy().hasHeightForWidth())
@@ -517,8 +605,13 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2.addWidget(self.labSiteCount)
         self.layHSiteCount = QtGui.QHBoxLayout()
         self.layHSiteCount.setObjectName(_fromUtf8("layHSiteCount"))
+<<<<<<< HEAD
         spacerItem10 = QtGui.QSpacerItem(78, 20, QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Minimum)
         self.layHSiteCount.addItem(spacerItem10)
+=======
+        spacerItem6 = QtGui.QSpacerItem(78, 20, QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Minimum)
+        self.layHSiteCount.addItem(spacerItem6)
+>>>>>>> 90b613de8d404a03f95d6eff36c970fc497466db
         self.cboxSiteCount = QtGui.QComboBox(self.gboxViewSiteCount)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -732,8 +825,13 @@ class Ui_MainWindow(object):
         self.horizontalLayout_7.setObjectName(_fromUtf8("horizontalLayout_7"))
         self.layVSiteformnames = QtGui.QVBoxLayout()
         self.layVSiteformnames.setObjectName(_fromUtf8("layVSiteformnames"))
+<<<<<<< HEAD
         spacerItem20 = QtGui.QSpacerItem(20, 18, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
         self.layVSiteformnames.addItem(spacerItem20)
+=======
+        spacerItem16 = QtGui.QSpacerItem(20, 18, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
+        self.layVSiteformnames.addItem(spacerItem16)
+>>>>>>> 90b613de8d404a03f95d6eff36c970fc497466db
         self.labSiteformnames = QtGui.QLabel(self.gboxSiteformnames)
         font = QtGui.QFont()
         font.setPointSize(8)
@@ -753,8 +851,13 @@ class Ui_MainWindow(object):
         self.lnedSiteformnames.setFocusPolicy(QtCore.Qt.ClickFocus)
         self.lnedSiteformnames.setObjectName(_fromUtf8("lnedSiteformnames"))
         self.layVSiteformnames.addWidget(self.lnedSiteformnames)
+<<<<<<< HEAD
         spacerItem21 = QtGui.QSpacerItem(20, 18, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
         self.layVSiteformnames.addItem(spacerItem21)
+=======
+        spacerItem17 = QtGui.QSpacerItem(20, 18, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
+        self.layVSiteformnames.addItem(spacerItem17)
+>>>>>>> 90b613de8d404a03f95d6eff36c970fc497466db
         self.horizontalLayout_7.addLayout(self.layVSiteformnames)
         self.horizontalLayout_5.addWidget(self.gboxSiteformnames)
         self.gboxPushsitedata = QtGui.QGroupBox(self.tabSiteform)
@@ -775,8 +878,13 @@ class Ui_MainWindow(object):
         self.verticalLayout_6.addWidget(self.labSitePush)
         self.horizontalLayout_4 = QtGui.QHBoxLayout()
         self.horizontalLayout_4.setObjectName(_fromUtf8("horizontalLayout_4"))
+<<<<<<< HEAD
         spacerItem22 = QtGui.QSpacerItem(78, 20, QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_4.addItem(spacerItem22)
+=======
+        spacerItem18 = QtGui.QSpacerItem(78, 20, QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_4.addItem(spacerItem18)
+>>>>>>> 90b613de8d404a03f95d6eff36c970fc497466db
         self.btnSitePush = QtGui.QPushButton(self.gboxPushsitedata)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -785,8 +893,13 @@ class Ui_MainWindow(object):
         self.btnSitePush.setSizePolicy(sizePolicy)
         self.btnSitePush.setObjectName(_fromUtf8("btnSitePush"))
         self.horizontalLayout_4.addWidget(self.btnSitePush)
+<<<<<<< HEAD
         spacerItem23 = QtGui.QSpacerItem(78, 20, QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_4.addItem(spacerItem23)
+=======
+        spacerItem19 = QtGui.QSpacerItem(78, 20, QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_4.addItem(spacerItem19)
+>>>>>>> 90b613de8d404a03f95d6eff36c970fc497466db
         self.verticalLayout_6.addLayout(self.horizontalLayout_4)
         self.verticalLayout_4.addLayout(self.verticalLayout_6)
         self.horizontalLayout_5.addWidget(self.gboxPushsitedata)
@@ -830,12 +943,21 @@ class Ui_MainWindow(object):
         self.verticalLayout_14.addWidget(self.label)
         self.verticalLayout_11.addWidget(self.groupBox)
         self.verticalLayout_10.addLayout(self.verticalLayout_11)
+<<<<<<< HEAD
         spacerItem24 = QtGui.QSpacerItem(858, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout_10.addItem(spacerItem24)
         self.horizontalLayout_8 = QtGui.QHBoxLayout()
         self.horizontalLayout_8.setObjectName(_fromUtf8("horizontalLayout_8"))
         spacerItem25 = QtGui.QSpacerItem(258, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_8.addItem(spacerItem25)
+=======
+        spacerItem20 = QtGui.QSpacerItem(858, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.verticalLayout_10.addItem(spacerItem20)
+        self.horizontalLayout_8 = QtGui.QHBoxLayout()
+        self.horizontalLayout_8.setObjectName(_fromUtf8("horizontalLayout_8"))
+        spacerItem21 = QtGui.QSpacerItem(258, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_8.addItem(spacerItem21)
+>>>>>>> 90b613de8d404a03f95d6eff36c970fc497466db
         self.verticalLayout_12 = QtGui.QVBoxLayout()
         self.verticalLayout_12.setObjectName(_fromUtf8("verticalLayout_12"))
         self.labMainConcat = QtGui.QLabel(self.tab)
@@ -850,8 +972,13 @@ class Ui_MainWindow(object):
         self.verticalLayout_12.addWidget(self.labMainConcat)
         self.horizontalLayout_6 = QtGui.QHBoxLayout()
         self.horizontalLayout_6.setObjectName(_fromUtf8("horizontalLayout_6"))
+<<<<<<< HEAD
         spacerItem26 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_6.addItem(spacerItem26)
+=======
+        spacerItem22 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_6.addItem(spacerItem22)
+>>>>>>> 90b613de8d404a03f95d6eff36c970fc497466db
         self.btnMainConcat = QtGui.QPushButton(self.tab)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -861,6 +988,7 @@ class Ui_MainWindow(object):
         self.btnMainConcat.setCheckable(True)
         self.btnMainConcat.setObjectName(_fromUtf8("btnMainConcat"))
         self.horizontalLayout_6.addWidget(self.btnMainConcat)
+<<<<<<< HEAD
         spacerItem27 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_6.addItem(spacerItem27)
         self.verticalLayout_12.addLayout(self.horizontalLayout_6)
@@ -870,6 +998,17 @@ class Ui_MainWindow(object):
         self.verticalLayout_10.addLayout(self.horizontalLayout_8)
         spacerItem29 = QtGui.QSpacerItem(858, 338, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout_10.addItem(spacerItem29)
+=======
+        spacerItem23 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_6.addItem(spacerItem23)
+        self.verticalLayout_12.addLayout(self.horizontalLayout_6)
+        self.horizontalLayout_8.addLayout(self.verticalLayout_12)
+        spacerItem24 = QtGui.QSpacerItem(258, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_8.addItem(spacerItem24)
+        self.verticalLayout_10.addLayout(self.horizontalLayout_8)
+        spacerItem25 = QtGui.QSpacerItem(858, 338, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.verticalLayout_10.addItem(spacerItem25)
+>>>>>>> 90b613de8d404a03f95d6eff36c970fc497466db
         self.verticalLayout_13.addLayout(self.verticalLayout_10)
         self.tabWforms.addTab(self.tab, _fromUtf8(""))
         self.tab_2 = QtGui.QWidget()
@@ -878,6 +1017,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_21.setObjectName(_fromUtf8("verticalLayout_21"))
         self.verticalLayout_19 = QtGui.QVBoxLayout()
         self.verticalLayout_19.setObjectName(_fromUtf8("verticalLayout_19"))
+<<<<<<< HEAD
         self.labSiteformTitle_3 = QtGui.QLabel(self.tab_2)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -899,6 +1039,14 @@ class Ui_MainWindow(object):
         self.horizontalLayout_11.setObjectName(_fromUtf8("horizontalLayout_11"))
         spacerItem31 = QtGui.QSpacerItem(68, 148, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_11.addItem(spacerItem31)
+=======
+        spacerItem26 = QtGui.QSpacerItem(368, 28, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.verticalLayout_19.addItem(spacerItem26)
+        self.horizontalLayout_11 = QtGui.QHBoxLayout()
+        self.horizontalLayout_11.setObjectName(_fromUtf8("horizontalLayout_11"))
+        spacerItem27 = QtGui.QSpacerItem(68, 148, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_11.addItem(spacerItem27)
+>>>>>>> 90b613de8d404a03f95d6eff36c970fc497466db
         self.labTaxaCheck1 = QtGui.QLabel(self.tab_2)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -909,6 +1057,7 @@ class Ui_MainWindow(object):
         self.labTaxaCheck1.setAlignment(QtCore.Qt.AlignCenter)
         self.labTaxaCheck1.setObjectName(_fromUtf8("labTaxaCheck1"))
         self.horizontalLayout_11.addWidget(self.labTaxaCheck1)
+<<<<<<< HEAD
         spacerItem32 = QtGui.QSpacerItem(68, 148, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_11.addItem(spacerItem32)
         self.verticalLayout_19.addLayout(self.horizontalLayout_11)
@@ -918,6 +1067,17 @@ class Ui_MainWindow(object):
         self.horizontalLayout_10.setObjectName(_fromUtf8("horizontalLayout_10"))
         spacerItem34 = QtGui.QSpacerItem(158, 148, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_10.addItem(spacerItem34)
+=======
+        spacerItem28 = QtGui.QSpacerItem(68, 148, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_11.addItem(spacerItem28)
+        self.verticalLayout_19.addLayout(self.horizontalLayout_11)
+        spacerItem29 = QtGui.QSpacerItem(368, 38, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.verticalLayout_19.addItem(spacerItem29)
+        self.horizontalLayout_10 = QtGui.QHBoxLayout()
+        self.horizontalLayout_10.setObjectName(_fromUtf8("horizontalLayout_10"))
+        spacerItem30 = QtGui.QSpacerItem(158, 148, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_10.addItem(spacerItem30)
+>>>>>>> 90b613de8d404a03f95d6eff36c970fc497466db
         self.groupBox_2 = QtGui.QGroupBox(self.tab_2)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -1006,6 +1166,7 @@ class Ui_MainWindow(object):
         self.gridLayout.addLayout(self.formLayout_8, 3, 1, 1, 1)
         self.verticalLayout_17.addLayout(self.gridLayout)
         self.horizontalLayout_10.addWidget(self.groupBox_2)
+<<<<<<< HEAD
         spacerItem35 = QtGui.QSpacerItem(158, 148, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_10.addItem(spacerItem35)
         self.verticalLayout_19.addLayout(self.horizontalLayout_10)
@@ -1015,6 +1176,17 @@ class Ui_MainWindow(object):
         self.horizontalLayout_9.setObjectName(_fromUtf8("horizontalLayout_9"))
         spacerItem37 = QtGui.QSpacerItem(358, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_9.addItem(spacerItem37)
+=======
+        spacerItem31 = QtGui.QSpacerItem(158, 148, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_10.addItem(spacerItem31)
+        self.verticalLayout_19.addLayout(self.horizontalLayout_10)
+        spacerItem32 = QtGui.QSpacerItem(58, 17, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.verticalLayout_19.addItem(spacerItem32)
+        self.horizontalLayout_9 = QtGui.QHBoxLayout()
+        self.horizontalLayout_9.setObjectName(_fromUtf8("horizontalLayout_9"))
+        spacerItem33 = QtGui.QSpacerItem(358, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_9.addItem(spacerItem33)
+>>>>>>> 90b613de8d404a03f95d6eff36c970fc497466db
         self.btnTaxaConcat = QtGui.QPushButton(self.tab_2)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -1023,6 +1195,7 @@ class Ui_MainWindow(object):
         self.btnTaxaConcat.setSizePolicy(sizePolicy)
         self.btnTaxaConcat.setObjectName(_fromUtf8("btnTaxaConcat"))
         self.horizontalLayout_9.addWidget(self.btnTaxaConcat)
+<<<<<<< HEAD
         spacerItem38 = QtGui.QSpacerItem(358, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_9.addItem(spacerItem38)
         self.verticalLayout_19.addLayout(self.horizontalLayout_9)
@@ -1033,12 +1206,27 @@ class Ui_MainWindow(object):
         self.horizontalLayout_16.addWidget(self.tabWforms)
         self.horizontalLayout_17.addLayout(self.horizontalLayout_16)
         self.tabWviewerdb.raise_()
+=======
+        spacerItem34 = QtGui.QSpacerItem(358, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_9.addItem(spacerItem34)
+        self.verticalLayout_19.addLayout(self.horizontalLayout_9)
+        spacerItem35 = QtGui.QSpacerItem(58, 17, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.verticalLayout_19.addItem(spacerItem35)
+        self.verticalLayout_21.addLayout(self.verticalLayout_19)
+        self.tabWforms.addTab(self.tab_2, _fromUtf8(""))
+        self.horizontalLayout_13.addWidget(self.tabWforms)
+        self.verticalLayout_16.addLayout(self.horizontalLayout_13)
+>>>>>>> 90b613de8d404a03f95d6eff36c970fc497466db
         MainWindow.setCentralWidget(self.centralwidget)
         self.toolBar = QtGui.QToolBar(MainWindow)
         self.toolBar.setObjectName(_fromUtf8("toolBar"))
         MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
         self.menuBar = QtGui.QMenuBar(MainWindow)
+<<<<<<< HEAD
         self.menuBar.setGeometry(QtCore.QRect(0, 0, 1336, 31))
+=======
+        self.menuBar.setGeometry(QtCore.QRect(0, 0, 1409, 31))
+>>>>>>> 90b613de8d404a03f95d6eff36c970fc497466db
         self.menuBar.setObjectName(_fromUtf8("menuBar"))
         self.menuFile = QtGui.QMenu(self.menuBar)
         self.menuFile.setObjectName(_fromUtf8("menuFile"))
@@ -1056,6 +1244,10 @@ class Ui_MainWindow(object):
         self.menuFile.addAction(self.actionExit)
         self.menuFile.addSeparator()
         self.menuBar.addAction(self.menuFile.menuAction())
+<<<<<<< HEAD
+=======
+        self.labviewerraw.setBuddy(self.tblViewraw)
+>>>>>>> 90b613de8d404a03f95d6eff36c970fc497466db
         self.labviewermeta.setBuddy(self.tblViewmeta)
         self.labviewerraw.setBuddy(self.tblViewraw)
         self.label_2.setBuddy(self.spinboxselectmetaID)
@@ -1077,6 +1269,11 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow", None))
+<<<<<<< HEAD
+=======
+        self.labviewerraw.setText(_translate("MainWindow", "Raw Data Viewer", None))
+        self.btnloadrawview.setText(_translate("MainWindow", "Load File", None))
+>>>>>>> 90b613de8d404a03f95d6eff36c970fc497466db
         self.labviewermeta.setText(_translate("MainWindow", "MetaData Viewer", None))
         self.labviewerraw.setText(_translate("MainWindow", "Raw Data Viewer", None))
         self.btnloadrawview.setText(_translate("MainWindow", "Load File", None))
@@ -1261,7 +1458,10 @@ class Ui_MainWindow(object):
 " Global ID provided to the program.", None))
         self.btnMainConcat.setText(_translate("MainWindow", "Concatenate Main Table", None))
         self.tabWforms.setTabText(self.tabWforms.indexOf(self.tab), _translate("MainWindow", "Main Table Form", None))
+<<<<<<< HEAD
         self.labSiteformTitle_3.setText(_translate("MainWindow", "Concatenating Taxonomic Information", None))
+=======
+>>>>>>> 90b613de8d404a03f95d6eff36c970fc497466db
         self.labTaxaCheck1.setText(_translate("MainWindow", "Use the form below to identify which taxonomic information is available in the raw data table. \n"
 " Check the boxes to indicate that information is available at that level of classification. Once\n"
 " checked proceed to enter the column name in the raw data table that contains the specified\n"
