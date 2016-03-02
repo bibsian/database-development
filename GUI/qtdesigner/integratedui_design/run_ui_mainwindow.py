@@ -1,6 +1,7 @@
 # This script is going to be used to run the user interface
 # generated with pyqt
 
+
 #=========================#
 # Importing modules
 #=========================#
@@ -189,6 +190,7 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
         # specific signals to perform database operations with
         self.w = None
         self.colView = None
+        self.timeview = DialogPopUp()
         self.siteDialog = DialogPreview()
         self.mainDialog = DialogPreview()
         self.taxaDialog = DialogPreview()
@@ -1720,6 +1722,7 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                 timedatac1 = tparse.TimeParser(
                     self.rawdf, self.lnedTempSchCol1.text(),
                     self.timecol1dict, self.timeactivated1[0]).go()
+                print(type(timedatac1))
                 print(timedatac1.columns)
               
             except Exception as e:
@@ -1798,7 +1801,7 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
     #======================#
     def time_concat(self):
 
-        
+        self.alltimedata = None
         # A series of conditional statments that will direct the
         # concatenation and/or creation of the final formated
         # date time informatoin
@@ -1810,20 +1813,25 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
         print("start")
         if len(self.timedatalist) == 1 and\
            self.rbtnAllpresent.isChecked():
+            print("List length 1, All present CHEKCED")
             self.alltimedata = self.timedatalist[0]
-            print("All done with time stuff.")
-            
 
+            print(self.alltimedata)
+            print(self.alltimedata.dtypes)
+            print("Exit list length 1, all present CHECKED")
   
         # Condition 2: If our data frame list corresponding to each
         # block in the time parser form is 1 AND the All present
         # radio button is NOT checked then look at which
         # informatoin is missing (must be 2 time components)
         # and make Null values for them
-        elif len(self.timedatalist) == 1 and (not self.rbtnAllpresent.isChecked()):
-            print("In 2nd bool")
+        elif len(self.timedatalist) == 1 and\
+           (not self.rbtnAllpresent.isChecked()):
+            print("List length 1, All present NOT CHECKED")
+            
             # Day/Month Null
             if self.rbtnDMnull.isChecked():
+                print("List length 1, D/M NULL ")
                 self.alltimedata = pd.concat(
                     [
                         self.timedatalist[0],
@@ -1831,10 +1839,13 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                             2, ['day', 'month'],
                             len(self.timedatalist[0]), 'nan ')],
                     axis=1)
+                print(self.alltimedata)
+                print("Exit List length 1, D/M NULL")
                 
         
             # Day/Year Null
             elif self.rbtnDYnull.isChecked():
+                print("List length 1, D/Y Null")
                 self.alltimedata = pd.concat(
                     [
                         self.timedatalist[0],
@@ -1842,10 +1853,13 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                             2, ['day', 'year'],
                             len(self.timedatalist[0]), 'nan ')],
                     axis=1)
+                print(self.alltimedata)
+                print("Exit List length 1, D/Y Null")
                 
 
             # Month/Year Null
             elif self.rbtnMYnull.isChecked():
+                print("List length 1, M/Y Null")
                 self.alltimedata = pd.concat(
                     [
                         self.timedatalist[0],
@@ -1853,45 +1867,62 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                             2, ['month', 'year'],
                             len(self.timedatalist[0]), 'nan ')],
                     axis=1)
-                
+                print(self.alltimedata)
+                print("Exit List length 1, M/Y Null")
+
             else:
+                print("Passing List Length 1 block")
                 pass
 
         # Condition 3: If our 'data frame' list corresponding to each
         # block in the time parser form is length 2
         # Go into this block
         elif len(self.timedatalist) == 2:
-            print("In 3rd bool")
-            alltimedata = pd.concat(
+            print("List Length 2 block")
+            self.alltimedata = pd.concat(
                 [self.timedatalist[0], self.timedatalist[1]], axis=1)
-            alltimecolumns = list(alltimedata.columns)
-            print("In 3rd bool above jd")
+            self.alltimecolumns = list(self.alltimedata.columns)
 
+            print("List Length 2, above jd/y")
             # Check if julian date and year were in separte
             # data frames of our 'data frame' list if so
             # combind and parse time once more.
-            if ('julianday' in alltimecolumns)== True and\
-               ('year' in alltimecolumns) == True:                
+            if ('julianday' in self.alltimecolumns)== True and\
+               ('year' in self.alltimecolumns) == True:
+                
                 print("This should only appear under special cases")
-                alltimedata['cbind'] = alltimedata[
-                    alltimecolumns[0]].astype(str).map(str)+\
-                    "-"+ alltimedata[alltimecolumns[1]].astype(str)
+                self.alltimedata['cbind'] = self.alltimedata[
+                    self.alltimecolumns[0]].astype(str).map(str)+\
+                    "-"+ self.alltimedata[self.alltimecolumns[1]].astype(str)
 
                 self.alltimedata = tparse.TimeParser(
-                    alltimedata, 'cbind', self.timecol1dict, 0).go()
-                
+                    self.alltimedata, 'cbind', self.timecol1dict, 0).go()
+
+                print(self.alltimedata)
+                print(self.alltimedata.dtypes)
+                print("Exiting jd/y formating")
 
             # If no julian date or year are present then
             # add columns of null values for missing infomraion
             else:
-                print("past 3rd bool past jd")
+                print("In list length 2, past jd")
                 # No missing information means concatenate
                 # dataset
-                if self.rbtnAllpresent.isChecked():
-                    self.alltimedata = alltimedata 
+                if len(self.timedatalist) == 2 and\
+                   self.rbtnAllpresent.isChecked():
+                    print("In list length 2, All present block")
+
+                    self.alltimedata = pd.concat(
+                        [self.timedatalist[0], self.timedatalist[1]],
+                        axis=1)
+
+                    print(self.alltimedata)
+                    print(self.alltimedata.dtypes)
+                    print("Exiting list length 2, All present block")
                     
                 # Missing Year data
                 elif self.rbtnYnull.isChecked():
+                    print("List lenght 2, In Year Null block")
                     self.alltimedata = pd.concat(
                     [
                         self.timedatalist[0], self.timedatalist[1],
@@ -1899,9 +1930,12 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                             1, ['year'],
                             len(self.timedatalist[0]), 'nan ')],
                     axis=1)
+                    print(self.alltimedata.dtypes)
+                    print("Exiting list length 2,Year Null block")
                     
                 # Missing Month data
                 elif self.rbtnMnull.isChecked():
+                    print("List lenght 2, In Month Null block")
                     self.alltimedata = pd.concat(
                     [
                         self.timedatalist[0], self.timedatalist[1],
@@ -1909,9 +1943,12 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                             1, ['month'],
                             len(self.timedatalist[0]), 'nan ')],
                     axis=1)
-
+                    print(self.alltimedata.dtypes)
+                    print("Exiting list lenght 2, In Month Null block")
+                    
                 # Missing Day data
                 elif self.rbtnDnull.isChecked():
+                    print("List lenght 2, Day Null block")
                     self.alltimedata = pd.concat(
                     [
                         self.timedatalist[0], self.timedatalist[1],
@@ -1919,17 +1956,27 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                             1, ['day'],
                             len(self.timedatalist[0]), 'nan ')],
                     axis=1)
-                    
+                    print(self.alltimedata.dtypes)
+                    print("Exiting list lenght 2, Day Null block")
+
                 else:
+                    print("Passing List length 2 block")
                     pass
+            print()
 
         # Condition 3: If our 'data frame' list is length 3
         # then we just need to concatenate the informatoin
         # and save it in the program
-        elif len(self.timedatalist)== 3:
+        elif len(self.timedatalist)== 3 and\
+             self.rbtnAllpresent.isChecked():
+            print("In List length 3 data frame block")
             self.alltimedata = pd.concat(
                 [self.timedatalist[0], self.timedatalist[1],
                  self.timedatalist[2]], axis=1)
+            print(self.alltimedata)
+        else:
+            
+            pass
 
         # Try and display the supposedly save information
         # from above; if a data frame with all time informatoin
@@ -1937,8 +1984,16 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
         # input error and they checked the wrong information
         # of put in the wrong type of columns etc.
         try:
-            self.timeview = DialogPopUp()
-            timemodel = ptbE.PandasTableModel(self.alltimedata)
+            print('Tryin to make the model view')
+
+            copy = self.alltimedata.copy()
+            copy['day']= copy['day'].astype(str)
+
+            print(copy)
+            print(copy.dtypes)
+
+
+            timemodel = ptbE.PandasTableModel(copy)
             self.timeview.tblList.setModel(timemodel)
             self.timeview.show()
             
