@@ -192,12 +192,12 @@ rawobs = Table('rawobs', metadata,
                Column('year', NUMERIC),
                Column('month', NUMERIC),
                Column('day', NUMERIC),
-               Column('spt_rep1', VARCHAR(10)),
-               Column('spt_rep2', VARCHAR(10)),
-               Column('spt_rep3', VARCHAR(10)),
-               Column('spt_rep4', VARCHAR(10)),
-               Column('structure', VARCHAR(10)),
-               Column('indivID', VARCHAR(10)),
+               Column('spt_rep1', VARCHAR(50)),
+               Column('spt_rep2', VARCHAR(50)),
+               Column('spt_rep3', VARCHAR(50)),
+               Column('spt_rep4', VARCHAR(50)),
+               Column('structure', VARCHAR(50)),
+               Column('indivID', VARCHAR(50)),
                Column('unitobs', NUMERIC))
 
 
@@ -236,5 +236,6 @@ metadata.create_all(engine)
 
 
 lterex.to_sql(ltertablename, con=engine, if_exists="append", index=False)
-siteex.to_sql(sitetablename, con=engine, if_exists="append", index=False)
-mainex.to_sql(maintablename, con=engine, if_exists="append", index=False)
+#
+#siteex.to_sql(sitetablename, con=engine, if_exists="append", index=False)
+#mainex.to_sql(maintablename, con=engine, if_exists="append", index=False)
