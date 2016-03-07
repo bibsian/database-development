@@ -45,14 +45,14 @@ class Ui_dialog(object):
         self.horizontalLayout.addItem(spacerItem)
         self.verticalLayout_2 = QtGui.QVBoxLayout()
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
-        self.btnSitePush = QtGui.QPushButton(dialog)
+        self.btnPush = QtGui.QPushButton(dialog)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.btnSitePush.sizePolicy().hasHeightForWidth())
-        self.btnSitePush.setSizePolicy(sizePolicy)
-        self.btnSitePush.setObjectName(_fromUtf8("btnSitePush"))
-        self.verticalLayout_2.addWidget(self.btnSitePush)
+        sizePolicy.setHeightForWidth(self.btnPush.sizePolicy().hasHeightForWidth())
+        self.btnPush.setSizePolicy(sizePolicy)
+        self.btnPush.setObjectName(_fromUtf8("btnPush"))
+        self.verticalLayout_2.addWidget(self.btnPush)
         self.horizontalLayout.addLayout(self.verticalLayout_2)
         self.verticalLayout.addLayout(self.horizontalLayout)
         self.tblList = QtGui.QTableView(dialog)
@@ -68,5 +68,5 @@ class Ui_dialog(object):
         self.label.setText(_translate("dialog", " Does the table below contain all of the correct\n"
 " information? If not adjust values in table.\n"
 " When complete, push to database.", None))
-        self.btnSitePush.setText(_translate("dialog", "Push to DB", None))
+        self.btnPush.setText(_translate("dialog", "Push to DB", None))
 
