@@ -80,13 +80,14 @@ class DialogPreview(QtGui.QDialog, tp.Ui_dialog):
         super().__init__(parent)
         self.setupUi(self)
 
-
 #========================#
 # Dialog pop up widget
 #========================#
 
 # Creating a Dialog box that will display the values that
 # input by the user and will be used to push to the database
+
+
 class DialogPopUp(QtGui.QDialog, td.Ui_Dialog):
     '''
     This class is a pop up dialog box that I can use
@@ -195,7 +196,6 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
         self.mainDialog = DialogPreview()
         self.taxaDialog = DialogPreview()
         self.rawDialog = DialogPreview()
-        self.taxaDialog = DialogPreview()
 
         # Setting up the dictionaries that will be used to
         # concatenate user information
@@ -227,7 +227,7 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
         self.btnSeasonReset.clicked.connect(self.season_reset)
         self.btnNullReset.clicked.connect(self.null_reset)
         self.btnTimeConcat.clicked.connect(self.time_concat)
-
+        self.btnObsConcat.clicked.connect(self.obs_concat)
         #=====================#
         # Catching SPIN BOX
         #=====================#
@@ -245,7 +245,6 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
         #======= SITE INFO =====#
         self.lnedViewSite.returnPressed.connect(self.col_view_handle)
 
-
         # Setting line edits for sit abbreivations, lat, long,
         # and descriptions to Disabled on start
         self.lnedSiteformsiteID.setDisabled(True)
@@ -256,8 +255,6 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
         # Longitude
         self.lnedSiteformlong.setDisabled(True)
 
-
-        
         # LINE EDITS: SITE SPATIAL INFORMATION
         # SITEID, LATTITUDE, LONGITUDE, NAMES, DESCRIPTIONS
         # siteID if Yes check box is checked
@@ -306,7 +303,7 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
             self.seasonlnedlist[i].setEnabled(False)
             self.seasonlnedlist[i].returnPressed.connect(
                 self.multiple_text)
-            
+
         self.lnedSeasConvertLabel.returnPressed.connect(
             self.season_convert)
 
@@ -316,6 +313,30 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
             self.lnedTempSchCol3]
         for i in self.timelnedlist:
             i.returnPressed.connect(self.time_format)
+
+        #============OBS INFO=============#
+        #====SPATIAL REPS====#
+        self.lnedSpRep1.setDisabled(True)
+
+        self.splnedlist = [
+            self.lnedSpRep1, self.lnedSpRep2, self.lnedSpRep3,
+            self.lnedSpRep4]
+
+        for i in self.splnedlist:
+            i.returnPressed.connect(self.sp_obs_record)
+
+        #======IND ID=========#
+        self.lnedObsIndID.setDisabled(True)
+        #======STRUCTURE=======#
+        self.lnedObsStruct.setDisabled(True)
+
+        self.optionallnedlist = [
+            self.lnedObsIndID, self.lnedObsStruct]
+
+        for i in self.optionallnedlist:
+            i.returnPressed.connect(self.optional_obs_record)
+
+        self.lnedObsData.returnPressed.connect(self.optional_obs_record)
 
         #=======================#
         # Catching CHECK BOX signals from user interface
@@ -345,7 +366,6 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
             self.seasonckboxlist[i].stateChanged.connect(
                 self.multiple_check_box_behavior)
 
-
         #====TIME DATA=====#
         # List to facilitate parsing date informatoin
         self.timedatalist = []
@@ -360,19 +380,19 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
         # A corresponding dictionary for the 1st block of check
         # boxes
         self.timecol1dict = {
-            0:'dmy', 1:'my', 2:'dy', 3:'dm', 4:'y', 5:'m',
-            6:'j', 7:'d'}
+            0: 'dmy', 1: 'my', 2: 'dy', 3: 'dm', 4: 'y', 5: 'm',
+            6: 'j', 7: 'd'}
 
         # COLUMN/BLOCK 2
-        #Creating more list and check boxes for other blocks
-        # in the UI 
+        # Creating more list and check boxes for other blocks
+        # in the UI
         self.timecol2list = [
-            self.ckCol2MYcombo , self.ckCol2DYcombo,
+            self.ckCol2MYcombo, self.ckCol2DYcombo,
             self.ckCol2DMcombo, self.ckCol2Y, self.ckCol2M,
             self.ckCol2J, self.ckCol2D]
         # Dictionary
-        self.timecol2dict = {0:'my', 1:'dy', 2:'dm', 3:'y', 4:'m',
-            5:'j', 6:'d'}
+        self.timecol2dict = {0: 'my', 1: 'dy', 2: 'dm', 3: 'y', 4: 'm',
+                             5: 'j', 6: 'd'}
 
         # COLUMN/BLOCK 3
         self.timecol3list = [
@@ -380,15 +400,15 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
             self.ckCol3DMcombo, self.ckCol3Y, self.ckCol3M,
             self.ckCol3J, self.ckCol3D]
         # Dictionary
-        self.timecol3dict = {0:'my', 1:'dy', 2:'dm', 3:'y', 4:'m',
-            5:'j', 6:'d'}
+        self.timecol3dict = {0: 'my', 1: 'dy', 2: 'dm', 3: 'y', 4: 'm',
+                             5: 'j', 6: 'd'}
 
         # Connecting checkboxes to methods
-        for i,item in enumerate(self.timecol1list):
+        for i, item in enumerate(self.timecol1list):
             self.timecol1list[i].stateChanged.connect(
                 self.time_indexing)
-            if i <= len(self.timecol2dict)-1:
-                
+            if i <= len(self.timecol2dict) - 1:
+
                 self.timecol2list[i].stateChanged.connect(
                     self.time_indexing)
                 self.timecol3list[i].stateChanged.connect(
@@ -396,8 +416,14 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
             else:
                 pass
 
+        #=======OPTIONAL OBS DATA========#
+        self.optionalobscklist = [
+            self.ckObsIndIDY, self.ckObsStructY, self.ckObsIndIDN,
+            self.ckObsStructN]
 
-        
+        for i, item in enumerate(self.optionalobscklist):
+            item.stateChanged.connect(self.optional_obs_record)
+
         #======================#
         # Catching the site COMBO BOX text
         #======================#
@@ -411,6 +437,12 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
             self.rbtnMYnull, self.rbtnDYnull, self.rbtnDMnull,
             self.rbtnYnull, self.rbtnMnull, self.rbtnMnull,
             self.rbtnAllpresent]
+
+        #=====================#
+        # Connecting user defined
+        # signal
+        #=====================#
+
         #======================#
         # Creating DATA MODELS to view pandas dataframes on
         # in qttreeView
@@ -500,7 +532,7 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
             return
 
     #======================#
-    # Method to handle the conversion of
+    # METHOD to handle the conversion of
     # factors that represent NULL values
     #======================#
     def null_handle(self):
@@ -586,7 +618,7 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
 
         elif sender == self.lnedNullphrase:
             self.nullphraseinput = self.lnedNullphrase.text()
-            
+
             try:
                 textnullinputlist = self.convert_phrases_to_List(
                     self.nullphraseinput)
@@ -1364,7 +1396,7 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
             # and extra information from the raw dataframe
             # that is current up to this form (taxa form)
             taxadataraw = self.data_list(
-                ['projID'],self.merge_main_to_taxa())
+                ['projID'], self.merge_tables('main_taxa'))
             print(taxadataraw)
             # Created a list of column names for the taxa table
             # as it is in the data base and it
@@ -1377,12 +1409,13 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
             # Which will help index which columns we already
             # have information for
             taxadictcolindex = list(self.taxatextdict.keys())
+
             # Adding 1 to each above indeces to acccount
             # for the fact that the taxa text dicationary
             # does not include informatoin about the projID
             # and hence throws the index information off by 1
             # if you wanted a 1:1 correspondence to names
-            taxadictcolindex = [x+1 for x in taxadictcolindex]
+            taxadictcolindex = [x + 1 for x in taxadictcolindex]
 
             # Extracting the values (names) from the taxa text
             # dictionary
@@ -1392,18 +1425,18 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
             # data that was created with our helper function
             # NOTE: These column names are NOT what is
             # present in the database and they MUST be changed
-            taxacurrentcol = list(taxadataraw.columns)
+            self.taxacurrentcol = list(taxadataraw.columns)
 
             # Using the true column names and the index
             # from the taxa dictionary to replace the
             # raw column names with the true one
-            taxacolumns = [taxadfcol[i] for i in taxadictcolindex ]
+            self.taxacolumns = [taxadfcol[i] for i in taxadictcolindex]
             # Inserting the projID column into the taxa column list
-            taxacolumns.insert(0, 'projID')
+            self.taxacolumns.insert(0, 'projID')
 
             # Reseting the raw taxa column names with matching
             # ones from the database
-            taxadataraw.columns = taxacolumns
+            taxadataraw.columns = self.taxacolumns
 
             print(taxadataraw.columns)
             #=============#
@@ -1412,42 +1445,43 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
             # with the raw taxa data column names and looking for
             # mismatches
             #==============#
-            rawtaxacolset = set(taxacolumns)
+            rawtaxacolset = set(self.taxacolumns)
             missingcollist = [
                 x for x in taxadfcol if x not in rawtaxacolset]
 
             print(missingcollist)
+            print(len(taxadataraw))
+            
             #=============#
             # Creating a data frame of NULL values for information
             # that is missing from the raw taxa table
             # Note: this is a data frame with 1 row
             #=============#
-            taxanulldf = pd.DataFrame()
-            for i,item in enumerate(missingcollist):
-                taxanulldf[missingcollist[i]]= item
-                taxanulldf.loc[0] = 'NULL'
+            taxanulldf = self.produce_null_df(
+                len(missingcollist), missingcollist,
+                len(taxadataraw), 'NULL ')
+             
             print(taxanulldf)
-            # Expanding our NULL taxa dataframe to one with matching
-            # rows from the raw taxa data
-            taxanulldfconcat = pd.concat(
-                [taxanulldf] * len(taxadataraw), ignore_index=True)
-            
+
             # Merging the raw taxa data with missing data
-            taxafinal = pd.concat(
+            self.taxaDataAll = pd.concat(
                 [taxadataraw.reset_index(drop=True),
-                 taxanulldfconcat.reset_index(drop=True)]
-                ,axis=1)
-            print(taxafinal)
-            
+                 taxanulldf.reset_index(drop=True)], axis=1)
+
+            print(self.taxaDataAll)
+            self.taxaprojcurrent = list(
+                set(self.taxaDataAll['projID']))
+
             # Setting the model view for the taxa table
-            taxamodel = ptbE.PandasTableModel(taxafinal)
+            taxamodel = ptbE.PandasTableModel(self.taxaDataAll)
+
             self.taxaDialog.tblList.setModel(taxamodel)
             self.taxaDialog.show()
 
             # Connecting the push database button to method
             self.taxaDialog.btnPush.clicked.connect(
                 self.upload_to_database)
-            
+
         except Exception as e:
             print(str(e))
     #===================#
@@ -1567,7 +1601,6 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
         self.tblViewraw.setModel(self.rawmodelreset)
         print(self.rawdf)
 
-
     #=====================#
     # Method to aid in parsing the time
     # information: Deals with what
@@ -1577,7 +1610,7 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
     #=====================#
     def time_indexing(self):
 
-        deldata = [0,1,2]
+        deldata = [0, 1, 2]
         # Creating list that will house the index
         # regarding the format of the raw date information
         self.timeactivated1 = []
@@ -1602,10 +1635,10 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
         # The timeactivated list are appended with the index
         # of the checkbox from out time check box lists
         # ('timecol1list, timecol2list, timecol3list')
-        for i,item in enumerate(self.timecol1list):
+        for i, item in enumerate(self.timecol1list):
             if self.timecol1list[i].isChecked():
                 self.timeactivated1.append(i)
-            if i <= len(self.timecol2list)-1:
+            if i <= len(self.timecol2list) - 1:
                 if self.timecol2list[i].isChecked():
                     self.timeactivated2.append(i)
 
@@ -1623,8 +1656,8 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
         # of our timeactivated list created above
         # and appends the popdata list to inform the program
         # which data associated with each should be stored
-        # still and not removed 
-        for i,item in enumerate(self.timeactivatedall):
+        # still and not removed
+        for i, item in enumerate(self.timeactivatedall):
             for j in range(len(self.timeactivatedall[i])):
                 popdata.append(i)
         # The missing list comprehension indexs which data
@@ -1660,11 +1693,11 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                 # after a user inputs information and it has been
                 # accepting into memory
                 reactivate = [
-                    any(block1)==False, any(block2)==False,
-                    any(block3)==False]
+                    any(block1) == False, any(block2) == False,
+                    any(block3) == False]
 
                 # This is the loop to reactivate
-                for i,item in enumerate(reactivate):
+                for i, item in enumerate(reactivate):
                     print("went into the reactivate loop")
                     if item is True:
                         self.timelnedlist[i].setEnabled(True)
@@ -1675,8 +1708,6 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                 print(reactivate)
             except:
                 print('Already enabled')
-
-
 
     #=====================#
     # Method that helps to format
@@ -1705,7 +1736,7 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
         columnerr = (
             " The column name you specified is incorrect.")
         checkerr = (
-            "More than one checkbox has been selected. Please "+
+            "More than one checkbox has been selected. Please " +
             "correct this.")
 
         # Identifying which linedit is the
@@ -1724,7 +1755,7 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                     self.timecol1dict, self.timeactivated1[0]).go()
                 print(type(timedatac1))
                 print(timedatac1.columns)
-              
+
             except Exception as e:
                 print(str(e))
                 print('Always going to go to error block')
@@ -1742,7 +1773,7 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                     return
 
         elif sender == self.lnedTempSchCol2 and\
-           len(self.timeactivated2) == 1:
+                len(self.timeactivated2) == 1:
             # Attempting to parse the time infomratoin based
             # on the checked boxes in the second block on the
             # time parser form and the line edit input
@@ -1765,9 +1796,8 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                     self.w.showMessage(columnerr)
                     return
 
-
         elif sender == self.lnedTempSchCol3 and\
-           len(self.timeactivated3) == 1:
+                len(self.timeactivated3) == 1:
             # Attempting to parse the time infomratoin based
             # on the checked boxes in the third block on the
             # time parser form and the line edit input
@@ -1819,16 +1849,16 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
             print(self.alltimedata)
             print(self.alltimedata.dtypes)
             print("Exit list length 1, all present CHECKED")
-  
+
         # Condition 2: If our data frame list corresponding to each
         # block in the time parser form is 1 AND the All present
         # radio button is NOT checked then look at which
         # informatoin is missing (must be 2 time components)
         # and make Null values for them
         elif len(self.timedatalist) == 1 and\
-           (not self.rbtnAllpresent.isChecked()):
+                (not self.rbtnAllpresent.isChecked()):
             print("List length 1, All present NOT CHECKED")
-            
+
             # Day/Month Null
             if self.rbtnDMnull.isChecked():
                 print("List length 1, D/M NULL ")
@@ -1841,8 +1871,7 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                     axis=1)
                 print(self.alltimedata)
                 print("Exit List length 1, D/M NULL")
-                
-        
+
             # Day/Year Null
             elif self.rbtnDYnull.isChecked():
                 print("List length 1, D/Y Null")
@@ -1855,7 +1884,6 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                     axis=1)
                 print(self.alltimedata)
                 print("Exit List length 1, D/Y Null")
-                
 
             # Month/Year Null
             elif self.rbtnMYnull.isChecked():
@@ -1887,13 +1915,13 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
             # Check if julian date and year were in separte
             # data frames of our 'data frame' list if so
             # combind and parse time once more.
-            if ('julianday' in self.alltimecolumns)== True and\
+            if ('julianday' in self.alltimecolumns) == True and\
                ('year' in self.alltimecolumns) == True:
-                
+
                 print("This should only appear under special cases")
                 self.alltimedata['cbind'] = self.alltimedata[
-                    self.alltimecolumns[0]].astype(str).map(str)+\
-                    "-"+ self.alltimedata[self.alltimecolumns[1]].astype(str)
+                    self.alltimecolumns[0]].astype(str).map(str) +\
+                    "-" + self.alltimedata[self.alltimecolumns[1]].astype(str)
 
                 self.alltimedata = tparse.TimeParser(
                     self.alltimedata, 'cbind', self.timecol1dict, 0).go()
@@ -1919,43 +1947,43 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                     print(self.alltimedata)
                     print(self.alltimedata.dtypes)
                     print("Exiting list length 2, All present block")
-                    
+
                 # Missing Year data
                 elif self.rbtnYnull.isChecked():
                     print("List lenght 2, In Year Null block")
                     self.alltimedata = pd.concat(
-                    [
-                        self.timedatalist[0], self.timedatalist[1],
-                        self.produce_null_df(
-                            1, ['year'],
-                            len(self.timedatalist[0]), 'nan ')],
-                    axis=1)
+                        [
+                            self.timedatalist[0], self.timedatalist[1],
+                            self.produce_null_df(
+                                1, ['year'],
+                                len(self.timedatalist[0]), 'nan ')],
+                        axis=1)
                     print(self.alltimedata.dtypes)
                     print("Exiting list length 2,Year Null block")
-                    
+
                 # Missing Month data
                 elif self.rbtnMnull.isChecked():
                     print("List lenght 2, In Month Null block")
                     self.alltimedata = pd.concat(
-                    [
-                        self.timedatalist[0], self.timedatalist[1],
-                        self.produce_null_df(
-                            1, ['month'],
-                            len(self.timedatalist[0]), 'nan ')],
-                    axis=1)
+                        [
+                            self.timedatalist[0], self.timedatalist[1],
+                            self.produce_null_df(
+                                1, ['month'],
+                                len(self.timedatalist[0]), 'nan ')],
+                        axis=1)
                     print(self.alltimedata.dtypes)
                     print("Exiting list lenght 2, In Month Null block")
-                    
+
                 # Missing Day data
                 elif self.rbtnDnull.isChecked():
                     print("List lenght 2, Day Null block")
                     self.alltimedata = pd.concat(
-                    [
-                        self.timedatalist[0], self.timedatalist[1],
-                        self.produce_null_df(
-                            1, ['day'],
-                            len(self.timedatalist[0]), 'nan ')],
-                    axis=1)
+                        [
+                            self.timedatalist[0], self.timedatalist[1],
+                            self.produce_null_df(
+                                1, ['day'],
+                                len(self.timedatalist[0]), 'nan ')],
+                        axis=1)
                     print(self.alltimedata.dtypes)
                     print("Exiting list lenght 2, Day Null block")
 
@@ -1967,15 +1995,15 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
         # Condition 3: If our 'data frame' list is length 3
         # then we just need to concatenate the informatoin
         # and save it in the program
-        elif len(self.timedatalist)== 3 and\
-             self.rbtnAllpresent.isChecked():
+        elif len(self.timedatalist) == 3 and\
+                self.rbtnAllpresent.isChecked():
             print("In List length 3 data frame block")
             self.alltimedata = pd.concat(
                 [self.timedatalist[0], self.timedatalist[1],
                  self.timedatalist[2]], axis=1)
             print(self.alltimedata)
         else:
-            
+
             pass
 
         # Try and display the supposedly save information
@@ -1987,22 +2015,188 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
             print('Tryin to make the model view')
 
             copy = self.alltimedata.copy()
-            copy['day']= copy['day'].astype(str)
+            copy['day'] = copy['day'].astype(str)
 
             print(copy)
             print(copy.dtypes)
 
-
             timemodel = ptbE.PandasTableModel(copy)
             self.timeview.tblList.setModel(timemodel)
             self.timeview.show()
-            
+
         except Exception as e:
             print(str(e))
             self.w.showMessage(
                 "Information does not compute please double" +
                 " check your inputs and NULL buttons.")
 
+    def sp_obs_record(self):
+        sender = self.sender()
+
+        # Making list comprehesions to extra text
+        # from line edits, identify sender of signals, and
+        # get a length of characters on the text
+        self.spinfolist = [x.text() for x in self.splnedlist]
+        self.spinfoboolist = [x == sender for x in self.splnedlist]
+        self.spinfolen = [len(x.text()) for x in self.splnedlist]
+        self.spinfolabel = [
+            'spt_rep1', 'spt_rep2', 'spt_rep3', 'spt_rep4']
+        # Required that raw df is loaded into the program
+        try:
+            self.obsdf = self.rawdf[self.sitecolumn]
+        # Throw exception if not loaded
+        except Exception as e:
+            print(str(e))
+            self.w = QtGui.QErrorMessage()
+            self.w.showMessage(
+                " Make sure the location of site ID information " +
+                "has been specified on the Site Form.")
+            return
+
+        # If a signal is sent from a line edit then try
+        # to subset that column from the rawdf
+        try:
+            [print(self.rawdf[x]) for x, y in zip(
+                self.spinfolist, self.spinfoboolist) if y == True]
+
+        # If the rawdf is not subsetable then throw errormessag
+        # to reenter user input
+        except Exception as e:
+            print(str(e))
+            self.w = QtGui.QErrorMessage()
+            self.w.showMessage(" Column not available; try again.")
+            return
+
+        # Column names for subsetted data frame
+        self.obsrename = ['spt_rep1']
+        # Iterate over the list containing the identified
+        # columns and concatenate them together using
+        # the siteID column as the base
+        for i, item in enumerate(self.spinfolen):
+            if item > 0:
+                self.obsdf = pd.concat(
+                    [self.obsdf, self.rawdf[self.spinfolist[i]]],
+                    axis=1)
+                self.obsrename.append(self.spinfolabel[i])
+            else:
+                pass
+
+    def optional_obs_record(self):
+        sender = self.sender()
+
+        print(sender)
+        optionallnedlisttext = [x.text() for x in self.optionallnedlist]
+        optionallnedbool = [x == sender for x in self.optionallnedlist]
+        optionallnedlab = ['indivID', 'structure']
+        # Check Box and linedit behavior
+        # managed with a list comprehension connection
+        # the list of checkboxes (Yes or No) with
+        # the line edits
+        [x.setEnabled(True) if y.isChecked()
+         else x.setEnabled(False) for x, y in
+         zip(self.optionallnedlist, self.optionalobscklist)]
+
+        # If a signal is sent from a line edit then try
+        # to subset that column from the rawdf
+        try:
+            self.obsoptdf = self.obsdf
+            self.obsoptrename = list(self.obsrename)
+            [print(self.rawdf[x]) for x, y in zip(
+                optionallnedlisttext,
+                optionallnedbool) if y == True]
+
+            # Iterate over the list containing the identified
+            # columns and concatenate them together using
+            # the siteID column as the base
+            for i, item in enumerate(optionallnedlisttext):
+                if len(item) > 0:
+                    self.obsoptdf = pd.concat(
+                        [self.obsoptdf, self.rawdf[item]],
+                        axis=1)
+                    self.obsoptrename.append(optionallnedlab[i])
+            else:
+                pass
+
+        # If the rawdf is not subsetable then throw errormessag
+        # to reenter user input
+        except Exception as e:
+            print(str(e))
+            self.w = QtGui.QErrorMessage()
+            self.w.showMessage(" Column not available; try again.")
+            return
+
+        if sender == self.lnedObsData or sender == self.btnObsConcat:
+            rawdatacol = self.lnedObsData.text()
+            try:
+                self.obsoptdf = pd.concat(
+                    [self.obsoptdf, self.rawdf[rawdatacol]],
+                    axis=1)
+                self.obsoptrename.append('unitobs')
+
+            except Exception as e:
+                print(str(e))
+                self.w = QtGui.QErrorMessage()
+                self.w.showMessage(" Column not available; try again.")
+                return
+
+    def obs_concat(self):
+
+        try:
+            if self.alltimedata is None:
+                raise ValueError
+            else:
+                pass
+        except Exception as e:
+            print(str(e))
+            self.w = QtGui.QErrorMessage()
+            self.w.showMessage(
+                "Be sure you have completed the Time Parser Form.")
+            return
+
+        self.sp_obs_record()
+        self.optional_obs_record()
+
+        self.obstruecol = [
+            'spt_rep1', 'spt_rep2', 'spt_rep3', 'spt_rep4',
+            'structure', 'indivID', 'unitobs']
+        self.obsoptdf.columns = self.obsoptrename
+
+        missing = [
+            x for x in self.obstruecol if x not in self.obsoptrename]
+        print(missing)
+
+        nulldf = self.produce_null_df(
+            len(missing), missing, len(self.obsoptdf), 'NULL ')
+
+        
+        if len(missing) > 0:
+            self.obsall = pd.concat(
+                [self.obsoptdf, nulldf, self.alltimedata,
+                 ], axis=1)
+        else:
+            self.obsall = pd.concat(
+                [self.obsoptdf, self.alltimedata,
+                 ], axis=1)
+
+        rawmerged = self.merge_tables('taxa_raw')
+        self.futureprojID = list(set(rawmerged['projID']))
+        self.futuretaxaID = list(set(rawmerged['taxaID']))
+
+        self.obsall = pd.concat(
+            [self.obsall, rawmerged[['projID','taxaID']]], axis=1)
+
+        self.obsall['unitobs'] = pd.to_numeric(
+                        self.obsall['unitobs'], errors='coerce')
+
+        
+        print(self.obsall.dtypes)
+        
+        obsmodel = ptbE.PandasTableModel(self.obsall)
+        self.rawDialog.tblList.setModel(obsmodel)
+        self.rawDialog.show()
+
+        self.rawDialog.btnPush.clicked.connect(
+            self.upload_to_database)
 
 
     #========================#
@@ -2011,12 +2205,13 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
     # names of columns, and length of values (n)
     #=========================#
     #=========HELPER==========#
+
     def produce_null_df(self, ncols, names, length, input):
 
         # Test regarding input types
         try:
             if (type(names) is list) == True and\
-                (type(ncols) is int) ==True:
+                    (type(ncols) is int) == True:
                 pass
         except:
             raise TypeError
@@ -2027,15 +2222,14 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
         # piece together along axis 1
         allnulls = pd.concat(
             [
-                pd.DataFrame(re.sub(" ", " ",(str(input)* length))\
-                             .split())]*len(names), axis=1)
+                pd.DataFrame(re.sub(" ", " ", (str(input) * length))
+                             .split())] * len(names), axis=1)
         # Rename columns
         allnulls.columns = names
 
         # Return objects
         return allnulls
 
-        
     #=====================#
     # This is a helper method that takes two inputs
     # an 'extracolumns' variable which is supposed
@@ -2152,13 +2346,21 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                 sitelist=self.sitelisttoadd,
                 lter=self.cboxselectlter.currentText(),
                 meta=self.metaurl)
-            
+
         elif sender == self.taxaDialog.btnPush:
             # This handle only checks the project ID's from
             # the taxonomic table.
             dbhandle = uow.UploadToDatabase(
                 self.taxaDataAll, config, 'taxatable',
-                taxaprojIDlist = self.taxaprojcurrent)
+                taxaprojIDlist=self.taxaprojcurrent)
+
+        elif sender == self.rawDialog.btnPush:
+            # This handle chekcs for taxaID and projID
+            dbhandle = uow.UploadToDatabase(
+                self.obsall, config, 'rawtable',
+                rawprojID= self.futureprojID,
+                rawtaxaID=self.futuretaxaID)
+            
         else:
             pass
 
@@ -2201,7 +2403,34 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                 # If the booleans in our list returned
                 # are true then push to database
                 if (all(taxacheck)) == True:
-                    
+
+                    dbhandle.push_table_to_postgres()
+                    QtGui.QMessageBox.about(
+                        self, "Progress Box",
+                        "The table information has now been" +
+                        " uploaded to the database.")
+
+                else:
+                    # If False is returned than the data is likely
+                    # already present based on the checks that were
+                    # built into the UploadToDatabase class
+                    self.w.showMessage(errormessage)
+                    return
+            except Exception as e:
+                print(str(e))
+
+        elif sender == self.rawDialog.btnPush:
+            try:
+                # Use the modules in class_database.py
+                # to return a test best on our inputs
+                # to the dbhandle
+                rawcheck = dbhandle.check_previous_rawobs()
+                print(rawcheck)
+
+                # If the booleans in our list returned
+                # are true then push to database
+                if (all(rawcheck)) == True:
+
                     dbhandle.push_table_to_postgres()
                     QtGui.QMessageBox.about(
                         self, "Progress Box",
@@ -2223,6 +2452,9 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
             self.mainDialog.close()
         elif sender == self.taxaDialog.btnPush:
             self.taxaDialog.close()
+        elif sender == self.rawDialog.btnPush:
+            self.rawDialog.close()
+
 
 
     #===========================#
@@ -2232,7 +2464,7 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
     # deeper in the database schema
     #===========================#
     #=========HELPER========#
-    def merge_main_to_taxa(self):
+    def merge_tables(self, tablename):
         try:
             required = self.sitecolumn
         except:
@@ -2242,40 +2474,86 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                 'in the raw data table that contains site' +
                 'abbreviations.')
 
+        # Initializing two empty list that will store the
+        # results from the query
+        projidmain = []
+        projidtaxa = []
+        siteid = []
+        taxaid = []
+        taxacolumnkey = []
+
         # Performing a unit of work to
         # to query the main table in the database
         session = config.Session()
-        maintablequery = uow.MainTableQuery(
+        query = uow.MainTableQuery(
         ).go(session, config.maintable)
         session.close()
 
-        # Initializing two empty list that will store the
-        # results from the query
-        projid = []
-        siteid = []
-
         # Appending the list with query results
-        for row in maintablequery:
-            projid.append(row.projID)
+        for row in query:
+            projidmain.append(row.projID)
             siteid.append(row.siteID)
 
         # Turning the list into a dataframe that will
         # be merged with the raw data
-        tomergewithraw = pd.DataFrame(
-            {'projID': projid,
+        self.tomergewithraw = pd.DataFrame(
+            {'projID': projidmain,
              str(self.sitecolumn): siteid
              })
 
-        # Merging the queried results with the raw data
-        # that is loaded in the database. Note I am not
-        # saving this to the program cause it will be
-        # someone redundant
-        rawmergedMain = pd.merge(
-            tomergewithraw, self.rawdf,
-            left_on=[str(self.sitecolumn)],
-            right_on=[str(self.sitecolumn)])
+        if tablename == 'main_taxa':
 
-        return rawmergedMain
+            # Merging the queried results with the raw data
+            # that is loaded in the database. Note I am not
+            # saving this to the program cause it will be
+            # someone redundant
+            rawmergedMain = pd.merge(
+                self.tomergewithraw, self.rawdf,
+                left_on=[str(self.sitecolumn)],
+                right_on=[str(self.sitecolumn)])
+
+            return rawmergedMain
+
+        if tablename == 'taxa_raw':
+                        # Performing a unit of work to
+            # to query the main table in the database
+            session = config.Session()
+            query = uow.TaxaTableQuery(
+            ).go(session, config.taxatable)
+            session.close()
+
+            # Appending the list with query results
+            for row in query:
+                projidtaxa.append(row.projID)
+                taxaid.append(row.taxaID)
+                taxacolumnkey.append(
+                    eval('row.' + self.taxacolumns[1]))
+
+            # Turning the list into a dataframe that will
+            # be merged with the raw data
+            taxamergewithraw = pd.DataFrame(
+                {'taxaID': taxaid,
+                 'projID': projidtaxa,
+                 str(self.taxacolumns[1]): taxacolumnkey
+                 })
+
+            finalmerge = pd.merge(
+                self.tomergewithraw, taxamergewithraw,
+                left_on=['projID'], right_on=['projID'])
+
+            # Merging the queried results with the raw data
+            # that is loaded in the database. Note I am not
+            # saving this to the program cause it will be
+            # someone redundant
+            rawmerged = pd.merge(
+                finalmerge, self.rawdf,
+                left_on=[
+                    str(self.sitecolumn), str(self.taxacolumns[1])],
+                right_on=[
+                    str(self.sitecolumn), str(self.taxatextdict[0])])
+
+            return rawmerged
+
     #===========================#
     # Method/Helper function to convert the user input strings into
     # a list.
@@ -2311,19 +2589,19 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
 
         return strToNumeric
 
-
     #============================#
     # Method to convert a string of phrases
     # into a list of phrases
     #=========HELPER===========#
     def convert_phrases_to_List(self, StrtoConvert):
         strTolist = re.sub(
-            "^,\s$", " ",StrtoConvert.rstrip()).split(",")
+            "^,\s$", " ", StrtoConvert.rstrip()).split(",")
 
         return strTolist
     #=======================#
     # Method to open a csv file that contain raw data
     #=======================#
+
     def open_file(self):
 
         name = QtGui.QFileDialog.getOpenFileName(self, 'Open File')
