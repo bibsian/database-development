@@ -25,9 +25,12 @@ except AttributeError:
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName(_fromUtf8("Dialog"))
-        Dialog.resize(427, 347)
+        Dialog.resize(423, 347)
         self.verticalLayout = QtGui.QVBoxLayout(Dialog)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
+        self.label = QtGui.QLabel(Dialog)
+        self.label.setObjectName(_fromUtf8("label"))
+        self.verticalLayout.addWidget(self.label)
         self.tblList = QtGui.QTableView(Dialog)
         self.tblList.setObjectName(_fromUtf8("tblList"))
         self.verticalLayout.addWidget(self.tblList)
@@ -44,4 +47,6 @@ class Ui_Dialog(object):
 
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(_translate("Dialog", "TableView", None))
+        self.label.setText(_translate("Dialog", "Check derived values for typos, mis-spellings, etc. \n"
+" Make correction in this table and press ok.", None))
 
