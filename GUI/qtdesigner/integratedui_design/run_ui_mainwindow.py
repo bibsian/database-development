@@ -796,8 +796,8 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
         #-------#
         # Check siteID entries for conformity to raw data
         #-------#
-        if [x.lower() for x in self.siteIDrecord_re] == [
-                y.lower() for y in self.sitelisttoadd] and len(
+        if [x.lower() for x in self.siteIDrecord_re].sort() == [
+                y.lower() for y in self.sitelisttoadd].sort() and len(
                     self.siteIDrecord_re) == self.numsite:
 
             print([x.lower() for x in self.siteIDrecord_re])
@@ -1054,8 +1054,8 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
         else:
             pass
 
-        siteDataAllmodel = ptbE.PandasTableModel(self.siteDataAll)
-        self.siteDialog.tblList.setModel(siteDataAllmodel)
+        self.siteDataAllmodel = ptbE.PandasTableModel(self.siteDataAll)
+        self.siteDialog.tblList.setModel(self.siteDataAllmodel)
         self.siteDialog.show()
         self.siteDialog.btnPush.clicked.connect(self.upload_to_database)
 
@@ -1121,7 +1121,7 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                         'samplingprotocol': submain['data_type'],
                         'startyr': self.startyr,
                         'endyr': self.endyr,
-                        'samplefreq': 'NULL',
+                        'samplefreq': submain['temp_int'],
                         'totalobs': 'NULL',
                         'studytype': submain['study_type'],
                         'community': submain['comm_data'],
@@ -1158,19 +1158,31 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                     ignore_index=True)
 
                 convertcolumns = [
-                    'samplefreq', 'totalobs', 'sp_rep1_ext',
+                    'totalobs', 'sp_rep1_ext',
                     'sp_rep2_ext', 'sp_rep3_ext', 'sp_rep4_ext']
 
                 for i in convertcolumns:
                     self.mainDataAll[i] = pd.to_numeric(
                         self.mainDataAll[i], errors='coerce')
 
+                totalobslist = []
                 # This step is depedent on accurate information
                 # provided from the siteView/ sitelisttoadd
                 # attribute
                 for i in range(len(self.sitelisttoadd)):
                     self.mainDataAll.loc[i, 'siteID']\
                         = self.sitelisttoadd[i]
+                    totalobslist.append(
+                        len(
+                            self.rawdf[
+                                self.rawdf[self.sitecolumn] ==
+                                self.sitelisttoadd[i]]))
+                    self.mainDataAll.loc[i, 'totalobs']\
+                        = totalobslist[i]
+
+                print(totalobslist)
+                print(sum(totalobslist))
+                print(len(self.rawdf))
 
                 self.mainDataAllModel = ptbE.PandasTableModel(
                     self.mainDataAll)
@@ -1191,7 +1203,8 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
             # then record the changes
             self.mainDataAllModel.dataChanged.connect(
                 self.update_main_table)
-        except:
+        except Exception as e:
+            print(str())
             self.w.showMessage("The globalID value is not set")
             return
         finally:
@@ -1451,7 +1464,7 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
 
             print(missingcollist)
             print(len(taxadataraw))
-            
+
             #=============#
             # Creating a data frame of NULL values for information
             # that is missing from the raw taxa table
@@ -1460,7 +1473,7 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
             taxanulldf = self.produce_null_df(
                 len(missingcollist), missingcollist,
                 len(taxadataraw), 'NULL ')
-             
+
             print(taxanulldf)
 
             # Merging the raw taxa data with missing data
@@ -1473,9 +1486,9 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                 set(self.taxaDataAll['projID']))
 
             # Setting the model view for the taxa table
-            taxamodel = ptbE.PandasTableModel(self.taxaDataAll)
+            self.taxamodel = ptbE.PandasTableModel(self.taxaDataAll)
 
-            self.taxaDialog.tblList.setModel(taxamodel)
+            self.taxaDialog.tblList.setModel(self.taxamodel)
             self.taxaDialog.show()
 
             # Connecting the push database button to method
@@ -2168,7 +2181,6 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
         nulldf = self.produce_null_df(
             len(missing), missing, len(self.obsoptdf), 'NULL ')
 
-        
         if len(missing) > 0:
             self.obsall = pd.concat(
                 [self.obsoptdf, nulldf, self.alltimedata,
@@ -2183,21 +2195,19 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
         self.futuretaxaID = list(set(rawmerged['taxaID']))
 
         self.obsall = pd.concat(
-            [self.obsall, rawmerged[['projID','taxaID']]], axis=1)
+            [self.obsall, rawmerged[['projID', 'taxaID']]], axis=1)
 
         self.obsall['unitobs'] = pd.to_numeric(
-                        self.obsall['unitobs'], errors='coerce')
+            self.obsall['unitobs'], errors='coerce')
 
-        
         print(self.obsall.dtypes)
-        
-        obsmodel = ptbE.PandasTableModel(self.obsall)
-        self.rawDialog.tblList.setModel(obsmodel)
+
+        self.obsmodel = ptbE.PandasTableModel(self.obsall)
+        self.rawDialog.tblList.setModel(self.obsmodel)
         self.rawDialog.show()
 
         self.rawDialog.btnPush.clicked.connect(
             self.upload_to_database)
-
 
     #========================#
     # This is a hleper method to create a dataframe of
@@ -2328,7 +2338,11 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
             # list of unique site abbreviations, current LTER
             # that we're working with
             dbhandle = uow.UploadToDatabase(
-                self.siteDataAll, config, 'sitetable',
+                pd.DataFrame(
+                    self.siteDataAllmodel.data(
+                        index=None, role=QtCore.Qt.UserRole),
+                    columns=self.siteDataAll.columns),
+                config, 'sitetable',
                 sitelist=self.sitelisttoadd,
                 lter=self.cboxselectlter.currentText())
 
@@ -2342,7 +2356,11 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
             # use the same abbreviations in the main data table.
             # Could check again project title also but seems harder...
             dbhandle = uow.UploadToDatabase(
-                self.mainDataAll, config, 'maintable',
+                pd.DataFrame(
+                    self.mainDataAllModel.data(
+                        index=None, role=QtCore.Qt.UserRole),
+                    columns=self.mainDataAll.columns),
+                config, 'maintable',
                 sitelist=self.sitelisttoadd,
                 lter=self.cboxselectlter.currentText(),
                 meta=self.metaurl)
@@ -2351,16 +2369,24 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
             # This handle only checks the project ID's from
             # the taxonomic table.
             dbhandle = uow.UploadToDatabase(
-                self.taxaDataAll, config, 'taxatable',
+                pd.DataFrame(
+                    self.taxamodel.data(
+                        index=None, role=QtCore.Qt.UserRole),
+                    columns=self.taxaDataAll.columns),
+                config, 'taxatable',
                 taxaprojIDlist=self.taxaprojcurrent)
 
         elif sender == self.rawDialog.btnPush:
             # This handle chekcs for taxaID and projID
             dbhandle = uow.UploadToDatabase(
-                self.obsall, config, 'rawtable',
-                rawprojID= self.futureprojID,
+                pd.DataFrame(
+                    self.obsmodel.data(
+                        index=None, role=QtCore.Qt.UserRole),
+                    columns=self.obsall.columns),
+                config, 'rawtable',
+                rawprojID=self.futureprojID,
                 rawtaxaID=self.futuretaxaID)
-            
+
         else:
             pass
 
@@ -2436,7 +2462,7 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                         self, "Progress Box",
                         "The table information has now been" +
                         " uploaded to the database.")
-                    
+
                 else:
                     # If False is returned than the data is likely
                     # already present based on the checks that were
@@ -2454,8 +2480,6 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
             self.taxaDialog.close()
         elif sender == self.rawDialog.btnPush:
             self.rawDialog.close()
-
-
 
     #===========================#
     # Helper function to merge
