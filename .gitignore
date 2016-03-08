@@ -1,6 +1,8 @@
 */*.py~
 *.py~
 
+data/.Rhistory
+/data/RawTestTableModications.R
 
 */__pycache__
 */__pycache__/*
