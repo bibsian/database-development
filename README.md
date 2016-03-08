@@ -5,20 +5,24 @@ The goal of this project is to develop an open source database that wil contain 
 
 # Project Components
 ## Identifying Data Sources
- This information will not be made public until the completion of the project
-
+ This won't be public until end of project
 ## Database Schema
- See Schema folder.
- 
- Using PostgreSQL 9.4.
-
+ Using PostgreSQL 9.4
 ## Populating the Database
-  1) Data transfer Protocal: This protocol is directly tied to the GUI development. 
-  
-  2) GUI Development: PyQt4 and Python 3.4
-  
-  3) UML Design Layout: To do
-  
+ This entire project is centered around creating this
+ GUI to populate the database we are creating. I believe we
+ might be able to turn this into a tool to help other scientist
+ create databases that sythensize various sources of informatoin
+ ( i.e. any subdiscipline could use this if we make it flexible enough)
 ## Web Application to Access Database
-  1) To be continued
-   
+  This may be a web application OR an R package--- to be determined 
+
+#Folder Structure
+GUI/*: Anything in this folder/subfolders will have classes related to managing the functionality of the GUI
+
+classestested/*: Anything here will be related to model-viewer controller class in the GUI
+
+data/*: Sample csv file to try testing the GUI with
+
+db/*: Anything here will be related to creating the database design/keys/tables etc.
+ 
