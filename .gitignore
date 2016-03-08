@@ -11,6 +11,9 @@ data/.Rhistory
 
 development/classesdev/.#modelview2d_pdnp.py
 GUI/qtdesigner/uiviewer_design/
+GUI/qtdesigner/integratedui_design/FinalForm.ui
+GUI/qtdesigner/integratedui_design/dblog_ajb.txt
+GUI/qtdesigner/integratedui_design/testinput.txt
 
 */*/*/.DS_Store
 */*/.DS_Store
