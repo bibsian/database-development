@@ -104,13 +104,12 @@ class PandasTableModel(QtCore.QAbstractTableModel):
 
     #=============================#
     # Editing Implimentation
-    #=============================#
-#    def setData(self, index, value, role = QtCore.Qt.EditRole):
-#
-#        if role == QtCore.Qt.EditRole:
-#            row= index.row()
-#            col= index.column()
-#            self.__data[index.row(), index.column()] = value
-#            self.dataChanged.emit(index,index)
-#            return True
-#        return False
+    #=============================#    
+    #def setData(self, index, value, role = QtCore.Qt.EditRole):
+    #    if role == QtCore.Qt.EditRole:
+    #        row= index.row()
+    #        col= index.column()
+    #        self.__data[index.row(), index.column()] = value
+    #        self.dataChanged.emit(index,index)
+    #        return True
+    #    return False

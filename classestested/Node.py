@@ -14,13 +14,15 @@ class Node(object):
     'boilerplate' script.
 
     To Do: Try and change this code so that a tree hierarchy can be
-    created from the metaData object that you can derive with SQLAlchemy
+    created from the metaData object that you can derive with 
+    SQLAlchemy, or least called from a separate class rather
+    than having the hard code in the script to run the program.
     '''
     # Constructor portion
     def __init__(self, name, parent=None):
-        self._name= name
-        self._children = []
-        self._parent = parent
+        self.name= name
+        self.children = []
+        self.parent = parent
 
         # Conditional statement to Add child Node's
         # when the parent is anything other than
@@ -31,34 +33,34 @@ class Node(object):
     # Method to add the child name
     # to a list if there is one
     def addChild(self, child):
-        self._children.append(child)
+        self.children.append(child)
 
     # method to return the name of the Node
     # that you created
     def name(self):
-        return self._name
+        return self.name
 
     # Pass row number to acces child
     # from list
     def child(self, row):
-        return self._children[row]
+        return self.children[row]
 
     # ChildCount returns the lenght
     # of the childrens list
     def childCount(self):
-        return len(self._children)
+        return len(self.children)
 
     # Return the parent node
     def parent(self):
-        return self._parent
+        return self.parent
 
         # To get the index of the node, relative
     # to the parent.
     # If self has a parent then
     # we return the index that the node corresponds to
     def row(self):
-        if self._parent is not None:
-            return self._parent._children.index(self)
+        if self.parent is not None:
+            return self.parent._children.index(self)
 
     # Log function to print out the parent
     # node structure
@@ -74,11 +76,11 @@ class Node(object):
             output += "\t"
 
         # Add the name of the current node and a line break
-        output += "|----" +  self._name + "\n"
+        output += "|----" +  self.name + "\n"
 
         # This is the recursive part. It calls child
         # log for every child listed via the nodes
-        for child in self._children:
+        for child in self.children:
             output += child.log(tabLevel)
         tabLevel -= 1
         output += "\n"

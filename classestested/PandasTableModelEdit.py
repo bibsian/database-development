@@ -89,6 +89,8 @@ class PandasTableModel(QtCore.QAbstractTableModel):
         if role == QtCore.Qt.UserRole:
             index = None
             return self.__data
+        else:
+            pass
         if index.isValid():
             # This is the role to display every item
             # That you created...I think
