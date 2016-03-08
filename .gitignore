@@ -7,7 +7,7 @@ data/.Rhistory
 */__pycache__
 */__pycache__/*
 */*/__pycache__
-
+*/*/*/__pycache__
 
 development/classesdev/.#modelview2d_pdnp.py
 GUI/qtdesigner/uiviewer_design/
