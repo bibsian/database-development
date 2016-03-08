@@ -1,4 +1,4 @@
-o# This python script is going to be used catch the
+o  # This python script is going to be used catch the
 # signals emitted on the Site Names and Coorinates Form
 # and process the information
 import sys
@@ -40,6 +40,9 @@ rawdf = pd.read_csv(rawpath)
 timedf = pd.read_csv(timepath)
 
 
+metadf['temp_int']
+
+
 #===============================#
 # Test for turning numpy array into
 # a dataframe
@@ -55,16 +58,28 @@ timedf == pd.DataFrame(numpval, columns=list(timedf.columns))
 testname1 = 'ABUR, AHND, AQUE, BULL, CARP, GOLB, IVEE, MOHK, NAPL, SCDI, SCTW'
 testnamelist = re.sub(",\s", " ", testname1.rstrip()).split()
 
+#========================#
+# Test matching list with different
+# orders
+#======================#
+testname2 = 'AQUE, ABUR, AHND, CARP, BULL, GOLB, IVEE, MOHK, NAPL, SCDI, SCTW'
+testname2list = re.sub(",\s", " ", testname2.rstrip()).split()
+
+
+[x.lower() for x in testnamelist].sort() == [y.lower()
+                                             for y in testname2list].sort()
+
+
 #====================#
 # Test for counting observations
 # per site in data
 #===================$
 lengthlist = []
 for i in testnamelist:
-    subdf = rawdf[rawdf['site']==i]
+    subdf = rawdf[rawdf['site'] == i]
     lengthlist.append(len(subdf))
 
-sum(lengthlist)==len(rawdf)
+sum(lengthlist) == len(rawdf)
 
 #===================#
 # Test dataframe lookup methods
@@ -796,29 +811,30 @@ test.go()
 
 ################
 
+
 def produce_null_df(ncols, names, length, input):
 
         # Test regarding input types
-        try:
-            if (type(names) is list) == True and\
-                    (type(ncols) is int) == True:
-                pass
-        except:
-            raise TypeError
-            return
+    try:
+        if (type(names) is list) == True and\
+                (type(ncols) is int) == True:
+            pass
+    except:
+        raise TypeError
+        return
 
-        # Create a NULL dataframe based on the length provided
-        # Make the number of columns necessary
-        # piece together along axis 1
-        allnulls = pd.concat(
-            [
-                pd.DataFrame(re.sub(" ", " ", (str(input) * length))
-                             .split())] * len(names), axis=1)
-        # Rename columns
-        allnulls.columns = names
+    # Create a NULL dataframe based on the length provided
+    # Make the number of columns necessary
+    # piece together along axis 1
+    allnulls = pd.concat(
+        [
+            pd.DataFrame(re.sub(" ", " ", (str(input) * length))
+                         .split())] * len(names), axis=1)
+    # Rename columns
+    allnulls.columns = names
 
-        # Return objects
-        return allnulls
+    # Return objects
+    return allnulls
 
 missing = ['one', 'two', 'three']
 
