@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/bibsian/Dropbox/database-development/GUI/qtdesigner/integratedui_design/ui_tabledialog.ui'
+# Form implementation generated from reading ui file '/Users/bibsian/Dropbox/database-development/GUI/qtdesigner/integratedui_design/ui_tablequery.ui'
 #
 # Created by: PyQt4 UI code generator 4.11.4
 #
@@ -25,7 +25,7 @@ except AttributeError:
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName(_fromUtf8("Dialog"))
-        Dialog.resize(744, 544)
+        Dialog.resize(593, 486)
         Dialog.setStyleSheet(_fromUtf8("\n"
 ".QPushButton{\n"
 "    color: black;\n"
@@ -50,8 +50,8 @@ class Ui_Dialog(object):
 "\n"
 "\n"
 ""))
-        self.verticalLayout_4 = QtGui.QVBoxLayout(Dialog)
-        self.verticalLayout_4.setObjectName(_fromUtf8("verticalLayout_4"))
+        self.horizontalLayout_3 = QtGui.QHBoxLayout(Dialog)
+        self.horizontalLayout_3.setObjectName(_fromUtf8("horizontalLayout_3"))
         self.verticalLayout_3 = QtGui.QVBoxLayout()
         self.verticalLayout_3.setObjectName(_fromUtf8("verticalLayout_3"))
         self.horizontalLayout = QtGui.QHBoxLayout()
@@ -87,41 +87,49 @@ class Ui_Dialog(object):
         self.label_3.setAlignment(QtCore.Qt.AlignCenter)
         self.label_3.setObjectName(_fromUtf8("label_3"))
         self.verticalLayout.addWidget(self.label_3)
-        self.queryList = QtGui.QTableView(Dialog)
-        self.queryList.setObjectName(_fromUtf8("queryList"))
-        self.verticalLayout.addWidget(self.queryList)
+        self.queryTable = QtGui.QTableView(Dialog)
+        self.queryTable.setStyleSheet(_fromUtf8(""))
+        self.queryTable.setObjectName(_fromUtf8("queryTable"))
+        self.verticalLayout.addWidget(self.queryTable)
         self.horizontalLayout.addLayout(self.verticalLayout)
         self.verticalLayout_3.addLayout(self.horizontalLayout)
         self.horizontalLayout_2 = QtGui.QHBoxLayout()
         self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
+        self.label = QtGui.QLabel(Dialog)
+        self.label.setStyleSheet(_fromUtf8(".QLabel{\n"
+"    font-size: 12px;\n"
+"    padding: 5px;\n"
+"    border-radius: 2px;\n"
+"    border: 1px;\n"
+"\n"
+"}\n"
+""))
+        self.label.setObjectName(_fromUtf8("label"))
+        self.horizontalLayout_2.addWidget(self.label)
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem)
-        self.buttonBox = QtGui.QDialogButtonBox(Dialog)
+        self.btnboxOk = QtGui.QDialogButtonBox(Dialog)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.buttonBox.sizePolicy().hasHeightForWidth())
-        self.buttonBox.setSizePolicy(sizePolicy)
-        self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
-        self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
-        self.horizontalLayout_2.addWidget(self.buttonBox)
+        sizePolicy.setHeightForWidth(self.btnboxOk.sizePolicy().hasHeightForWidth())
+        self.btnboxOk.setSizePolicy(sizePolicy)
+        self.btnboxOk.setOrientation(QtCore.Qt.Horizontal)
+        self.btnboxOk.setStandardButtons(QtGui.QDialogButtonBox.Ok)
+        self.btnboxOk.setObjectName(_fromUtf8("btnboxOk"))
+        self.horizontalLayout_2.addWidget(self.btnboxOk)
         self.verticalLayout_3.addLayout(self.horizontalLayout_2)
-        self.verticalLayout_4.addLayout(self.verticalLayout_3)
-        self.buttonBox.raise_()
-        self.tblList.raise_()
-        self.label_2.raise_()
+        self.horizontalLayout_3.addLayout(self.verticalLayout_3)
 
         self.retranslateUi(Dialog)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), Dialog.accept)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), Dialog.reject)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(_translate("Dialog", "TableView", None))
-        self.label_2.setText(_translate("Dialog", "SiteID User Inputs", None))
-        self.label_3.setText(_translate("Dialog", "Database Query for Current SiteID Records", None))
-        self.buttonBox.setToolTip(_translate("Dialog", "If the site labels and coordinates match \n"
+        Dialog.setWindowTitle(_translate("Dialog", "Dialog", None))
+        self.label_2.setText(_translate("Dialog", "Table of Generated Information", None))
+        self.label_3.setText(_translate("Dialog", "Database Query for Current Related Records", None))
+        self.label.setText(_translate("Dialog", "If the generated list contains records already in the database skip this form.", None))
+        self.btnboxOk.setToolTip(_translate("Dialog", "If the site labels and coordinates match \n"
 " values in the database you may skip \n"
 " this form.", None))
 
