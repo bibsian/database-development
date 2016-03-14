@@ -1119,7 +1119,7 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                         'title': submain['title'],
                         'samplingunits': 'NULL',
                         'samplingprotocol': submain['data_type'],
-                        'structured': 'NULL'
+                        'structured': 'NULL',
                         'startyr': self.startyr,
                         'endyr': self.endyr,
                         'samplefreq': submain['temp_int'],
