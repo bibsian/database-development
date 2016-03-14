@@ -1119,6 +1119,7 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                         'title': submain['title'],
                         'samplingunits': 'NULL',
                         'samplingprotocol': submain['data_type'],
+                        'structured': 'NULL'
                         'startyr': self.startyr,
                         'endyr': self.endyr,
                         'samplefreq': submain['temp_int'],
@@ -1135,7 +1136,7 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                     },
                     columns=[
                         'title', 'samplingunits', 'samplingprotocol',
-                        'startyr', 'endyr', 'samplefreq',
+                        'structured','startyr', 'endyr', 'samplefreq',
                         'totalobs', 'community', 'siteID', 'sp_rep1_ext',
                         'sp_rep2_ext', 'sp_rep3_ext', 'sp_rep4_ext',
                         'metalink', 'knbID'])
