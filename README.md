@@ -5,7 +5,7 @@ The goal of this project is to develop an open source database that wil contain 
 
 # Project Components
 ## Identifying Data Sources
- This won't be public until end of project
+ See current folder
 ## Database Schema
  Using PostgreSQL 9.4
 ## Populating the Database
@@ -20,9 +20,11 @@ The goal of this project is to develop an open source database that wil contain 
 #Folder Structure
 GUI/*: Anything in this folder/subfolders will have classes related to managing the functionality of the GUI
 
-classestested/*: Anything here will be related to model-viewer controller class in the GUI
+classestested/*: Anything here will be related to model-viewer class in the GUI
 
 data/*: Sample csv file to try testing the GUI with
 
 db/*: Anything here will be related to creating the database design/keys/tables etc.
+
+current/*: Anythin in this folder will be related to datasets we've catalogued an ID'ed.
  
