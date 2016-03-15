@@ -5,24 +5,29 @@ The goal of this project is to develop an open source database that wil contain 
 
 # Project Components
 ## Identifying Data Sources
- This won't be public until end of project
+ See current folder
 ## Database Schema
  Using PostgreSQL 9.4
 ## Populating the Database
- This entire project is centered around creating this
+ This repo is mostly focused on code for the
  GUI to populate the database we are creating. I believe we
  might be able to turn this into a tool to help other scientist
- create databases that sythensize various sources of informatoin
+ create databases that sythensize various independent data sources 
  ( i.e. any subdiscipline could use this if we make it flexible enough)
-## Web Application to Access Database
+## Web Application and/or R package to Access Database
   This may be a web application OR an R package--- to be determined 
 
 #Folder Structure
 GUI/*: Anything in this folder/subfolders will have classes related to managing the functionality of the GUI
+(Working on major refactoring. The newfeatures brach will basically have a whole new set of files with
+the old ones removed. So that branch is likely not up to date. The master branch contains the first version of the
+GUI which didn't really take advantage of object oriented programming....now I know better)
 
-classestested/*: Anything here will be related to model-viewer controller class in the GUI
+classestested/*: Anything here will be related to model-viewer class in the GUI
 
 data/*: Sample csv file to try testing the GUI with
 
 db/*: Anything here will be related to creating the database design/keys/tables etc.
+
+current/*: Anythin in this folder will be related to datasets we've catalogued an ID'ed.
  
