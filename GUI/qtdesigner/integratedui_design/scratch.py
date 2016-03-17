@@ -59,6 +59,8 @@ metadf['temp_int']
 
 #del ColumnToJsonFrame
 
+rawdfmod = rawdf.replace(-99999, 'NULL', inplace=True)
+
 class ColumnToDictionaryFrame():
     '''
     This class will convert a dataframe (given a list of columns)
@@ -73,6 +75,7 @@ class ColumnToDictionaryFrame():
 
     # Method to return the json dataframe
     def dict_df(self):
+        
         self.jsonlist = []
         try:
             self.dictstartseq = [
@@ -99,21 +102,31 @@ class ColumnToDictionaryFrame():
 
 print(dictlistalltest)
 
+#del dictlistalltest
 dictlistalltest = ColumnToDictionaryFrame(
-    rawdf,['VIS', 'OBS_CODE']).dict_df()
+    rawdf,['VIS', 'OBS_CODE', 'AREA', 'Substrate_type']).dict_df()
 
+len(dictlistalltest.iloc[0][0])
+
+del testdictdf
 testdictdf = cdictframe.ColumnToDictionaryFrame(
-    rawdf, ['VIS', 'OBS_CODE']).dict_df()
+    rawdf, ['VIS', 'OBS_CODE', 'AREA', 'Substrate_type']).dict_df()
+len(testdictdf.iloc[0][0])
 
 print(testdictdf)
 
+testdictdfall = pd.concat([rawdf['COUNT'], testdictdf],axis=1)
+testdictdfall.columns = ['unitobs', 'covariate']
+testdictdfall['unitobs']= pd.to_numeric(
+    testdictdfall['unitobs'], errors='coerce')
 
+#del engine
 # Enging to connect to postgres database
 engine = create_engine(
     'postgresql+psycopg2://postgres:demography@localhost/ArrayTest',
     echo=True)
 
-dictlistalltest.to_sql(
+testdictdfall.to_sql(
     'rawobs', con=engine, if_exists="append", index=False)
 
     
