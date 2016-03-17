@@ -184,7 +184,7 @@ rawobs = Table('rawobs', metadata,
                Column('structure', VARCHAR(50)),
                Column('indivID', VARCHAR(50)),
                Column('unitobs', NUMERIC),
-               Column('covariate', VARCHAR(200)))
+               Column('covariate', TEXT))
 
 
 # station_info: Table regarding climate station information within
