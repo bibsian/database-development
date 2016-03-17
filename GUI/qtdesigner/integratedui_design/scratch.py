@@ -1,6 +1,9 @@
-o  # This python script is going to be used catch the
+# This python script is going to be used catch the
 # signals emitted on the Site Names and Coorinates Form
 # and process the information
+import copy
+import itertools
+import json
 import sys
 import re
 from collections import defaultdict
@@ -10,11 +13,17 @@ import numbers as nm
 import pandas as pd
 import numpy as np
 import config as config
+from sqlalchemy import create_engine
+
+import class_columntodictframe as cdictframe
 import class_database as uow
 import importlib
-from collections import namedtuple
+
+
 
 df = None
+
+
 
 if _platform == "darwin":
     metapath = (
@@ -42,6 +51,144 @@ timedf = pd.read_csv(timepath)
 
 metadf['temp_int']
 
+#==============#
+# Class to convert covariates
+# columns to json data types
+#===============#
+
+
+#del ColumnToJsonFrame
+
+class ColumnToDictionaryFrame():
+    '''
+    This class will convert a dataframe (given a list of columns)
+    into a dataframe of json types where each row is a json
+    data type of all observations from the columns in that row
+    '''
+    def __init__(self, dataframe, columnlist):
+        self.data = dataframe
+        self.names = list(columnlist)
+        self.ncols = np.shape(dataframe)[1]
+        self.nrows = np.shape(dataframe)[0]
+
+    # Method to return the json dataframe
+    def dict_df(self):
+        self.jsonlist = []
+        try:
+            self.dictstartseq = [
+                {self.data[self.names].columns[i]:None
+                 for i,item in enumerate(self.names)}]
+
+        except:
+            raise AttributeError
+
+        self.dictlist = [
+            (self.dictstartseq[0]).copy() for x in range(self.nrows)]
+
+        for col in self.names:
+            for i in range(self.nrows):
+                self.dictlist[i][col] = str(self.data[col].iloc[i])
+
+        self.dictdf = pd.DataFrame(
+            {'covariate': self.dictlist})
+        self.dictdf['covariate'] = self.dictdf['covariate'].astype(str)
+
+        return self.dictdf
+
+
+
+print(dictlistalltest)
+
+dictlistalltest = ColumnToDictionaryFrame(
+    rawdf,['VIS', 'OBS_CODE']).dict_df()
+
+testdictdf = cdictframe.ColumnToDictionaryFrame(
+    rawdf, ['VIS', 'OBS_CODE']).dict_df()
+
+print(testdictdf)
+
+
+# Enging to connect to postgres database
+engine = create_engine(
+    'postgresql+psycopg2://postgres:demography@localhost/ArrayTest',
+    echo=True)
+
+dictlistalltest.to_sql(
+    'rawobs', con=engine, if_exists="append", index=False)
+
+    
+    
+#del testlist
+testlist = ['VIS', 'OBS_CODE']
+
+dictliststart = [
+    {rawdf[testlist].columns[i]: None
+     for i,item in enumerate(testlist)}]
+
+#del dictlistall
+#del dictlistalltest
+dictlistall = [(dictliststart[0]).copy() for x in range(len(rawdf))]
+
+#del jsonlist
+jsonlist = []
+
+for col in testlist:
+    for i in range(len(rawdf)):
+        dictlistall[i][col] = str(rawdf[col].iloc[i])
+
+print(dictlistall[0:10])
+
+type(jsonlist[0])
+
+# del jsondf
+# del testconcat
+jsondf = pd.DataFrame(
+    {'covariate':  dictlistall})
+
+testconcat = pd.concat([rawdf['COUNT'],jsondf],axis=1)
+testconcat['covariate']= testconcat['covariate'].astype(str)
+testconcat.columns = ['unitobs', 'covariate']
+
+type(testconcat.loc[0,'covariate'])
+
+# Enging to connect to postgres database
+engine = create_engine(
+    'postgresql+psycopg2://postgres:demography@localhost/ArrayTest',
+    echo=True)
+
+testconcat.to_sql(
+    'rawobs', con=engine, if_exists="append", index=False)
+
+print(str(1))
+
+#=======================#
+# Test populate a database
+# with queires from sql
+#========================#
+del sys.modules['class_database']
+del sys.modules['config']
+import class_database as uow
+import config as config
+
+session = config.Session()
+q = uow.SiteTableQuery().go(session, config.sitetable)
+type(q)
+q[0]
+len(q)
+qdf = pd.DataFrame(q).iloc[:, 1:]
+qdf.dtypes
+
+qdf['lat'] = qdf['lat'].astype(float)
+session.close()
+
+session = config.Session()
+q1 = uow.RawTableQuery().go(session, config.rawtable)
+q1df = pd.DataFrame(q1).iloc[:,1:]
+
+q1df.dtypes
+
+q1df
+    
 
 #===============================#
 # Test for turning numpy array into
