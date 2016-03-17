@@ -2287,18 +2287,26 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                 "Column Not Present in data; please re-enter list.")
             return
 
-        if sender == self.lnedCov:
-            
+        if sender == self.lnedCov or sender == self.btnObsConcat:
+            print("In the concat block")
+
             self.covdata = cdictframe.ColumnToDictionaryFrame(
                 self.rawdf, collist).dict_df()
 
             self.rawalldata = pd.concat(
                 [self.obsall, self.covdata], axis=1)
+            self.rawalldata[
+                'covariate'] = self.rawalldata['covariate'].astype(str)
 
+            print(self.rawalldata.dtypes)
+            print(type(self.rawalldata.iloc[0][0]))
+            print(len(self.rawalldata.iloc[0][0]))
+            print(type(self.rawalldata.iloc[0][0]) is str)
         else:
             pass
         
         if sender == self.btnObsConcat:
+            print(self.rawalldata)
             
             self.rawallmodel = ptbE.PandasTableModel(self.rawalldata)
             self.rawDialog.tblList.setModel(self.rawallmodel)
@@ -2481,9 +2489,9 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
             # This handle chekcs for taxaID and projID
             dbhandle = uow.UploadToDatabase(
                 pd.DataFrame(
-                    self.obsmodel.data(
+                    self.rawallmodel.data(
                         index=None, role=QtCore.Qt.UserRole),
-                    columns=self.obsall.columns),
+                    columns=self.rawalldata.columns),
                 config, 'rawtable',
                 rawprojID=self.futureprojID,
                 rawtaxaID=self.futuretaxaID)
