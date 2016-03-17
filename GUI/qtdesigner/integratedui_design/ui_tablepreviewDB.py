@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/bibsian/Dropbox/database-development/GUI/qtdesigner/integratedui_design/ui_tablepreviewDB.ui'
+# Form implementation generated from reading ui file 'C:\Users\MillerLab\Dropbox\database-development\GUI\qtdesigner\integratedui_design\ui_tablepreviewDB.ui'
 #
 # Created by: PyQt4 UI code generator 4.11.4
 #
@@ -26,10 +26,48 @@ class Ui_dialog(object):
     def setupUi(self, dialog):
         dialog.setObjectName(_fromUtf8("dialog"))
         dialog.resize(594, 439)
-        self.verticalLayout_3 = QtGui.QVBoxLayout(dialog)
+        dialog.setStyleSheet(_fromUtf8("\n"
+".QPushButton{\n"
+"    color: black;\n"
+"    border-width: 1px;\n"
+"    border-color: #339;\n"
+"    border-style: solid;\n"
+"    border-radius: 7;\n"
+"    padding-left: 5px;\n"
+"    padding-right: 5px;\n"
+"    padding-top: 5px;\n"
+"    padding-bottom: 5px;\n"
+"}\n"
+"\n"
+".QLabel{\n"
+"    font-weight: bold;\n"
+"    font-size: 12px;\n"
+"    padding: 5px;\n"
+"    border-radius: 2px;\n"
+"    border: 1px solid black;\n"
+"\n"
+"}\n"
+"\n"
+"\n"
+""))
+        self.verticalLayout_4 = QtGui.QVBoxLayout(dialog)
+        self.verticalLayout_4.setObjectName(_fromUtf8("verticalLayout_4"))
+        self.verticalLayout_3 = QtGui.QVBoxLayout()
         self.verticalLayout_3.setObjectName(_fromUtf8("verticalLayout_3"))
         self.verticalLayout = QtGui.QVBoxLayout()
+        self.verticalLayout.setSpacing(0)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
+        self.label_2 = QtGui.QLabel(dialog)
+        self.label_2.setFrameShape(QtGui.QFrame.Box)
+        self.label_2.setFrameShadow(QtGui.QFrame.Plain)
+        self.label_2.setLineWidth(1)
+        self.label_2.setAlignment(QtCore.Qt.AlignCenter)
+        self.label_2.setObjectName(_fromUtf8("label_2"))
+        self.verticalLayout.addWidget(self.label_2)
+        self.tblList = QtGui.QTableView(dialog)
+        self.tblList.setObjectName(_fromUtf8("tblList"))
+        self.verticalLayout.addWidget(self.tblList)
+        self.verticalLayout_3.addLayout(self.verticalLayout)
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setSizeConstraint(QtGui.QLayout.SetFixedSize)
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
@@ -54,17 +92,15 @@ class Ui_dialog(object):
         self.btnPush.setObjectName(_fromUtf8("btnPush"))
         self.verticalLayout_2.addWidget(self.btnPush)
         self.horizontalLayout.addLayout(self.verticalLayout_2)
-        self.verticalLayout.addLayout(self.horizontalLayout)
-        self.tblList = QtGui.QTableView(dialog)
-        self.tblList.setObjectName(_fromUtf8("tblList"))
-        self.verticalLayout.addWidget(self.tblList)
-        self.verticalLayout_3.addLayout(self.verticalLayout)
+        self.verticalLayout_3.addLayout(self.horizontalLayout)
+        self.verticalLayout_4.addLayout(self.verticalLayout_3)
 
         self.retranslateUi(dialog)
         QtCore.QMetaObject.connectSlotsByName(dialog)
 
     def retranslateUi(self, dialog):
         dialog.setWindowTitle(_translate("dialog", "Preview Data", None))
+        self.label_2.setText(_translate("dialog", "Data to be Uploaded to Database", None))
         self.label.setText(_translate("dialog", " Does the table below contain all of the correct\n"
 " information? If not adjust values in table.\n"
 " When complete, push to database.", None))

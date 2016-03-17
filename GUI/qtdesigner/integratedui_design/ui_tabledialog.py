@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/bibsian/Dropbox/database-development/GUI/qtdesigner/integratedui_design/ui_tabledialog.ui'
+# Form implementation generated from reading ui file 'C:\Users\MillerLab\Dropbox\database-development\GUI\qtdesigner\integratedui_design\ui_tabledialog.ui'
 #
 # Created by: PyQt4 UI code generator 4.11.4
 #
@@ -25,7 +25,7 @@ except AttributeError:
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName(_fromUtf8("Dialog"))
-        Dialog.resize(744, 544)
+        Dialog.resize(465, 429)
         Dialog.setStyleSheet(_fromUtf8("\n"
 ".QPushButton{\n"
 "    color: black;\n"
@@ -74,22 +74,6 @@ class Ui_Dialog(object):
         self.verticalLayout = QtGui.QVBoxLayout()
         self.verticalLayout.setSpacing(0)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
-        self.label_3 = QtGui.QLabel(Dialog)
-        self.label_3.setStyleSheet(_fromUtf8("QLineEdit{\n"
-"    padding: 1px;\n"
-"    border-style: solid;\n"
-"    border: 2px solid gray;\n"
-"    border-radius: 8px;\n"
-"}"))
-        self.label_3.setFrameShape(QtGui.QFrame.Box)
-        self.label_3.setFrameShadow(QtGui.QFrame.Plain)
-        self.label_3.setLineWidth(1)
-        self.label_3.setAlignment(QtCore.Qt.AlignCenter)
-        self.label_3.setObjectName(_fromUtf8("label_3"))
-        self.verticalLayout.addWidget(self.label_3)
-        self.queryList = QtGui.QTableView(Dialog)
-        self.queryList.setObjectName(_fromUtf8("queryList"))
-        self.verticalLayout.addWidget(self.queryList)
         self.horizontalLayout.addLayout(self.verticalLayout)
         self.verticalLayout_3.addLayout(self.horizontalLayout)
         self.horizontalLayout_2 = QtGui.QHBoxLayout()
@@ -119,8 +103,7 @@ class Ui_Dialog(object):
 
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(_translate("Dialog", "TableView", None))
-        self.label_2.setText(_translate("Dialog", "SiteID User Inputs", None))
-        self.label_3.setText(_translate("Dialog", "Database Query for Current SiteID Records", None))
+        self.label_2.setText(_translate("Dialog", "Table of Generated Information: Check for Correctness", None))
         self.buttonBox.setToolTip(_translate("Dialog", "If the site labels and coordinates match \n"
 " values in the database you may skip \n"
 " this form.", None))

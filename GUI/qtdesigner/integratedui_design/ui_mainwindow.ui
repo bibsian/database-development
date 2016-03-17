@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1413</width>
-    <height>923</height>
+    <height>1017</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -2124,25 +2124,6 @@ If a mistake was made please push the button adjacent to the line labeled with '
                                 </property>
                                </widget>
                               </item>
-                              <item>
-                               <widget class="QPushButton" name="btnSiteDBCheck">
-                                <property name="sizePolicy">
-                                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                                  <horstretch>0</horstretch>
-                                  <verstretch>0</verstretch>
-                                 </sizepolicy>
-                                </property>
-                                <property name="font">
-                                 <font>
-                                  <pointsize>8</pointsize>
-                                 </font>
-                                </property>
-                                <property name="text">
-                                 <string>Check 
- Database</string>
-                                </property>
-                               </widget>
-                              </item>
                              </layout>
                             </item>
                             <item>
@@ -3721,7 +3702,6 @@ If a mistake was made please push the button adjacent to the line labeled with '
                  </item>
                 </layout>
                 <zorder></zorder>
-                <zorder></zorder>
                </widget>
               </item>
               <item>
@@ -4651,7 +4631,7 @@ If a mistake was made please push the button adjacent to the line labeled with '
                                    </sizepolicy>
                                   </property>
                                   <property name="focusPolicy">
-                                   <enum>Qt::NoFocus</enum>
+                                   <enum>Qt::ClickFocus</enum>
                                   </property>
                                   <property name="text">
                                    <string/>
@@ -4728,7 +4708,7 @@ If a mistake was made please push the button adjacent to the line labeled with '
                                    </sizepolicy>
                                   </property>
                                   <property name="focusPolicy">
-                                   <enum>Qt::NoFocus</enum>
+                                   <enum>Qt::ClickFocus</enum>
                                   </property>
                                   <property name="text">
                                    <string/>
@@ -4835,7 +4815,11 @@ If a mistake was made please push the button adjacent to the line labeled with '
                           <item>
                            <layout class="QHBoxLayout" name="layObsSchemeQ2StructH">
                             <item>
-                             <widget class="QLineEdit" name="lnedObsStruct"/>
+                             <widget class="QLineEdit" name="lnedObsStruct">
+                              <property name="focusPolicy">
+                               <enum>Qt::ClickFocus</enum>
+                              </property>
+                             </widget>
                             </item>
                            </layout>
                           </item>
@@ -4899,7 +4883,11 @@ If a mistake was made please push the button adjacent to the line labeled with '
                           <item>
                            <layout class="QHBoxLayout" name="layObsSchemebtnlnedH">
                             <item>
-                             <widget class="QLineEdit" name="lnedObsIndID"/>
+                             <widget class="QLineEdit" name="lnedObsIndID">
+                              <property name="focusPolicy">
+                               <enum>Qt::ClickFocus</enum>
+                              </property>
+                             </widget>
                             </item>
                            </layout>
                           </item>
@@ -4963,29 +4951,22 @@ If a mistake was made please push the button adjacent to the line labeled with '
                           <item>
                            <layout class="QHBoxLayout" name="layObsSchemeQ3lnedbtnObsID">
                             <item>
-                             <widget class="QLineEdit" name="lnedObsData"/>
+                             <widget class="QLineEdit" name="lnedObsData">
+                              <property name="focusPolicy">
+                               <enum>Qt::ClickFocus</enum>
+                              </property>
+                             </widget>
                             </item>
                            </layout>
                           </item>
-                          <item>
-                           <widget class="QLabel" name="labObsSchemeQ3Concat">
-                            <property name="text">
-                             <string>After completing this scheme push the 'Concatenate 
- Raw Observation Table'.</string>
-                            </property>
-                            <property name="alignment">
-                             <set>Qt::AlignCenter</set>
-                            </property>
-                           </widget>
-                          </item>
-                          <item>
-                           <widget class="QPushButton" name="btnObsConcat">
-                            <property name="text">
-                             <string>Concatenate Raw Observation Table</string>
-                            </property>
-                           </widget>
-                          </item>
                          </layout>
+                        </item>
+                        <item>
+                         <widget class="QPushButton" name="btnObsPreview">
+                          <property name="text">
+                           <string>Concatenate Observational Data</string>
+                          </property>
+                         </widget>
                         </item>
                        </layout>
                       </widget>
@@ -5042,6 +5023,374 @@ If a mistake was made please push the button adjacent to the line labeled with '
           </item>
          </layout>
         </widget>
+        <widget class="QWidget" name="tab_7">
+         <attribute name="title">
+          <string>Covaritate Form</string>
+         </attribute>
+         <layout class="QVBoxLayout" name="verticalLayout_63">
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_62">
+            <item>
+             <spacer name="verticalSpacer_19">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_61">
+              <item>
+               <spacer name="horizontalSpacer_87">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QFrame" name="frame_9">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="frameShape">
+                 <enum>QFrame::StyledPanel</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
+                </property>
+                <layout class="QVBoxLayout" name="verticalLayout_61">
+                 <item>
+                  <layout class="QVBoxLayout" name="verticalLayout_60">
+                   <item>
+                    <spacer name="verticalSpacer_17">
+                     <property name="orientation">
+                      <enum>Qt::Vertical</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>20</width>
+                       <height>40</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item>
+                    <layout class="QHBoxLayout" name="horizontalLayout_60">
+                     <item>
+                      <spacer name="horizontalSpacer_85">
+                       <property name="orientation">
+                        <enum>Qt::Horizontal</enum>
+                       </property>
+                       <property name="sizeHint" stdset="0">
+                        <size>
+                         <width>40</width>
+                         <height>20</height>
+                        </size>
+                       </property>
+                      </spacer>
+                     </item>
+                     <item>
+                      <layout class="QVBoxLayout" name="verticalLayout_59">
+                       <item>
+                        <layout class="QHBoxLayout" name="horizontalLayout_39">
+                         <item>
+                          <spacer name="horizontalSpacer_63">
+                           <property name="orientation">
+                            <enum>Qt::Horizontal</enum>
+                           </property>
+                           <property name="sizeHint" stdset="0">
+                            <size>
+                             <width>40</width>
+                             <height>20</height>
+                            </size>
+                           </property>
+                          </spacer>
+                         </item>
+                         <item>
+                          <widget class="QLabel" name="label_18">
+                           <property name="sizePolicy">
+                            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                             <horstretch>0</horstretch>
+                             <verstretch>0</verstretch>
+                            </sizepolicy>
+                           </property>
+                           <property name="font">
+                            <font>
+                             <pointsize>-1</pointsize>
+                             <weight>75</weight>
+                             <bold>true</bold>
+                            </font>
+                           </property>
+                           <property name="text">
+                            <string>In the following section you will specify the columns in the raw data table that contain information 
+ regarding potential covariates.</string>
+                           </property>
+                           <property name="alignment">
+                            <set>Qt::AlignCenter</set>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <spacer name="horizontalSpacer_64">
+                           <property name="orientation">
+                            <enum>Qt::Horizontal</enum>
+                           </property>
+                           <property name="sizeHint" stdset="0">
+                            <size>
+                             <width>40</width>
+                             <height>20</height>
+                            </size>
+                           </property>
+                          </spacer>
+                         </item>
+                        </layout>
+                       </item>
+                       <item>
+                        <layout class="QHBoxLayout" name="horizontalLayout_44">
+                         <item>
+                          <spacer name="horizontalSpacer_65">
+                           <property name="orientation">
+                            <enum>Qt::Horizontal</enum>
+                           </property>
+                           <property name="sizeHint" stdset="0">
+                            <size>
+                             <width>40</width>
+                             <height>20</height>
+                            </size>
+                           </property>
+                          </spacer>
+                         </item>
+                         <item>
+                          <widget class="QGroupBox" name="groupBox_14">
+                           <property name="title">
+                            <string>Covariate Information</string>
+                           </property>
+                           <layout class="QVBoxLayout" name="verticalLayout_58">
+                            <item>
+                             <layout class="QVBoxLayout" name="verticalLayout_57">
+                              <item>
+                               <spacer name="verticalSpacer_15">
+                                <property name="orientation">
+                                 <enum>Qt::Vertical</enum>
+                                </property>
+                                <property name="sizeHint" stdset="0">
+                                 <size>
+                                  <width>20</width>
+                                  <height>40</height>
+                                 </size>
+                                </property>
+                               </spacer>
+                              </item>
+                              <item>
+                               <layout class="QHBoxLayout" name="horizontalLayout_43">
+                                <item>
+                                 <spacer name="horizontalSpacer_71">
+                                  <property name="orientation">
+                                   <enum>Qt::Horizontal</enum>
+                                  </property>
+                                  <property name="sizeHint" stdset="0">
+                                   <size>
+                                    <width>40</width>
+                                    <height>20</height>
+                                   </size>
+                                  </property>
+                                 </spacer>
+                                </item>
+                                <item>
+                                 <layout class="QVBoxLayout" name="verticalLayout_46">
+                                  <item>
+                                   <widget class="QLabel" name="label_19">
+                                    <property name="text">
+                                     <string>For every level column that represents a potential covariate 
+ enter a list of column names into the line below and press 'enter'.</string>
+                                    </property>
+                                    <property name="alignment">
+                                     <set>Qt::AlignCenter</set>
+                                    </property>
+                                   </widget>
+                                  </item>
+                                  <item>
+                                   <layout class="QHBoxLayout" name="horizontalLayout_41">
+                                    <item>
+                                     <spacer name="horizontalSpacer_67">
+                                      <property name="orientation">
+                                       <enum>Qt::Horizontal</enum>
+                                      </property>
+                                      <property name="sizeHint" stdset="0">
+                                       <size>
+                                        <width>40</width>
+                                        <height>20</height>
+                                       </size>
+                                      </property>
+                                     </spacer>
+                                    </item>
+                                    <item>
+                                     <widget class="QLineEdit" name="lnedCov"/>
+                                    </item>
+                                    <item>
+                                     <spacer name="horizontalSpacer_68">
+                                      <property name="orientation">
+                                       <enum>Qt::Horizontal</enum>
+                                      </property>
+                                      <property name="sizeHint" stdset="0">
+                                       <size>
+                                        <width>40</width>
+                                        <height>20</height>
+                                       </size>
+                                      </property>
+                                     </spacer>
+                                    </item>
+                                   </layout>
+                                  </item>
+                                  <item>
+                                   <widget class="QLabel" name="labObsSchemeQ3Concat">
+                                    <property name="text">
+                                     <string>After completing this scheme push the 'Concatenate 
+ Raw Observation Table'.</string>
+                                    </property>
+                                    <property name="alignment">
+                                     <set>Qt::AlignCenter</set>
+                                    </property>
+                                   </widget>
+                                  </item>
+                                  <item>
+                                   <widget class="QPushButton" name="btnObsConcat">
+                                    <property name="text">
+                                     <string>Concatenate All Raw Data</string>
+                                    </property>
+                                   </widget>
+                                  </item>
+                                 </layout>
+                                </item>
+                                <item>
+                                 <spacer name="horizontalSpacer_72">
+                                  <property name="orientation">
+                                   <enum>Qt::Horizontal</enum>
+                                  </property>
+                                  <property name="sizeHint" stdset="0">
+                                   <size>
+                                    <width>40</width>
+                                    <height>20</height>
+                                   </size>
+                                  </property>
+                                 </spacer>
+                                </item>
+                               </layout>
+                              </item>
+                              <item>
+                               <spacer name="verticalSpacer_16">
+                                <property name="orientation">
+                                 <enum>Qt::Vertical</enum>
+                                </property>
+                                <property name="sizeHint" stdset="0">
+                                 <size>
+                                  <width>20</width>
+                                  <height>40</height>
+                                 </size>
+                                </property>
+                               </spacer>
+                              </item>
+                             </layout>
+                            </item>
+                           </layout>
+                          </widget>
+                         </item>
+                         <item>
+                          <spacer name="horizontalSpacer_66">
+                           <property name="orientation">
+                            <enum>Qt::Horizontal</enum>
+                           </property>
+                           <property name="sizeHint" stdset="0">
+                            <size>
+                             <width>40</width>
+                             <height>20</height>
+                            </size>
+                           </property>
+                          </spacer>
+                         </item>
+                        </layout>
+                       </item>
+                      </layout>
+                     </item>
+                     <item>
+                      <spacer name="horizontalSpacer_86">
+                       <property name="orientation">
+                        <enum>Qt::Horizontal</enum>
+                       </property>
+                       <property name="sizeHint" stdset="0">
+                        <size>
+                         <width>40</width>
+                         <height>20</height>
+                        </size>
+                       </property>
+                      </spacer>
+                     </item>
+                    </layout>
+                   </item>
+                   <item>
+                    <spacer name="verticalSpacer_18">
+                     <property name="orientation">
+                      <enum>Qt::Vertical</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>20</width>
+                       <height>40</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_88">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_20">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
        </widget>
       </item>
      </layout>
@@ -5065,7 +5414,7 @@ If a mistake was made please push the button adjacent to the line labeled with '
      <x>0</x>
      <y>0</y>
      <width>1413</width>
-     <height>22</height>
+     <height>31</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

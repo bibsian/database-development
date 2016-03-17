@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/bibsian/Dropbox/database-development/GUI/qtdesigner/integratedui_design/ui_tablequery.ui'
+# Form implementation generated from reading ui file 'C:\Users\MillerLab\Dropbox\database-development\GUI\qtdesigner\integratedui_design\ui_tablequery.ui'
 #
 # Created by: PyQt4 UI code generator 4.11.4
 #
