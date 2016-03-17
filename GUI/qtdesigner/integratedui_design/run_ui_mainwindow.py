@@ -25,14 +25,16 @@ from contextlib import contextmanager
 import logging as log
 import datetime as TM
 
-
 # User Interfaces
 import ui_mainwindow as mw
 import ui_tabledialog as td
 import ui_tablepreviewDB as tp
+import ui_tablequery as tq
+import class_columntodictframe as cdictframe
 import class_database as uow
 import config
 import class_timeparse as tparse
+
 
 # Custom Classes:
 # This is an if elif statement to choose
@@ -85,10 +87,34 @@ class DialogPreview(QtGui.QDialog, tp.Ui_dialog):
 #========================#
 
 # Creating a Dialog box that will display the values that
-# input by the user and will be used to push to the database
+# input by the user To View Certain information
 
 
 class DialogPopUp(QtGui.QDialog, td.Ui_Dialog):
+    '''
+    This class is a pop up dialog box that I can use
+    to display pandas dataframes that need to be verified
+    by the user.
+    '''
+    # Constructor for creating an instance of this object
+    # which is made through multiple inheritance
+    # i.e. QDialog and Ui_Dialog
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setupUi(self)
+
+
+#========================#
+# Dialog pop up widget
+#========================#
+
+# Creating a Dialog box that will display the values that are
+# input by the user and a query from the database with
+# related informatoin
+
+
+class DialogQuery(QtGui.QDialog, tq.Ui_Dialog):
     '''
     This class is a pop up dialog box that I can use
     to display pandas dataframes that need to be verified
@@ -192,6 +218,7 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
         self.w = None
         self.colView = None
         self.timeview = DialogPopUp()
+        self.rawPreview = DialogPopUp()
         self.siteDialog = DialogPreview()
         self.mainDialog = DialogPreview()
         self.taxaDialog = DialogPreview()
@@ -227,7 +254,9 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
         self.btnSeasonReset.clicked.connect(self.season_reset)
         self.btnNullReset.clicked.connect(self.null_reset)
         self.btnTimeConcat.clicked.connect(self.time_concat)
-        self.btnObsConcat.clicked.connect(self.obs_concat)
+        self.btnObsConcat.clicked.connect(self.covariate_concat)
+        self.btnObsPreview.clicked.connect(self.obs_concat)
+        
         #=====================#
         # Catching SPIN BOX
         #=====================#
@@ -322,9 +351,13 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
             self.lnedSpRep1, self.lnedSpRep2, self.lnedSpRep3,
             self.lnedSpRep4]
 
-        for i in self.splnedlist:
-            i.returnPressed.connect(self.sp_obs_record)
-
+        for i,item in enumerate(self.splnedlist):
+            item.returnPressed.connect(self.sp_obs_record)
+            if i > 0:
+                item.setEnabled(True)
+            else:
+                pass
+            
         #======IND ID=========#
         self.lnedObsIndID.setDisabled(True)
         #======STRUCTURE=======#
@@ -336,8 +369,10 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
         for i in self.optionallnedlist:
             i.returnPressed.connect(self.optional_obs_record)
 
+            
         self.lnedObsData.returnPressed.connect(self.optional_obs_record)
 
+        self.lnedCov.returnPressed.connect(self.covariate_concat)
         #=======================#
         # Catching CHECK BOX signals from user interface
         #=======================#
@@ -696,26 +731,50 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                 collistdf = pd.DataFrame(collisttoadd)
                 collistdf.columns = [columntofind]
 
+                try:
+                    session = config.Session()
+                    query = uow.SiteTableQuery().go(
+                        session, config.sitetable)
+                    if len(query) == 0:
+                        querydf = pd.DataFrame()
+                    else:
+                        querydf = pd.DataFrame(query).iloc[:, 1:]
+                        for i, item in enumerate(['lat', 'long']):
+                            querydf[item] = querydf[item].astype(float)
+                        print(querydf.dtypes)
+
+                except Exception as e:
+                    print(str(e))
+                    return
+
                 # If quality control passes, instantiate the popup
                 # dialog box that will display the derived informatoin
-                self.colView = DialogPopUp()
+                self.colView = DialogQuery()
 
                 # Creating the table model to view the subsetted
                 # values in dataframe form with qttableview
                 self.collistmodel = ptbE.PandasTableModel(collistdf)
+                self.querytablemodel = ptb.PandasTableModel(
+                    querydf)
 
                 # Settting the data Model to view through the
                 # dialog box from UniqueColumnList
                 self.colView.tblList.setModel(self.collistmodel)
+                self.colView.queryTable.setModel(
+                    self.querytablemodel)
                 self.colView.show()
 
-            # Catch designed to update the sitelist to add
+                self.colView.btnboxOk.accepted.connect(
+                    self.colView.accept)
+
+                # Catch designed to update the sitelist to add
             # if the user finds errors
             self.collistmodel.dataChanged.connect(
                 self.update_site_list)
 
         else:
             pass
+
 
     #=======================#
     # Method to update the sitelisttoadd
@@ -1137,9 +1196,9 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                     columns=[
                         'title', 'samplingunits', 'samplingprotocol',
                         'structured','startyr', 'endyr', 'samplefreq',
-                        'totalobs', 'community', 'siteID', 'sp_rep1_ext',
-                        'sp_rep2_ext', 'sp_rep3_ext', 'sp_rep4_ext',
-                        'metalink', 'knbID'])
+                        'totalobs','studytype', 'community', 'siteID',
+                        'sp_rep1_ext','sp_rep2_ext', 'sp_rep3_ext',
+                        'sp_rep4_ext','metalink', 'knbID'])
             # If for some reason the that dataframe above could not
             # be created then throw and error
             except:
@@ -1220,8 +1279,7 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
     #=========================#
     #=========MAIN DATA========#
     def update_main_table(self):
-        print(self.mainDataAllModel.data(None, QtCore.Qt.UserRole))
-
+        pass
     #=========================#
     # This method handles multiple checkbox
     # widgets that are directly connected
@@ -2139,13 +2197,15 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
             self.w.showMessage(" Column not available; try again.")
             return
 
-        if sender == self.lnedObsData or sender == self.btnObsConcat:
+        if sender == self.lnedObsData or sender == self.btnObsPreview:
             rawdatacol = self.lnedObsData.text()
             try:
                 self.obsoptdf = pd.concat(
                     [self.obsoptdf, self.rawdf[rawdatacol]],
                     axis=1)
                 self.obsoptrename.append('unitobs')
+                print("We're in the optional Block")
+                print(self.obsoptdf)
 
             except Exception as e:
                 print(str(e))
@@ -2169,19 +2229,26 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
 
         self.sp_obs_record()
         self.optional_obs_record()
-
+        print("In concatenate block")
+        print(self.obsoptdf)
+        
+        # These are the column names that need to be present
+        # to push to the database
         self.obstruecol = [
             'spt_rep1', 'spt_rep2', 'spt_rep3', 'spt_rep4',
             'structure', 'indivID', 'unitobs']
         self.obsoptdf.columns = self.obsoptrename
 
+        # Checking the missing columns
         missing = [
             x for x in self.obstruecol if x not in self.obsoptrename]
         print(missing)
 
+        # Creating the null dataframe
         nulldf = self.produce_null_df(
             len(missing), missing, len(self.obsoptdf), 'NULL ')
 
+        
         if len(missing) > 0:
             self.obsall = pd.concat(
                 [self.obsoptdf, nulldf, self.alltimedata,
@@ -2201,15 +2268,48 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
         self.obsall['unitobs'] = pd.to_numeric(
             self.obsall['unitobs'], errors='coerce')
 
-        print(self.obsall.dtypes)
+        self.obsmodel = ptbE.PandasTableModel(self.obsall) 
+        self.rawPreview.tblList.setModel(self.obsmodel)
+        self.rawPreview.show()
 
-        self.obsmodel = ptbE.PandasTableModel(self.obsall)
-        self.rawDialog.tblList.setModel(self.obsmodel)
-        self.rawDialog.show()
+        
 
-        self.rawDialog.btnPush.clicked.connect(
-            self.upload_to_database)
+    def covariate_concat(self):
+        sender = self.sender()
+        try:
+            collist = self.convert_string_to_List(self.lnedCov.text())
+            self.rawdf[collist]
 
+        except Exception as e:
+            print(str(e))
+            self.w = QtGui.QErrorMessage()
+            self.w.showMessage(
+                "Column Not Present in data; please re-enter list.")
+            return
+
+        if sender == self.lnedCov:
+            
+            self.covdata = cdictframe.ColumnToDictionaryFrame(
+                self.rawdf, collist).dict_df()
+
+            self.rawalldata = pd.concat(
+                [self.obsall, self.covdata], axis=1)
+
+        else:
+            pass
+        
+        if sender == self.btnObsConcat:
+            
+            self.rawallmodel = ptbE.PandasTableModel(self.rawalldata)
+            self.rawDialog.tblList.setModel(self.rawallmodel)
+            self.rawDialog.show()
+
+            self.rawDialog.btnPush.clicked.connect(
+                self.upload_to_database)
+        else:
+            pass
+
+    
     #========================#
     # This is a hleper method to create a dataframe of
     # null values based on inputs about the number of columns
@@ -2403,7 +2503,7 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                 sitecheck = dbhandle.check_previous_sites()
                 print(sitecheck)
 
-                if (any(sitecheck) == True):
+                if (all(sitecheck) == True):
                     dbhandle.push_table_to_postgres()
 
                     QtGui.QMessageBox.about(
