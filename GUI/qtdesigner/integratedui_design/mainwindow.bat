@@ -9,3 +9,8 @@ python "C:\Users\MillerLab\Envs\lter\Lib\site-packages\PyQt4\uic\pyuic.py" "C:\U
 # Table DialogPreviewDB
 workon lter
 python "C:\Users\MillerLab\Envs\lter\Lib\site-packages\PyQt4\uic\pyuic.py" "C:\Users\MillerLab\Dropbox\database-development\GUI\qtdesigner\integratedui_design\ui_tablepreviewDB.ui" -o "C:\Users\MillerLab\Dropbox\database-development\GUI\qtdesigner\integratedui_design\ui_tablepreviewDB.py"
+
+
+# Table DialogQuery
+workon lter
+python "C:\Users\MillerLab\Envs\lter\Lib\site-packages\PyQt4\uic\pyuic.py" "C:\Users\MillerLab\Dropbox\database-development\GUI\qtdesigner\integratedui_design\ui_tablequery.ui" -o "C:\Users\MillerLab\Dropbox\database-development\GUI\qtdesigner\integratedui_design\ui_tablequery.py"
