@@ -37,8 +37,9 @@ class SiteTableQuery(object):
 
     def go(self, session, configclass):
         sitetable = configclass
-        return session.query(sitetable, sitetable.siteID,
-                             sitetable.lterID).all()
+        return session.query(
+            sitetable, sitetable.siteID, sitetable.lterID,
+            sitetable.lat, sitetable.long, sitetable.descript).all()
 
 
 class MainTableQuery(object):
@@ -84,7 +85,7 @@ class RawTableQuery(object):
         rawtable = configclass
         return session.query(
             rawtable, rawtable.sampleID, rawtable.taxaID,
-            rawtable.projID).all()
+            rawtable.projID, rawtable.covariate).all()
 
     
 class UploadToDatabase(object):
@@ -216,19 +217,14 @@ class UploadToDatabase(object):
                 # Return boolean list.
                 # all(TRUE) means that:
 
-                # 1) There are 0 or more site abbreviations
-                # that match the records about to be pushed
-                # THIS IS OKAY because studies can use
-                # the same site locations at LTER's
-                boolist.append(len(checkedSite) >= 0)
-
-                # 2) The metadata url of the records about to
+                # 1) The metadata url of the records about to
                 # be pushed is unique. So if site abbreviations
                 # are already present for this then
                 # if the metadataurl is unique, the site was
                 # used in a different project
                 boolist.append(len(checkedMeta) == 0)
                 return boolist
+
 
     # This needs to be created
     def check_previous_taxa(self):
