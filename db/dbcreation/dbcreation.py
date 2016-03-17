@@ -93,21 +93,6 @@ site_info = Table(sitetablename, metadata,
                   Column('long', NUMERIC),
                   Column('descript', TEXT))
 
-# The following table will house environmental information
-# that was gathered at the LTER site itself (long term
-# weather stations, permanent sites, etc).
-# This table is for temperature data
-# foreign key= lterID
-localclimate = Table('localclimate', metadata,
-                     Column('obsID', Integer, primary_key=True),
-                     Column('siteID', None, ForeignKey('siteID.siteID')),
-                     Column('year', NUMERIC),
-                     Column('month', NUMERIC),
-                     Column('day', NUMERIC),
-                     Column('hour', NUMERIC),
-                     Column('unitobs', VARCHAR(10)),
-                     Column('unitmeasure', VARCHAR(10)))
-
 
 # taxa: Table regarding taxanomic information. Change from
 # last time involves the forgein key and the addition of
@@ -198,7 +183,8 @@ rawobs = Table('rawobs', metadata,
                Column('spt_rep4', VARCHAR(50)),
                Column('structure', VARCHAR(50)),
                Column('indivID', VARCHAR(50)),
-               Column('unitobs', NUMERIC))
+               Column('unitobs', NUMERIC),
+               Column('covariate', VARCHAR(200)))
 
 
 # station_info: Table regarding climate station information within
