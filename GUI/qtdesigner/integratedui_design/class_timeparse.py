@@ -2,7 +2,8 @@
 # for the TimeParser class
 import pandas as pd
 import re
-
+import logging
+import logging.config
 
 class TimeParser(object):
     '''
@@ -26,6 +27,7 @@ class TimeParser(object):
     the database). 
     
     '''
+    
     def __init__(
             self, dataframe, dfcolumn,  dictionary, dictindex):
         self.dataframe = dataframe
@@ -39,6 +41,9 @@ class TimeParser(object):
     # dictionary index, the program will decide which
     # potential formats the column in the raw data could take.
     def go(self):
+        logging.config.fileConfig("logging.config")
+        logger = logging.getLogger('time')
+    
         if self.datetypenum == 3:
             # List of the possible date formats to parse when
             # there are 3 components of time.
@@ -81,6 +86,7 @@ class TimeParser(object):
                 formatedtime = pd.DataFrame(
                     self.dataframe[self.dfcolumn])
                 formatedtime.columns = ['year']
+                logger.info('dateformat={}'.format(self.datetypename))
                 return formatedtime                
             except Exception as e:
                 print(str(e))
@@ -92,6 +98,7 @@ class TimeParser(object):
                 formatedtime = pd.DataFrame(
                     self.dataframe[self.dfcolumn])
                 formatedtime.columns = ['month']
+                logger.info('dateformat={}'.format(self.datetypename))
                 return formatedtime
             except Exception as e:
                 print(str(e))
@@ -103,6 +110,7 @@ class TimeParser(object):
                 formatedtime = pd.DataFrame(
                     self.dataframe[self.dfcolumn])
                 formatedtime.columns = ['day']
+                logger.info('dateformat={}'.format(self.datetypename))
                 return formatedtime
             except Exception as e:
                 print(str(e))
@@ -114,6 +122,7 @@ class TimeParser(object):
                 formatedtime = pd.DataFrame(
                     self.dataframe[self.dfcolumn])
                 formatedtime.columns = ['julianday']
+                logger.info('dateformat={}'.format(self.datetypename))
                 return formatedtime
             except Exception as e:
                 print(str(e))
@@ -159,7 +168,7 @@ class TimeParser(object):
                     if tyear and tmonth and tday is not None:
                         timeformateddf = pd.DataFrame(
                             {'year':tyear, 'month':tmonth, 'day':tday})
-                        
+                        logger.info('dateformat={}'.format(item))
                         return timeformateddf
                     else:
                         pass
@@ -178,9 +187,8 @@ class TimeParser(object):
                     if tmonth and tyear is not None:
                         timeformateddf = pd.DataFrame(
                             {'month':tmonth, 'year':tyear})
-
+                        logger.info('dateformat={}'.format(item))
                         return timeformateddf
-                    
                     else:
                         pass
 
@@ -198,7 +206,7 @@ class TimeParser(object):
                     if tday and tyear is not None:
                         timeformateddf = pd.DataFrame(
                             {'day':tday, 'year':tyear})
-
+                        logger.info('dateformat={}'.format(item))
                         return timeformateddf
                     
                     else:
@@ -218,10 +226,11 @@ class TimeParser(object):
                     if tday and tmonth is not None:
                         timeformateddf = pd.DataFrame(
                             {'day':tday, 'month':tmonth})
-
+                        logger.info('dateformat={}'.format(item))
                         return timeformateddf
                     
                     else:
                         pass
+            
             except:
-                print("Trying different date format.")
+                logger.info("Trying different date format.")
