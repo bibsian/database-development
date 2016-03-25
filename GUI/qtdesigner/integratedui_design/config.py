@@ -7,14 +7,14 @@ from sqlalchemy.orm import sessionmaker, aliased
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.automap import automap_base
 import psycopg2
-import datetime as TM
-import logging as log
+import datetime as dt
+import logging
 
-label = ((str(TM.datetime.now()).split()[0]).replace("-", "_")+".txt")
-
-log.basicConfig(filename = label)
-log.getLogger('sqlalchemy.engine').setLevel(log.INFO)
-
+# Setup to log database transactions
+date = (str(dt.datetime.now()).split()[0]).replace("-", "_")
+logging.basicConfig(
+    filename='Logs_DbTransactions/database_log_{}.log'.format(date))
+logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
 
 # Creating a connection to the database specifying echo
 # as false so we will not log information twice when
@@ -25,8 +25,6 @@ log.getLogger('sqlalchemy.engine').setLevel(log.INFO)
 engine = create_engine(
     'postgresql+psycopg2://postgres:demography@localhost/LTER'\
     , echo= False)
-
-
 
 # Set up the base
 #global base
@@ -55,4 +53,6 @@ rawtable = base.classes.rawobs
 # Creating a factory that can supply connection resources
 # uses sessionmaker
 Session = sessionmaker(bind=engine)
-    
+
+
+
