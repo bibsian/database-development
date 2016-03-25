@@ -18,12 +18,8 @@ import numbers as nm
 from PyQt4 import QtCore, QtGui
 import pandas as pd
 import numpy as np
+import itertools
 import gc
-
-import pandas as pd
-from contextlib import contextmanager
-import logging as log
-import datetime as TM
 
 # User Interfaces
 import ui_mainwindow as mw
@@ -34,7 +30,10 @@ import class_columntodictframe as cdictframe
 import class_database as uow
 import config
 import class_timeparse as tparse
+import datetime as dt
 
+import logging
+import logging.config
 
 # Custom Classes:
 # This is an if elif statement to choose
@@ -174,6 +173,8 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
     To do: Catch errors for not having the LTER combo box checked.
     or the site number combo box checked.
     '''
+
+    logging.config.fileConfig("logging.config")
 
     # Constructor for initiating this object which is essential
     # the program.
@@ -470,7 +471,7 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
         #========================#
         self.rbtnlist = [
             self.rbtnMYnull, self.rbtnDYnull, self.rbtnDMnull,
-            self.rbtnYnull, self.rbtnMnull, self.rbtnMnull,
+            self.rbtnYnull, self.rbtnMnull, self.rbtnDnull,
             self.rbtnAllpresent]
 
         #=====================#
@@ -506,11 +507,21 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
         # input
         if sender == self.spinboxselectmetaID:
             self.globalid = int(self.spinboxselectmetaID.value())
+
+            logger = logging.getLogger("setup")
+            logger.info("globalid={}".format(self.globalid))
+
+
             return
+        
         # Saving the lter location that is chosen from the
         # combo box
         elif sender == self.cboxselectlter:
             self.lterlocation = self.cboxselectlter.currentText()
+            logger = logging.getLogger("setup")
+            logger.info("lterid={}".format(self.lterlocation))
+
+            
             return
         # Writing a series of try except commands to
         # 1) check to see if an LTER Site was chosen before the
@@ -535,6 +546,10 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                 # agains the user inputs (self)
                 if metacheck  ==  self.metaurl and\
                    lterloccheck == self.lterlocation:
+
+                    # Log metadata URL
+                    logger = logging.getLogger("setup")
+                    logger.info("metadata={}".format(self.metaurl))
 
                     # Notification that the url is correct
                     QtGui.QMessageBox.about(
@@ -611,6 +626,10 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                     self.nullnuminput, 'Integer')
                 print(numnullinputlist)
 
+
+                logger = logging.getLogger('nullvalue')
+                logger.info("null={}".format(numnullinputlist))
+                
                 # Append the null values numeric list with
                 # text counterparts
                 for i in numnullinputlisttext:
@@ -627,6 +646,9 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
 
             except Exception as e:
                 print(str(e))
+
+
+            
             message = InputReceived()
             message.show()
             self.lnedNullnumeric.clear()
@@ -641,6 +663,9 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                     self.nulltextinput)
                 print(textnullinputlist)
 
+                logger = logging.getLogger('nullvalue')
+                logger.info("null={}".format(textnullinputlist))
+                
                 for i in textnullinputlist:
                     for j in self.rawdf.columns:
                         self.rawdf[j].replace(i, 'NULL', inplace=True)
@@ -661,6 +686,9 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                 for i in textnullinputlist:
                     for j in self.rawdf.columns:
                         self.rawdf[j].replace(i, 'NULL', inplace=True)
+
+                logger = logging.getLogger('nullvalue')
+                logger.info("null={}".format(textnullinputlist))
 
             except Except as e:
                 print(str(e))
@@ -705,7 +733,6 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
             # User input for identifying the column that
             # contains site abbreviations
             columntofind = self.lnedViewSite.text()
-
             # Quality control check: user supplied value of column
             # name, if not there, throw error
             try:
@@ -715,6 +742,10 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                 # once the user has specified that column that
                 # contains site abbreviations
                 self.sitelisttoadd = collisttoadd
+
+                logger = logging.getLogger('site')
+                logger.info('sitelocation={}'.format(columntofind))
+            
             except:
                 self.w = QtGui.QErrorMessage()
                 self.w.showMessage(
@@ -754,6 +785,13 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                 # Creating the table model to view the subsetted
                 # values in dataframe form with qttableview
                 self.collistmodel = ptbE.PandasTableModel(collistdf)
+                
+                logdata = list(itertools.chain.from_iterable(
+                    self.collistmodel.data(
+                        None, QtCore.Qt.UserRole)))
+                
+                logger.info('UniqueSitesDerived={}'.format(logdata))
+
                 self.querytablemodel = ptb.PandasTableModel(
                     querydf)
 
@@ -787,6 +825,14 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
         self.sitelisttoadd = self.collistmodel.data(
             None, QtCore.Qt.UserRole)
         print(self.sitelisttoadd)
+
+        logdata = list(itertools.chain.from_iterable(
+            self.collistmodel.data(
+                None, QtCore.Qt.UserRole)))
+        logger = logging.getLogger('site')
+        logger.info('UniqueSitesDerived={}'.format(logdata))
+
+
 
     #=========================#
     # Method to retrieve the information from the combo box
@@ -832,16 +878,24 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
             return
         try:
             required = self.sitelisttoadd
+            del required
         except:
             self.w.showMessage(
                 "You must identify the column in the raw data " +
                 "that contains site abbreviations.")
             return
 
+        loggerckbox = logging.getLogger('sitecheck')
         if self.ckSiteCoordN.isChecked():
             self.siteIDrecord = self.lnedSiteformnock.text()
+
         elif self.ckSiteCoordY.isChecked():
             self.siteIDrecord = self.lnedSiteformsiteID.text()
+
+        loggerckbox.info(
+            'ckSiteCoordN={}'.format(self.ckSiteCoordN.isChecked()))
+        loggerckbox.info(
+            'ckSiteCoordY={}'.format(self.ckSiteCoordY.isChecked()))
 
         #-------#
         # Regular expression to turn the text entered into the line
@@ -851,6 +905,10 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
         #-------#
         self.siteIDrecord_re = self.convert_string_to_List(
             self.siteIDrecord)
+
+        logger = logging.getLogger('site')
+        logger.info(
+            'UniqueSitesInput={}'.format(self.siteIDrecord_re))
 
         #-------#
         # Check siteID entries for conformity to raw data
@@ -1009,6 +1067,7 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
         # for number of unique sites is set
         try:
             required = self.numsite
+            del required
         except:
             self.w = QtGui.QErrorMessage()
             self.w.showMessage(
@@ -1023,16 +1082,19 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
             self.lnedSiteformnames.text())
 
         print(self.sitenames)
-
+        
         # If the lengths of the list and numbers
         # fromt he combo box match up, record
         # The update status
         if len(self.sitenames) == self.numsite:
+            logger = logging.getLogger('site')
+            logger.info('siteNames={}'.format(self.sitenames))
             QtGui.QMessageBox.about(
                 self, "Message Box", "The site names have" +
                 " been recorded in the program")
             self.lnedSiteformnames.clear()
             self.lnedSiteformnames.setEnabled(False)
+
         # Else delete the self.sitelist
         # and throw error.
         else:
@@ -1050,6 +1112,7 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
     def site_concat(self):
         try:
             required = self.lterlocation
+            del required
         except:
             self.w = QtGui.QErrorMessage()
             self.w.showMessage(
@@ -1116,7 +1179,25 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
         self.siteDataAllmodel = ptbE.PandasTableModel(self.siteDataAll)
         self.siteDialog.tblList.setModel(self.siteDataAllmodel)
         self.siteDialog.show()
-        self.siteDialog.btnPush.clicked.connect(self.upload_to_database)
+        logger = logging.getLogger('site')
+        logger.info(
+            'siteTable={}'.format(
+                self.siteDataAllmodel.data(
+                    index=None, role=QtCore.Qt.UserRole)))
+        
+        self.siteDataAllmodel.dataChanged.connect(
+            self.update_site_table)
+        
+        self.siteDialog.btnPush.clicked.connect(
+            self.upload_to_database)
+
+    def update_site_table(self):
+        logger = logging.getLogger('site')
+        logger.info(
+            'siteTable={}'.format(
+                self.siteDataAllmodel.data(
+                    index=None, role=QtCore.Qt.UserRole)))
+        
 
     #====================#
     # Method to concatenate the information that will
@@ -1136,6 +1217,7 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
 
         try:
             required = self.sitelisttoadd
+            del required
         except:
             self.w.showMessage(
                 " Establish the unique site abbreviations by " +
@@ -1259,6 +1341,12 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
             finally:
                 print(self.mainDataAll.dtypes)
 
+            logger = logging.getLogger('main')
+            logger.info(
+                'mainTable={}'.format(
+                    self.mainDataAllModel.data(
+                            index=None, role=QtCore.Qt.UserRole)))
+            
             # If the data is change in the main table model
             # then record the changes
             self.mainDataAllModel.dataChanged.connect(
@@ -1279,7 +1367,12 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
     #=========================#
     #=========MAIN DATA========#
     def update_main_table(self):
-        pass
+        logger = logging.getLogger('main')
+        logger.info(
+            'mainTable={}'.format(
+                self.mainDataAllModel.data(
+                    index=None, role=QtCore.Qt.UserRole)))
+
     #=========================#
     # This method handles multiple checkbox
     # widgets that are directly connected
@@ -1498,7 +1591,10 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
             # NOTE: These column names are NOT what is
             # present in the database and they MUST be changed
             self.taxacurrentcol = list(taxadataraw.columns)
-
+            logger = logging.getLogger('taxa')
+            logger.info(
+                'taxalocation={}'.format(self.taxacurrentcol))
+            
             # Using the true column names and the index
             # from the taxa dictionary to replace the
             # raw column names with the true one
@@ -1522,6 +1618,9 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                 x for x in taxadfcol if x not in rawtaxacolset]
 
             print(missingcollist)
+            logger.info(
+                'taxamissing={}'.format(missingcollist))
+
             print(len(taxadataraw))
 
             #=============#
@@ -1543,6 +1642,10 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
             print(self.taxaDataAll)
             self.taxaprojcurrent = list(
                 set(self.taxaDataAll['projID']))
+
+            logger.info(
+                'taxaprojID={}'.format(
+                    self.taxaprojcurrent))
 
             # Setting the model view for the taxa table
             self.taxamodel = ptbE.PandasTableModel(self.taxaDataAll)
@@ -1572,7 +1675,8 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
         self.w = QtGui.QErrorMessage()
         # Identifyin the sender
         sender = self.sender()
-
+        logger = logging.getLogger('season')
+        
         # If the sender is the line edit where the column
         # containing seasonal information is called
         # the try the following
@@ -1581,14 +1685,21 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
             # error. Additionally save the column name
             # as a variable
             try:
-                self.seasoncolumn = str(self.lnedSeasConvertLabel.text())
+                self.seasoncolumn = str(
+                    self.lnedSeasConvertLabel.text())
+                
                 print(self.rawdf[self.seasoncolumn])
+                logger.info(
+                    'seasonlocation={}'.format(
+                        self.seasoncolumn))
+
                 QtGui.QMessageBox.about(
                     self, 'Status', (
                         'This information has been recorded' +
                         ' in the program.'))
                 self.lnedSeasConvertLabel.clear()
                 return
+            
             except Exception as e:
                 print(str(e))
                 self.w.showMessage(
@@ -1745,20 +1856,20 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
             else:
                 pass
         except:
-            print('Data not set')
+            print('')
         finally:
             # This last part of the indexing block is
             # to aid in keeping track of  which line edits are
             # Enabled or disabled based on user inputs and
             # currently checked boxes
-
-            print(self.timedatalist)
+ 
             try:
                 # Inspecting each block to determine what is checked
                 block1 = [x.isChecked() for x in self.timecol1list]
                 block2 = [x.isChecked() for x in self.timecol2list]
                 block3 = [x.isChecked() for x in self.timecol3list]
-
+                
+                
                 # if any block is completely unchecked (any(block1))
                 # then reactivate the line edit. Line edits
                 # are deactivate in the time_concat method
@@ -1770,14 +1881,21 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
 
                 # This is the loop to reactivate
                 for i, item in enumerate(reactivate):
-                    print("went into the reactivate loop")
+                    # If a set of check boxes contains no checks
+                    # then enable the line edit for that set of
+                    # boxes
                     if item is True:
                         self.timelnedlist[i].setEnabled(True)
+                    # Use the list of booleans regarding reactivating
+                    # to print how many columns of the temporal
+                    # information is contained in.
+                    if item == False:
+                        print('tiemcolumns={}'.format(i+1))
+
                     else:
                         pass
 
-                # Print the list of booleans regarding reactivating
-                print(reactivate)
+
             except:
                 print('Already enabled')
 
@@ -1790,12 +1908,14 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
     # not going to focus on that now.
     def time_format(self):
         self.w = QtGui.QErrorMessage()
-
+        logger = logging.getLogger('time')
+        
         timeformatedcolumns = ['year', 'month', 'day']
         # Checking if requried informatoin is present in the
         # program; if not then throw message
         try:
             required = self.rawdf
+            del required
         except:
             self.w.showMessage(
                 "Must upload raw data table before proceeding")
@@ -1825,16 +1945,15 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                 timedatac1 = tparse.TimeParser(
                     self.rawdf, self.lnedTempSchCol1.text(),
                     self.timecol1dict, self.timeactivated1[0]).go()
-                print(type(timedatac1))
-                print(timedatac1.columns)
-
+                logger.info(
+                    'timecolumn1={}'.format(
+                        self.lnedTempSchCol1.text()))
             except Exception as e:
                 print(str(e))
                 print('Always going to go to error block')
 
             finally:
                 if type(timedatac1) is pd.DataFrame:
-                    print(type(timedatac1))
                     self.timedatalist.append(timedatac1)
                     updatemess = InputReceived()
                     self.lnedTempSchCol1.clear()
@@ -1854,7 +1973,9 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                 timedatac2 = tparse.TimeParser(
                     self.rawdf, self.lnedTempSchCol2.text(),
                     self.timecol2dict, self.timeactivated2[0]).go()
-                print(timedatac2.columns)
+                logger.info(
+                    'timecolumn2={}'.format(
+                        self.lnedTempSchCol2.text()))
             except Exception as e:
                 print(str(e))
 
@@ -1878,8 +1999,9 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                 timedatac3 = tparse.TimeParser(
                     self.rawdf, self.lnedTempSchCol3.text(),
                     self.timecol3dict, self.timeactivated3[0]).go()
-                print(timedatac3.columns)
-
+                logger.info(
+                    'timecolumn3={}'.format(
+                        self.lnedTempSchCol3.text()))
             except Exception as e:
                 print(str(e))
 
@@ -1903,11 +2025,27 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
     #======================#
     def time_concat(self):
 
+        logger = logging.getLogger('time')
+        rbtnnames = [
+            'month-year', 'day-year','day-month', 'year',
+            'month', 'day', 'All-Present']
+    
+        print(rbtnnames)
+        for i,item in enumerate(self.rbtnlist):
+            print(item.isChecked() == True , item)
+            
+
+            if item.isChecked() == True:
+                logger.info(
+                    'timeNullColumns={}'.format(rbtnnames[i]))
+            else:
+                pass
+
         self.alltimedata = None
         # A series of conditional statments that will direct the
         # concatenation and/or creation of the final formated
         # date time informatoin
-
+        
         # Condition 1: If our data frame list corresponding to each
         # block in the time parser form is 1 AND the All present
         # radio button is checked then, this is our data information
@@ -1918,7 +2056,6 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
             print("List length 1, All present CHEKCED")
             self.alltimedata = self.timedatalist[0]
 
-            print(self.alltimedata)
             print(self.alltimedata.dtypes)
             print("Exit list length 1, all present CHECKED")
 
@@ -2062,7 +2199,7 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                 else:
                     print("Passing List length 2 block")
                     pass
-            print()
+            print('')
 
         # Condition 3: If our 'data frame' list is length 3
         # then we just need to concatenate the informatoin
@@ -2089,11 +2226,10 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
             copy = self.alltimedata.copy()
             copy['day'] = copy['day'].astype(str)
 
-            print(copy)
-            print(copy.dtypes)
 
             timemodel = ptbE.PandasTableModel(copy)
             self.timeview.tblList.setModel(timemodel)
+
             self.timeview.show()
 
         except Exception as e:
@@ -2128,7 +2264,7 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
         # If a signal is sent from a line edit then try
         # to subset that column from the rawdf
         try:
-            [print(self.rawdf[x]) for x, y in zip(
+            [type(self.rawdf[x]) for x, y in zip(
                 self.spinfolist, self.spinfoboolist) if y == True]
 
         # If the rawdf is not subsetable then throw errormessag
@@ -2141,6 +2277,8 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
 
         # Column names for subsetted data frame
         self.obsrename = ['spt_rep1']
+
+        logger = logging.getLogger('raw')
         # Iterate over the list containing the identified
         # columns and concatenate them together using
         # the siteID column as the base
@@ -2150,6 +2288,9 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                     [self.obsdf, self.rawdf[self.spinfolist[i]]],
                     axis=1)
                 self.obsrename.append(self.spinfolabel[i])
+                logger.info(
+                    'spt_rep{}={}'.format(
+                        i+1, self.spinfolist[i]))
             else:
                 pass
 
@@ -2168,12 +2309,13 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
          else x.setEnabled(False) for x, y in
          zip(self.optionallnedlist, self.optionalobscklist)]
 
+        logger = logging.getLogger('raw')        
         # If a signal is sent from a line edit then try
         # to subset that column from the rawdf
         try:
             self.obsoptdf = self.obsdf
             self.obsoptrename = list(self.obsrename)
-            [print(self.rawdf[x]) for x, y in zip(
+            [type(self.rawdf[x]) for x, y in zip(
                 optionallnedlisttext,
                 optionallnedbool) if y == True]
 
@@ -2186,8 +2328,12 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                         [self.obsoptdf, self.rawdf[item]],
                         axis=1)
                     self.obsoptrename.append(optionallnedlab[i])
-            else:
-                pass
+                if i==0:
+                    logger.info('indivID'.format(item))
+                if i==1:
+                    logger.info('structure={}'.format(item))
+                else:
+                    pass
 
         # If the rawdf is not subsetable then throw errormessag
         # to reenter user input
@@ -2204,8 +2350,8 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                     [self.obsoptdf, self.rawdf[rawdatacol]],
                     axis=1)
                 self.obsoptrename.append('unitobs')
-                print("We're in the optional Block")
-                print(self.obsoptdf)
+                logger.info('unitobs={}'.format(rawdatacol))
+                print(self.obsoptdf.columns)
 
             except Exception as e:
                 print(str(e))
@@ -2214,7 +2360,7 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                 return
 
     def obs_concat(self):
-
+        logger = logging.getLogger('raw')
         try:
             if self.alltimedata is None:
                 raise ValueError
@@ -2242,7 +2388,7 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
         # Checking the missing columns
         missing = [
             x for x in self.obstruecol if x not in self.obsoptrename]
-        print(missing)
+        logger.info('missing={}'.format(missing))
 
         # Creating the null dataframe
         nulldf = self.produce_null_df(
@@ -2262,6 +2408,9 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
         self.futureprojID = list(set(rawmerged['projID']))
         self.futuretaxaID = list(set(rawmerged['taxaID']))
 
+        logger.info('rawfutureprojID={}'.format(self.futureprojID))
+        logger.info('rawfuturetaxaID={}'.format(self.futuretaxaID))
+
         self.obsall = pd.concat(
             [self.obsall, rawmerged[['projID', 'taxaID']]], axis=1)
 
@@ -2276,9 +2425,11 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
 
     def covariate_concat(self):
         sender = self.sender()
+        logger= logging.getLogger('cov')
         try:
             collist = self.convert_string_to_List(self.lnedCov.text())
-            self.rawdf[collist]
+            type(self.rawdf[collist])
+            logger.info('covariatecolumns={}'.format(collist))
 
         except Exception as e:
             print(str(e))
@@ -2743,6 +2894,10 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
             self.rawdf = pd.read_csv(name)
             self.rawdfresetall = pd.DataFrame.copy(self.rawdf)
 
+            logger = logging.getLogger("setup")
+            logger.info('filename={}'.format(name))
+
+            
             rawmodel = ptb.PandasTableModel(self.rawdf)
             self.tblViewraw.setModel(rawmodel)
         except:
@@ -2776,11 +2931,14 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
 
 
 def main():
+    
+
     app = QtGui.QApplication(sys.argv)
     ex = UiMainWindow()
     ex.show()
-
+    
     sys.exit(app.exec_())
+
 
 
 #=================#
