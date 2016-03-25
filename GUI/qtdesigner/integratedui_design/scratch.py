@@ -14,16 +14,24 @@ import pandas as pd
 import numpy as np
 import config as config
 from sqlalchemy import create_engine
+import itertools
 
 import class_columntodictframe as cdictframe
 import class_database as uow
 import importlib
+import logging
+import logging.config
 
+logging.config.fileConfig("logging.config")
+
+logger = logging.getLogger('time')
+
+sys.stdout = 'what the fuck is giong on'
+
+logger.info(sys.stdout)
 
 
 df = None
-
-
 
 if _platform == "darwin":
     metapath = (
@@ -50,6 +58,28 @@ timedf = pd.read_csv(timepath)
 
 
 metadf['temp_int']
+
+#=================#
+# Testing boolean index
+#=================#
+b = [True, True, False]
+
+for i,item in enumerate(b):
+    if item==True:
+        print('timecolumns={}'.format(i+1))
+
+#================#
+# Test converting pandastablemodel to list
+#================#
+a=[['hello'], ['world']]
+print(list(itertools.chain.from_iterable(a)))
+
+
+#================#
+# Test string to extract date for log files
+#================#
+(str(TM.datetime.now()).split()[0]).replace("-", "_")
+
 
 #==============#
 # Class to convert covariates
@@ -933,10 +963,6 @@ else:
 session1
 session1.close()
 
-#================#
-# Test string to extract date for log files
-#================#
-(str(TM.datetime.now()).split()[0]).replace("-", "_")
 
 #==================#
 # Test defining my own
