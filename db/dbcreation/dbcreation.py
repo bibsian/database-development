@@ -87,7 +87,7 @@ lter = Table(ltertablename, metadata,
 # (i.e. no entries are allowed in this table unless the site
 # information originates at a given lter_id)
 site_info = Table(sitetablename, metadata,
-                  Column('siteID', VARCHAR(10), primary_key=True),
+                  Column('siteID', VARCHAR(50), primary_key=True),
                   Column('lterID', None, ForeignKey('lter.lterID')),
                   Column('lat', NUMERIC),
                   Column('long', NUMERIC),
@@ -102,15 +102,15 @@ site_info = Table(sitetablename, metadata,
 taxa = Table('taxa', metadata,
              Column('taxaID', Integer, primary_key=True),
              Column('projID', None, ForeignKey('main_data.projID')),
-             Column('sppcode', VARCHAR(20)),
-             Column('kingdom', VARCHAR(20)),
-             Column('phylum', VARCHAR(20)),
-             Column('class', VARCHAR(20)),
-             Column('order', VARCHAR(20)),
-             Column('family', VARCHAR(20)),
-             Column('genus', VARCHAR(20)),
-             Column('species', VARCHAR(20)),
-             Column('authority', VARCHAR(20)))
+             Column('sppcode', VARCHAR(100)),
+             Column('kingdom', VARCHAR(100)),
+             Column('phylum', VARCHAR(100)),
+             Column('class', VARCHAR(100)),
+             Column('order', VARCHAR(100)),
+             Column('family', VARCHAR(100)),
+             Column('genus', VARCHAR(100)),
+             Column('species', VARCHAR(100)),
+             Column('authority', VARCHAR(100)))
 
 
 # main: Table describing the raw data that was collected
@@ -125,14 +125,14 @@ maindata = Table(maintablename, metadata,
                  # This column specifies the type of information
                  # about the sampling organisms life stage
                  # ie. adult, juvenile, size, etc
-                 Column('samplingunits', VARCHAR(20)),
+                 Column('samplingunits', VARCHAR(50)),
                  # This column specifies the type of data that was
                  # collected (i.e. count, biomass, percent cover, etc.)
-                 Column('samplingprotocol', VARCHAR(20)),
+                 Column('samplingprotocol', VARCHAR(50)),
                  # This column specifies the type of information
                  # about the sampling organisms life stage
                  # ie. adult, juvenile, size, etc
-                 Column('structured',  VARCHAR(20)),
+                 Column('structured',  VARCHAR(50)),
                  Column('startyr', INTEGER),
                  Column('endyr', INTEGER),
                  # This column relates to the frequency of sampling
@@ -146,7 +146,7 @@ maindata = Table(maintablename, metadata,
                  # This column list whether the study was observational
                  # or experimental (which includes historic experiemental
                  # events)
-                 Column('studytype', VARCHAR(10)),
+                 Column('studytype', VARCHAR(50)),
                  # This column indicates whether the study contained
                  # community level data (i.e. data over multiple
                  # taxonomic groups
@@ -164,8 +164,8 @@ maindata = Table(maintablename, metadata,
                  Column('sp_rep2_ext', NUMERIC),
                  Column('sp_rep3_ext', NUMERIC),
                  Column('sp_rep4_ext', NUMERIC),
-                 Column('metalink', VARCHAR(80)),
-                 Column('knbID', VARCHAR(20)))
+                 Column('metalink', VARCHAR(200)),
+                 Column('knbID', VARCHAR(50)))
 
 # count: Table containing the raw count data that is populating
 # the database.
@@ -193,7 +193,7 @@ rawobs = Table('rawobs', metadata,
 # (i.e. no entries are allowed in this table unless the site
 # information originates at a given lter_id)
 station_info = Table('station_data', metadata,
-                     Column('stationID', VARCHAR(10), primary_key=True),
+                     Column('stationID', VARCHAR(50), primary_key=True),
                      Column('lterID', None, ForeignKey('lter.lterID')),
                      Column('lat', NUMERIC),
                      Column('long', NUMERIC),
@@ -212,7 +212,7 @@ climateobs = Table('climateobs', metadata,
                    Column('day', NUMERIC),
                    Column('hour', NUMERIC),
                    Column('unitobs', NUMERIC),
-                   Column('unitmeasure', VARCHAR(10)))
+                   Column('unitmeasure', VARCHAR(50)))
 
 
 # This command takes all the information that was stored in the
