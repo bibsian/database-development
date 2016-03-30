@@ -22,15 +22,6 @@ import importlib
 import logging
 import logging.config
 
-logging.config.fileConfig("logging.config")
-
-logger = logging.getLogger('time')
-
-sys.stdout = 'what the fuck is giong on'
-
-logger.info(sys.stdout)
-
-
 df = None
 
 if _platform == "darwin":
@@ -56,8 +47,21 @@ metadf = pd.read_csv(metapath, encoding="iso-8859-11")
 rawdf = pd.read_csv(rawpath)
 timedf = pd.read_csv(timepath)
 
+# =========================#
+# Mainually testing the globalid object
+# =========================#
+del sys.modules['class_globalid']
+import class_globalid as gid
 
-metadf['temp_int']
+#del test
+test = gid.GlobalId(metadf)
+print(test.get_records())
+metaurl = list(test[test['global_id']==2]['site_metadata'])[0]
+print(metaurl == (
+    'http://sbc.lternet.edu/cgi-bin/showDataset.cgi?'+
+    'docid=knb-lter-sbc.17'))
+
+
 
 #=================#
 # Testing boolean index
@@ -79,6 +83,13 @@ print(list(itertools.chain.from_iterable(a)))
 # Test string to extract date for log files
 #================#
 (str(TM.datetime.now()).split()[0]).replace("-", "_")
+
+#=====================#
+# Testing logger configuration file
+#=====================#
+logging.config.fileConfig("logging.config")
+logger = logging.getLogger('time')
+logger.info(sys.stdout)
 
 
 #==============#
@@ -231,7 +242,7 @@ q1df = pd.DataFrame(q1).iloc[:,1:]
 q1df.dtypes
 
 q1df
-    
+
 
 #===============================#
 # Test for turning numpy array into
@@ -245,8 +256,10 @@ timedf == pd.DataFrame(numpval, columns=list(timedf.columns))
 #==============================#
 
 # Getting list of users values
-testname1 = 'ABUR, AHND, AQUE, BULL, CARP, GOLB, IVEE, MOHK, NAPL, SCDI, SCTW'
-testnamelist = re.sub(",\s", " ", testname1.rstrip()).split()
+del testname1
+testname1 = 'ABUR,  AHda,   AQUE,   BULL,   CARP, GOLB, IVEE, MOHK, NAPL, SCDI, SCTW    '
+testnamelist = re.sub("i,\s{1,}", " ", testname1.rstrip()).split()
+testnamelistlower = [x.lower() for x in testnamelist]
 
 #========================#
 # Test matching list with different
@@ -259,6 +272,12 @@ testname2list = re.sub(",\s", " ", testname2.rstrip()).split()
 [x.lower() for x in testnamelist].sort() == [y.lower()
                                              for y in testname2list].sort()
 
+x['col1']
+x = {'col1': 'test, this, out', 'col2':'me, too', 'col3':None}
+
+xl = [str(item) for key,item in x.items() if item is not None]
+
+[re.sub(',\s{1,}', " ", x.rstrip()).split() for x in xl]
 
 #====================#
 # Test for counting observations
