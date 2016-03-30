@@ -10,11 +10,6 @@ import psycopg2
 import datetime as dt
 import logging
 
-# Setup to log database transactions
-date = (str(dt.datetime.now()).split()[0]).replace("-", "_")
-logging.basicConfig(
-    filename='Logs_DbTransactions/database_log_{}.log'.format(date))
-logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
 
 # Creating a connection to the database specifying echo
 # as false so we will not log information twice when
