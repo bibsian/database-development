@@ -1,4 +1,4 @@
-# G These are the classes that will use SQLalchemy to
+# These are the classes that will use SQLalchemy to
 # push information to the database
 
 from sqlalchemy import create_engine
@@ -8,8 +8,14 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.automap import automap_base
 from contextlib import contextmanager
 import psycopg2
-import logging as log
-import datetime as TM
+import logging
+import datetime as dt
+
+# Setup to log database transactions
+date = (str(dt.datetime.now()).split()[0]).replace("-", "_")
+logging.basicConfig(
+    filename='Logs_DbTransactions/database_log_{}.log'.format(date))
+logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
 
 
 class LterTableQuery(object):
