@@ -644,15 +644,14 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                     for j in self.rawdf.columns:
                         self.rawdf[j].replace(i, 'NULL', inplace=True)
 
+                message = InputReceived()
+                message.show()
+                self.lnedNullnumeric.clear()
+
             except Exception as e:
                 print(str(e))
 
-
             
-            message = InputReceived()
-            message.show()
-            self.lnedNullnumeric.clear()
-
         # Perform similar operations as above if the sender
         # is from the line edit intended to handle text
         # values that represent null values
@@ -670,11 +669,12 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                     for j in self.rawdf.columns:
                         self.rawdf[j].replace(i, 'NULL', inplace=True)
 
+                message = InputReceived()
+                message.show()
+                self.lnedNulltext.clear()
+
             except Exception as e:
                 print(str(e))
-            message = InputReceived()
-            message.show()
-            self.lnedNulltext.clear()
 
         elif sender == self.lnedNullphrase:
             self.nullphraseinput = self.lnedNullphrase.text()
@@ -689,13 +689,12 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
 
                 logger = logging.getLogger('nullvalue')
                 logger.info("null={}".format(textnullinputlist))
-
+                message = InputReceived()
+                message.show()
+                self.lnedNullphrase.clear()
             except Except as e:
                 print(str(e))
 
-            message = InputReceived()
-            message.show()
-            self.lnedNullphrase.clear()
         try:
 
             rawmodel = ptb.PandasTableModel(self.rawdf)
@@ -1557,6 +1556,8 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                 'information about site abbreviations.')
             return
         try:
+            print("In the taxa concat blockk")
+
             # Using a helper function to use the taxa dictionary
             # and extra information from the raw dataframe
             # that is current up to this form (taxa form)
@@ -1657,8 +1658,8 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
             self.taxaDialog.btnPush.clicked.connect(
                 self.upload_to_database)
 
-        except Exception as e:
-            print(str(e))
+        except:
+            raise LookupError("Can't concatenate") 
     #===================#
     # This method uses information from the line edits
     # regarding season information that needs to be
@@ -2765,7 +2766,7 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
         siteid = []
         taxaid = []
         taxacolumnkey = []
-
+        metaurl = []
         # Performing a unit of work to
         # to query the main table in the database
         session = config.Session()
@@ -2777,14 +2778,28 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
         for row in query:
             projidmain.append(row.projID)
             siteid.append(row.siteID)
-
+            metaurl.append(row.metalink)
+            
         # Turning the list into a dataframe that will
         # be merged with the raw data
         self.tomergewithraw = pd.DataFrame(
             {'projID': projidmain,
+             'metalink': metaurl,
              str(self.sitecolumn): siteid
              })
 
+        try:
+            self.tomergeUpdated = self.tomergewithraw[
+                self.tomergewithraw['metalink']== self.metaurl]
+
+        except:
+            raise LookupError
+        
+        print('IN MERGE BLOCK')
+        print(set(self.tomergeUpdated['projID']))
+        print(set(self.tomergeUpdated[str(self.sitecolumn)]))
+        print('ABOUT TO ENTER MAIN BLOCK')
+        
         if tablename == 'main_taxa':
 
             # Merging the queried results with the raw data
@@ -2792,14 +2807,14 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
             # saving this to the program cause it will be
             # someone redundant
             rawmergedMain = pd.merge(
-                self.tomergewithraw, self.rawdf,
+                self.tomergeUpdated, self.rawdf,
                 left_on=[str(self.sitecolumn)],
                 right_on=[str(self.sitecolumn)])
 
             return rawmergedMain
 
         if tablename == 'taxa_raw':
-                        # Performing a unit of work to
+            # Performing a unit of work to
             # to query the main table in the database
             session = config.Session()
             query = uow.TaxaTableQuery(
@@ -2822,7 +2837,7 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                  })
 
             finalmerge = pd.merge(
-                self.tomergewithraw, taxamergewithraw,
+                self.tomergeUpdated, taxamergewithraw,
                 left_on=['projID'], right_on=['projID'])
 
             # Merging the queried results with the raw data
