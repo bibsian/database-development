@@ -47,20 +47,6 @@ metadf = pd.read_csv(metapath, encoding="iso-8859-11")
 rawdf = pd.read_csv(rawpath)
 timedf = pd.read_csv(timepath)
 
-# =========================#
-# Mainually testing the globalid object
-# =========================#
-del sys.modules['class_globalid']
-import class_globalid as gid
-
-#del test
-test = gid.GlobalId(metadf)
-print(test.get_records())
-metaurl = list(test[test['global_id']==2]['site_metadata'])[0]
-print(metaurl == (
-    'http://sbc.lternet.edu/cgi-bin/showDataset.cgi?'+
-    'docid=knb-lter-sbc.17'))
-
 
 
 #=================#
