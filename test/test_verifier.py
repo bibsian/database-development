@@ -2,7 +2,9 @@
 import pytest
 import pandas as pd
 
-class GlobalId(pd.DataFrame):
+
+
+class Verifier(pd.DataFrame):
     """
     Gloabal Id is a pandas dataframe that
     contains all the metadata along with user
@@ -19,7 +21,7 @@ class GlobalId(pd.DataFrame):
         lterloc = kwargs.pop('lterloc', None)
         metaurl = kwargs.pop('metaurl', None)
 
-        super(GlobalId, self).__init__(*args, **kwargs)
+        super(Verifier, self).__init__(*args, **kwargs)
         # Giving our added attributes None type or assigning
         # them based on user input
         if idnumber is not None:
@@ -44,7 +46,7 @@ class GlobalId(pd.DataFrame):
         Defining the constructor to subclass a pandas
         dataframe.
         '''
-        return GlobalId
+        return Verifier
 
     def get_records(self):
         '''
@@ -74,6 +76,7 @@ class GlobalId(pd.DataFrame):
                     " correctly. Please check the dataframe, " +
                     "global_id, LTER location, and metadata url.")
 
+
 @pytest.fixture
 def df():
     import pandas as pd
@@ -83,8 +86,8 @@ def df():
 
 
 def test_init_nodata():
-    assert GlobalId
-    test = GlobalId(idnumber=1)
+    assert Verifier
+    test = Verifier(idnumber=1)
     assert test.idnumber == 1
     assert len(test.values) == 0
     assert test.records is None
@@ -93,7 +96,7 @@ def test_init_nodata():
 
 
 def test_init_data(df):
-    test = GlobalId(data=df)
+    test = Verifier(data=df)
     assert test.idnumber is None
     assert test.lterloc is None
     assert test.metaurl is None
@@ -101,7 +104,7 @@ def test_init_data(df):
 
 
 def test_lookup_error(df):
-    test = GlobalId(data=df)
+    test = Verifier(data=df)
     test.idnumber = 2
     test.lterloc = 'SBC'
     test.metaurl = 'raise error'
