@@ -13,8 +13,8 @@ import numpy as np
 import pandas as pd
 
 # Defining a custom class for PyQt4
-#=================================#
 class PandasTableModel(QtCore.QAbstractTableModel):
+
     '''
     This class is an abstract table class from Qt to visualize
     data in a table format and using the pandas dataframe
@@ -22,15 +22,12 @@ class PandasTableModel(QtCore.QAbstractTableModel):
     
     To Do: Add the ability to add and remove rows from
     the datasets
-    
-
     '''
     #============================#
     # Constructors
     #============================#
-    
-    def __init__(self, data, parent = None):
-        QtCore.QAbstractTableModel.__init__(self,parent)
+    def __init__(self, data, parent=None):
+        QtCore.QAbstractTableModel.__init__(self, parent)
 
         # This initiates the private instance variable (our data)
         # based on the values within the dataframe.
@@ -40,7 +37,7 @@ class PandasTableModel(QtCore.QAbstractTableModel):
 
         # This gives us a private instance variable with the column
         # headers from the dataframe
-        self.__cols= data.columns
+        self.__cols = data.columns
 
         self.r, self.c = np.shape(self.__data)
 
@@ -51,7 +48,7 @@ class PandasTableModel(QtCore.QAbstractTableModel):
     # Defing the rowCount method by calling on the inistatiated
     # object (self) and asking for the for the unique
     # instance variables that were defined
-    def rowCount(self, parent = None):
+    def rowCount(self, parent=None):
         return self.r
 
     #===============================#
@@ -61,7 +58,7 @@ class PandasTableModel(QtCore.QAbstractTableModel):
     # Defing the rowCount method by calling on the inistatiated
     # objected (self) and asking for the attribute that was
     # constructed above (columns, self.c)
-    def columnCount(self, parent = None):
+    def columnCount(self, parent=None):
         return self.c
 
     #===============================#
@@ -72,7 +69,7 @@ class PandasTableModel(QtCore.QAbstractTableModel):
     # when Viewing through a table.
     # If the orientation is horizontal or veritcal, the argument
     # section corresponds to the row or column index respectively.
-    def headerData (self, section, orientation, role):
+    def headerData(self, section, orientation, role):
         if role == QtCore.Qt.DisplayRole:
             if orientation == QtCore.Qt.Horizontal:
                 return self.__cols[section]

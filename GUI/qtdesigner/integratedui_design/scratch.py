@@ -21,6 +21,8 @@ import class_database as uow
 import importlib
 import logging
 import logging.config
+import gc
+
 
 df = None
 
@@ -31,6 +33,8 @@ if _platform == "darwin":
         "/Users/bibsian/Dropbox/database-development/data/raw_table_test_mod.csv")
     timepath = (
         "/Users/bibsian/Dropbox/database-development/data/time_file_test.csv")
+    rawtestpath = (
+        "/Users/bibsian/Dropbox/database-development/test/DataRawTestFile.csv")
 
 elif _platform == "win32":
     #=======================#
@@ -42,10 +46,39 @@ elif _platform == "win32":
                + "\\data\\raw_table_test_mod.csv")
     timepath = ("C:\\Users\MillerLab\\Dropbox\\database-development"
                 + "\\data\\time_file_test.csv")
-
+    rawtestpath = ("C:\\Users\MillerLab\\Dropbox\\database-development"
+                + "\\test\\DataRawTestFile.csv")
+    
 metadf = pd.read_csv(metapath, encoding="iso-8859-11")
 rawdf = pd.read_csv(rawpath)
 timedf = pd.read_csv(timepath)
+rawtestdf = pd.read_csv(rawtestpath)
+
+metadf['global_id']
+metadf.loc[metadf['global_id']== 2]['global_id'] == 2
+
+lengthlist = rawtestdf['splitme'].str.split().apply(len)
+
+'splitme' in rawtestdf.columns
+
+all(lengthlist == 2) is True
+
+rawtestdf.loc[lengthlist.loc[lengthlist==2].index, 'splitme']
+
+rawtestdf.loc[lengthlist.loc[lengthlist!=2].index, 'splitme']
+
+rawtestdf['splitme'].str.split().apply(len)
+
+test = metadf.iloc[0:4, :]
+
+test.dtypes
+test.fillna(-99999)
+typelist = list(test.select_dtypes(include=[np.float]))
+for i, item in enumerate(typelist):
+    print(item)
+    test.loc[i, item] = test.loc[i, item].astype(int)
+    
+test.dtypes
 
 
 

@@ -1,7 +1,5 @@
 # This script is going to be used to run the user interface
 # generated with pyqt
-
-
 #=========================#
 # Importing modules
 #=========================#
@@ -136,7 +134,6 @@ class DialogQuery(QtGui.QDialog, tq.Ui_Dialog):
 # object i.e. our user interface
 # and the user interface module we created (ui_mainwindow)
 
-
 class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
     '''
     This class displays the user interface that was created with
@@ -196,13 +193,28 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
         # the program is running on (Mac or Windows)
         if _platform == "darwin":
             self.metapath = (
-                "/Users/bibsian/Dropbox/database-development/data/meta_file_test.csv")
+                "/Users/bibsian/Dropbox/database-development/data" +
+                "/meta_file_test.csv")
+
+            self.csvpath = (
+                "/Users/bibsian/Dropbox/database-development/GUI" +
+                "/qtdesigner/integratedui_design/" +
+                "Logs_TablesConverted/")
+            
         elif _platform == "win32":
             #=======================#
             # Paths to data and conversion of files to dataframe
             #=======================#
-            self.metapath = ("C:\\Users\MillerLab\\Dropbox\\database-development"
-                             + "\\data\\meta_file_test.csv")
+            self.metapath = (
+                "C:\\Users\MillerLab\\Dropbox\\database-development" +
+                "\\data\\meta_file_test.csv")
+            self.csvpath = (
+                "C:\\Users\MillerLab\\Dropbox\\database-development" +
+                "\\GUI\\qtdesigner\\integratedui_design\\" +
+                "Logs-TablesConverted\\")
+
+
+        # Setting paths
         self.metadf = pd.read_csv(self.metapath, encoding="iso-8859-11")
 
         #===================#
@@ -1175,14 +1187,15 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
         else:
             pass
 
+        try:
+            self.siteDataAll.to_csv(
+                (self.csvpath + 'site_table' + self.globalid + '.csv'))
+        except Exception as e:
+            print(str(e))
+
         self.siteDataAllmodel = ptbE.PandasTableModel(self.siteDataAll)
         self.siteDialog.tblList.setModel(self.siteDataAllmodel)
         self.siteDialog.show()
-        logger = logging.getLogger('site')
-        logger.info(
-            'siteTable={}'.format(
-                self.siteDataAllmodel.data(
-                    index=None, role=QtCore.Qt.UserRole)))
         
         self.siteDataAllmodel.dataChanged.connect(
             self.update_site_table)
@@ -1191,12 +1204,8 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
             self.upload_to_database)
 
     def update_site_table(self):
-        logger = logging.getLogger('site')
-        logger.info(
-            'siteTable={}'.format(
-                self.siteDataAllmodel.data(
-                    index=None, role=QtCore.Qt.UserRole)))
-        
+        pass
+
 
     #====================#
     # Method to concatenate the information that will
@@ -1325,6 +1334,23 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                 print(sum(totalobslist))
                 print(len(self.rawdf))
 
+                try:
+                    convertme = self.mainDataAll.copy()
+                    convertme.fillna(-99999)
+                    typelist = list(
+                        convertme.select_dtypes(include=[np.float]))
+
+                    for i, item in enumerate(typelist):
+                        test.loc[i, item] = test.loc[
+                            i, item].astype(int)
+
+                    convertme.to_csv(
+                        (self.csvpath + 'main_table' +
+                         self.globalid + '.csv'), sep='\t')
+
+                except Exception as e:
+                        print(str(e))
+
                 self.mainDataAllModel = ptbE.PandasTableModel(
                     self.mainDataAll)
 
@@ -1366,12 +1392,7 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
     #=========================#
     #=========MAIN DATA========#
     def update_main_table(self):
-        logger = logging.getLogger('main')
-        logger.info(
-            'mainTable={}'.format(
-                self.mainDataAllModel.data(
-                    index=None, role=QtCore.Qt.UserRole)))
-
+        pass
     #=========================#
     # This method handles multiple checkbox
     # widgets that are directly connected
@@ -1648,6 +1669,14 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                 'taxaprojID={}'.format(
                     self.taxaprojcurrent))
 
+            try:
+                self.taxaDataAll.to_csv(
+                    (self.csvpath + 'taxa_table' +
+                     self.globalid + '.csv'))
+                
+            except Exception as e:
+                print(str(e))
+                
             # Setting the model view for the taxa table
             self.taxamodel = ptbE.PandasTableModel(self.taxaDataAll)
 
@@ -1659,7 +1688,7 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
                 self.upload_to_database)
 
         except:
-            raise LookupError("Can't concatenate") 
+            raise LookupError("Can't concatenate")
     #===================#
     # This method uses information from the line edits
     # regarding season information that needs to be
@@ -2418,7 +2447,8 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
         self.obsall['unitobs'] = pd.to_numeric(
             self.obsall['unitobs'], errors='coerce')
 
-        self.obsmodel = ptbE.PandasTableModel(self.obsall) 
+        
+        self.obsmodel = ptbE.PandasTableModel(self.obsall)
         self.rawPreview.tblList.setModel(self.obsmodel)
         self.rawPreview.show()
 
@@ -2459,6 +2489,14 @@ class UiMainWindow (QtGui.QMainWindow, mw.Ui_MainWindow):
         
         if sender == self.btnObsConcat:
             print(self.rawalldata)
+            try:
+                self.obsall.to_csv(
+                    (self.csvpath + 'raw_table' +
+                     self.globalid + '.csv'))
+
+            except Exception as e:
+                print(str(e))
+
             
             self.rawallmodel = ptbE.PandasTableModel(self.rawalldata)
             self.rawDialog.tblList.setModel(self.rawallmodel)
