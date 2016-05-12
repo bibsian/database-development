@@ -14,6 +14,21 @@ GUI/qtdesigner/uiviewer_design/
 GUI/qtdesigner/integratedui_design/FinalForm.ui
 GUI/qtdesigner/integratedui_design/dblog_ajb.txt
 GUI/qtdesigner/integratedui_design/testinput.txt
+GUI/qtdesigner/integratedui_design/Logs_Tables_Converted/*
+GUI/qtdesigner/integratedui_design/Logs_Tables_Converted/*
+GUI/qtdesigner/integratedui_design/Logs_DbTransactions/*
+GUI/qtdesigner/integratedui_design/Logs_DbTransactions/*/*
+GUI/qtdesigner/integratedui_design/Logs_UserInput/*
+GUI/qtdesigner/integratedui_design/.emacs*
+GUI/qtdesigner/integratedui_design/.R*
+GUI/qtdesigner/integratedui_design/.#*
+
+UMLdiagrams/*~
+
+test/#*
+test/.coverage
+test/__*
+
 
 */*/*/.DS_Store
 */*/.DS_Store
