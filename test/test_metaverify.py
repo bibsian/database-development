@@ -4,7 +4,7 @@ import pandas as pd
 from sys import platform as _platform
 import sys, os
 sys.path.append(os.path.realpath(os.path.dirname(__file__)))
-from .inputhandler import InputHandler
+from class_inputhandler import InputHandler
 
 class MetaVerifier(object):
     """
@@ -32,7 +32,7 @@ class MetaVerifier(object):
     _meta = pd.read_csv(metapath, encoding='iso-8859-11')
 
     def __init__(self,  inputclsinstance):
-        self.idnumber = inputclsinstance.lnedentry['globalid']
+        self.idnumber = int(inputclsinstance.lnedentry['globalid'])
         self.lterloc = inputclsinstance.lnedentry['lter']
         self.metaurl = inputclsinstance.lnedentry['metaurl']
 
@@ -57,20 +57,22 @@ class MetaVerifier(object):
 
             try:
 
-                assert self._meta.loc[
+                assert (self._meta.loc[
                     self._meta['global_id']== self.idnumber][
-                            'global_id'] == self.idnumber
+                            'global_id'] == 
+                        self.idnumber).bool() is True
 
-                assert self._meta.loc[
-                    self._meta['lter']== self.lterloc][
-                            'lter'] == self.lterloc
+                assert (self._meta.loc[
+                    self._meta['global_id']== self.idnumber][
+                        'lter'] ==
+                        self.lterloc).bool() is True
 
-                assert self._meta.loc[
-                    self._meta['site_metadata']== self.metaurl][
-                            'site_metadata'] == self.metaurl
+                assert (self._meta.loc[
+                    self._meta['global_id']== self.idnumber][
+                            'site_metadata']
+                        == self.metaurl).bool() is True
 
                 return True
-
             except:
                 raise LookupError(
                     "The verification attributes have not been set" +
@@ -89,10 +91,10 @@ def metahandle():
 @pytest.fixture
 def metahandlecorrect():
     lentry = {
-        'globalid': 2,
+        'globalid': '2',
 
         'metaurl':
-        'http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid="knb-lter-sbc.19',
+        'http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.17',
 
         'lter': 'SBC'}
     ckentry = {}
@@ -112,6 +114,8 @@ def test_init_nodata(metahandle):
     with pytest.raises(LookupError):
         t.verify_entries()
 
-    
 
+def test_correct_userinput(metahandlecorrect):
+    verify = MetaVerifier(metahandlecorrect)
+    verify.verify_entries()
 

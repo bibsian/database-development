@@ -18,7 +18,8 @@ class InputHandler(object):
     def __init__(
             self, name=None, tablename=None, lnedentry={},
             checks={}, rbtns={}, cbox={}, verify=False, session=False,
-            filename=None):
+            filename=None, timedata=None, covdata=None,
+            foreignmergeddata=None):
         self.name = name
         self.tablename = tablename
         self.lnedentry = lnedentry
@@ -28,7 +29,9 @@ class InputHandler(object):
         self.verifty = verify
         self.session = session
         self.filename = filename
-
+        self.timedata = timedata
+        self.covdata = covdata
+        self.foreignmergeddata = foreignmergeddata
 
 
 @pytest.fixture

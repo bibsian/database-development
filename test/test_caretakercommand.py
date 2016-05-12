@@ -1,9 +1,12 @@
 #!usr/bin/env python
 import pytest
 import abc
-from .filehandles import FileCaretaker,FileHandler, DataProxy,\
+import sys, os
+sys.path.append(os.path.realpath(os.path.dirname(__file__)))
+from class_inputhandler import InputHandler
+from class_filehandles import FileCaretaker,FileHandler, DataProxy,\
     FileMemento
-from .inputhandler import InputHandler
+from class_inputhandler import InputHandler
 
 
 # for all subclasses

@@ -6,12 +6,18 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1147</width>
+    <width>1185</width>
     <height>777</height>
    </rect>
   </property>
+  <property name="baseSize">
+   <size>
+    <width>0</width>
+    <height>0</height>
+   </size>
+  </property>
   <property name="windowTitle">
-   <string>DataFormater</string>
+   <string>Data Formatter</string>
   </property>
   <property name="styleSheet">
    <string notr="true">QLabel{
@@ -44,8 +50,8 @@ QTableView{
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1147</width>
-     <height>22</height>
+     <width>1185</width>
+     <height>31</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -61,7 +67,15 @@ QTableView{
     <property name="title">
      <string>Edit</string>
     </property>
-    <addaction name="actionReplace"/>
+    <widget class="QMenu" name="menuReplace">
+     <property name="title">
+      <string>Replace..</string>
+     </property>
+     <addaction name="actionFactor_levels"/>
+     <addaction name="separator"/>
+     <addaction name="actionValue"/>
+    </widget>
+    <addaction name="menuReplace"/>
     <addaction name="actionDisplay_unique"/>
     <addaction name="separator"/>
     <addaction name="actionModify_ontomany_entries"/>
@@ -96,6 +110,12 @@ QTableView{
      <horstretch>0</horstretch>
      <verstretch>0</verstretch>
     </sizepolicy>
+   </property>
+   <property name="baseSize">
+    <size>
+     <width>500</width>
+     <height>500</height>
+    </size>
    </property>
    <property name="styleSheet">
     <string notr="true"/>
@@ -205,19 +225,27 @@ QTableView{
     <bool>false</bool>
    </attribute>
    <addaction name="actionSiteTable"/>
+   <addaction name="separator"/>
    <addaction name="actionMainTable"/>
+   <addaction name="separator"/>
    <addaction name="actionTaxaTable"/>
-   <addaction name="actionRawTable"/>
-   <addaction name="actionClimateSiteTable"/>
-   <addaction name="actionClimateRawTable"/>
+   <addaction name="separator"/>
    <addaction name="actionActionTemporalParser"/>
+   <addaction name="separator"/>
+   <addaction name="actionRawTable"/>
+   <addaction name="separator"/>
+   <addaction name="actionCovariates"/>
+   <addaction name="separator"/>
+   <addaction name="actionClimateSiteTable"/>
+   <addaction name="separator"/>
+   <addaction name="actionClimateRawTable"/>
   </widget>
   <action name="actionStart_Session">
    <property name="text">
     <string>New Session...</string>
    </property>
    <property name="shortcut">
-    <string>Meta+N</string>
+    <string>Ctrl+N</string>
    </property>
   </action>
   <action name="actionEnd_Session">
@@ -231,11 +259,6 @@ QTableView{
   <action name="actionLoad_File">
    <property name="text">
     <string>Load File</string>
-   </property>
-  </action>
-  <action name="actionReplace">
-   <property name="text">
-    <string>Replace..</string>
    </property>
   </action>
   <action name="actionOne_to_many">
@@ -269,43 +292,148 @@ QTableView{
    </property>
   </action>
   <action name="actionSiteTable">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="text">
-    <string>SiteTable</string>
+    <string>Sites</string>
+   </property>
+   <property name="font">
+    <font>
+     <weight>75</weight>
+     <italic>false</italic>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="visible">
+    <bool>true</bool>
    </property>
   </action>
   <action name="actionMainTable">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
-    <string>MainTable</string>
+    <string>Metadata</string>
+   </property>
+   <property name="font">
+    <font>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
    </property>
   </action>
   <action name="actionTaxaTable">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
-    <string>TaxaTable</string>
+    <string>Taxa</string>
+   </property>
+   <property name="font">
+    <font>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
    </property>
   </action>
   <action name="actionRawTable">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
-    <string>RawTable</string>
+    <string>Observations</string>
+   </property>
+   <property name="font">
+    <font>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
    </property>
   </action>
   <action name="actionClimateSiteTable">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
-    <string>ClimateSiteTable</string>
+    <string>Climate Sites</string>
+   </property>
+   <property name="font">
+    <font>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
    </property>
   </action>
   <action name="actionClimateRawTable">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
-    <string>ClimateRawTable</string>
+    <string>Climate Observations</string>
+   </property>
+   <property name="font">
+    <font>
+     <weight>75</weight>
+     <italic>false</italic>
+     <bold>true</bold>
+     <strikeout>false</strikeout>
+    </font>
    </property>
   </action>
   <action name="actionModify_ontomany_entries">
    <property name="text">
     <string>Modify one to many records..</string>
    </property>
+   <property name="font">
+    <font>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
   </action>
   <action name="actionActionTemporalParser">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
-    <string>Temporal Parser</string>
+    <string>Format Time</string>
+   </property>
+   <property name="font">
+    <font>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="visible">
+    <bool>true</bool>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
+   </property>
+  </action>
+  <action name="actionCovariates">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Covariates</string>
+   </property>
+   <property name="font">
+    <font>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+  </action>
+  <action name="actionFactor_levels">
+   <property name="text">
+    <string>Factor levels</string>
+   </property>
+  </action>
+  <action name="actionValue">
+   <property name="text">
+    <string>Value</string>
    </property>
   </action>
  </widget>

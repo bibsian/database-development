@@ -13,25 +13,10 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import *
 from sqlalchemy.dialects.postgresql import *
 import pandas as pd
-import sys
-
-from sys import platform as _platform
-if _platform == "darwin":
-    sys.path.insert(
-        0, "/Users/bibsian/Dropbox/database-development/data/")
-    path = "/Users/bibsian/Dropbox/database-development/data/"
-elif _platform == "win32":
-    sys.path.insert(
-        0, 'C:\\Users\\MillerLab\\Dropbox\\database-development\\data\\')
-    path = 'C:\\Users\\MillerLab\\Dropbox\\database-development\\data\\'
 
 
-lterex = pd.read_csv((path+'lter_table_test.csv'))
+lterex = pd.read_csv(('lter_table.csv'))
 ltertablename = 'lter_table'
-mainex = pd.read_csv((path+'main_table_test.csv'))
-maintablename = 'main_talbe'
-siteex = pd.read_csv((path+'siteid_table_test.csv'))
-sitetablename = 'lter_site_table'
 
 
 # Here we are using the packageage sqlalchemy
@@ -68,34 +53,109 @@ engine = create_engine(
 # 'create_all'
 metadata = MetaData()
 
-# global_site_table: This is the initial table
+
+# Raw climate station data
+climate_raw_table = Table(
+    'climate_raw_table', metadata,
+    Column('metarecordid', Integer, primary_key=True),
+    Column('title', TEXT),
+    Column('stationid', None, ForeignKey(
+        'climate_station_table.stationid')),
+    ForeignKeyConstraint(
+        ['stationid'], ['climate_station_table.stationid'],
+        ondelete='CASCADE'),
+    Column('year', NUMERIC),
+    Column('month', NUMERIC),
+    Column('day', NUMERIC),
+    # Terrestiral environmental variables
+    Column('avetempobs', NUMERIC),
+    Column('avetempmeasure', VARCHAR(50)),
+    Column('mintempobs', NUMERIC),
+    Column('mintempmeasure', VARCHAR(50)),
+    Column('maxtempobs', NUMERIC),
+    Column('maxtempmeasure', VARCHAR(50)),
+    Column('aveprecipobs', NUMERIC),
+    Column('aveprecipmeasure', VARCHAR(50)),
+    Column('minprecipobs', NUMERIC),
+    Column('minprecipmeasure', VARCHAR(50)),
+    Column('maxprecipobs', NUMERIC),
+    Column('maxprecipmeasure', NUMERIC),
+    Column('avewindobs', NUMERIC),
+    Column('avewindmeasure', VARCHAR(50)),
+    Column('minwindobs', NUMERIC),
+    Column('minwindmeasure', VARCHAR(50)),
+    Column('maxwindobs', NUMERIC),
+    Column('maxwindmeasure', NUMERIC),
+    Column('avelightobs', NUMERIC),
+    Column('avelightmeasure', VARCHAR(50)),
+    Column('minlightobs', NUMERIC),
+    Column('minlightmeasure', VARCHAR(50)),
+    Column('maxlightobs', NUMERIC),
+    Column('maxlightmeasure', NUMERIC),
+    # Aquatic environmental vairables
+    Column('avewatertempobs', NUMERIC),
+    Column('avewatertempmeasure', VARCHAR(50)),
+    Column('minwatertempobs', NUMERIC),
+    Column('minwatertempmeasure', VARCHAR(50)),
+    Column('maxwatertempobs', NUMERIC),
+    Column('maxwatertempmeasure', VARCHAR(50)),
+    Column('avephobs', NUMERIC),
+    Column('avephmeasure', VARCHAR(50)),
+    Column('minphobs', NUMERIC),
+    Column('minphmeasure', VARCHAR(50)),
+    Column('maxphobs', NUMERIC),
+    Column('maxphmeasure', NUMERIC),
+    Column('avecondobs', NUMERIC),
+    Column('avecondmeasure', VARCHAR(50)),
+    Column('mincondobs', NUMERIC),
+    Column('mincondmeasure', VARCHAR(50)),
+    Column('maxcondobs', NUMERIC),
+    Column('maxcondmeasure', VARCHAR(50)),
+    Column('aveturbidityobs', NUMERIC),
+    Column('aveturbiditymeasure', VARCHAR(50)),
+    Column('minturbidityobs', NUMERIC),
+    Column('minturbiditymeasure', VARCHAR(50)),
+    Column('maxturbidityobs', NUMERIC),
+    Column('maxturbiditymeasure', VARCHAR(50)),
+    Column('covariates', TEXT))
+
+
+# climate_site_table: This is the initial table
 # that will contain information
 # regarding the LTER sites themselves. Column names
 # should be self explanatory.
-global_site_table = Table(
-    'global_site_table', metadata,
-    Column('referenceid', Integer, primary_key=True),
-    Column('lterid', VARCHAR(10)),
-    Column('ltername', TEXT),
-    Column('envdatatitle', VARCHAR(50)),
-    Column('envstationid', VARCHAR(50)),
+climate_station_table = Table(
+    'climate_station_table', metadata,
+    Column('stationid', VARCHAR(200), primary_key=True),
+    Column('lterid', None,
+           ForeignKey('lter_table.lterid')),
     Column('lat', NUMERIC),
     Column('lng', NUMERIC),
-    Column('contact', VARCHAR(50)),
-    Column('source', TEXT),
-    UniqueConstraint('lterid'))
+    Column('descript', TEXT))
+
+
+#lter_table will be the link from climate data to study data
+lter_table = Table(
+    'lter_table', metadata,
+    Column('lterid', VARCHAR(10), primary_key=True),
+    Column('lter_name', TEXT),
+    Column('currently_funded', VARCHAR(50)),
+    Column('pi', VARCHAR(200)),
+    Column('pi_contact_email', VARCHAR(200)),
+    Column('alt_contact_email', VARCHAR(200)),
+    Column('homepage', VARCHAR(200)))
+
 
 # site_info: Table regarding site information for within each
 # individual study. The table will be related to lter_info and
 # the 'foreign key'= lterid/'lterid'
 # (i.e. no entries are allowed in this table unless the site
 # information originates at a given lter_id)
-lter_site_table = Table(
-    'lter_site_table', metadata,
-    Column('siteid', VARCHAR(50), primary_key=True),
-    Column('referenceid', None,
-           ForeignKey('global_site_table.referenceid')),
-    Column('lterid', VARCHAR(10)),
+site_table = Table(
+    'site_table', metadata,
+    Column('siteid', VARCHAR(200), primary_key=True),
+    Column('lterid', None,
+           ForeignKey('lter_table.lterid')),
     Column('lat', NUMERIC),
     Column('lng', NUMERIC),
     Column('descript', TEXT))
@@ -125,7 +185,7 @@ main_table = Table(
     Column('structured',  VARCHAR(50)),
     Column('studystartyr', INTEGER),
     Column('studyendyr', INTEGER),
-    Column('siteid', None, ForeignKey('lter_site_table.siteid')),
+    Column('siteid', None, ForeignKey('site_table.siteid')),
     # DERIVED: start year of data collection for
     # a particular site
     Column('sitestartyr', INTEGER),
@@ -176,29 +236,30 @@ main_table = Table(
     # encompassed all time and taxa units.
     
     Column('sp_rep1_ext', NUMERIC),
-    Column('sp_rep1_ext_units', VARCHAR(25)),
-    Column('sp_rep1_label', VARCHAR(25)),
+    Column('sp_rep1_ext_units', VARCHAR(200)),
+    Column('sp_rep1_label', None, ForeignKey('site_table.siteid')),
     Column('sp_rep1_uniquelevels', NUMERIC),
     
     Column('sp_rep2_ext', NUMERIC),
-    Column('sp_rep2_ext_units', VARCHAR(25)),
-    Column('sp_rep2_label', VARCHAR(25)),
-    Column('sp_rep1_uniquelevels', NUMERIC),
+    Column('sp_rep2_ext_units', VARCHAR(200)),
+    Column('sp_rep2_label', VARCHAR(200)),
+    Column('sp_rep2_uniquelevels', NUMERIC),
     
     Column('sp_rep3_ext', NUMERIC),
-    Column('sp_rep3_ext_units', VARCHAR(25)),
-    Column('sp_rep3_label', VARCHAR(25)),
-    Column('sp_rep1_uniquelevels', NUMERIC),
+    Column('sp_rep3_ext_units', VARCHAR(200)),
+    Column('sp_rep3_label', VARCHAR(200)),
+    Column('sp_rep3_uniquelevels', NUMERIC),
     
     Column('sp_rep4_ext', NUMERIC),
-    Column('sp_rep4_ext_units', VARCHAR(25)),
-    Column('sp_rep4_label', VARCHAR(25)),
-    Column('sp_rep1_uniquelevels', NUMERIC),
+    Column('sp_rep4_ext_units', VARCHAR(200)),
+    Column('sp_rep4_label', VARCHAR(200)),
+    Column('sp_rep4_uniquelevels', NUMERIC),
     
     #Columns relating to author, metadata, other sources
     Column('authors', TEXT),
+    Column('authors_contact', VARCHAR(200)),
     Column('metalink', VARCHAR(200)),
-    Column('knbid', VARCHAR(50)))
+    Column('knbid', VARCHAR(200)))
 
 # taxa: Table regarding taxanomic information. Change from
 # last time involves the forgein key and the addition of
@@ -243,76 +304,7 @@ raw_table = Table(
     Column('structure', VARCHAR(50)),
     Column('individ', VARCHAR(50)),
     Column('unitobs', NUMERIC),
-    Column('covariate', TEXT))
-
-
-# talbe for climate data in terrestiral systems
-environmental_table_terrestrial = Table(
-    'environmental_table_terrestrial', metadata,
-    Column('env_obsid', Integer, primary_key=True),
-    Column('referenceid', None, ForeignKey(
-        'global_site_table.referenceid')),
-    ForeignKeyConstraint(
-        ['referenceid'], ['global_site_table.referenceid'],
-        ondelete='CASCADE'),
-    Column('envstationid', VARCHAR(50)),
-    Column('year', NUMERIC),
-    Column('month', NUMERIC),
-    Column('day', NUMERIC),
-    Column('hour', NUMERIC),
-    Column('avetempobs', NUMERIC),
-    Column('avetempmeasure', VARCHAR(50)),
-    Column('mintempobs', NUMERIC),
-    Column('mintempmeasure', VARCHAR(50)),
-    Column('maxtempobs', NUMERIC),
-    Column('maxtempmeasure', VARCHAR(50)),
-    Column('aveprecipobs', NUMERIC),
-    Column('aveprecipmeasure', VARCHAR(50)),
-    Column('minprecipobs', NUMERIC),
-    Column('minprecipmeasure', VARCHAR(50)),
-    Column('maxprecipobs', NUMERIC),
-    Column('maxprecipmeasure', NUMERIC))
-
-
-# sensor talbe for aquatic ecosystems
-environmental_table_aquatic = Table(
-    'environmental_table_aquatic', metadata,
-    Column('climate_obsid', Integer, primary_key=True),
-    Column('referenceid', None, ForeignKey(
-        'global_site_table.referenceid')),
-    ForeignKeyConstraint(
-        ['referenceid'], ['global_site_table.referenceid'],
-        ondelete='CASCADE'),
-    Column('envstationid', VARCHAR(50)),
-    Column('year', NUMERIC),
-    Column('month', NUMERIC),
-    Column('day', NUMERIC),
-    Column('hour', NUMERIC),
-    Column('avewatertempobs', NUMERIC),
-    Column('avewatertempmeasure', VARCHAR(50)),
-    Column('minwatertempobs', NUMERIC),
-    Column('minwatertempmeasure', VARCHAR(50)),
-    Column('maxwatertempobs', NUMERIC),
-    Column('maxwatertempmeasure', VARCHAR(50)),
-    Column('avephobs', NUMERIC),
-    Column('avephmeasure', VARCHAR(50)),
-    Column('minphobs', NUMERIC),
-    Column('minphmeasure', VARCHAR(50)),
-    Column('maxphobs', NUMERIC),
-    Column('maxphmeasure', NUMERIC),
-    Column('avecondobs', NUMERIC),
-    Column('avecondmeasure', VARCHAR(50)),
-    Column('mincondobs', NUMERIC),
-    Column('mincondmeasure', VARCHAR(50)),
-    Column('maxcondobs', NUMERIC),
-    Column('maxmindmeasure', VARCHAR(50)),
-    Column('aveturbidityobs', NUMERIC),
-    Column('aveturbiditymeasure', VARCHAR(50)),
-    Column('minturbidityobs', NUMERIC),
-    Column('minturbiditymeasure', VARCHAR(50)),
-    Column('maxturbidityobs', NUMERIC),
-    Column('maxturbiditymeasure', VARCHAR(50)))
-
+    Column('covariates', TEXT))
 
 
 # This command takes all the information that was stored in the
@@ -321,6 +313,5 @@ environmental_table_aquatic = Table(
 metadata.create_all(engine)
 
 
-#lterex.to_sql(ltertablename, con=engine, if_exists="append", index=False)
-#siteex.to_sql(sitetablename, con=engine, if_exists="append", index=False)
-#mainex.to_sql(maintablename, con=engine, if_exists="append", index=False)
+lterex.to_sql(
+    ltertablename, con=engine, if_exists="append", index=False)

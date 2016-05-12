@@ -1,77 +1,132 @@
 #!usr/bin/env python
 from PyQt4 import QtGui, QtCore, QtWebKit
+import pandas as pd
 import sys, os
 sys.path.append(os.path.realpath(os.path.dirname(__file__)))
 import ui_mainrefactor as mw
-import ui_dialog_session as ds
-import commanders as cmd
-import userfacade as face
-import inputhandler as ini
+import ui_dialog_session as dsession
+import ui_dialog_site as dsite
+import ui_dialog_main as dmain
+import ui_dialog_taxa as dtaxa
+import ui_dialog_time as dtime
+import ui_dialog_obs as dobs
+import ui_dialog_covariate as dcov
+import class_userfacade as face
+import class_inputhandler as ini
+import class_modelviewpandas as view
 
 
-class SessionDialog(QtGui.QDialog, ds.Ui_DialogSession):
+if sys.platform == 'darwin':
+    os.chdir(
+        '/Users/bibsian/Dropbox/database-development/data/')
+elif sys.platform == 'win32':
+    os.chdir(
+        'C:\\Users\\MillerLab\\Dropbox\\database-development\\data')
+
+
+class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
     '''
-    Dialog pop that prompts the user to inpute
+    Dialog pop up that promts the user to input_manager
+    information regarding sites. When completed the certain
+    tool bar options will be enabled.
+    '''
+    sitelocSent = QtCore.pyqtSignal(object)
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setupUi(self)
+        self.siteini = None
+
+        self.btnSiteID.clicked.connect(self.site_handler)
+
+    def site_handler(self):
+        pass
+
+    def site_confirm(self):
+        pass
+
+class SessionDialog(QtGui.QDialog, dsession.Ui_Dialog):
+    '''
+    Dialog box prompts the user to inpute
     unique metadata relating to the file that
-    will be loaded.
-    
+    will be loaded. Also select and load file into
+    rawdata viewer
     '''
+    metarecordSent = QtCore.pyqtSignal(object)
+    filetypeSent = QtCore.pyqtSignal(object)
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
 
         # Attributes
-        self.records = [
-            ('globalid', self.lineEditGlobalid),
-            ('metaurl', self.lineEditMetaURL),
-            ('lter', self.cboxLTERloc)]
+        self.metaini = None
+        self.fileini = None
 
-        self._metalned = {}
+        # Signal
+        self.btnVerifyMeta.clicked.connect(self.meta_handler)
+        self.btnSelectFile.clicked.connect(self.file_handler)
+        self.btnSaveClose.clicked.connect(self.close)
+        self.btnCancel.clicked.connect(self.close)
         
-        # Dialog boxes for user feedback
+        # Status Message boxes
         self.error = QtGui.QErrorMessage()
-        self.message = QtGui.QMessageBox()
+        self.message = QtGui.QMessageBox
 
-        # Signals/Slots
-        self.btnSubmitMeta.clicked.connect(self.extract_entry)
-        self.buttonBox.accepted.connect(self.accept)
-        self.buttonBox.rejected.connect(self.reject)
-
-    def extract_entry(self):
+    def meta_handler(self):
         '''
-        Method to extract the user input from the
-        line edit boxes.
+        Method to pass the user input about metadata to the mainwindow
+        (where the facade class is instantiated).
         '''
+        sender = self.sender()
+        if sender == self.btnVerifyMeta:
+            entries = {
+                'globalid': int(self.lnedGlobalId.text().strip()),
+                'metaurl': self.lnedMetadataUrl.text().strip(),
+                'lter': self.cboxLTERloc.currentText().strip()
+            }
+            self.metaini = ini.InputHandler(
+                name='metacheck', tablename=None,
+                lnedentry=entries)
+            assert self.metaini.name is not None
+            self.metarecordSent.emit(self.metaini)
+        else:
+            pass
 
-        for i, item in enumerate(self.records):
-            if i < (len(self.records)-1):
-                self._metalned[item[0]] = item[1].text()
-            else:
-                self._metalned[item[0]] = item[1].currentText()
+    @QtCore.pyqtSlot(str)
+    def meta_confirm(self, windowmessage):
+        self.message.about(self, 'Status', windowmessage)
 
-        try:
-            assert ('' not in self._metalned.values()) is True
-        except:
-            self.error.showMessage(
-                'All informatoin is not present.')
-            raise AssertionError('All info not present')
-        
-        # Send signal to Facade and run entires through
-        # verifier class. Then display entries confirmed.
-        self.message.about(self, 'Update', 'Entries Confirmed')
-
-    def pass_entry(self):
+    def file_handler(self):
         '''
-        Method to return the dictionary that contains the
-        metadata information
+        Method to pass  the user input about the file to load
         '''
+        sender = self.sender()
+        if sender == self.btnSelectFile:
+            lned = {
+                'sheet': self.lnedExcelSheet.text().strip(),
+                'delim': self.lnedDelimiter.text().strip(),
+                'tskip': self.lnedSkipTop.text().strip(),
+                'bskip': self.lnedSkipBottom.text().strip()
+            }
+            rbtn = {
+                'csv': self.rbtnCsv.isChecked(),
+                'xlsx': self.rbtnExcel.isChecked(),
+                'txt': self.rbtnTxt.isChecked()
+            }
+            name = QtGui.QFileDialog.getOpenFileName(
+                self, 'Select File')
 
-        try:
-            assert ('' not in self._metalned.values()) is True
-        except:
-            raise AssertionError('Cant pass metalned; not complete')
+            self.fileini = ini.InputHandler(
+                name='fileoptions', tablename=None,
+                rbtns=rbtn, lnedentry=lned, filename=name
+            )
 
-        return self.metalned
+            assert self.fileini.name is not None
+            self.filetypeSent.emit(self.fileini)
+
+    @QtCore.pyqtSlot(object)
+    def file_confirm(self, windowmessage):
+        self.message.about(self, 'Status', windowmessage)
 
 
 class UiMainWindow(QtGui.QMainWindow, mw.Ui_MainWindow):
@@ -81,23 +136,85 @@ class UiMainWindow(QtGui.QMainWindow, mw.Ui_MainWindow):
     that are required to perform the necessary lower level logic
     (i.e. implement a Facade, Commander, MetaVerifier, etc.
     '''
+
+    metarecordReceive = QtCore.pyqtSignal(str)
+    filetypeReceive = QtCore.pyqtSignal(str)
+    metadatafile = pd.read_csv(
+        'meta_file_test.csv', encoding='iso-8859-11')
+
     def __init__(self, parent=None):
         super().__init__(parent)
         # attributes
         self.setupUi(self)
-        self.sessionD = SessionDialog()
-        self.face = face.Facade()
+        self.facade = face.Facade()
+        self.dsession = SessionDialog()
+        self.dsite = SiteDialog()
 
+        # Custom Signals from dialogs
+        self.dsession.metarecordSent.connect(self.session_manager)
+        self.dsession.filetypeSent.connect(self.session_manager)
+
+        self.metarecordReceive.connect(
+            self.dsession.meta_confirm)
+        self.filetypeReceive.connect(
+            self.dsession.meta_confirm)
+
+        # Dialog boxes for user feedback
+        self.error = QtGui.QErrorMessage()
+        self.message = QtGui.QMessageBox
 
         # actions
         self.actionStart_Session.triggered.connect(
-            self.session_manager)
+            self.session_display)
+        self.actionSiteTable.triggered.connect(
+            self.site_display)
 
-    def session_manager(self):
+        # Persistent views
+        metadatamodel = view.PandasTableModel(self.metadatafile)
+        self.tblViewMeta.setModel(metadatamodel)
+
+    def session_display(self):
+        ''' Open the session dialog box'''
+        self.dsession.show()
+
+    def site_display(self):
+        ''' Open the site dialog box'''
+        self.dsite.show()
+
+    @QtCore.pyqtSlot(object)
+    def session_manager(self, dataobject):
         '''
         Methods to display the Session dialog box and initiate
         functionality
         '''
-        self.sessionD.show()
-        
+        if dataobject.name == 'metacheck':
+            print('In metacheck blocks')
+            self.facade.input_register(dataobject)
+            try:
+                self.facade.meta_verity()
+                self.metarecordReceive.emit('Input recorded')
+                self.webView.load(
+                    QtCore.QUrl(dataobject.lnedentry['metaurl']))
+                
+            except Exception as e:
+                self.metarecordReceive.emit(str(e))
+    
+        elif dataobject.name == 'fileoptions':
+            print('In fileoptions block')
+            self.facade.input_register(dataobject)
+            try:
+                self.facade.load_data()
+                self.filetypeReceive.emit('Data loaded')
+                datamodel = view.PandasTableModel(self.facade._data)
+                self.tblViewRaw.setModel(datamodel)
+
+            except Exception as e:
+                self.filetypeReceive.emit(str(e))
+
+    def site_manager(self):
+        '''
+        Methods to display the Site diaglog box and initiate
+        it's functionality
+        '''
+        pass
 
