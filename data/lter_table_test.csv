@@ -1,28 +1,1 @@
-lterID,lter_name,currently_funded,lat,long
-AND,Andrew Forest LTER,1,44.21,-122.26
-ARC,Arctic LTER,1,66.63,-149.6
-BES,Baltimore Ecosystem Study,1,39.1,-76.3
-BNZ,Bonanaza Creek LTER,1,64.86,-147.85
-CCE,California Current Ecosystem LTER,1,32.87,-120.28
-CDR,Cedar Creek Ecosystem Science Reserve,1,45.4,-93.2
-CAP,Central Arizon - Phoneix LTER,1,33.43,-111.93
-CWT,Coweeta LTER,1,35,-83.5
-FCE,Florida Coastal Everglades LTER,1,25.47,-80.85
-GCE,Georgia Coastal Ecosystems LTER,1,31.43,-81.37
-HFR,Harvard Forest LTER,1,42.53,-72.19
-HBR,Hubbard Brook LTER,1,43.94,-71.75
-JRN,Jornada Basin LTER,1,32.62,-106.74
-KBS,Kellogg Biological Station LTER,1,42.4,-85.4
-KNZ,Konza Prairie LTER,1,39.09,-96.58
-LNO,LTER Network Office,1,35.08,-106.62
-LUQ,Luquillo LTER,1,18.3,-65.8
-MCM,McMurdo Dry Valleys LTER,1,-77,162.52
-MCR,Moorea Coral Reef LTER,1,-17.49,-149.83
-NWT,Niwot Ridge LTER,1,39.99,-105.38
-NTL,North Temperate Lakes LTER,1,46.01,-89.67
-PAL,Palmer Antarctica LTER,1,-64.77,-64.05
-PIE,Plum Island Ecosystems LTER,1,42.79,-70.89
-SBC,Santa Barbar Coastal LTER,1,34.41,-119.84
-SEV,Sevilleta LTER ,0,34.35,-106.88
-SGS,Shortgrass Steppe,1,40.83,-104.72
-VCR,Virginia Coastal Reserve LTER,1,37.28,-75.91
+lterID,lter_name,currently_funded,lat,lng,pi,pi_contact_email,alt_contact_emailAND,Andrew Forest LTER,1,44.2100,-122.2600,Michael Nelson,mpnelson@oregonstate.edu,hjafacilities@fsl.orst.eduARC,Arctic LTER,1,66.6300,-149.6000,Gaius Shaver,gshaver@mbl.edu,dscanlon@mbl.eduBES,Baltimore Ecosystem Study,1,39.1000,-76.3000,Steward Pickett,PickettS@ecostudies.org,BeyarH@caryinstitute.orgBNZ,Bonanaza Creek LTER,1,64.8600,-147.8500,Roger Ruess,rwruess@alaska.edu,jhollingsworth@alaska.eduCCE,California Current Ecosystem LTER,1,32.8700,-120.2800,Mark Ohman,mohman@ucsd.edu,mohman@ucsd.eduCDR,Cedar Creek Ecosystem Science Reserve,1,45.4000,-93.2000,Eric Seabloom,seabloom@umn.edu,retilman@umn.eduCAP,Central Arizon - Phoneix LTER,1,33.4300,-111.9300,Nancy Grimm,nbgrimm@asu.edu,caplter@asu.eduCWT,Coweeta LTER,1,35.0000,-83.5000,Ted Gragson,tgragson@uga.edu,tgragson@uga.eduFCE,Florida Coastal Everglades LTER,1,25.4700,-80.8500,Evelyn Gaiser,gaisere@flu.edu,fcelter@fiu.eduGCE,Georgia Coastal Ecosystems LTER,1,31.4300,-81.3700,Merryl Alber,malber@uga.edu,gcelter@uga.eduHFR,Harvard Forest LTER,1,42.5300,-72.1900,David Foster,drfoster@fas.harvard.edu,drfoster@fas.harvard.eduHBR,Hubbard Brook LTER,1,43.9400,-71.7500,Charles Driscoll,ctdrisco@syr.edu,ihalm@fs.fed.usJRN,Jornada Basin LTER,1,32.6200,-106.7400,Deb Peters,debpeter@nmsu.edu,debpeter@nmsu.eduKBS,Kellogg Biological Station LTER,1,42.4000,-85.4000,Phil Robertson,robert30@msu.edu,lter.data.manager@kbs.msu.eduKNZ,Konza Prairie LTER,1,39.0900,-96.5800,John Blair,jblair@ksu.edu,knzlter@ksu.eduLNO,LTER Network Communications Office,1,34.4193,-119.6994,Frank Davis,frank.davis@nceas.ucsb.edu,downs@nceas.ucsb.eduLNO,LTER Network Office,1,35.0800,-106.6200,Robert Waide,rwaide@lternet.edu, rwaide@lternet.eduLUQ,Luquillo LTER,1,18.3000,-65.8000,Jess Zimmerman,jesskz@ites.upr.edu,jesskz@ites.upr.eduMCM,McMurdo Dry Valleys LTER,1,-77.0000,162.5200,Mike Gooseff,michael.gooseff@colorado.edu,mcmlter@lternet.eduMCR,Moorea Coral Reef LTER,1,-17.4900,-149.8300,Russell Schmitt,russ.schmitt@lifesci.ucsb.edu,brooks@msi.ucsb.eduNWT,Niwot Ridge LTER,1,39.9900,-105.3800,Katharine Suding,suding@colorado.edu,lternwt@colorado.eduNTL,North Temperate Lakes LTER,1,46.0100,-89.6700,Emily Stanley,ehstanley@wisc.edu,oferrell@wesc.eduPAL,Palmer Antarctica LTER,1,-64.7700,-64.0500,Hugh Ducklow,hducklow@Ideo.columbia.edu,hducklow@Ideo.columbia.eduPIE,Plum Island Ecosystems LTER,1,42.7900,-70.8900,Anne Giblin,agiblin@mbl.edu,agiblin@mbl.eduSBC,Santa Barbar Coastal LTER,1,34.4100,-119.8400,Dan Reed,dan.reed@lifesci.ucsb.edu,sbclter@msi.ucsb.eduSEV,Sevilleta LTER ,0,34.3500,-106.8800,Will Pockman,pockman@unm.edu,webmaster@sevilleta.unm.eduSGS,Shortgrass Steppe,1,40.8300,-104.7200,John Moore,jcmoore@nrel.colostate.edu,ECODATA_NREL@colostate.eduVCR,Virginia Coastal Reserve LTER,1,37.2800,-75.9100,Karen McGlathery,kjm4k@virginia.edu,JPorter@lternet.edu
