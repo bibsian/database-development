@@ -2,7 +2,7 @@
 import pandas as pd
 import sys, os
 sys.path.append(os.path.realpath(os.path.dirname(__file__)))
-
+import re
 
 def check_int(x):
     ''' function to check if text can be converted to integer'''

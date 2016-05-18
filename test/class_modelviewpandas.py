@@ -4,7 +4,7 @@
 # /31591015#31591015'
 # TreeGraphModel modeified from:
 # http://www.yasinuludag.com/blog/?p=98
-from PyQt4 import QtGui, QtCore, uic
+from PyQt4 import QtCore
 import numpy as np
 import pandas as pd
 
@@ -77,7 +77,7 @@ class PandasTableModelEdit(QtCore.QAbstractTableModel):
     def data(self, index, role):
         if role == QtCore.Qt.UserRole:
             index = None
-            return self.__data
+            return pd.DataFrame(self.__data, columns=self.__cols)
         else:
             pass
     
