@@ -160,7 +160,7 @@ def MainWindow():
                         i,self.sitetabledata.columns].to_dict()
                     for key in dbupload.items():
                         setattr(self.siteorms[i], key[0], key[1])
-                orm.session.commit()
+
                 self.site_unlocks.emit('Tables Enabled')
                 self.site_manager()
                 self.close()
