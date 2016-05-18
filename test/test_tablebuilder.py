@@ -2,13 +2,11 @@
 import pytest
 import pandas as pd
 import abc
-from PyQt4 import QtCore
 import sys, os
 sys.path.append(os.path.realpath(os.path.dirname(__file__)))
-import class_helpers
 import class_inputhandler as ini
 import class_userfacade as face
-import class_helpers
+from class_helpers import *
 
 @pytest.fixture
 def AbstractTableBuilder():
@@ -62,7 +60,6 @@ def AbstractTableBuilder():
             'cov': True,
             'depend': False
         }
-        
         stationtable = {
             'columns': ['lterid', 'lat', 'lng', 'descript'],
             'time': False,
@@ -99,7 +96,7 @@ def AbstractTableBuilder():
         }
         taxatable = {
             'columns': [
-                'projid', 'sppcode', 'kingdom', 'phylum', 'class',
+                'projid', 'sppcode', 'kingdom', 'phylum', 'clss',
                 'order','family', 'genus', 'species', 'authority'],
             'time': False,
             'cov': False,
@@ -131,11 +128,14 @@ def AbstractTableBuilder():
             return self.tabledict[
                 self._inputs.tablename]['columns']
 
+        def get_available_columns(self):
+            return list(self._inputs.lnedentry.values())
+        
         def get_null_columns(self):
             availcol = list(self._inputs.lnedentry.keys())
             allcol = self.tabledict[
                 self._inputs.tablename]['columns']
-            return list(set(allcol).difference(availcol))
+            return [x for x in allcol if x not in availcol]
 
         def get_time_status(self):
             return  self.tabledict[
@@ -157,15 +157,15 @@ def AbstractTableBuilder():
         def get_dependent_status(self):
             return self.tabledict[
                 self._inputs.tablename]['depend']
-
-        @abc.abstractmethod
-        def get_dependent_data(self):
-            pass
         
         @abc.abstractmethod
         def get_merged_foreign_data(self):
             pass
 
+        @abc.abstractmethod
+        def get_dataframe(self):
+            pass
+            
     return AbstractTableBuilder
 
 @pytest.fixture
@@ -176,18 +176,52 @@ def SiteTableBuilder(AbstractTableBuilder):
         Note, no get methods because there is no
         alternate informatoin needed
         '''
-        def get_merged_foreign_data(self):
-            pass
 
+        def get_dataframe(self, dataframe, acols, nullcols, dbcol):
+            try:
+                assert acols is not None
+            except Exception as e:
+                print(str(e))
+                raise AssertionError('Columns names not set')
+            try:
+                assert dataframe is not None
+            except Exception as e:
+                print(str(e))
+                raise AssertionError('Raw dataframe not set')
+            if 'lterid' in dbcol:
+                dbcol.remove('lterid')
+            else:
+                pass
+            if 'lterid' in nullcols:
+                nullcols.remove('lterid')
+            else:
+                pass
+            uniquesubset = dataframe[acols]
+            nullsubset = produce_null_df(
+                ncols=len(nullcols),
+                colnames=nullcols,
+                dflength=len(uniquesubset),
+                nullvalue='NaN')
+            
+            concat =  pd.concat(
+                [uniquesubset, nullsubset], axis=1).reset_index(
+                    drop=True)
+            final = concat.drop_duplicates().reset_index(drop=True) 
+            final.columns =dbcol
+            return final
+        
     return SiteTableBuilder
+
 
 @pytest.fixture
 def DatabaseTable():
     class DatabaseTable:
         def __init__(self):
             self._name = None
-            self._cols = list()
-            self._null = list()
+            self._cols = None
+            self._null = None
+            self._availcols = None
+            self._availdf = None
             self._time = None
             self._timedf = None
             self._cov = None
@@ -202,9 +236,15 @@ def DatabaseTable():
         def set_columns(self, colnames):
             self._cols = colnames
 
+        def set_available_columns(self, acols):
+            self._availcols = acols
+        
         def set_null_columns(self, nullcol):
             self._null = nullcol
 
+        def set_dataframe(self, availdf):
+            self._availdf = availdf
+            
         def set_time_status(self, timebool):
             self._time = timebool
 
@@ -215,11 +255,6 @@ def DatabaseTable():
             self._depend = dependitems
 
 
-        def set_display_table(self):
-            pass
-
-        def set_database_table(self):
-            pass
 
     return DatabaseTable
 
@@ -232,14 +267,13 @@ def TableDirector(DatabaseTable):
         _inputs = None
         _name = None
         _builder = None
-
+        _rawdata = None
         def set_user_input(self, userinputcls):
             try:
                 self._inputs = userinputcls
             except Exception as e:
                 print(str(e))
                 raise AttributeError('Incorrect user input class')
-
 
         def set_builder(self, builder):
             self._builder = builder
@@ -250,6 +284,14 @@ def TableDirector(DatabaseTable):
                 raise AssertionError('User input not set')
 
             self._builder._inputs = self._inputs
+
+        def set_data(self, dataframe):
+            self._rawdata = dataframe
+            try:
+                assert self._rawdata is not None
+            except Exception as e:
+                print(str(e))
+                raise AssertionError('Data not set')
 
         def get_database_table(self):
             ''' Initiates a concrete table class'''
@@ -268,9 +310,16 @@ def TableDirector(DatabaseTable):
             columns = self._builder.get_columns()
             dbtable.set_columns(columns)
 
+            acolumns = self._builder.get_available_columns()
+            dbtable.set_available_columns(acolumns)
+            
             nullcol = self._builder.get_null_columns()
             dbtable.set_null_columns(nullcol)
 
+            adata = self._builder.get_dataframe(
+                self._rawdata, acolumns, nullcol, columns)
+            dbtable.set_dataframe(adata)
+            
             time = self._builder.get_time_status()
             dbtable.set_time_status(time)
 
@@ -291,7 +340,11 @@ def user_input():
         name='siteinfo', tablename='sitetable', lnedentry=lned)
     return user_input
 
-def test_build(SiteTableBuilder, TableDirector, user_input):
+@pytest.fixture
+def df():
+    return pd.read_csv('raw_data_test.csv')
+    
+def test_build(SiteTableBuilder, TableDirector, user_input, df):
     '''
     Testing builder classes
     '''
@@ -307,18 +360,11 @@ def test_build(SiteTableBuilder, TableDirector, user_input):
     assert (isinstance(director, TableDirector)) is True
     director.set_user_input(face_input)
     director.set_builder(sitetable)
+    director.set_data(df)
 
-    site = director.get_database_table()
-    print(site)
-    print(site._name)
-    assert (site._name == 'sitetable') is True
-    assert (
-        set(site._cols) == set([
-            'lterid', 'siteid', 'lat', 'lng', 'descript'])) is True
-    assert (set(site._null) == set(
-        ['lterid', 'lat', 'lng', 'descript'])) is True
-    assert (site._time is False) is True
-    assert (site._cov is False) is True
-
+    sitetab = director.get_database_table()
+    showsite = sitetab._availdf
+    assert (isinstance(showsite, pd.DataFrame)) is True
+    
 def test_error_builds(SiteTableBuilder, TableDirector, user_input):
     pass

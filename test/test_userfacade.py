@@ -1,6 +1,7 @@
-#!usr/bin/env python
+#!/usr/bin/env python
 import pytest
 import sys, os
+import pandas as pd
 sys.path.append(os.path.realpath(os.path.dirname(__file__)))
 from class_inputhandler import InputHandler
 from class_commanders import LoadDataCommander, DataCommandReceiver
@@ -9,9 +10,9 @@ from class_commanders import MakeProxyCommander, MakeProxyReceiver
 from class_commanders import CareTakerCommand, CareTakerReceiver
 from class_metaverify import MetaVerifier
 from class_helpers import UniqueReplace, check_registration
+from class_tablebuilder import SiteTableBuilder, TableDirector 
 from collections import namedtuple
-import pandas as pd
-
+import class_logconfig as log
 
 @pytest.fixture
 def Facade():
@@ -108,7 +109,13 @@ def Facade():
                 'covariates': None
             }
             self._data = None
-
+            self._dbtabledict= {
+                'sitetable': SiteTableBuilder()
+            }
+            self._tablelog = {
+                'sitetable': None
+            }
+            
         def make_proxy_helper(self, data, label):
             proxycmd = MakeProxyCommander(
                 MakeProxyReceiver(), data, label)            
@@ -136,7 +143,7 @@ def Facade():
                 raise AttributeError(
                     'Wrong class input for program facade.')
 
-        def meta_verity(self):
+        def meta_verify(self):
             '''
             Adapter method:
             Takes 'fileoption' input and MetaVerifier class
@@ -154,7 +161,7 @@ def Facade():
                 self._inputs['metacheck'].lnedentry['globalid'])
             self._rawcolumnregister['lterid'] = (
                 self._inputs['metacheck'].lnedentry['lter'])
-
+            
             print('Input verified')
 
 
@@ -240,20 +247,27 @@ def Facade():
             self.make_proxy_helper(datamod, inputname)
             return self._data
 
-        def make_table(self, tablebuilder, inputname):
+        def make_table(self, inputname):
+            if self._tablelog[
+                    self._inputs[inputname].tablename] is None:
+                # Log to record input for different tables
+                self._tablelog[self._inputs[inputname].tablename] =(
+                    log.configure_logger('tablename',(
+                        'Logs_UI/{}_{}_{}_{}'.format(
+                            self._inputs['metacheck'].lnedentry[
+                                'globalid'],
+                            self._inputs[inputname].tablename,
+                            self._inputs['fileoptions'].filename,
+                            'today.log'))))
+            else:
+                pass
             director = TableDirector()
+            builder = self._dbtabledict[
+                self._inputs[inputname].tablename]
             director.set_user_input(self._inputs[inputname])
-            director.set_builder(tablebuilder)
-            
-
-        def display_table(self, tableinfo):
-            try:
-                assert self._inputs[tableinfo] is not None
-            except Exception as e:
-                print(str(e))
-                raise AssertionError(
-                    'Table information not input')
-
+            director.set_builder(builder)
+            director.set_data(self._data)
+            return director.get_database_table()
 
     return Facade
 
@@ -310,7 +324,7 @@ def replacehandle():
 def sitehandle():
     lned = {'siteid': 'site'}
     sitehandle = InputHandler(
-        name='siteinfo', lnedentry=lned)
+        name='siteinfo', lnedentry=lned, tablename='sitetable')
     return sitehandle
     
 def test_correct_userinput(metahandle, filehandle, Facade):
@@ -325,7 +339,7 @@ def test_correct_userinput(metahandle, filehandle, Facade):
     # Registering input with the facade (metadata handler)
     face.input_register(metahandle)
     assert ('metacheck' in face._inputs.keys()) is True
-    face.meta_verity()
+    face.meta_verify()
     # Attempting to load data when there has been no
     # user inputs for loading a file
     with pytest.raises(AttributeError):
@@ -341,7 +355,7 @@ def test_incorrect_userinput(badmetahandle, Facade):
     face = Facade()
     face.input_register(badmetahandle)
     with pytest.raises(AttributeError):
-        face.meta_verity()
+        face.meta_verify()
 
 def test_file_loader(filehandle, Facade):
     '''
@@ -397,3 +411,16 @@ def test_replace_list(sitehandle, Facade, filehandle):
     assert (
         ulist.loc[1, sitehandle.lnedentry['siteid']]
         not in face._data.values) is True
+
+def test_build(sitehandle, Facade, filehandle, metahandle):
+    face = Facade()
+    face.input_register(metahandle)
+    face.meta_verify()
+    face.input_register(filehandle)
+    face.load_data()
+    face.input_register(sitehandle)
+    
+
+    sitedirector = face.make_table('siteinfo')
+    df = sitedirector._availdf
+    assert (isinstance(df, pd.DataFrame)) is True
