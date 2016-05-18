@@ -191,7 +191,7 @@ class UiMainWindow(QtGui.QMainWindow, mw.Ui_MainWindow):
             print('In metacheck blocks')
             self.facade.input_register(dataobject)
             try:
-                self.facade.meta_verity()
+                self.facade.meta_verify()
                 self.metarecordReceive.emit('Input recorded')
                 self.webView.load(
                     QtCore.QUrl(dataobject.lnedentry['metaurl']))
