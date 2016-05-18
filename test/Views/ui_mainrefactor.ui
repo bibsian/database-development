@@ -51,7 +51,7 @@ QTableView{
      <x>0</x>
      <y>0</y>
      <width>1185</width>
-     <height>31</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -230,7 +230,7 @@ QTableView{
    <addaction name="separator"/>
    <addaction name="actionTaxaTable"/>
    <addaction name="separator"/>
-   <addaction name="actionActionTemporalParser"/>
+   <addaction name="actionTimeFormat"/>
    <addaction name="separator"/>
    <addaction name="actionRawTable"/>
    <addaction name="separator"/>
@@ -392,7 +392,7 @@ QTableView{
     </font>
    </property>
   </action>
-  <action name="actionActionTemporalParser">
+  <action name="actionTimeFormat">
    <property name="enabled">
     <bool>false</bool>
    </property>
