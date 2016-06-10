@@ -1,7 +1,9 @@
-#!/usr/bin/env python
+  #!/usr/bin/env python
 import pytest
 import sys, os
 import pandas as pd
+import datetime as tm
+from PyQt4 import QtCore
 sys.path.append(os.path.realpath(os.path.dirname(__file__)))
 from class_inputhandler import InputHandler
 from class_commanders import LoadDataCommander, DataCommandReceiver
@@ -10,7 +12,9 @@ from class_commanders import MakeProxyCommander, MakeProxyReceiver
 from class_commanders import CareTakerCommand, CareTakerReceiver
 from class_metaverify import MetaVerifier
 from class_helpers import UniqueReplace, check_registration
-from class_tablebuilder import SiteTableBuilder, TableDirector 
+from class_tablebuilder import (
+    SiteTableBuilder, TableDirector, MainTableBuilder,
+    TaxaTableBuilder)
 from collections import namedtuple
 import class_logconfig as log
 
@@ -81,44 +85,34 @@ def Facade():
             '''
             self.clsinstance = None
             self._inputs = {}
-            self._rawcolumnregister = {
+            self._valueregister = {
                 'globalid': None,
                 'lterid': None,
-                'siteid': None,
-                'metadataid': None,
-                'sppcode': None,
-                'kingdom': None,
-                'phylum': None,
-                'class': None,
-                'order': None,
-                'family': None,
-                'genus': None,
-                'species': None,
-                'date': None,
-                'year': None,
-                'month': None,
-                'day': None,
-                'dateformat': None,
-                'spt_rep1': None,
-                'spt_rep2': None,
-                'spt_rep3': None,
-                'spt_rep4': None,
-                'structure': None,
-                'individ': None,
-                'unitobs': None,
-                'covariates': None
+                'sitelevels': None
             }
             self._data = None
             self._dbtabledict= {
-                'sitetable': SiteTableBuilder()
+                'sitetable': SiteTableBuilder(),
+                'maintable': MainTableBuilder(),
+                'taxatable': TaxaTableBuilder()
             }
             self._tablelog = {
-                'sitetable': None
+                'sitetable': None,
+                'maintable': None,
+                'taxatable': None
             }
+
+            self._colinputlog = {
+                'siteinfo': None,
+                'maininfo': None,
+                'taxainfo': None
+            }
+
             
         def make_proxy_helper(self, data, label):
             proxycmd = MakeProxyCommander(
-                MakeProxyReceiver(), data, label)            
+                MakeProxyReceiver(), data.reset_index(
+                    drop=True), label)            
             self.input_manager.invoker.perform_commands = proxycmd
             self.input_manager.invoker.make_proxy_data()
             self.input_manager.caretaker.save_to_memento(
@@ -157,9 +151,9 @@ def Facade():
             except Exception as e:
                 raise AttributeError(str(e))
 
-            self._rawcolumnregister['globalid'] = (
+            self._valueregister['globalid'] = (
                 self._inputs['metacheck'].lnedentry['globalid'])
-            self._rawcolumnregister['lterid'] = (
+            self._valueregister['lterid'] = (
                 self._inputs['metacheck'].lnedentry['lter'])
             
             print('Input verified')
@@ -204,11 +198,19 @@ def Facade():
 
             return self._data
 
+        def register_site_levels(self, sitelevels):
+            try:
+                assert isinstance(sitelevels, list)
+            except Exception as e:
+                print(str(e))
+                raise TypeError('Site levels input is not a list')
 
+            sitelevels.sort()
+            self._valueregister['sitelevels'] = sitelevels
+        
         def view_unique(self, inputname):
             
-            check_registration(self, inputname)
-            
+            check_registration(self, inputname)    
             repinst = UniqueReplace(
                 self._data, self._inputs[inputname])
             return repinst.get_levels()
@@ -248,27 +250,41 @@ def Facade():
             return self._data
 
         def make_table(self, inputname):
-            if self._tablelog[
-                    self._inputs[inputname].tablename] is None:
+            tablename = self._inputs[inputname].tablename
+            globalid = self._inputs['metacheck'].lnedentry['globalid']
+            filename = os.path.split(
+                                self._inputs[
+                                    'fileoptions'].filename)[1]
+            dt = (str(tm.datetime.now()).split()[0]).replace("-", "_")
+
+            if self._tablelog[tablename] is None:
                 # Log to record input for different tables
-                self._tablelog[self._inputs[inputname].tablename] =(
-                    log.configure_logger('tablename',(
-                        'Logs_UI/{}_{}_{}_{}'.format(
-                            self._inputs['metacheck'].lnedentry[
-                                'globalid'],
-                            self._inputs[inputname].tablename,
-                            self._inputs['fileoptions'].filename,
-                            'today.log'))))
+                self._tablelog[tablename] =(
+                    log.configure_logger('tableformat',(
+                        'Logs_UI/{}_{}_{}_{}.log'.format(
+                            globalid, tablename,filename,dt))))
             else:
-                pass
-            director = TableDirector()
-            builder = self._dbtabledict[
-                self._inputs[inputname].tablename]
+                pass                
+
+            director = TableDirector()           
+            builder = self._dbtabledict[tablename]
             director.set_user_input(self._inputs[inputname])
             director.set_builder(builder)
-            director.set_data(self._data)
+
+            if tablename != 'maintable':
+                director.set_data(self._data)
+            else:
+                metaverify = MetaVerifier(self._inputs['metacheck'])
+                metadata = metaverify._meta
+                director.set_data(metadata.iloc[globalid,:])
+
+            director.set_sitelevels(self._valueregister['sitelevels'])
+
             return director.get_database_table()
 
+        def merge_table(self, inputname):
+            pass
+        
     return Facade
 
 
@@ -370,6 +386,13 @@ def test_file_loader(filehandle, Facade):
     face.load_data()
     assert isinstance(face._data, pd.DataFrame)
 
+def test_register_sitelevels(Facade):
+    test = ['site1', 'site2']
+    face = Facade()
+    face.register_site_levels(test)
+    assert (
+        isinstance(face._valueregister['sitelevels'], list)) is True
+    
 def test_manipulate_data(filehandle, Facade, replacehandle):
     face = Facade()
     face.input_register(filehandle)
@@ -412,15 +435,40 @@ def test_replace_list(sitehandle, Facade, filehandle):
         ulist.loc[1, sitehandle.lnedentry['siteid']]
         not in face._data.values) is True
 
-def test_build(sitehandle, Facade, filehandle, metahandle):
+def test_build_site(sitehandle, Facade, filehandle, metahandle):
     face = Facade()
     face.input_register(metahandle)
     face.meta_verify()
     face.input_register(filehandle)
     face.load_data()
     face.input_register(sitehandle)
-    
 
     sitedirector = face.make_table('siteinfo')
     df = sitedirector._availdf
     assert (isinstance(df, pd.DataFrame)) is True
+    face._tablelog['sitetable'].info('is this logging?')
+
+@pytest.fixture
+def main_input():
+    main_input = InputHandler(
+        name='maininfo', tablename='maintable')
+    return main_input
+
+def test_build_main(
+        sitehandle, Facade, filehandle, metahandle, main_input):
+    face = Facade()
+    face.input_register(metahandle)
+    face.meta_verify()
+    face.input_register(filehandle)
+    face.load_data()
+    face.input_register(sitehandle)
+    face.input_register(main_input)
+    sitelevels = face._data['site'].drop_duplicates().values.tolist()
+    sitelevels.sort()
+    face.register_site_levels(sitelevels)
+    
+    maindirector = face.make_table('maininfo')
+    df = maindirector._availdf
+    print(df)
+    assert (isinstance(df, pd.DataFrame)) is True
+    face._tablelog['maintable'].info('is this logging?')

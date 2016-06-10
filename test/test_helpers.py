@@ -1,9 +1,13 @@
 #usr/bin/env python
 import pytest
 import pandas as pd
+from numpy import where
 import re
 import decimal as dc
 import config as cfig
+import class_logconfig as log
+from sys import platform as _platform
+import config as orm
 
 @pytest.fixture
 def check_int():
@@ -88,7 +92,124 @@ def test_decimal(decimal_df_col, df):
     decimal_df_col(df, 'lng')
     print(df)
     print(df.dtypes)
-    cfig.session.bulk_insert_mappings(
-    cfig.Sitetable,
-        [df.iloc[i,:].to_dict() for i in range(len(df))])
-    cfig.session.commit()
+#    cfig.session.bulk_insert_mappings(
+#    cfig.Sitetable,
+#        [df.iloc[i,:].to_dict() for i in range(len(df))])
+#    cfig.session.commit()
+
+@pytest.fixture
+def updated_df_values():
+    def updated_df_values(olddataframe,newdataframe,logger, name):
+        '''
+        Helper function to aid in logging the difference between
+        dataframes after user have modified the entries.
+        For example, inputing latitude and longitude for the site
+        table or the extent of spatial replication in the main table.
+        
+        Arguments:
+        olddataframe = An unmodified dataframe
+        newdataframe = A user modified dataframe
+        logger = An instance of a logger handler
+        table = A string with the name to append to log
+        '''
+        try:
+            assert (
+                olddataframe.columns.values.tolist() ==
+                newdataframe.columns.values.tolist()) is True
+        except Exception as e:
+            print(str(e))
+            raise AttributeError(
+                'Dataframe columns are not equivalent')
+        diffdf = (olddataframe != newdataframe)
+            
+        for i,item in enumerate(diffdf.columns):
+            if any(diffdf[item].values.tolist()):
+                index = where(diffdf[item].values)[0].tolist()
+                logger.info('{} "{}" = {} to {}'.format(
+                    name,
+                    item,
+                    olddataframe.loc[index,item].values.tolist(),
+                    newdataframe.loc[index,item].values.tolist()))
+            else:
+                pass
+    return updated_df_values
+
+@pytest.fixture
+def old():
+    old = pd.read_csv('DataRawTestFile.csv')
+    return old
+
+@pytest.fixture
+def new(old):
+    new = old.copy()
+    cols = list(new.columns)
+    new.loc[1,cols[2]] = 'Change1'
+    new.loc[2,cols[5]] = 'Change2'
+    new.loc[3,cols[4]] = 'Change3'
+    return new
+
+@pytest.fixture
+def mylog():
+    mylog = log.configure_logger(
+        'tableformat', 'Logs_UI/test_df_diff.log')
+    return mylog
+
+@pytest.fixture
+def metadf_og():
+    if _platform == "darwin":
+        metapath = (
+            "/Users/bibsian/Dropbox/database-development/data" +
+            "/meta_file_test.csv")
+            
+    elif _platform == "win32":
+        #=======================#
+        # Paths to data and conversion of files to dataframe
+        #=======================#
+        metapath = (
+            "C:\\Users\MillerLab\\Dropbox\\database-development" +
+            "\\data\\meta_file_test.csv")
+
+    metadf = pd.read_csv(metapath, encoding="iso-8859-11")
+    return metadf
+
+@pytest.fixture
+def metadf_mod(metadf_og):
+    new = metadf_og.copy()
+    new.loc[3, 'treatment_type'] = 'maybe...'
+    return new
+
+def test_logger_and_df_diff(updated_df_values, mylog, old, new):
+    updated_df_values(old, new, mylog, 'maintable')
+
+def test_logger_and_metadf_diff(
+        updated_df_values, mylog, metadf_og, metadf_mod):
+    print(metadf_og.columns)
+    print(metadf_og.dtypes)
+    print('---------------')
+    print(metadf_mod.columns)
+    print(metadf_mod.dtypes)
+    print('----------------')
+    updated_df_values(metadf_og, metadf_mod, mylog, 'maintable')
+
+
+@pytest.fixture
+def maindf():
+    df = pd.read_csv('DatabaseConfig/main_table_test.csv')
+    return df
+
+@pytest.fixture
+def convert_typetest():
+    def convert(dataframe, types):
+        for i in dataframe.columns:
+            if types[i] in ['NUMERIC', 'INTEGER', 'Integer']:
+                dataframe[i] = pd.to_numeric(
+                    dataframe[i], errors='coerce')
+            elif types[i] in ['VARCHAR', 'TEXT']:
+                dataframe[i] = dataframe[i].astype(object)
+    return convert
+
+def test_convert_types(maindf, convert_typetest):
+    print(maindf.dtypes)
+    convert_typetest(maindf, orm.maintypes)
+    print(maindf.dtypes)
+
