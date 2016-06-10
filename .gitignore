@@ -10,6 +10,9 @@ data/.Rhistory
 */*/*/__pycache__
 */_*
 
+*/#*
+*/#*/#*
+
 .*
 */.*
 */*/.*
@@ -19,12 +22,21 @@ data/.Rhistory
 */*.ini
 */*/*.ini
 
+
+LTER_connect*
+
+db/dbcreation/dbcreation.py
+db/dbcreation/#*
+
+/Icon*
 development/classesdev/.#modelview2d_pdnp.py
 
 GUI/qtdesigner/uiviewer_design/
 GUI/qtdesigner/integratedui_design/FinalForm.ui
 GUI/qtdesigner/integratedui_design/dblog_ajb.txt
+GUI/qtdesigner/integratedui_design/config.py
 GUI/qtdesigner/integratedui_design/testinput.txt
+GUI/qtdesigner/integratedui_design/Maintenance/*
 GUI/qtdesigner/integratedui_design/Logs_Tables_Converted/*
 GUI/qtdesigner/integratedui_design/Logs_Tables_Converted/*
 GUI/qtdesigner/integratedui_design/Logs_DbTransactions/*
@@ -33,13 +45,19 @@ GUI/qtdesigner/integratedui_design/Logs_UserInput/*
 GUI/qtdesigner/integratedui_design/.emacs*
 GUI/qtdesigner/integratedui_design/.R*
 GUI/qtdesigner/integratedui_design/.#*
+GUI/qtdesigner/integratedui_design/#*
 
 UMLdiagrams/*~
 
 test/#*
 test/.coverage
 test/__*
+test/config.py
+test/logging.config
+test/Logs*/*
 
+LTER*
+Ubuntu*
 
 */*/*/.DS_Store
 */*/.DS_Store
