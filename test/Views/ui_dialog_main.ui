@@ -83,7 +83,7 @@
            </font>
           </property>
           <property name="title">
-           <string>Enter Metadata Inofmration</string>
+           <string>Enter Metadata Information</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -188,7 +188,7 @@
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="btnSiteClose">
+        <widget class="QPushButton" name="btnSaveClose">
          <property name="text">
           <string>Save &amp;&amp; Close</string>
          </property>

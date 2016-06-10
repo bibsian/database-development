@@ -243,6 +243,9 @@ class Ui_Dialog(object):
         self.verticalLayout_3.addWidget(self.frame)
         self.horizontalLayout_3 = QtGui.QHBoxLayout()
         self.horizontalLayout_3.setObjectName(_fromUtf8("horizontalLayout_3"))
+        self.btnTaxapreview = QtGui.QPushButton(Dialog)
+        self.btnTaxapreview.setObjectName(_fromUtf8("btnTaxapreview"))
+        self.horizontalLayout_3.addWidget(self.btnTaxapreview)
         spacerItem4 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_3.addItem(spacerItem4)
         self.btnSaveClose = QtGui.QPushButton(Dialog)
@@ -269,6 +272,7 @@ class Ui_Dialog(object):
         self.ckGenus.setText(_translate("Dialog", "Genus", None))
         self.ckClass.setText(_translate("Dialog", "Class", None))
         self.ckSpp.setText(_translate("Dialog", "Species Name", None))
+        self.btnTaxapreview.setText(_translate("Dialog", "Preview", None))
         self.btnSaveClose.setText(_translate("Dialog", "Save && Close", None))
         self.btnCancel.setText(_translate("Dialog", "Cancel", None))
 

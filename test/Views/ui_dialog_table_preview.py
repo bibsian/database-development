@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/bibsian/Dropbox/database-development/test/Views/ui_dialog_main.ui'
+# Form implementation generated from reading ui file '/Users/bibsian/Dropbox/database-development/test/Views/ui_dialog_table_preview.ui'
 #
 # Created by: PyQt4 UI code generator 4.11.4
 #
@@ -25,55 +25,9 @@ except AttributeError:
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName(_fromUtf8("Dialog"))
-        Dialog.resize(655, 562)
-        Dialog.setStyleSheet(_fromUtf8(".QLabel{\n"
-"    background: None;\n"
-"    padding: 0px;\n"
-"    margin: 0px;\n"
-"}\n"
-".QComboBox {\n"
-"    border: 1px solid gray;\n"
-"    border-radius: 7px;\n"
-"    padding: 2px;\n"
-"    padding-left: 15px;\n"
-"    background: #EEEEEE;\n"
-"}\n"
-".QFrame, .QWidget{\n"
-"    border-radius: 7;\n"
-"    background: white;\n"
-"}    \n"
-"\n"
-"\n"
-"\n"
-".QLineEdit{\n"
-"    padding: 1px;\n"
-"    border-style: solid;\n"
-"    border: 1px solid black;\n"
-"    border-radius: 8px;\n"
-"    margin: 0px;\n"
-"}\n"
-"\n"
-".QPushButton {\n"
-"    color: black;\n"
-"    background: #EEEEEE;\n"
-"    border-width: 1px;\n"
-"    border-color: black;\n"
-"    border-style: solid;\n"
-"    border-radius: 7;\n"
-"    margin-top: 0px;\n"
-"    maring-bottom: 0px;\n"
-"    margin-left: 5px;\n"
-"    margin-right:5px;    \n"
-"    padding-left: 5px;\n"
-"    padding-right: 5px;\n"
-"    padding-top: 3px;\n"
-"    padding-bottom: 3px;\n"
-"}\n"
-"\n"
-"\n"
-""))
-        self.verticalLayout_6 = QtGui.QVBoxLayout(Dialog)
-        self.verticalLayout_6.setObjectName(_fromUtf8("verticalLayout_6"))
+        Dialog.resize(563, 452)
+        self.verticalLayout_3 = QtGui.QVBoxLayout(Dialog)
+        self.verticalLayout_3.setObjectName(_fromUtf8("verticalLayout_3"))
         self.verticalLayout_5 = QtGui.QVBoxLayout()
         self.verticalLayout_5.setObjectName(_fromUtf8("verticalLayout_5"))
         self.frame = QtGui.QFrame(Dialog)
@@ -88,6 +42,7 @@ class Ui_Dialog(object):
         font.setBold(True)
         font.setWeight(75)
         self.groupBox.setFont(font)
+        self.groupBox.setTitle(_fromUtf8(""))
         self.groupBox.setAlignment(QtCore.Qt.AlignCenter)
         self.groupBox.setObjectName(_fromUtf8("groupBox"))
         self.verticalLayout = QtGui.QVBoxLayout(self.groupBox)
@@ -115,12 +70,12 @@ class Ui_Dialog(object):
         spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem1)
         self.verticalLayout_2.addLayout(self.horizontalLayout_2)
-        self.tabviewMetadata = QtGui.QTableView(self.groupBox)
-        self.tabviewMetadata.setFocusPolicy(QtCore.Qt.ClickFocus)
-        self.tabviewMetadata.setFrameShape(QtGui.QFrame.WinPanel)
-        self.tabviewMetadata.setFrameShadow(QtGui.QFrame.Plain)
-        self.tabviewMetadata.setObjectName(_fromUtf8("tabviewMetadata"))
-        self.verticalLayout_2.addWidget(self.tabviewMetadata)
+        self.tabviewPreview = QtGui.QTableView(self.groupBox)
+        self.tabviewPreview.setFocusPolicy(QtCore.Qt.ClickFocus)
+        self.tabviewPreview.setFrameShape(QtGui.QFrame.WinPanel)
+        self.tabviewPreview.setFrameShadow(QtGui.QFrame.Plain)
+        self.tabviewPreview.setObjectName(_fromUtf8("tabviewPreview"))
+        self.verticalLayout_2.addWidget(self.tabviewPreview)
         self.verticalLayout.addLayout(self.verticalLayout_2)
         self.verticalLayout_4.addWidget(self.groupBox)
         self.verticalLayout_5.addWidget(self.frame)
@@ -128,22 +83,17 @@ class Ui_Dialog(object):
         self.horizontalLayout_7.setObjectName(_fromUtf8("horizontalLayout_7"))
         spacerItem2 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_7.addItem(spacerItem2)
-        self.btnSaveClose = QtGui.QPushButton(Dialog)
-        self.btnSaveClose.setObjectName(_fromUtf8("btnSaveClose"))
-        self.horizontalLayout_7.addWidget(self.btnSaveClose)
         self.btnCancel = QtGui.QPushButton(Dialog)
         self.btnCancel.setObjectName(_fromUtf8("btnCancel"))
         self.horizontalLayout_7.addWidget(self.btnCancel)
         self.verticalLayout_5.addLayout(self.horizontalLayout_7)
-        self.verticalLayout_6.addLayout(self.verticalLayout_5)
+        self.verticalLayout_3.addLayout(self.verticalLayout_5)
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(_translate("Dialog", "Metadata Information", None))
-        self.groupBox.setTitle(_translate("Dialog", "Enter Metadata Information", None))
-        self.label_3.setText(_translate("Dialog", "Metadata Table", None))
-        self.btnSaveClose.setText(_translate("Dialog", "Save && Close", None))
-        self.btnCancel.setText(_translate("Dialog", "Cancel", None))
+        Dialog.setWindowTitle(_translate("Dialog", "Dialog", None))
+        self.label_3.setText(_translate("Dialog", "Table Preview", None))
+        self.btnCancel.setText(_translate("Dialog", "Close", None))
 

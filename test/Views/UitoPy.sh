@@ -50,3 +50,9 @@ echo climate site dialog updated
 
 cp /Users/bibsian/Dropbox/database-development/test/Views/ui_dialog_climatesite.py /Users/bibsian/Dropbox/database-development/test/ui_dialog_climatesite.py
 echo climate site dialog copied
+
+python /Users/bibsian/.virtualenvs/lter/lib/python3.4/site-packages/PyQt4/uic/pyuic.py /Users/bibsian/Dropbox/database-development/test/Views/ui_dialog_table_preview.ui -o /Users/bibsian/Dropbox/database-development/test/Views/ui_dialog_table_preview.py
+echo preview dialog updated
+
+cp /Users/bibsian/Dropbox/database-development/test/Views/ui_dialog_table_preview.py /Users/bibsian/Dropbox/database-development/test/ui_dialog_table_preview.py
+echo preview dialog copied
