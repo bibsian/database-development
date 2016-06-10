@@ -1,5 +1,1 @@
-title,samplingunits,samplingprotocol,structured,startyr,endyr,samplefreq,totalobs,studytype,community,siteID,sp_rep2_ext,sp_rep3_ext,sp_rep4_ext,metalink,knbID
-something about plants,density,count,yes,1993,2015,season:yr,100,obs,yes,site1,50,20,10,www.test.com,NULL
-something about plants,density,count,yes,1993,2015,season:yr,105,obs,yes,site2,50,20,10,www.test.com,NULL
-something about plants,density,count,yes,1993,2015,season:yr,300,obs,yes,site3,50,20,10,www.test.com,NULL
-something about plants,density,count,yes,1993,2015,season:yr,550,obs,yes,site4,50,20,10,www.test.com,NULL
+title,samplingunits,samplingprotocol,structured,startyr,endyr,samplefreq,totalobs,studytype,community,siteID,sp_rep2_ext,sp_rep3_ext,sp_rep4_ext,metalink,knbIDCrazy Animal Survey,NULL,count,NULL,1987,1999,weekly,6,obs,yes,Site1,NULL,NULL,NULL,http://www.whatwhat.com/djdj,knb1232.15Crazy Animal Survey,NULL,count,NULL,1987,1999,weekly,6,obs,yes,Site2,NULL,NULL,NULL,http://www.whatwhat.com/djdj,knb1232.15Crazy Animal Survey,NULL,count,NULL,1987,1999,weekly,6,obs,yes,Site3,NULL,NULL,NULL,http://www.whatwhat.com/djdj,knb1232.15
