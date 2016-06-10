@@ -1,5 +1,6 @@
 #!usr/bin/env python
 import sys, os
+import datetime as tm
 sys.path.append(os.path.realpath(os.path.dirname(__file__)))
 from collections import namedtuple
 from class_commanders import LoadDataCommander, DataCommandReceiver
@@ -8,7 +9,8 @@ from class_commanders import MakeProxyCommander, MakeProxyReceiver
 from class_commanders import CareTakerCommand, CareTakerReceiver
 from class_metaverify import MetaVerifier
 from class_helpers import UniqueReplace, check_registration
-from class_tablebuilder import SiteTableBuilder, TableDirector
+from class_tablebuilder import (
+    SiteTableBuilder, TableDirector, MainTableBuilder)
 import class_logconfig as log
 
 class Facade:
@@ -41,7 +43,6 @@ class Facade:
     'dataproxy'
     'replace'
 
-
     Note:
     The class attribute 'input_manager' contains the 
     file caretaker (sessioncaretaker) and command 
@@ -55,7 +56,7 @@ class Facade:
     sessioncaretaker = carecommand._caretaker
 
     manager = namedtuple(
-        'maanger', 'caretaker invoker')
+        'manger', 'caretaker invoker')
     input_manager = manager(
         sessioncaretaker, sessioninvoker)
 
@@ -75,44 +76,25 @@ class Facade:
         '''
         self.clsinstance = None
         self._inputs = {}
-        self._rawcolumnregister = {
+        self._valueregister = {
             'globalid': None,
             'lterid': None,
-            'siteid': None,
-            'metadataid': None,
-            'sppcode': None,
-            'kingdom': None,
-            'phylum': None,
-            'class': None,
-            'order': None,
-            'family': None,
-            'genus': None,
-            'species': None,
-            'date': None,
-            'year': None,
-            'month': None,
-            'day': None,
-            'dateformat': None,
-            'spt_rep1': None,
-            'spt_rep2': None,
-            'spt_rep3': None,
-            'spt_rep4': None,
-            'structure': None,
-            'individ': None,
-            'unitobs': None,
-            'covariates': None
+            'sitelevels': None
         }
         self._data = None
         self._dbtabledict= {
-            'sitetable': SiteTableBuilder()
+            'sitetable': SiteTableBuilder(),
+            'maintable': MainTableBuilder()
         }
         self._tablelog = {
-            'sitetable': None
+            'sitetable': None,
+            'maintable': None
         }
 
     def make_proxy_helper(self, data, label):
         proxycmd = MakeProxyCommander(
-            MakeProxyReceiver(), data, label)            
+            MakeProxyReceiver(), data.reset_index(
+                drop=True), label)
         self.input_manager.invoker.perform_commands = proxycmd
         self.input_manager.invoker.make_proxy_data()
         self.input_manager.caretaker.save_to_memento(
@@ -151,9 +133,9 @@ class Facade:
         except Exception as e:
             raise AttributeError(str(e))
 
-        self._rawcolumnregister['globalid'] = (
+        self._valueregister['globalid'] = (
             self._inputs['metacheck'].lnedentry['globalid'])
-        self._rawcolumnregister['lterid'] = (
+        self._valueregister['lterid'] = (
             self._inputs['metacheck'].lnedentry['lter'])
 
         print('Input verified')
@@ -198,11 +180,19 @@ class Facade:
 
         return self._data
 
+    def register_site_levels(self, sitelevels):
+        try:
+            assert isinstance(sitelevels, list)
+        except Exception as e:
+            print(str(e))
+            raise TypeError('Site levels input is not a list')
+
+        sitelevels.sort()
+        self._valueregister['sitelevels'] = sitelevels
 
     def view_unique(self, inputname):
 
-        check_registration(self, inputname)
-
+        check_registration(self, inputname)    
         repinst = UniqueReplace(
             self._data, self._inputs[inputname])
         return repinst.get_levels()
@@ -242,23 +232,34 @@ class Facade:
         return self._data
 
     def make_table(self, inputname):
-        if self._tablelog[
-                self._inputs[inputname].tablename] is None:
+        tablename = self._inputs[inputname].tablename
+        globalid = self._inputs['metacheck'].lnedentry['globalid']
+        filename = os.path.split(
+                            self._inputs[
+                                'fileoptions'].filename)[1]
+        dt = (str(tm.datetime.now()).split()[0]).replace("-", "_")
+
+        if self._tablelog[tablename] is None:
             # Log to record input for different tables
-            self._tablelog[self._inputs[inputname].tablename] =(
-                log.configure_logger('tablename',(
-                    'Logs_UI/{}_{}_{}_{}'.format(
-                        self._inputs['metacheck'].lnedentry[
-                            'globalid'],
-                        self._inputs[inputname].tablename,
-                        self._inputs['fileoptions'].filename,
-                        'today.log'))))
+            self._tablelog[tablename] =(
+                log.configure_logger('tableformat',(
+                    'Logs_UI/{}_{}_{}_{}.log'.format(
+                        globalid, tablename,filename,dt))))
         else:
-            pass
+            pass                
+
         director = TableDirector()
-        builder = self._dbtabledict[
-            self._inputs[inputname].tablename]
+        builder = self._dbtabledict[tablename]
         director.set_user_input(self._inputs[inputname])
         director.set_builder(builder)
-        director.set_data(self._data)
+
+        if tablename != 'maintable':
+            director.set_data(self._data)
+        else:
+            metaverify = MetaVerifier(self._inputs['metacheck'])
+            metadata = metaverify._meta
+            director.set_data(metadata.iloc[globalid,:])
+
+        director.set_sitelevels(self._valueregister['sitelevels'])
+
         return director.get_database_table()

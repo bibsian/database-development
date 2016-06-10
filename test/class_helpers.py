@@ -3,6 +3,11 @@ import pandas as pd
 import sys, os
 sys.path.append(os.path.realpath(os.path.dirname(__file__)))
 import re
+from numpy import where
+
+def extract(d,keys):
+    ''' return subset of dictionary based on list of keys'''
+    return dict((k, d[k]) for k in d if k in keys)
 
 def check_int(x):
     ''' function to check if text can be converted to integer'''
@@ -139,4 +144,38 @@ class UniqueReplace(object):
                 self.userinput.lnedentry['to'])
 
             return modified
+
+def updated_df_values(olddataframe,newdataframe,logger, name):
+    '''
+    Helper function to aid in logging the difference between
+    dataframes after user have modified the entries.
+    For example, inputing latitude and longitude for the site
+    table or the extent of spatial replication in the main table.
+
+    Arguments:
+    olddataframe = An unmodified dataframe
+    newdataframe = A user modified dataframe
+    logger = An instance of a logger handler
+    table = A string with the name to append to log
+    '''
+    try:
+        assert (
+            olddataframe.columns.values.tolist() ==
+            newdataframe.columns.values.tolist()) is True
+    except Exception as e:
+        print(str(e))
+        raise AttributeError(
+            'Dataframe columns are not equivalent')
+    diffdf = (olddataframe != newdataframe)
+
+    for i,item in enumerate(diffdf.columns):
+        if any(diffdf[item].values.tolist()):
+            index = where(diffdf[item].values)[0].tolist()
+            logger.info('{} "{}" = {} to {}'.format(
+                name,
+                item,
+                olddataframe.loc[index,item].values.tolist(),
+                newdataframe.loc[index,item].values.tolist()))
+        else:
+            pass
 
