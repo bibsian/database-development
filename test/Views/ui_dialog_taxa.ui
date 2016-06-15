@@ -403,6 +403,28 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>ckCreateTaxa</tabstop>
+  <tabstop>ckSppCode</tabstop>
+  <tabstop>lnedSppCode</tabstop>
+  <tabstop>ckKingdom</tabstop>
+  <tabstop>lnedKingdom</tabstop>
+  <tabstop>ckPhylum</tabstop>
+  <tabstop>lnedPhylum</tabstop>
+  <tabstop>ckClass</tabstop>
+  <tabstop>lnedClass</tabstop>
+  <tabstop>ckOrder</tabstop>
+  <tabstop>lnedOrder</tabstop>
+  <tabstop>ckFamily</tabstop>
+  <tabstop>lnedFamily</tabstop>
+  <tabstop>ckGenus</tabstop>
+  <tabstop>lnedGenus</tabstop>
+  <tabstop>ckSpp</tabstop>
+  <tabstop>lnedSpp</tabstop>
+  <tabstop>btnTaxasubmit</tabstop>
+  <tabstop>btnSaveClose</tabstop>
+  <tabstop>btnCancel</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

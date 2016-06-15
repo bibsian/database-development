@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>816</width>
-    <height>347</height>
+    <width>913</width>
+    <height>364</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -155,32 +155,12 @@
                    </property>
                    <item>
                     <property name="text">
+                     <string>NULL</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
                      <string>dd - mm - YYYY (Any Order)</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>dd - YYYY (Any Order)</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>MM - YYYY (Any Order)</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>YYYY</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>MM</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>DD</string>
                     </property>
                    </item>
                    <item>
@@ -190,17 +170,37 @@
                    </item>
                    <item>
                     <property name="text">
+                     <string>dd - YYYY (Any Order)</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
                      <string>dd - YY (Any Order)</string>
                     </property>
                    </item>
                    <item>
                     <property name="text">
-                     <string>MM - YY (Any Order)</string>
+                     <string>mm - YYYY (Any Order)</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>mm - YY (Any Order)</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>YYYY</string>
                     </property>
                    </item>
                    <item>
                     <property name="text">
                      <string>YY</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>Julian day</string>
                     </property>
                    </item>
                   </widget>
@@ -229,32 +229,12 @@
                    </property>
                    <item>
                     <property name="text">
+                     <string>NULL</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
                      <string>dd - mm - YYYY (Any Order)</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>dd - YYYY (Any Order)</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>MM - YYYY (Any Order)</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>YYYY</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>MM</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>DD</string>
                     </property>
                    </item>
                    <item>
@@ -264,17 +244,17 @@
                    </item>
                    <item>
                     <property name="text">
+                     <string>dd - YYYY (Any Order)</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
                      <string>dd - YY (Any Order)</string>
                     </property>
                    </item>
                    <item>
                     <property name="text">
-                     <string>MM - YY (Any Order)</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>YY</string>
+                     <string>dd</string>
                     </property>
                    </item>
                   </widget>
@@ -298,6 +278,9 @@
                  </item>
                  <item row="0" column="2">
                   <widget class="QLabel" name="label_5">
+                   <property name="toolTip">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; text-decoration: underline;&quot;&gt;Format Examples&lt;/span&gt;&lt;/p&gt;&lt;p&gt;YYYY = 1996&lt;/p&gt;&lt;p&gt;YY = 96&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
                    <property name="text">
                     <string>Time Format</string>
                    </property>
@@ -316,32 +299,12 @@
                    </property>
                    <item>
                     <property name="text">
+                     <string>NULL</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
                      <string>dd - mm - YYYY (Any Order)</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>dd - YYYY (Any Order)</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>MM - YYYY (Any Order)</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>YYYY</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>MM</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>DD</string>
                     </property>
                    </item>
                    <item>
@@ -351,17 +314,17 @@
                    </item>
                    <item>
                     <property name="text">
-                     <string>dd - YY (Any Order)</string>
+                     <string>mm - YYYY (Any Order)</string>
                     </property>
                    </item>
                    <item>
                     <property name="text">
-                     <string>MM - YY (Any Order)</string>
+                     <string>mm - YY (Any Order)</string>
                     </property>
                    </item>
                    <item>
                     <property name="text">
-                     <string>YY</string>
+                     <string>mm</string>
                     </property>
                    </item>
                   </widget>
@@ -484,6 +447,21 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>lnedDay</tabstop>
+  <tabstop>cboxDay</tabstop>
+  <tabstop>ckDay</tabstop>
+  <tabstop>lnedMonth</tabstop>
+  <tabstop>cboxMonth</tabstop>
+  <tabstop>ckMonth</tabstop>
+  <tabstop>lnedYear</tabstop>
+  <tabstop>cboxYear</tabstop>
+  <tabstop>ckYear</tabstop>
+  <tabstop>ckJulian</tabstop>
+  <tabstop>ckMonthSpelling</tabstop>
+  <tabstop>btnSaveClose</tabstop>
+  <tabstop>btnCancel</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
