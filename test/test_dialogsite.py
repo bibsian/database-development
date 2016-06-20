@@ -14,6 +14,7 @@ import ui_mainrefactor as mw
 import class_modelviewpandas as view
 import config as orm
 
+
 @pytest.fixture
 def MainWindow():
     class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
