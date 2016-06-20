@@ -1,4 +1,4 @@
-  #!/usr/bin/env python
+#!/usr/bin/env python
 import pytest
 import sys, os
 import pandas as pd
@@ -11,11 +11,11 @@ from class_commanders import CommandInvoker
 from class_commanders import MakeProxyCommander, MakeProxyReceiver
 from class_commanders import CareTakerCommand, CareTakerReceiver
 from class_metaverify import MetaVerifier
-from class_helpers import UniqueReplace, check_registration
+from class_helpers import UniqueReplace, check_registration, extract
 from class_tablebuilder import (
     SiteTableBuilder, TableDirector, MainTableBuilder,
     TaxaTableBuilder)
-from collections import namedtuple
+from collections import namedtuple, OrderedDict
 import class_logconfig as log
 
 @pytest.fixture
@@ -44,7 +44,7 @@ def Facade():
         'rawtable'
         'climatesitetable'
         'climaterawtable'
-        'timeparser'
+        'timetable'
         'editdata'
         'dbquery'
         'dbpush'
@@ -88,14 +88,22 @@ def Facade():
             self._valueregister = {
                 'globalid': None,
                 'lterid': None,
+                'siteid':None,
                 'sitelevels': None
             }
             self._data = None
-            self._dbtabledict= {
+            self._dbtabledict = {
                 'sitetable': SiteTableBuilder(),
                 'maintable': MainTableBuilder(),
-                'taxatable': TaxaTableBuilder()
+                'taxatable': TaxaTableBuilder(),
+                'timetable': None
             }
+
+            self._datamerged = {
+                'raw_main': None,
+                'raw_main_taxa': None
+            }
+            
             self._tablelog = {
                 'sitetable': None,
                 'maintable': None,
@@ -250,13 +258,16 @@ def Facade():
             return self._data
 
         def make_table(self, inputname):
+            uniqueinput = self._inputs[inputname]
             tablename = self._inputs[inputname].tablename
             globalid = self._inputs['metacheck'].lnedentry['globalid']
             filename = os.path.split(
                                 self._inputs[
                                     'fileoptions'].filename)[1]
             dt = (str(tm.datetime.now()).split()[0]).replace("-", "_")
-
+            sitecol = self._inputs['siteinfo'].lnedentry['siteid']
+            uqsitelevels = self._valueregister['sitelevels']
+            
             if self._tablelog[tablename] is None:
                 # Log to record input for different tables
                 self._tablelog[tablename] =(
@@ -268,7 +279,7 @@ def Facade():
 
             director = TableDirector()           
             builder = self._dbtabledict[tablename]
-            director.set_user_input(self._inputs[inputname])
+            director.set_user_input(uniqueinput)
             director.set_builder(builder)
 
             if tablename != 'maintable':
@@ -278,7 +289,9 @@ def Facade():
                 metadata = metaverify._meta
                 director.set_data(metadata.iloc[globalid,:])
 
-            director.set_sitelevels(self._valueregister['sitelevels'])
+            director.set_globalid(globalid)
+            director.set_siteid(sitecol)
+            director.set_sitelevels(uqsitelevels)
 
             return director.get_database_table()
 
@@ -472,3 +485,66 @@ def test_build_main(
     print(df)
     assert (isinstance(df, pd.DataFrame)) is True
     face._tablelog['maintable'].info('is this logging?')
+
+
+@pytest.fixture
+def taxa_user_input():
+    taxalned = OrderedDict((
+        ('sppcode', ''),
+        ('kingdom', ''),
+        ('phylum', 'TAXON_PHYLUM'),
+        ('class', 'TAXON_CLASS'),
+        ('order', 'TAXON_ORDER'),
+        ('family', 'TAXON_FAMILY'),
+        ('genus', 'TAXON_GENUS'),
+        ('species', 'TAXON_SPECIES') 
+    ))
+
+    taxackbox = OrderedDict((
+        ('sppcode', False),
+        ('kingdom', False),
+        ('phylum', True),
+        ('class', True),
+        ('order', True),
+        ('family', True),
+        ('genus', True),
+        ('species', True) 
+    ))
+
+    taxacreate = {
+        'taxacreate': False
+    }
+    
+    available = [
+        x for x,y in zip(
+            list(taxalned.keys()), list(
+                taxackbox.values()))
+        if y is True
+    ]
+    
+    taxaini = InputHandler(
+        name='taxainfo',
+        tablename='taxatable',
+        lnedentry= extract(taxalned, available),
+        checks=taxacreate)
+    return taxaini
+    
+def test_build_taxa(
+        sitehandle, Facade, filehandle, metahandle,
+        taxa_user_input):
+    face = Facade()
+    face.input_register(metahandle)
+    face.meta_verify()
+    face.input_register(filehandle)
+    face.load_data()
+    face.input_register(sitehandle)
+    face.input_register(taxa_user_input)
+    sitelevels = face._data['site'].drop_duplicates().values.tolist()
+    sitelevels.sort()
+    face.register_site_levels(sitelevels)
+    
+    taxadirector = face.make_table('taxainfo')
+    df = taxadirector._availdf
+    print(df)
+    assert (isinstance(df, pd.DataFrame)) is True
+

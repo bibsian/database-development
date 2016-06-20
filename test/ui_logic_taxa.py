@@ -1,25 +1,17 @@
 from PyQt4 import QtGui
-import pandas as pd
 import class_inputhandler as ini
 import class_modelviewpandas as view
 import config as orm
 import ui_dialog_taxa as uitax
 from collections import OrderedDict
-import ui_dialog_table_preview as uiprev
+import ui_log_preview as tprev
 import helpers as hlp
-
-
-class TablePreview(QtGui.QDialog, uiprev.Ui_Dialog):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.setupUi(self)
-        self.btnCancel.clicked.connect(self.close)
 
 class TaxaDialog(QtGui.QDialog, uitax.Ui_Dialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
-
+        self.facade = None
         # Place holders for user inputs
         self.taxalned = {}
         self.taxackbox = {}
@@ -44,7 +36,7 @@ class TaxaDialog(QtGui.QDialog, uitax.Ui_Dialog):
         # Update boxes/preview box
         self.message = QtGui.QMessageBox
         self.error = QtGui.QErrorMessage()
-        self.preview = TablePreview()
+        self.preview = tprev.PreviewDialog()
 
     def submit_change(self):
         '''
@@ -103,88 +95,30 @@ class TaxaDialog(QtGui.QDialog, uitax.Ui_Dialog):
 
         self._log = self.facade._tablelog['taxatable']
         self.taxatable = self.taxadirector._availdf.copy()
-        for i,item in enumerate(self.taxaini.lnedentry):
-            self.taxatable.rename(
-                columns={self.taxatable.columns[i]:item},
-                inplace=True)
         self.taxamodel = self.viewEdit(self.taxatable)
+
         if sender is self.btnTaxasubmit:
-            self.preview = TablePreview()
             self.preview.tabviewPreview.setModel(self.taxamodel)
             self.preview.show()
         elif sender is self.btnSaveClose:
             try:
-                if self.taxaorms.values() is not None:
-                    self.taxaorms = {}
-                else:
-                    pass
-                # ---- This block is dedicated to mergeing 
-                # ---- data from the database to get foreign
-                # ---- keys correct. Merging, projid's onto
-                # ---- the raw data, then onto the taxa data
-                globalid = self.facade._valueregister['globalid']
-                siteloc = self.facade._inputs[
-                    'siteinfo'].lnedentry['siteid']
-                sitelevels = self.facade._valueregister[
-                    'sitelevels']                    
-                projids = orm.session.query(
-                    orm.Maintable).order_by(
-                        orm.Maintable.siteid).filter(
-                            orm.Maintable.siteid.in_(sitelevels)
-                            ).filter(
-                                orm.Maintable.metarecordid ==
-                                globalid)
-                qmaindf = pd.read_sql(
-                    projids.statement, projids.session.bind)
-                rawmerge = pd.merge(
-                    self.facade._data, qmaindf,
-                    left_on=siteloc,
-                    right_on='siteid', how='left')
-                rawtaxacol = [
-                    x for x in list(self.taxalned.values())
-                    if x != '']
 
-                rawtaxacol.append('projid')
-                rawtaxacol.append(siteloc)
-                taxadflist = []
-                for i in sitelevels:
-                    taxadflist.append(
-                        rawmerge[rawmerge['siteid']==i].loc[
-                            :, rawtaxacol[:]])
-
-                taxamerge = taxadflist[0]
-                for i,item in enumerate(taxadflist):
-                    if i == 0:
-                        pass
-                    else:
-                        taxamerge = pd.concat(
-                            [taxamerge, item], axis=0).reset_index(
-                                drop=True)
-
-                rawtaxacol.remove('projid')
-                self.available.append(siteloc)
-                taxaall = pd.merge(
-                    taxamerge, self.taxatable,
-                    left_on=rawtaxacol,
-                    right_on=self.available, how='left')
-                taxaall = taxaall.drop_duplicates()
-                taxaall = taxaall.reset_index(drop=True)
-
-                alltaxacols = list(self.taxalned.keys())
-                alltaxacols.insert(0, 'projid')
-                alltaxacols.append('authority')
-
-                for i in range(len(taxaall)):
+                # Instantiating taxa orms
+                for i in range(len(self.taxatable)):
                     self.taxaorms[i] = orm.Taxatable(
-                        projid=taxaall.loc[i, 'projid'])
+                        projid=self.taxatable.loc[i, 'projid'])
                     orm.session.add(self.taxaorms[i])
-                for i in range(len(taxaall)):
-                    upload = taxaall.loc[i, alltaxacols].to_dict()
-                    for key in upload.items():
-                        setattr(self.taxaorms[i], key[0], key[1])
+                orm.session.flush()
 
-                # ----- End Merging block
-                # ----- TRY TO TURN INTO CLASS
+                # Populating the all
+                # other fields for taxa orms
+                for i in range(len(self.taxatable)):
+                    upload = self.taxatable.loc[
+                        i, self.taxatable.columns].to_dict()
+                    for key in upload.items():
+                        setattr(
+                            self.taxaorms[i], key[0], key[1])
+                orm.session.flush()
 
             except Exception as e:
                 print(str(e))

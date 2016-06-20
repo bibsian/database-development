@@ -173,13 +173,14 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
                 self.siteorms[i] = orm.Sitetable(
                     siteid=self.sitetabledata.loc[i,'siteid'])
                 orm.session.add(self.siteorms[i])
-
+            orm.session.flush()
             for i in range(len(self.sitetabledata)):
                 dbupload = self.sitetabledata.loc[
                     i,self.sitetabledata.columns].to_dict()
                 for key in dbupload.items():
                     setattr(self.siteorms[i], key[0], key[1])
 
+            orm.session.flush()
             self.site_unlocks.emit('Tables Enabled')
             self.site_manager()
             self.close()

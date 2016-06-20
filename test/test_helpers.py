@@ -213,3 +213,23 @@ def test_convert_types(maindf, convert_typetest):
     convert_typetest(maindf, orm.maintypes)
     print(maindf.dtypes)
 
+@pytest.fixture
+def year_strip():
+    def year_strip(dateformat):
+        f = dateformat
+        found = re.search('Y+', f)
+        ylength = len(found.group(0))
+        return ylength
+    return year_strip
+    
+def test_year_strip(year_strip):
+    y2 = 'dd - mm - YY (Any Order)'
+    y4 = 'dd - mm - YYYY (Any Order)'
+    ym2 = 'mm - YY (Any Order)'
+    ym4 = 'mm - YYYY (Any Order)'
+    y = 'YYYY'
+    assert (year_strip(y2) == 2) is True
+    assert (year_strip(ym2) == 2) is True
+    assert (year_strip(ym4) == 4) is True
+    assert (year_strip(y4) == 4) is True
+    assert (year_strip(y) == 4) is True

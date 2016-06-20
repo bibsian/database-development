@@ -17,7 +17,6 @@ from sqlalchemy import *
 from sqlalchemy.dialects.postgresql import *
 import pandas as pd
 import sys
-
 from sys import platform as _platform
 if _platform == "darwin":
     sys.path.insert(
@@ -33,9 +32,8 @@ lterex = pd.read_csv((path+'lter_table_test.csv'))
 ltertablename = 'lter'
 mainex = pd.read_csv((path+'main_table_test.csv'))
 maintablename = 'main_data'
-siteex = pd.read_csv((path+'siteID_table_test.csv'))
+siteex = pd.read_csv((path+'site_table_test.csv'))
 sitetablename = 'siteID'
-
 
 # Here we are using the packageage sqlalchemy
 # connecting to the lter databse
@@ -48,7 +46,7 @@ engine = create_engine(
     echo=True)
 
 # Note that the relationships in the database (i.e. entity-relation
-#-ship diagram or  ED diagram) can be visualized after all the tables
+# ship diagram or  ED diagram) can be visualized after all the tables
 # have been created. So, the first step to setting up the skeleton
 # of out LTER database
 # is going to be to create all tables, and attributes within each,
@@ -222,6 +220,5 @@ metadata.create_all(engine)
 
 
 lterex.to_sql(ltertablename, con=engine, if_exists="append", index=False)
-#
 #siteex.to_sql(sitetablename, con=engine, if_exists="append", index=False)
 #mainex.to_sql(maintablename, con=engine, if_exists="append", index=False)

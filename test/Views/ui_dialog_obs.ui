@@ -144,7 +144,7 @@
                     </sizepolicy>
                    </property>
                    <property name="focusPolicy">
-                    <enum>Qt::ClickFocus</enum>
+                    <enum>Qt::TabFocus</enum>
                    </property>
                    <property name="inputMask">
                     <string/>
@@ -175,7 +175,7 @@
                     </sizepolicy>
                    </property>
                    <property name="focusPolicy">
-                    <enum>Qt::ClickFocus</enum>
+                    <enum>Qt::TabFocus</enum>
                    </property>
                    <property name="inputMask">
                     <string/>
@@ -227,7 +227,7 @@
                     </sizepolicy>
                    </property>
                    <property name="focusPolicy">
-                    <enum>Qt::ClickFocus</enum>
+                    <enum>Qt::TabFocus</enum>
                    </property>
                    <property name="inputMask">
                     <string/>
@@ -265,7 +265,7 @@
                     </sizepolicy>
                    </property>
                    <property name="focusPolicy">
-                    <enum>Qt::ClickFocus</enum>
+                    <enum>Qt::TabFocus</enum>
                    </property>
                    <property name="inputMask">
                     <string/>
@@ -310,7 +310,7 @@
                     </sizepolicy>
                    </property>
                    <property name="focusPolicy">
-                    <enum>Qt::ClickFocus</enum>
+                    <enum>Qt::TabFocus</enum>
                    </property>
                    <property name="inputMask">
                     <string/>
@@ -369,7 +369,7 @@
                     </sizepolicy>
                    </property>
                    <property name="focusPolicy">
-                    <enum>Qt::ClickFocus</enum>
+                    <enum>Qt::TabFocus</enum>
                    </property>
                    <property name="inputMask">
                     <string/>
@@ -407,7 +407,7 @@
                     </sizepolicy>
                    </property>
                    <property name="focusPolicy">
-                    <enum>Qt::ClickFocus</enum>
+                    <enum>Qt::TabFocus</enum>
                    </property>
                    <property name="inputMask">
                     <string/>
@@ -477,6 +477,13 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_7">
        <item>
+        <widget class="QPushButton" name="btnPreview">
+         <property name="text">
+          <string>Preview</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <spacer name="horizontalSpacer_6">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -509,6 +516,23 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>lnedRep1</tabstop>
+  <tabstop>lnedRep2</tabstop>
+  <tabstop>ckRep2</tabstop>
+  <tabstop>lnedRep3</tabstop>
+  <tabstop>ckRep3</tabstop>
+  <tabstop>lnedRep4</tabstop>
+  <tabstop>ckRep4</tabstop>
+  <tabstop>lnedStructure</tabstop>
+  <tabstop>ckStructure</tabstop>
+  <tabstop>lnedIndividual</tabstop>
+  <tabstop>ckIndividual</tabstop>
+  <tabstop>lnedRaw</tabstop>
+  <tabstop>btnPreview</tabstop>
+  <tabstop>btnSaveClose</tabstop>
+  <tabstop>btnCancel</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

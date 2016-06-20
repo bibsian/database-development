@@ -125,6 +125,16 @@
               <layout class="QVBoxLayout" name="verticalLayout">
                <item>
                 <layout class="QGridLayout" name="gridLayout">
+                 <item row="1" column="1">
+                  <widget class="QLineEdit" name="lnedDay">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                  </widget>
+                 </item>
                  <item row="0" column="1">
                   <widget class="QLabel" name="label_4">
                    <property name="text">
@@ -132,16 +142,6 @@
                    </property>
                    <property name="alignment">
                     <set>Qt::AlignCenter</set>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="3" column="1">
-                  <widget class="QLineEdit" name="lnedYear">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
                    </property>
                   </widget>
                  </item>
@@ -205,20 +205,6 @@
                    </item>
                   </widget>
                  </item>
-                 <item row="3" column="3">
-                  <widget class="QCheckBox" name="ckYear">
-                   <property name="text">
-                    <string>Year Not Present</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="0">
-                  <widget class="QLabel" name="label">
-                   <property name="text">
-                    <string>Day</string>
-                   </property>
-                  </widget>
-                 </item>
                  <item row="1" column="2">
                   <widget class="QComboBox" name="cboxDay">
                    <property name="sizePolicy">
@@ -244,6 +230,11 @@
                    </item>
                    <item>
                     <property name="text">
+                     <string>dd - mm (Any Order)</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
                      <string>dd - YYYY (Any Order)</string>
                     </property>
                    </item>
@@ -257,35 +248,41 @@
                      <string>dd</string>
                     </property>
                    </item>
+                   <item>
+                    <property name="text">
+                     <string>julian day - YYYY (Any Order)</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>julian day - YY (Any Order)</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>julian day</string>
+                    </property>
+                   </item>
+                  </widget>
+                 </item>
+                 <item row="4" column="2">
+                  <widget class="QCheckBox" name="ckMonthSpelling">
+                   <property name="text">
+                    <string>Month Spelled Out</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="4" column="1">
+                  <widget class="QCheckBox" name="ckJulian">
+                   <property name="text">
+                    <string>Julian Day</string>
+                   </property>
                   </widget>
                  </item>
                  <item row="3" column="0">
                   <widget class="QLabel" name="label_3">
                    <property name="text">
                     <string>Year</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="2" column="1">
-                  <widget class="QLineEdit" name="lnedMonth">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="0" column="2">
-                  <widget class="QLabel" name="label_5">
-                   <property name="toolTip">
-                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; text-decoration: underline;&quot;&gt;Format Examples&lt;/span&gt;&lt;/p&gt;&lt;p&gt;YYYY = 1996&lt;/p&gt;&lt;p&gt;YY = 96&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                   </property>
-                   <property name="text">
-                    <string>Time Format</string>
-                   </property>
-                   <property name="alignment">
-                    <set>Qt::AlignCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -314,6 +311,11 @@
                    </item>
                    <item>
                     <property name="text">
+                     <string>dd - mm (Any Order)</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
                      <string>mm - YYYY (Any Order)</string>
                     </property>
                    </item>
@@ -329,15 +331,15 @@
                    </item>
                   </widget>
                  </item>
-                 <item row="2" column="3">
-                  <widget class="QCheckBox" name="ckMonth">
+                 <item row="2" column="0">
+                  <widget class="QLabel" name="label_2">
                    <property name="text">
-                    <string>Month Not Present</string>
+                    <string>Month</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="1" column="1">
-                  <widget class="QLineEdit" name="lnedDay">
+                 <item row="3" column="1">
+                  <widget class="QLineEdit" name="lnedYear">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                      <horstretch>0</horstretch>
@@ -346,31 +348,33 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="1" column="3">
-                  <widget class="QCheckBox" name="ckDay">
-                   <property name="text">
-                    <string>Day Not Present</string>
+                 <item row="2" column="1">
+                  <widget class="QLineEdit" name="lnedMonth">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
                    </property>
                   </widget>
                  </item>
-                 <item row="2" column="0">
-                  <widget class="QLabel" name="label_2">
+                 <item row="1" column="0">
+                  <widget class="QLabel" name="label">
                    <property name="text">
-                    <string>Month</string>
+                    <string>Day</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="4" column="1">
-                  <widget class="QCheckBox" name="ckJulian">
-                   <property name="text">
-                    <string>Julian Day</string>
+                 <item row="0" column="2">
+                  <widget class="QLabel" name="label_5">
+                   <property name="toolTip">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; text-decoration: underline;&quot;&gt;Format Examples&lt;/span&gt;&lt;/p&gt;&lt;p&gt;YYYY = 1996&lt;/p&gt;&lt;p&gt;YY = 96&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                    </property>
-                  </widget>
-                 </item>
-                 <item row="4" column="2">
-                  <widget class="QCheckBox" name="ckMonthSpelling">
                    <property name="text">
-                    <string>Month Spelled Out</string>
+                    <string>Time Format</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -415,6 +419,13 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_7">
        <item>
+        <widget class="QPushButton" name="btnPreview">
+         <property name="text">
+          <string>Preview</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <spacer name="horizontalSpacer_6">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -450,13 +461,10 @@
  <tabstops>
   <tabstop>lnedDay</tabstop>
   <tabstop>cboxDay</tabstop>
-  <tabstop>ckDay</tabstop>
   <tabstop>lnedMonth</tabstop>
   <tabstop>cboxMonth</tabstop>
-  <tabstop>ckMonth</tabstop>
   <tabstop>lnedYear</tabstop>
   <tabstop>cboxYear</tabstop>
-  <tabstop>ckYear</tabstop>
   <tabstop>ckJulian</tabstop>
   <tabstop>ckMonthSpelling</tabstop>
   <tabstop>btnSaveClose</tabstop>

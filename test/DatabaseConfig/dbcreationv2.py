@@ -15,7 +15,7 @@ from sqlalchemy.dialects.postgresql import *
 import pandas as pd
 
 
-lterex = pd.read_csv(('lter_table.csv'))
+lterex = pd.read_csv(('lter_table_test.csv'))
 ltertablename = 'lter_table'
 
 
@@ -60,10 +60,8 @@ climate_raw_table = Table(
     Column('metarecordid', Integer, primary_key=True),
     Column('title', TEXT),
     Column('stationid', None, ForeignKey(
-        'climate_station_table.stationid')),
-    ForeignKeyConstraint(
-        ['stationid'], ['climate_station_table.stationid'],
-        ondelete='CASCADE'),
+        'climate_station_table.stationid', ondelete="CASCADE",
+        onupdate="CASCADE")),
     Column('year', NUMERIC),
     Column('month', NUMERIC),
     Column('day', NUMERIC),
@@ -128,7 +126,7 @@ climate_station_table = Table(
     'climate_station_table', metadata,
     Column('stationid', VARCHAR(200), primary_key=True),
     Column('lterid', None,
-           ForeignKey('lter_table.lterid')),
+           ForeignKey('lter_table.lterid', onupdate="CASCADE")),
     Column('lat', NUMERIC),
     Column('lng', NUMERIC),
     Column('descript', TEXT))
@@ -154,8 +152,8 @@ lter_table = Table(
 site_table = Table(
     'site_table', metadata,
     Column('siteid', VARCHAR(200), primary_key=True),
-    Column('lterid', None,
-           ForeignKey('lter_table.lterid')),
+    Column('lterid', VARCHAR(10),
+           ForeignKey('lter_table.lterid', onupdate="CASCADE")),
     Column('lat', NUMERIC),
     Column('lng', NUMERIC),
     Column('descript', TEXT))
@@ -183,15 +181,16 @@ main_table = Table(
     # about the sampling organisms life stage
     # ie. size, age, life-stage 
     Column('structured',  VARCHAR(50)),
-    Column('studystartyr', INTEGER),
-    Column('studyendyr', INTEGER),
-    Column('siteid', None, ForeignKey('site_table.siteid')),
+    Column('studystartyr', NUMERIC),
+    Column('studyendyr', NUMERIC),
+    Column('siteid', VARCHAR(200),
+           ForeignKey('site_table.siteid', onupdate="CASCADE")),
     # DERIVED: start year of data collection for
     # a particular site
-    Column('sitestartyr', INTEGER),
+    Column('sitestartyr', NUMERIC),
     # DERIVED: end year of data collection for
     # a particular site
-    Column('siteendyr', INTEGER),
+    Column('siteendyr', NUMERIC),
     # META: This column relates to the frequency of sampling
     # i.e. seasonal, monthly, month:yr, season:yr, daily, etc.
     Column('samplefreq', TEXT),
@@ -210,12 +209,7 @@ main_table = Table(
     Column('community', BOOLEAN),
     # DERIVED: calculates the number of unique
     # taxonomic units from raw data
-    Column('uniquetaxaunits', INTEGER),
-    # DERIVED: This will be the total observation
-    # related to this project. THis includes
-    # all temporal and spatial levels and
-    # all taxonomc groups
-    Column('totalobs', NUMERIC),
+    Column('uniquetaxaunits', NUMERIC),
 
     # Spatial replicate informatoin
     # META:
@@ -237,7 +231,7 @@ main_table = Table(
     
     Column('sp_rep1_ext', NUMERIC),
     Column('sp_rep1_ext_units', VARCHAR(200)),
-    Column('sp_rep1_label', None, ForeignKey('site_table.siteid')),
+    Column('sp_rep1_label', VARCHAR(200)),
     Column('sp_rep1_uniquelevels', NUMERIC),
     
     Column('sp_rep2_ext', NUMERIC),
@@ -269,14 +263,12 @@ main_table = Table(
 taxa_table = Table(
     'taxa_table', metadata,
     Column('taxaid', Integer, primary_key=True),
-    Column('projid', None, ForeignKey('main_table.projid')),
-    ForeignKeyConstraint(
-        ['projid'],['main_table.projid'], ondelete='CASCADE',
-        onupdate='CASCADE'),
+    Column('projid', Integer, ForeignKey('main_table.projid',
+           ondelete="CASCADE", onupdate="CASCADE")),
     Column('sppcode', VARCHAR(100)),
     Column('kingdom', VARCHAR(100)),
     Column('phylum', VARCHAR(100)),
-    Column('class', VARCHAR(100)),
+    Column('clss', VARCHAR(100)),
     Column('order', VARCHAR(100)),
     Column('family', VARCHAR(100)),
     Column('genus', VARCHAR(100)),
@@ -290,10 +282,10 @@ taxa_table = Table(
 raw_table = Table(
     'raw_table', metadata,
     Column('sampleid', Integer, primary_key=True),
-    Column('taxaid', None, ForeignKey('taxa_table.taxaid')),
-    Column('projid', None, ForeignKey('main_table.projid')),
-    ForeignKeyConstraint(
-        ['projid'],['main_table.projid'], ondelete='CASCADE'),
+    Column('taxaid', None, ForeignKey(
+        'taxa_table.taxaid', ondelete="CASCADE", onupdate="CASCADE")),
+    Column('projid', None, ForeignKey(
+        'main_table.projid', ondelete="CASCADE", onupdate="CASCADE")),
     Column('year', NUMERIC),
     Column('month', NUMERIC),
     Column('day', NUMERIC),

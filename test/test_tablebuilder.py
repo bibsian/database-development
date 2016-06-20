@@ -8,6 +8,9 @@ sys.path.append(os.path.realpath(os.path.dirname(__file__)))
 import class_inputhandler as ini
 import class_userfacade as face
 from class_helpers import *
+import class_merger as mrg
+from collections import OrderedDict
+import config as orm
 
 @pytest.fixture
 def AbstractTableBuilder():
@@ -94,7 +97,7 @@ def AbstractTableBuilder():
                 'authors', 'authors_contact', 'metalink', 'knbid'],
             'time': False,
             'cov': False,
-            'depend': True
+            'depend': False
         }
         taxatable = {
             'columns': [
@@ -102,7 +105,7 @@ def AbstractTableBuilder():
                 'order','family', 'genus', 'species', 'authority'],
             'time': False,
             'cov': False,
-            'depend': False
+            'depend': True
         }
         rawtable = {
             'columns': [
@@ -111,7 +114,7 @@ def AbstractTableBuilder():
                 'structure', 'individ', 'unitobs', 'covariates'],
             'time': True,
             'cov': True ,
-            'depend': False
+            'depend': True
         }
 
         tabledict = {
@@ -161,7 +164,7 @@ def AbstractTableBuilder():
                 self._inputs.tablename]['depend']
         
         @abc.abstractmethod
-        def get_merged_foreign_data(self):
+        def get_dependent_data(self):
             pass
 
         @abc.abstractmethod
@@ -181,7 +184,7 @@ def SiteTableBuilder(AbstractTableBuilder):
 
         def get_dataframe(
                 self, dataframe, acols, nullcols, dbcol,
-                sitelevels):
+                globalid, siteid, sitelevels):
             try:
                 assert acols is not None
             except Exception as e:
@@ -227,7 +230,7 @@ def MainTableBuilder(AbstractTableBuilder):
 
         def get_dataframe(
                 self, dataframe, acols, nullcols, dbcol,
-                sitelevels):
+                globalid, siteid, sitelevels):
             try:
                 assert acols is not None
             except Exception as e:
@@ -338,10 +341,10 @@ def TaxaTableBuilder(AbstractTableBuilder):
         Note, no get methods because there is no
         alternate informatoin needed
         '''
-
+        dependentdf = None
         def get_dataframe(
                 self, dataframe, acols, nullcols, dbcol,
-                sitelevels):
+                globalid, siteid, sitelevels):
             try:
                 assert acols is not None
             except Exception as e:
@@ -360,7 +363,118 @@ def TaxaTableBuilder(AbstractTableBuilder):
                 nullcols.remove('projid')
             else:
                 pass
+            
+            dbcolrevised = [x for x in dbcol if x not in nullcols]
+            uniquesubset_site_list = []
+            self.dependentdf = produce_null_df(
+                ncols=2, colnames=['uniquetaxaunits', 'siteid'],
+                dflength=len(sitelevels), nullvalue='NULL'
+            )
+            for i,item in enumerate(sitelevels):                
+                unqdf = dataframe[dataframe[siteid]==item]
+                uniquesubset = unqdf[acols]
+                unique = uniquesubset.drop_duplicates()
+                unique = unique.reset_index(drop=True)
+                self.dependentdf[
+                    'uniquetaxaunits'].iloc[i] = len(uniquesubset)
+                self.dependentdf['siteid'].iloc[i] = item
 
+                sitelevel = produce_null_df(
+                    ncols=len(unique),
+                    colnames=[siteid],
+                    dflength=len(unique),
+                    nullvalue=item)
+                nullsubset = produce_null_df(
+                    ncols=len(nullcols),
+                    colnames=nullcols,
+                    dflength=len(unique),
+                    nullvalue='NaN')
+
+                unique = pd.concat(
+                    [unique,nullsubset,sitelevel], axis=1)
+                uniquesubset_site_list.append(unique)
+
+            final = uniquesubset_site_list[0]
+            for i,item in enumerate(uniquesubset_site_list):
+                if i > 0:
+                    final = pd.concat([final,item], ignore_index=True)
+                else:
+                    pass
+
+            for i,item in enumerate(dbcolrevised):
+                final.rename(
+                    columns={acols[i]:item},
+                    inplace=True)
+
+            query_class = mrg.Merger(globalid)
+            sitefilter = sitelevels
+            q_data = query_class.query_database(
+                'maintable', sitefilter)
+            taxa_merge = pd.merge(
+                final, q_data,
+                left_on=siteid, right_on='siteid',
+                how='left'
+            )
+
+            self.dependentdf = pd.merge(
+                taxa_merge, self.dependentdf,
+                left_on='siteid', right_on='siteid',
+                how='left'
+            )
+
+
+            dbcol.insert(0,'projid')
+            return taxa_merge[dbcol]
+
+        def get_dependent_data(self):
+            maindata = self.dependentdf[
+                ['projid','uniquetaxaunits_y']].drop_duplicates()
+            maindata.columns = ['projid', 'uniquetaxaunits']
+            maindata = maindata.reset_index()
+            mainqueries = {}
+
+            try:
+                for i in range(len(maindata)):
+                    mainqueries[i] = orm.session.query(
+                        orm.Maintable).filter(
+                            orm.Maintable.projid ==
+                            maindata['projid'][i])
+                    mainqueries[i].one().uniquetaxaunits = (
+                        maindata['uniquetaxaunits'][i])
+                orm.session.flush()
+            except Exception as e:
+                print(str(e))
+                raise ValueError(
+                    'Could not modified maintable uniquetaxaunits')
+
+    return TaxaTableBuilder
+
+@pytest.fixture
+def RawTableBuilder(AbstractTableBuilder):
+    class RawTableBuilder(AbstractTableBuilder):
+        '''
+        Concrete table builder implementation: Site
+        Note, no get methods because there is no
+        alternate informatoin needed
+        '''
+        def get_dataframe(
+                self, dataframe, acols, nullcols, dbcol,
+                globalid, siteid, sitelevels):
+            try:
+                assert acols is not None
+            except Exception as e:
+                print(str(e))
+                raise AssertionError('Columns names not set')
+            try:
+                assert dataframe is not None
+            except Exception as e:
+                print(str(e))
+                raise AssertionError('Raw dataframe not set')
+            acols.remove('sampleid')
+            acols.remove('covariates')
+            acols.remove('year')
+            acols.remove('month')
+            acols.remove('day')
             uniquesubset = dataframe[acols]
             nullsubset = produce_null_df(
                 ncols=len(nullcols),
@@ -372,11 +486,12 @@ def TaxaTableBuilder(AbstractTableBuilder):
                 [uniquesubset, nullsubset], axis=1).reset_index(
                     drop=True)
             final = concat.drop_duplicates().reset_index(drop=True) 
-            
-            
+            final.columns =dbcol
             return final
-        
-    return TaxaTableBuilder
+
+
+    return RawTableBuilder 
+
 
 @pytest.fixture
 def DatabaseTable():
@@ -418,7 +533,7 @@ def DatabaseTable():
 
         def set_dependent_status(self, dependitems):
             self._depend = dependitems
-
+            
     return DatabaseTable
 
 
@@ -431,7 +546,10 @@ def TableDirector(DatabaseTable):
         _name = None
         _builder = None
         _rawdata = None
+        _globalid = None
         _sitelevels = None
+        _siteid = None
+
         def set_user_input(self, userinputcls):
             try:
                 self._inputs = userinputcls
@@ -457,8 +575,25 @@ def TableDirector(DatabaseTable):
                 print(str(e))
                 raise AssertionError('Data not set')
 
+        def set_globalid(self, globalid):
+            try:
+                assert globalid is not None
+            except Exception as e:
+                print(str(e))
+                raise AttributeError('Global Id is not registered')
+            self._globalid = globalid
+            
+        def set_siteid(self, siteid):
+            try:
+                assert siteid is not None
+            except Exception as e:
+                print(str(e))
+                raise AttributeError('SiteId is not registered')
+            self._siteid = siteid
+            
         def set_sitelevels(self, sitelevels):
             self._sitelevels = sitelevels
+
             
         def get_database_table(self):
             ''' Initiates a concrete table class'''
@@ -485,7 +620,7 @@ def TableDirector(DatabaseTable):
 
             adata = self._builder.get_dataframe(
                 self._rawdata, acolumns, nullcol, columns,
-                self._sitelevels)
+                self._globalid, self._siteid, self._sitelevels)
 
             dbtable.set_dataframe(adata)
             
@@ -497,7 +632,14 @@ def TableDirector(DatabaseTable):
 
             dep = self._builder.get_dependent_status()
             dbtable.set_dependent_status(dep)
-            
+            print(dep)
+            if dep is True:
+                print('in the build block')
+                self._builder.get_dependent_data()
+                print('executed the dependent command')
+            else:
+                pass
+
             return dbtable
 
     return TableDirector
@@ -580,61 +722,64 @@ def test_maintable_build(
     assert (isinstance(director, TableDirector)) is True
     director.set_user_input(face_input)
     director.set_builder(maintable)
-    director.set_data(metadf)
+    director.set_data(metadf)    
     director.set_sitelevels(sitelevels)
 
     maintab = director.get_database_table()
     showmain = maintab._availdf
     assert (isinstance(showmain, pd.DataFrame)) is True
-    print(showmain)
 
 
 @pytest.fixture
 def taxa_user_input():
-    taxalned = {
-        'sppcode': '',
-        'kingdom': '',
-        'phylum': 'TAXON_PHYLUM',
-        'class': 'TAXON_CLASS',
-        'order': 'TAXON_ORDER',
-        'family': 'TAXON_FAMILY',
-        'genus': 'TAXON_GENUS',
-        'species': 'TAXON_SPECIES' 
-    }
+    taxalned = OrderedDict((
+        ('sppcode', ''),
+        ('kingdom', ''),
+        ('phylum', 'TAXON_PHYLUM'),
+        ('clss', 'TAXON_CLASS'),
+        ('order', 'TAXON_ORDER'),
+        ('family', 'TAXON_FAMILY'),
+        ('genus', 'TAXON_GENUS'),
+        ('species', 'TAXON_SPECIES') 
+    ))
 
-    taxackbox = {
-        'sppcode': False,
-        'kingdom': False,
-        'phylum': True,
-        'class': True,
-        'order': True,
-        'family': True,
-        'genus': True,
-        'species': True 
-    }
+    taxackbox = OrderedDict((
+        ('sppcode', False),
+        ('kingdom', False),
+        ('phylum', True),
+        ('clss', True),
+        ('order', True),
+        ('family', True),
+        ('genus', True),
+        ('species', True) 
+    ))
 
     taxacreate = {
         'taxacreate': False
     }
-
+    
     available = [
         x for x,y in zip(
             list(taxalned.keys()), list(
                 taxackbox.values()))
         if y is True
     ]
-
     
     taxaini = ini.InputHandler(
         name='taxainput',
         tablename='taxatable',
-        lnedentry=extract(taxalned, available),
+        lnedentry= extract(taxalned, available),
         checks=taxacreate)
     return taxaini
-    
+
+@pytest.fixture
+def taxadfexpected():
+    return pd.read_csv('DatabaseConfig/taxa_table_test.csv')
+
 def test_taxatable_build(
-        TaxaTableBuilder, TableDirector, taxa_user_input, df):
-    sitelevels = df['SITE'].values.tolist()
+        TaxaTableBuilder, TableDirector, taxa_user_input, df,
+        taxadfexpected):
+    sitelevels = df['SITE'].drop_duplicates().values.tolist()
     sitelevels.sort()
     facade = face.Facade()
     facade.input_register(taxa_user_input)
@@ -647,8 +792,23 @@ def test_taxatable_build(
     director.set_user_input(face_input)
     director.set_builder(taxabuilder)
     director.set_data(df)
+    director.set_globalid(2)
+    director.set_siteid('SITE')
     director.set_sitelevels(sitelevels)
+
     taxatable = director.get_database_table()
     showtaxa = taxatable._availdf
+    assert isinstance(showtaxa,pd.DataFrame)    
+
     print(showtaxa)
-    assert 0
+    testphylum = showtaxa['phylum'].values.tolist()
+    testorder = showtaxa['order'].values.tolist()
+    testspecies = showtaxa['species'].values.tolist()
+
+    truephylum = taxadfexpected['phylum'].values.tolist()
+    trueorder = taxadfexpected['order'].values.tolist()
+    truespecies = taxadfexpected['species'].values.tolist()
+
+    assert (testphylum == truephylum) is True
+    assert (testorder == trueorder) is True
+    assert (testspecies == truespecies) is True

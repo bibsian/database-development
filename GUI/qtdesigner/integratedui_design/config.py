@@ -18,7 +18,7 @@ import logging
 # with sqlalchemy
 #global engine
 engine = create_engine(
-    'postgresql+psycopg2://username:password@localhost/LTER'\
+    'postgresql+psycopg2://postgres:demography@localhost/LTER'\
     , echo= False)
 
 # Set up the base

@@ -55,11 +55,13 @@ class MainDialog(QtGui.QDialog, dmainw.Ui_Dialog):
                 self.mainorms[i] = orm.Maintable(
                     siteid=self.maintablemod.loc[i,'siteid'])
                 orm.session.add(self.mainorms[i])
+            orm.session.flush()
             for i in range(len(self.maintablemod)):
                 dbupload = self.maintablemod.loc[
                     i,self.maintablemod.columns].to_dict()
                 for key in dbupload.items():
                     setattr(self.mainorms[i], key[0], key[1])
+            orm.session.flush()
             self.close()
 
         except Exception as e:

@@ -1,7 +1,7 @@
 YEAR,MONTH,DATE,SITE,DEPTH,REP,SP_CODE,COUNT,COMMENTS,Common_Name,GROUP,SURVEY,TAXON_PHYLUM,TAXON_CLASS,TAXON_ORDER,TAXON_FAMILY,TAXON_GENUS,TAXON_SPECIES
-1999,2,2/1/1999,BC I,10,-99999,SPP1,-99999,-99999,Juvenile Black Surfperch,FISH,FISH,Chordata,Actinopterygii,Perciformes,Embiotocidae,Embiotoca,jacksoni
-1999,2,2/29/1999,BC I,10,-99999,SPP2,-99999,-99999,Juvenile Black Surfperch,FISH,FISH,Chordata,Actinopterygii,Perciformes,Embiotocidae,Embiotoca,jacksoni
-1987,8,8/3/1987,Frys III,10,-99999,SPP1,-99999,-99999,Juvenile Black Surfperch,FISH,FISH,Chordata,Actinopterygii,Perciformes,Embiotocidae,Embiotoca,jacksoni
-1987,8,8/8/1987,Frys III,10,-99999,SPP1,-99999,-99999,Juvenile Black Surfperch,FISH,FISH,Chordata,Actinopterygii,Perciformes,Embiotocidae,Embiotoca,jacksoni
-1992,10,10/12/1992,BC II,20,3,SPP3,1,-99999,Juvenile Black Surfperch,FISH,FISH,Chordata,Actinopterygii,Perciformes,Embiotocidae,Embiotoca,jacksoni
-1992,10,10/13/1992,BC II,20,4,SPP4,1,-99999,Juvenile Black Surfperch,FISH,FISH,Chordata,Actinopterygii,Perciformes,Embiotocidae,Embiotoca,jacksoni
+1999,2,2/1/1999,Site1,10,NULL,SPP1,nan,-99999,Juvenile Black Surfperch,FISH,FISH,Taxa1,Class1,Order1,Family1,Genus1,Spp1
+1999,2,2/29/1999,Site1,10,NULL,SPP2,nan,-99999,Juvenile Black Surfperch,FISH,FISH,Taxa1,Class1,Order1,Family1,Genus1,Spp2
+1987,8,8/3/1987,Site2,10,NULL,SPP1,nan,-99999,Juvenile Black Surfperch,FISH,FISH,Taxa1,Class1,Order1,Family1,Genus1,Spp1
+1987,8,8/8/1987,Site2,10,NULL,SPP1,nan,-99999,Juvenile Black Surfperch,FISH,FISH,Taxa1,Class1,Order1,Family1,Genus1,Spp1
+1992,10,10/12/1992,Site3,20,3,SPP3,1,-99999,Juvenile Black Surfperch,FISH,FISH,Taxa1,Class1,Order1,Family1,Genus1,Spp3
+1992,10,10/13/1992,Site3,20,4,SPP4,1,-99999,Juvenile Black Surfperch,FISH,FISH,Taxa1,Class1,Order1,Family1,Genus1,Spp4
