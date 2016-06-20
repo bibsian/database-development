@@ -1,6 +1,8 @@
 #!usr/bin/env python
 import abc
 from class_helpers import *
+import class_merger as mrg
+import config as orm
 
 class AbstractTableBuilder(object):
     '''
@@ -67,6 +69,7 @@ class AbstractTableBuilder(object):
 
     maintable = {
         'columns': [
+            'projid',
             'metarecordid', 'title', 'samplingunits',
             'samplingprotocol', 'structured', 'studystartyr',
             'studyendyr', 'siteid',
@@ -84,7 +87,7 @@ class AbstractTableBuilder(object):
             'authors', 'authors_contact', 'metalink', 'knbid'],
         'time': False,
         'cov': False,
-        'depend': True
+        'depend': False
     }
     taxatable = {
         'columns': [
@@ -92,7 +95,7 @@ class AbstractTableBuilder(object):
             'order','family', 'genus', 'species', 'authority'],
         'time': False,
         'cov': False,
-        'depend': False
+        'depend': True
     }
     rawtable = {
         'columns': [
@@ -101,7 +104,7 @@ class AbstractTableBuilder(object):
             'structure', 'individ', 'unitobs', 'covariates'],
         'time': True,
         'cov': True ,
-        'depend': False
+        'depend': True
     }
 
     tabledict = {
@@ -151,12 +154,13 @@ class AbstractTableBuilder(object):
             self._inputs.tablename]['depend']
 
     @abc.abstractmethod
-    def get_merged_foreign_data(self):
+    def get_dependent_data(self):
         pass
 
     @abc.abstractmethod
     def get_dataframe(self):
         pass
+
 
 class SiteTableBuilder(AbstractTableBuilder):
     '''
@@ -166,7 +170,8 @@ class SiteTableBuilder(AbstractTableBuilder):
     '''
 
     def get_dataframe(
-            self, dataframe, acols, nullcols, dbcol, sitelevels):
+            self, dataframe, acols, nullcols, dbcol,
+            globalid, siteid, sitelevels):
         try:
             assert acols is not None
         except Exception as e:
@@ -208,7 +213,7 @@ class MainTableBuilder(AbstractTableBuilder):
 
     def get_dataframe(
             self, dataframe, acols, nullcols, dbcol,
-            sitelevels):
+            globalid, siteid, sitelevels):
         try:
             assert acols is not None
         except Exception as e:
@@ -309,6 +314,118 @@ class MainTableBuilder(AbstractTableBuilder):
         back = [x for x in concat.columns if x not in autoupdated]
         return concat[back]
 
+class TaxaTableBuilder(AbstractTableBuilder):
+    '''
+    Concrete table builder implementation: Site
+    Note, no get methods because there is no
+    alternate informatoin needed
+    '''
+    dependentdf = None
+    def get_dataframe(
+            self, dataframe, acols, nullcols, dbcol,
+            globalid, siteid, sitelevels):
+        try:
+            assert acols is not None
+        except Exception as e:
+            print(str(e))
+            raise AssertionError('Columns names not set')
+        try:
+            assert dataframe is not None
+        except Exception as e:
+            print(str(e))
+            raise AssertionError('Raw dataframe not set')
+        if 'projid' in dbcol:
+            dbcol.remove('projid')
+        else:
+            pass
+        if 'projid' in nullcols:
+            nullcols.remove('projid')
+        else:
+            pass
+
+        dbcolrevised = [x for x in dbcol if x not in nullcols]
+        uniquesubset_site_list = []
+        self.dependentdf = produce_null_df(
+            ncols=2, colnames=['uniquetaxaunits', 'siteid'],
+            dflength=len(sitelevels), nullvalue='NULL'
+        )
+        for i,item in enumerate(sitelevels):                
+            unqdf = dataframe[dataframe[siteid]==item]
+            uniquesubset = unqdf[acols]
+            unique = uniquesubset.drop_duplicates()
+            unique = unique.reset_index(drop=True)
+            self.dependentdf[
+                'uniquetaxaunits'].iloc[i] = len(uniquesubset)
+            self.dependentdf['siteid'].iloc[i] = item
+
+            sitelevel = produce_null_df(
+                ncols=len(unique),
+                colnames=[siteid],
+                dflength=len(unique),
+                nullvalue=item)
+            nullsubset = produce_null_df(
+                ncols=len(nullcols),
+                colnames=nullcols,
+                dflength=len(unique),
+                nullvalue='NaN')
+
+            unique = pd.concat(
+                [unique,nullsubset,sitelevel], axis=1)
+            uniquesubset_site_list.append(unique)
+
+        final = uniquesubset_site_list[0]
+        for i,item in enumerate(uniquesubset_site_list):
+            if i > 0:
+                final = pd.concat([final,item], ignore_index=True)
+            else:
+                pass
+
+        for i,item in enumerate(dbcolrevised):
+            final.rename(
+                columns={acols[i]:item},
+                inplace=True)
+
+        query_class = mrg.Merger(globalid)
+        sitefilter = sitelevels
+        q_data = query_class.query_database(
+            'maintable', sitefilter)
+        taxa_merge = pd.merge(
+            final, q_data,
+            left_on=siteid, right_on='siteid',
+            how='left'
+        )
+
+        self.dependentdf = pd.merge(
+            taxa_merge, self.dependentdf,
+            left_on='siteid', right_on='siteid',
+            how='left'
+        )
+
+
+        dbcol.insert(0,'projid')
+        return taxa_merge[dbcol]
+
+    def get_dependent_data(self):
+        maindata = self.dependentdf[
+            ['projid','uniquetaxaunits_y']].drop_duplicates()
+        maindata.columns = ['projid', 'uniquetaxaunits']
+        maindata = maindata.reset_index()
+        mainqueries = {}
+
+        try:
+            for i in range(len(maindata)):
+                mainqueries[i] = orm.session.query(
+                    orm.Maintable).filter(
+                        orm.Maintable.projid ==
+                        maindata['projid'][i])
+                mainqueries[i].one().uniquetaxaunits = (
+                    maindata['uniquetaxaunits'][i])
+            orm.session.flush()
+        except Exception as e:
+            print(str(e))
+            raise ValueError(
+                'Could not modified maintable uniquetaxaunits')
+
 class DatabaseTable:
     def __init__(self):
         self._name = None
@@ -354,8 +471,10 @@ class TableDirector:
     _name = None
     _builder = None
     _rawdata = None
+    _globalid = None
     _sitelevels = None
-    
+    _siteid = None
+
     def set_user_input(self, userinputcls):
         try:
             self._inputs = userinputcls
@@ -370,6 +489,7 @@ class TableDirector:
         except Exception as e:
             print(str(e))
             raise AssertionError('User input not set')
+
         self._builder._inputs = self._inputs
 
     def set_data(self, dataframe):
@@ -379,6 +499,22 @@ class TableDirector:
         except Exception as e:
             print(str(e))
             raise AssertionError('Data not set')
+
+    def set_globalid(self, globalid):
+        try:
+            assert globalid is not None
+        except Exception as e:
+            print(str(e))
+            raise AttributeError('Global Id is not registered')
+        self._globalid = globalid
+
+    def set_siteid(self, siteid):
+        try:
+            assert siteid is not None
+        except Exception as e:
+            print(str(e))
+            raise AttributeError('SiteId is not registered')
+        self._siteid = siteid
 
     def set_sitelevels(self, sitelevels):
         self._sitelevels = sitelevels
@@ -408,7 +544,7 @@ class TableDirector:
 
         adata = self._builder.get_dataframe(
             self._rawdata, acolumns, nullcol, columns,
-            self._sitelevels)
+            self._globalid, self._siteid, self._sitelevels)
 
         dbtable.set_dataframe(adata)
 
@@ -420,5 +556,12 @@ class TableDirector:
 
         dep = self._builder.get_dependent_status()
         dbtable.set_dependent_status(dep)
+        print(dep)
+        if dep is True:
+            print('in the build block')
+            self._builder.get_dependent_data()
+            print('executed the dependent command')
+        else:
+            pass
 
         return dbtable

@@ -12,3 +12,4 @@ class PreviewDialog(QtGui.QDialog, dprev.Ui_Dialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
+        self.btnCancel.clicked.connect(self.close)

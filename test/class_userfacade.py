@@ -10,7 +10,8 @@ from class_commanders import CareTakerCommand, CareTakerReceiver
 from class_metaverify import MetaVerifier
 from class_helpers import UniqueReplace, check_registration
 from class_tablebuilder import (
-    SiteTableBuilder, TableDirector, MainTableBuilder)
+    SiteTableBuilder, TableDirector, MainTableBuilder,
+    TaxaTableBuilder)
 import class_logconfig as log
 
 class Facade:
@@ -36,7 +37,7 @@ class Facade:
     'rawtable'
     'climatesitetable'
     'climaterawtable'
-    'timeparser'
+    'timetable'
     'editdata'
     'dbquery'
     'dbpush'
@@ -84,11 +85,21 @@ class Facade:
         self._data = None
         self._dbtabledict= {
             'sitetable': SiteTableBuilder(),
-            'maintable': MainTableBuilder()
+            'maintable': MainTableBuilder(),
+            'taxatable': TaxaTableBuilder(),
+            'timetable': None
         }
+
         self._tablelog = {
             'sitetable': None,
-            'maintable': None
+            'maintable': None,
+            'taxatable': None
+        }
+
+        self._colinputlog = {
+            'siteinfo': None,
+            'maininfo': None,
+            'taxainfo': None
         }
 
     def make_proxy_helper(self, data, label):
@@ -99,10 +110,10 @@ class Facade:
         self.input_manager.invoker.make_proxy_data()
         self.input_manager.caretaker.save_to_memento(
             proxycmd._proxy.create_memento())
+
         self._data = (
             self.input_manager.caretaker.restore_memento(
                 label))
-        print('Proxy Created')
 
     def input_register(self, clsinstance):
         '''
@@ -232,12 +243,15 @@ class Facade:
         return self._data
 
     def make_table(self, inputname):
+        uniqueinput = self._inputs[inputname]
         tablename = self._inputs[inputname].tablename
         globalid = self._inputs['metacheck'].lnedentry['globalid']
         filename = os.path.split(
                             self._inputs[
                                 'fileoptions'].filename)[1]
         dt = (str(tm.datetime.now()).split()[0]).replace("-", "_")
+        sitecol = self._inputs['siteinfo'].lnedentry['siteid']
+        uqsitelevels = self._valueregister['sitelevels']
 
         if self._tablelog[tablename] is None:
             # Log to record input for different tables
@@ -248,9 +262,9 @@ class Facade:
         else:
             pass                
 
-        director = TableDirector()
+        director = TableDirector()           
         builder = self._dbtabledict[tablename]
-        director.set_user_input(self._inputs[inputname])
+        director.set_user_input(uniqueinput)
         director.set_builder(builder)
 
         if tablename != 'maintable':
@@ -260,6 +274,8 @@ class Facade:
             metadata = metaverify._meta
             director.set_data(metadata.iloc[globalid,:])
 
-        director.set_sitelevels(self._valueregister['sitelevels'])
+        director.set_globalid(globalid)
+        director.set_siteid(sitecol)
+        director.set_sitelevels(uqsitelevels)
 
         return director.get_database_table()

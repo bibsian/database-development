@@ -4,10 +4,29 @@ import sys, os
 sys.path.append(os.path.realpath(os.path.dirname(__file__)))
 import re
 from numpy import where
+from collections import OrderedDict
+
+def strip_time(data, col):
+    strippedlist = []
+    for i in list(set(col)):
+        strippedlist.append([
+            re.sub("/|,|-|;"," ", x) for x in list(
+                data[i].astype(str))])
+    return strippedlist
+
+def year_strip(dateformat):
+    '''
+    Takes a string specifying a date format and then extracts the
+    year format for help with processing.
+    '''
+    f = dateformat
+    found = re.search('Y+', f)
+    ylength = len(found.group(0))
+    return ylength
 
 def extract(d,keys):
     ''' return subset of dictionary based on list of keys'''
-    return dict((k, d[k]) for k in d if k in keys)
+    return OrderedDict((k, d[k]) for k in d if k in keys)
 
 def check_int(x):
     ''' function to check if text can be converted to integer'''
