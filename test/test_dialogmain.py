@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 import pytest
 import pytestqt
-import pandas as pd
 from PyQt4 import QtGui, QtCore
+from pandas import read_sql
 import sys, os
 sys.path.append(os.path.realpath(os.path.dirname(__file__)))
 import ui_mainrefactor as mw
@@ -13,6 +13,7 @@ import class_userfacade as face
 import class_inputhandler as ini
 import class_helpers as hlp
 import class_modelviewpandas as view
+import class_flusher as flsh
 import config as orm
 
 @pytest.fixture
@@ -46,6 +47,7 @@ def MainWindow():
             self.btnSaveClose.clicked.connect(self.submit_change)
             self.btnCancel.clicked.connect(self.close)
 
+            self.message = QtGui.QMessageBox
             self.error = QtGui.QErrorMessage()
         def set_data(self):
             '''
@@ -55,41 +57,60 @@ def MainWindow():
             set the data model,
             set the data model viewer
             '''
-            self.facade.input_register(self.mainini)
-            self.maindirector = self.facade.make_table('maininfo')
-            self._log = self.facade._tablelog['maintable']
-            self.maintable = self.maindirector._availdf.copy()
+            if self.maintablemod is None:
+                self.facade.input_register(self.mainini)
+                self.maindirector = self.facade.make_table('maininfo')
+                self.facade.create_log_record('maintable')
+                self._log = self.facade._tablelog['maintable']
+                self.maintable = self.maindirector._availdf.copy()
+                self.maintable = self.maintable.reset_index(drop=True)
+            else:
+                self.maintable = self.mainmodel.data(
+                    None, QtCore.Qt.UserRole).reset_index(drop=True)
+
             self.mainmodel = self.viewEdit(self.maintable)
             self.tabviewMetadata.setModel(self.mainmodel)
 
         def submit_change(self):
             self.maintablemod = self.mainmodel.data(
-                None, QtCore.Qt.UserRole)
+                None, QtCore.Qt.UserRole).reset_index(drop=True)
+
             print('retrieved edited data')
-            print(self.maintable['siteid'])
-            print(self.maintablemod['siteid'])
 
             try:
-                print('before types coversion')
-                print(self.maintablemod.dtypes)
-                orm.convert_types(self.maintablemod, orm.maintypes)
-                print('after type conversion')
-                print(self.maintablemod.dtypes)
-                print('orm maintypes')
-                print(orm.maintypes)
+                maincheck = orm.session.query(
+                    orm.Maintable.metarecordid).order_by(
+                        orm.Maintable.metarecordid)
+                maincheckdf = read_sql(
+                    maincheck.statement, maincheck.session.bind)
+                metaid_entered = maincheckdf[
+                    'metarecordid'].values.tolist()
+                if self.facade._valueregister[
+                        'globalid'] in metaid_entered:
+                    self.message.about(
+                        self, 'Status',
+                        'Metarecord ID is already present in database')
+                    return
+                else:
+                    pass
                 
-                for i in range(len(self.maintablemod)):
-                    self.mainorms[i] = orm.Maintable(
-                        siteid=self.maintablemod.loc[i,'siteid'])
-                    orm.session.add(self.mainorms[i])
+                orm.convert_types(self.maintable, orm.maintypes)
+                orm.convert_types(self.maintablemod, orm.maintypes)            
+                hlp.updated_df_values(
+                    self.maintable, self.maintablemod,
+                    self._log, 'maintable'
+                )
 
-                print('In orm block')
-                for i in range(len(self.maintablemod)):
-                    dbupload = self.maintablemod.loc[
-                        i,self.maintablemod.columns].to_dict()
-                    for key in dbupload.items():
-                        setattr(self.mainorms[i], key[0], key[1])
-                orm.session.commit()
+                main_flush = flsh.Flusher(
+                    self.maintablemod, 'maintable',
+                    'siteid', self.facade._valueregister['lterid'])
+                ck = main_flush.database_check(
+                    self.facade._valueregister['sitelevels'])                
+                if ck is True:
+                    main_flush.go()
+                else:
+                    raise AttributeError
+
                 self.close()
             except Exception as e:
                 print(str(e))
@@ -118,7 +139,6 @@ def MainWindow():
             # Actions
             self.actionSiteTable.triggered.connect(self.site_display)
             # Custom Signals
-            self.dsite.changed_data.connect(self.update_data_model)
             self.dsite.site_unlocks.connect(self.site_complete_enable)
 
             # ------ SESSION DIALOG CONSTRUCTOR ARGS ----- #
