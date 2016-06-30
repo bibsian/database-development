@@ -25,6 +25,8 @@ def Merger():
                     None
                 )
             }
+            self.rawmain = None
+            self.maintaxa = None
 
         def query_database(self, tablename, tablefilterlist):
             '''
@@ -49,18 +51,26 @@ def Merger():
             querydf = pd.read_sql(
                 query.statement, query.session.bind)
             return querydf
+
+        
     return Merger
+
+@pytest.fixture
+def df():
+    return pd.read_csv('raw_data_test.csv')
 
 # This test will only work if the test data set is loaded into the
 # database with metarecordid as '2'
 # and the informaotin is at least filled out up to the taxatable
-def test_query(Merger):
-    test1 = Merger(2)
+def test_query(Merger, df):
+    merge1 = Merger(2)
     sitefilter = ['Site1', 'Site2', 'Site3']
-    data = test1.query_database('maintable', sitefilter)
-    print(data)
+    mainquery = merge1.query_database('maintable', sitefilter)
+    print(mainquery)
     assert (
-        (list(set(data['siteid'].values.tolist())).sort() ==
+        (list(set(mainquery['siteid'].values.tolist())).sort() ==
          sitefilter.sort())
         is True)
+    
+    
     
