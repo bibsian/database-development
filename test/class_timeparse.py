@@ -1,8 +1,8 @@
-import pytest
 import pandas as pd
 import sys, os
 sys.path.append(os.path.realpath(os.path.dirname(__file__)))
 import class_helpers as hlp
+from itertools import chain
 
 class TimeParse(object):
     def __init__(self, dataframe, datadict):
@@ -47,9 +47,11 @@ class TimeParse(object):
     def concatenator(
             data, name1_keep, name2_change, block, name3=None):
         '''
-        Method to concatenate date informatoin that is separated
-        into multiple columns (this makes it easier for formatting
-        into the table into the database's structure)
+        Method to determine whether the entries for date information
+        are all from the same columns or different columns.
+        If they are in different columns the method
+        concatenates all columns so that it can be read as a 
+        single date time column.
         '''
         print('In '+block+' block')
 
@@ -83,16 +85,24 @@ class TimeParse(object):
         i.e. (year, month, day) including nulls
         '''
         fields = ['month', 'day', 'year']
-
+        if any(isinstance(i, list) for i in col):
+            col = list(chain.from_iterable(col))
+        else:
+            pass
         if len(nulls) > 0:
             nulldf = hlp.produce_null_df(
                 len(nulls), nulls, len(data), 'nan')
-
         else:
             nulldf = pd.DataFrame()            
-        time_list_re = hlp.strip_time(data, col)
+        try:
+            time_list_re = hlp.strip_time(data, col)
+        except Exception as e:
+            print(str(e))
+            raise AttributeError('Could not strip time format')            
         notnull = [x for x in fields if x not in nulls]
 
+        # Nested loop to do actually parsing of date information
+        # and format it into three different columns
         for i,item in enumerate(form):
             try:
                 time_form_list = []
@@ -124,8 +134,8 @@ class TimeParse(object):
     @staticmethod
     def mapper(datedict, intervals):
         ''' 
-        Function mapping time data that has been formated and
-        time data the should have NULL values as entries.
+        Function to map/format time data that has been parsed and
+        including columns with NULL values as entries.
         The parser above returns 'formated' data in a dictionary
         so it can be compiled here.
         '''

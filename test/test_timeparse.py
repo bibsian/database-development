@@ -4,6 +4,7 @@ import pandas as pd
 import sys, os
 sys.path.append(os.path.realpath(os.path.dirname(__file__)))
 import class_helpers as hlp
+from itertools import chain
 
 # -----------
 # Test data set
@@ -11,6 +12,10 @@ import class_helpers as hlp
 @pytest.fixture
 def df():
     return pd.read_csv('time_file_test.csv')
+
+@pytest.fixture
+def df2():
+    return pd.read_csv('raw_data_test_dialogsite.csv')
 
 # -----------
 # 1 Column Input
@@ -177,6 +182,21 @@ def daymonthyear4():
     return d
 
 @pytest.fixture
+def daymonthyear4_df2():
+    d = {
+        'dayname': 'DATE',
+        'dayform': 'dd-mm-YYYY (Any Order)',
+        'monthname': 'DATE',
+        'monthform': 'dd-mm-YYYY (Any Order)',
+        'yearname': 'DATE',
+        'yearform': 'dd-mm-YYYY (Any Order)',
+        'jd': False,
+        'mspell': False
+    }
+    return d
+
+
+@pytest.fixture
 def daymonthyear4_separate():
     d = {
         'dayname': 'd',
@@ -189,6 +209,21 @@ def daymonthyear4_separate():
         'mspell': False
     }
     return d
+
+@pytest.fixture
+def daymonthyear4_same():
+    d = {
+        'dayname': 'dmy',
+        'dayform': 'dd-mm-YYYY (Any Order)',
+        'monthname': 'dmy',
+        'monthform': 'dd-mm-YYYY (Any Order)',
+        'yearname': 'dmy',
+        'yearform': 'dd-mm-YYYY (Any Order)',
+        'jd': False,
+        'mspell': False
+    }
+    return d
+
 
 @pytest.fixture
 def dmy4_two_col_diff():
@@ -288,16 +323,25 @@ def TimeParse():
             i.e. (year, month, day) including nulls
             '''
             fields = ['month', 'day', 'year']
-            
+            if any(isinstance(i, list) for i in col):
+                col = list(chain.from_iterable(col))
+            else:
+                pass
+                
             if len(nulls) > 0:
                 nulldf = hlp.produce_null_df(
                     len(nulls), nulls, len(data), 'nan')
 
+                
             else:
                 nulldf = pd.DataFrame()            
-            time_list_re = hlp.strip_time(data, col)
+            try:
+                time_list_re = hlp.strip_time(data, col)
+            except Exception as e:
+                print(str(e))
+                raise AttributeError('Could not strip time format')            
             notnull = [x for x in fields if x not in nulls]
-            
+
             for i,item in enumerate(form):
                 try:
                     time_form_list = []
@@ -658,3 +702,33 @@ def test_two_column_entries_all_data_different_names(
     assert (monthtestlist == monthtruelist) is True
     assert (yeartestlist == yeartruelist) is True
 
+def test_all_same_column_mdy(df, TimeParse, daymonthyear4_same):
+    alltest = TimeParse(df, daymonthyear4_same)
+    alldf = alltest.formater()
+    print(alldf)
+    yeartestlist = alldf['year'].values.tolist()
+    monthtestlist = alldf['month'].values.tolist()
+    daytestlist = alldf['day'].values.tolist()
+    daytruelist = df['d'].values.tolist()
+    monthtruelist = df['m'].values.tolist()
+    yeartruelist = df['y'].values.tolist()
+    assert (daytestlist == daytruelist) is True
+    assert (monthtestlist == monthtruelist) is True
+    assert (yeartestlist == yeartruelist) is True
+
+def test_all_same_column_mdy_df2(df2, TimeParse, daymonthyear4_df2):
+
+    alltest = TimeParse(df2, daymonthyear4_df2)
+    alldf = alltest.formater()
+    print(alldf)
+    yeartestlist = alldf['year'].values.tolist()
+    monthtestlist = alldf['month'].values.tolist()
+    daytestlist = alldf['day'].values.tolist()
+    datecol = pd.to_datetime(df2['DATE'])
+    daytruelist = datecol.dt.day.values.tolist()
+    monthtruelist = datecol.dt.month.values.tolist()
+    yeartruelist = datecol.dt.year.values.tolist()
+    assert (daytestlist == daytruelist) is True
+    assert (monthtestlist == monthtruelist) is True
+    assert (yeartestlist == yeartruelist) is True
+    
