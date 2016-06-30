@@ -11,7 +11,6 @@ import class_inputhandler as ini
 import class_userfacade as face
 import class_modelviewpandas as view
 import class_helpers as hlp
-import config as orm
 from collections import OrderedDict
 
 @pytest.fixture
@@ -130,6 +129,9 @@ def TaxaDialog(sitehandle, filehandle, metahandle, TablePreview):
                 ('genus', self.ckGenus.isChecked()),
                 ('species', self.ckSpp.isChecked())
             ))
+
+            # NEED TO IMPLEMNT METHODS TO CREATE COLUMNS FROM
+            # USER INPUT (should be easy) !!!!!!!!!
             self.taxacreate = {
                 'taxacreate': self.ckCreateTaxa.isChecked()
             }
@@ -148,51 +150,30 @@ def TaxaDialog(sitehandle, filehandle, metahandle, TablePreview):
                 checks=self.taxacreate
             )
             self.facade.input_register(self.taxaini)
+            self.facade.create_log_record('taxatable')
+            self._log = self.facade._tablelog['taxatable']
+
             try:
                 print('about to make taxa table')
                 self.taxadirector = self.facade.make_table('taxainfo')
-
+                assert self.taxadirector._availdf is not None
 
             except Exception as e:
                 print(str(e))
+                self._log.debug(str(e))
                 self.error.showMessage(
-                    'Column not identified')
+                    'Column(s) not identified')
+                raise AttributeError('Column(s) not identified')
 
-            self._log = self.facade._tablelog['taxatable']
-            try:
-                self.taxatable = self.taxadirector._availdf.copy()
-                self.taxamodel = self.viewEdit(self.taxatable)
-            except Exception as e:
-                print(str(e))
-                
+            self.taxatable = self.taxadirector._availdf.copy()
+            self.taxamodel = self.viewEdit(self.taxatable)
             
             if sender is self.btnTaxasubmit:
                 self.preview.tabviewPreview.setModel(self.taxamodel)
                 self.preview.show()
             elif sender is self.btnSaveClose:
-                try:
-
-                    # Instantiating taxa orms
-                    for i in range(len(self.taxatable)):
-                        self.taxaorms[i] = orm.Taxatable(
-                            projid=self.taxatable.loc[i, 'projid'])
-                        orm.session.add(self.taxaorms[i])
-                    orm.session.commit()
-
-                    # Populating the all
-                    # other fields for taxa orms
-                    for i in range(len(self.taxatable)):
-                        upload = self.taxatable.loc[
-                            i, self.taxatable.columns].to_dict()
-                        for key in upload.items():
-                            setattr(
-                                self.taxaorms[i], key[0], key[1])
-                    orm.session.commit()
-
-                except Exception as e:
-                    print(str(e))
-                    raise ValueError('Could not commit orm')
-
+                hlp.write_column_to_log(
+                    self.taxalned, self._log, 'taxatable')                
                 self.close()
                 
     return TaxaDialog()
