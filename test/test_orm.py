@@ -6,7 +6,6 @@ sys.path.append(os.path.realpath(os.path.dirname(__file__)))
 import class_helpers as hlp
 import config as orm
 
-
 @pytest.fixture
 def metadf():
     if _platform == "darwin":
@@ -148,7 +147,8 @@ def tablebuild():
         concat['siteid'] = sitelevels
         return concat.reset_index(drop=True)
     return get_dataframe
-    
+
+# TEST ASSUMES sitelevels ARE IN DATABASE ALREADY!!!!!
 def test_write(metadf, tablebuild, dbcolumns):
     sitelevels = ['Site1', 'Site2', 'Site3']
     avail = ['all']
@@ -160,6 +160,7 @@ def test_write(metadf, tablebuild, dbcolumns):
     print(table)
     print(table['metarecordid'])
     print(table['uniquetaxaunits'])
+
     mainorms = {}
 
     for i in range(len(table)):
@@ -167,11 +168,14 @@ def test_write(metadf, tablebuild, dbcolumns):
             siteid=table.loc[i,'siteid'])
         orm.session.add(mainorms[i])
 
-    print('In orm block')
     for i in range(len(table)):
         dbupload = table.loc[
             i,table.columns].to_dict()
         for key in dbupload.items():
             setattr(mainorms[i], key[0], key[1])
     orm.session.commit()
+
     
+    
+
+
