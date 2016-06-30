@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/bibsian/Dropbox/database-development/test/Views/ui_dialog_obs.ui'
+# Form implementation generated from reading ui file 'C:\Users\MillerLab\Dropbox\database-development\test\Views\ui_dialog_obs.ui'
 #
 # Created by: PyQt4 UI code generator 4.11.4
 #
@@ -26,6 +26,7 @@ class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName(_fromUtf8("Dialog"))
         Dialog.resize(751, 512)
+        Dialog.setFocusPolicy(QtCore.Qt.TabFocus)
         Dialog.setStyleSheet(_fromUtf8(".QLabel{\n"
 "    background: None;\n"
 "    padding: 0px;\n"
@@ -115,7 +116,7 @@ class Ui_Dialog(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lnedRaw.sizePolicy().hasHeightForWidth())
         self.lnedRaw.setSizePolicy(sizePolicy)
-        self.lnedRaw.setFocusPolicy(QtCore.Qt.TabFocus)
+        self.lnedRaw.setFocusPolicy(QtCore.Qt.StrongFocus)
         self.lnedRaw.setInputMask(_fromUtf8(""))
         self.lnedRaw.setText(_fromUtf8(""))
         self.lnedRaw.setAlignment(QtCore.Qt.AlignCenter)
@@ -130,7 +131,7 @@ class Ui_Dialog(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lnedStructure.sizePolicy().hasHeightForWidth())
         self.lnedStructure.setSizePolicy(sizePolicy)
-        self.lnedStructure.setFocusPolicy(QtCore.Qt.TabFocus)
+        self.lnedStructure.setFocusPolicy(QtCore.Qt.StrongFocus)
         self.lnedStructure.setInputMask(_fromUtf8(""))
         self.lnedStructure.setText(_fromUtf8(""))
         self.lnedStructure.setAlignment(QtCore.Qt.AlignCenter)
@@ -139,12 +140,14 @@ class Ui_Dialog(object):
         self.lnedStructure.setObjectName(_fromUtf8("lnedStructure"))
         self.gridLayout.addWidget(self.lnedStructure, 5, 1, 1, 1)
         self.ckStructure = QtGui.QCheckBox(self.groupBox)
+        self.ckStructure.setFocusPolicy(QtCore.Qt.TabFocus)
         self.ckStructure.setObjectName(_fromUtf8("ckStructure"))
         self.gridLayout.addWidget(self.ckStructure, 5, 2, 1, 1)
         self.label_5 = QtGui.QLabel(self.groupBox)
         self.label_5.setObjectName(_fromUtf8("label_5"))
         self.gridLayout.addWidget(self.label_5, 4, 0, 1, 1)
         self.ckRep4 = QtGui.QCheckBox(self.groupBox)
+        self.ckRep4.setFocusPolicy(QtCore.Qt.TabFocus)
         self.ckRep4.setObjectName(_fromUtf8("ckRep4"))
         self.gridLayout.addWidget(self.ckRep4, 4, 2, 1, 1)
         self.lnedRep4 = QtGui.QLineEdit(self.groupBox)
@@ -154,7 +157,7 @@ class Ui_Dialog(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lnedRep4.sizePolicy().hasHeightForWidth())
         self.lnedRep4.setSizePolicy(sizePolicy)
-        self.lnedRep4.setFocusPolicy(QtCore.Qt.TabFocus)
+        self.lnedRep4.setFocusPolicy(QtCore.Qt.StrongFocus)
         self.lnedRep4.setInputMask(_fromUtf8(""))
         self.lnedRep4.setText(_fromUtf8(""))
         self.lnedRep4.setAlignment(QtCore.Qt.AlignCenter)
@@ -172,7 +175,7 @@ class Ui_Dialog(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lnedRep2.sizePolicy().hasHeightForWidth())
         self.lnedRep2.setSizePolicy(sizePolicy)
-        self.lnedRep2.setFocusPolicy(QtCore.Qt.TabFocus)
+        self.lnedRep2.setFocusPolicy(QtCore.Qt.StrongFocus)
         self.lnedRep2.setInputMask(_fromUtf8(""))
         self.lnedRep2.setText(_fromUtf8(""))
         self.lnedRep2.setAlignment(QtCore.Qt.AlignCenter)
@@ -181,9 +184,11 @@ class Ui_Dialog(object):
         self.lnedRep2.setObjectName(_fromUtf8("lnedRep2"))
         self.gridLayout.addWidget(self.lnedRep2, 2, 1, 1, 1)
         self.ckRep3 = QtGui.QCheckBox(self.groupBox)
+        self.ckRep3.setFocusPolicy(QtCore.Qt.TabFocus)
         self.ckRep3.setObjectName(_fromUtf8("ckRep3"))
         self.gridLayout.addWidget(self.ckRep3, 3, 2, 1, 1)
         self.ckRep2 = QtGui.QCheckBox(self.groupBox)
+        self.ckRep2.setFocusPolicy(QtCore.Qt.TabFocus)
         self.ckRep2.setObjectName(_fromUtf8("ckRep2"))
         self.gridLayout.addWidget(self.ckRep2, 2, 2, 1, 1)
         self.lnedRep3 = QtGui.QLineEdit(self.groupBox)
@@ -193,7 +198,7 @@ class Ui_Dialog(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lnedRep3.sizePolicy().hasHeightForWidth())
         self.lnedRep3.setSizePolicy(sizePolicy)
-        self.lnedRep3.setFocusPolicy(QtCore.Qt.TabFocus)
+        self.lnedRep3.setFocusPolicy(QtCore.Qt.StrongFocus)
         self.lnedRep3.setInputMask(_fromUtf8(""))
         self.lnedRep3.setText(_fromUtf8(""))
         self.lnedRep3.setAlignment(QtCore.Qt.AlignCenter)
@@ -211,6 +216,7 @@ class Ui_Dialog(object):
         self.label_7.setObjectName(_fromUtf8("label_7"))
         self.gridLayout.addWidget(self.label_7, 6, 0, 1, 1)
         self.ckIndividual = QtGui.QCheckBox(self.groupBox)
+        self.ckIndividual.setFocusPolicy(QtCore.Qt.TabFocus)
         self.ckIndividual.setObjectName(_fromUtf8("ckIndividual"))
         self.gridLayout.addWidget(self.ckIndividual, 6, 2, 1, 1)
         self.lnedIndividual = QtGui.QLineEdit(self.groupBox)
@@ -220,7 +226,7 @@ class Ui_Dialog(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lnedIndividual.sizePolicy().hasHeightForWidth())
         self.lnedIndividual.setSizePolicy(sizePolicy)
-        self.lnedIndividual.setFocusPolicy(QtCore.Qt.TabFocus)
+        self.lnedIndividual.setFocusPolicy(QtCore.Qt.StrongFocus)
         self.lnedIndividual.setInputMask(_fromUtf8(""))
         self.lnedIndividual.setText(_fromUtf8(""))
         self.lnedIndividual.setAlignment(QtCore.Qt.AlignCenter)
@@ -238,7 +244,7 @@ class Ui_Dialog(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lnedRep1.sizePolicy().hasHeightForWidth())
         self.lnedRep1.setSizePolicy(sizePolicy)
-        self.lnedRep1.setFocusPolicy(QtCore.Qt.TabFocus)
+        self.lnedRep1.setFocusPolicy(QtCore.Qt.NoFocus)
         self.lnedRep1.setInputMask(_fromUtf8(""))
         self.lnedRep1.setText(_fromUtf8(""))
         self.lnedRep1.setAlignment(QtCore.Qt.AlignCenter)

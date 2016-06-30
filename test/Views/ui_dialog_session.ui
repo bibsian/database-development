@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>697</width>
-    <height>431</height>
+    <width>579</width>
+    <height>384</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -99,475 +99,38 @@ QTabBar::tab:!selected {
        <property name="frameShadow">
         <enum>QFrame::Raised</enum>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout_4">
+       <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_3">
-          <item>
-           <widget class="QGroupBox" name="groupBoxMeta">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="font">
-             <font>
-              <pointsize>12</pointsize>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="title">
-             <string>Select Metadata Record to Upload</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-            <layout class="QVBoxLayout" name="verticalLayout_2">
-             <item>
-              <layout class="QFormLayout" name="formLayout">
-               <property name="fieldGrowthPolicy">
-                <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-               </property>
-               <item row="0" column="0">
-                <layout class="QHBoxLayout" name="horizontalLayout_2">
-                 <item>
-                  <widget class="QLineEdit" name="lnedGlobalId">
-                   <property name="enabled">
-                    <bool>true</bool>
-                   </property>
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="focusPolicy">
-                    <enum>Qt::ClickFocus</enum>
-                   </property>
-                   <property name="alignment">
-                    <set>Qt::AlignCenter</set>
-                   </property>
-                   <property name="placeholderText">
-                    <string>Global Id</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QComboBox" name="cboxLTERloc">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="focusPolicy">
-                    <enum>Qt::NoFocus</enum>
-                   </property>
-                   <property name="layoutDirection">
-                    <enum>Qt::LeftToRight</enum>
-                   </property>
-                   <property name="autoFillBackground">
-                    <bool>false</bool>
-                   </property>
-                   <property name="frame">
-                    <bool>false</bool>
-                   </property>
-                   <item>
-                    <property name="text">
-                     <string>LTER Location</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>AND</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>ARC</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>BES</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>BNZ</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>CCE</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>CDR</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>CAP</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>CWT</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>FCE</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>GCE</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>HFR</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>HBR</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>JRN</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>KBS</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>KNZ</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>LNO</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>LUQ</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>MCM</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>MCR</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>NWT</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>NTL</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>PAL</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>PIE</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>SBC</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>SEV</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>SGS</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>VCR</string>
-                    </property>
-                   </item>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLineEdit" name="lnedMetadataUrl">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="focusPolicy">
-                    <enum>Qt::ClickFocus</enum>
-                   </property>
-                   <property name="text">
-                    <string/>
-                   </property>
-                   <property name="alignment">
-                    <set>Qt::AlignCenter</set>
-                   </property>
-                   <property name="placeholderText">
-                    <string>Metadata URL</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <spacer name="horizontalSpacer_4">
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>40</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                </layout>
-               </item>
-               <item row="1" column="0">
-                <layout class="QHBoxLayout" name="horizontalLayout">
-                 <item>
-                  <widget class="QPushButton" name="btnVerifyMeta">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="focusPolicy">
-                    <enum>Qt::ClickFocus</enum>
-                   </property>
-                   <property name="contextMenuPolicy">
-                    <enum>Qt::DefaultContextMenu</enum>
-                   </property>
-                   <property name="text">
-                    <string>Verify</string>
-                   </property>
-                   <property name="autoDefault">
-                    <bool>false</bool>
-                   </property>
-                   <property name="flat">
-                    <bool>false</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <spacer name="horizontalSpacer">
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>40</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                </layout>
-               </item>
-              </layout>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item>
-           <widget class="QGroupBox" name="groupBoxFile">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="font">
-             <font>
-              <pointsize>12</pointsize>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="title">
-             <string>Select Raw Data Input File</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-            <layout class="QVBoxLayout" name="verticalLayout">
-             <item>
-              <layout class="QFormLayout" name="formLayout_2">
-               <property name="fieldGrowthPolicy">
-                <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-               </property>
-               <item row="0" column="0">
-                <layout class="QGridLayout" name="gridLayout">
-                 <item row="2" column="0">
-                  <widget class="QRadioButton" name="rbtnTxt">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="focusPolicy">
-                    <enum>Qt::ClickFocus</enum>
-                   </property>
-                   <property name="text">
-                    <string>txt</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="2" column="1">
-                  <widget class="QLineEdit" name="lnedDelimiter">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="focusPolicy">
-                    <enum>Qt::ClickFocus</enum>
-                   </property>
-                   <property name="text">
-                    <string/>
-                   </property>
-                   <property name="alignment">
-                    <set>Qt::AlignCenter</set>
-                   </property>
-                   <property name="placeholderText">
-                    <string>Delimiter</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="2" column="2">
-                  <widget class="QLineEdit" name="lnedSkipTop">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="focusPolicy">
-                    <enum>Qt::ClickFocus</enum>
-                   </property>
-                   <property name="text">
-                    <string/>
-                   </property>
-                   <property name="alignment">
-                    <set>Qt::AlignCenter</set>
-                   </property>
-                   <property name="placeholderText">
-                    <string>Skip Lines (Top)</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="2" column="3">
-                  <widget class="QLineEdit" name="lnedSkipBottom">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="focusPolicy">
-                    <enum>Qt::ClickFocus</enum>
-                   </property>
-                   <property name="text">
-                    <string/>
-                   </property>
-                   <property name="alignment">
-                    <set>Qt::AlignCenter</set>
-                   </property>
-                   <property name="placeholderText">
-                    <string>Skip Lines (Bottom)</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="1">
-                  <widget class="QLineEdit" name="lnedExcelSheet">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="focusPolicy">
-                    <enum>Qt::ClickFocus</enum>
-                   </property>
-                   <property name="text">
-                    <string/>
-                   </property>
-                   <property name="alignment">
-                    <set>Qt::AlignCenter</set>
-                   </property>
-                   <property name="placeholderText">
-                    <string>Sheet Number</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="0">
-                  <widget class="QRadioButton" name="rbtnExcel">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="focusPolicy">
-                    <enum>Qt::ClickFocus</enum>
-                   </property>
-                   <property name="text">
-                    <string>xlsx / xls</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="0" column="0">
-                  <widget class="QRadioButton" name="rbtnCsv">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="focusPolicy">
-                    <enum>Qt::ClickFocus</enum>
-                   </property>
-                   <property name="text">
-                    <string>csv</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-               <item row="1" column="0">
-                <widget class="QPushButton" name="btnSelectFile">
+         <widget class="QGroupBox" name="groupBoxMeta">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="title">
+           <string>Select Metadata Record to Upload</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <item>
+            <layout class="QFormLayout" name="formLayout">
+             <property name="labelAlignment">
+              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+             </property>
+             <item row="0" column="0">
+              <layout class="QHBoxLayout" name="horizontalLayout">
+               <item>
+                <widget class="QLineEdit" name="lnedGlobalId">
                  <property name="enabled">
                   <bool>true</bool>
                  </property>
@@ -578,23 +141,429 @@ QTabBar::tab:!selected {
                   </sizepolicy>
                  </property>
                  <property name="focusPolicy">
-                  <enum>Qt::ClickFocus</enum>
+                  <enum>Qt::StrongFocus</enum>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                 <property name="placeholderText">
+                  <string>Global Id</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QComboBox" name="cboxLTERloc">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="focusPolicy">
+                  <enum>Qt::StrongFocus</enum>
+                 </property>
+                 <property name="layoutDirection">
+                  <enum>Qt::LeftToRight</enum>
+                 </property>
+                 <property name="autoFillBackground">
+                  <bool>false</bool>
+                 </property>
+                 <property name="frame">
+                  <bool>false</bool>
+                 </property>
+                 <item>
+                  <property name="text">
+                   <string>LTER Location</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>AND</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>ARC</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>BES</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>BNZ</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>CCE</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>CDR</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>CAP</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>CWT</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>FCE</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>GCE</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>HFR</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>HBR</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>JRN</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>KBS</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>KNZ</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>LNO</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>LUQ</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>MCM</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>MCR</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>NWT</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>NTL</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>PAL</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>PIE</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>SBC</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>SEV</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>SGS</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>VCR</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="lnedMetadataUrl">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="focusPolicy">
+                  <enum>Qt::StrongFocus</enum>
                  </property>
                  <property name="text">
-                  <string>Select File</string>
+                  <string/>
                  </property>
-                 <property name="autoDefault">
-                  <bool>false</bool>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                 <property name="placeholderText">
+                  <string>Metadata URL</string>
                  </property>
                 </widget>
                </item>
               </layout>
              </item>
+             <item row="1" column="0">
+              <widget class="QPushButton" name="btnVerifyMeta">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="focusPolicy">
+                <enum>Qt::StrongFocus</enum>
+               </property>
+               <property name="contextMenuPolicy">
+                <enum>Qt::DefaultContextMenu</enum>
+               </property>
+               <property name="text">
+                <string>Verify</string>
+               </property>
+               <property name="autoDefault">
+                <bool>false</bool>
+               </property>
+               <property name="flat">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
             </layout>
-            <zorder></zorder>
-           </widget>
-          </item>
-         </layout>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="groupBoxFile">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="title">
+           <string>Select Raw Data Input File</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout">
+           <item>
+            <layout class="QFormLayout" name="formLayout_2">
+             <property name="fieldGrowthPolicy">
+              <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+             </property>
+             <property name="labelAlignment">
+              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+             </property>
+             <item row="0" column="0">
+              <layout class="QGridLayout" name="gridLayout">
+               <item row="2" column="0">
+                <widget class="QRadioButton" name="rbtnTxt">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="focusPolicy">
+                  <enum>Qt::TabFocus</enum>
+                 </property>
+                 <property name="text">
+                  <string>txt</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QLineEdit" name="lnedDelimiter">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="focusPolicy">
+                  <enum>Qt::StrongFocus</enum>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                 <property name="placeholderText">
+                  <string>Delimiter</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="2">
+                <widget class="QLineEdit" name="lnedSkipTop">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="focusPolicy">
+                  <enum>Qt::StrongFocus</enum>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                 <property name="placeholderText">
+                  <string>Skip Lines (Top)</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="3">
+                <widget class="QLineEdit" name="lnedSkipBottom">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="focusPolicy">
+                  <enum>Qt::StrongFocus</enum>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                 <property name="placeholderText">
+                  <string>Skip Lines (Bottom)</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QLineEdit" name="lnedExcelSheet">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="focusPolicy">
+                  <enum>Qt::StrongFocus</enum>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                 <property name="placeholderText">
+                  <string>Sheet Number</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QRadioButton" name="rbtnExcel">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="focusPolicy">
+                  <enum>Qt::TabFocus</enum>
+                 </property>
+                 <property name="text">
+                  <string>xlsx / xls</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <widget class="QRadioButton" name="rbtnCsv">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="focusPolicy">
+                  <enum>Qt::TabFocus</enum>
+                 </property>
+                 <property name="text">
+                  <string>csv</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item row="1" column="0">
+              <widget class="QPushButton" name="btnSelectFile">
+               <property name="enabled">
+                <bool>true</bool>
+               </property>
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="focusPolicy">
+                <enum>Qt::StrongFocus</enum>
+               </property>
+               <property name="text">
+                <string>Select File</string>
+               </property>
+               <property name="autoDefault">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+          <zorder></zorder>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -617,7 +586,7 @@ QTabBar::tab:!selected {
        <item>
         <widget class="QPushButton" name="btnSaveClose">
          <property name="focusPolicy">
-          <enum>Qt::ClickFocus</enum>
+          <enum>Qt::TabFocus</enum>
          </property>
          <property name="text">
           <string>Save &amp;&amp; Close</string>
@@ -630,7 +599,7 @@ QTabBar::tab:!selected {
        <item>
         <widget class="QPushButton" name="btnCancel">
          <property name="focusPolicy">
-          <enum>Qt::ClickFocus</enum>
+          <enum>Qt::TabFocus</enum>
          </property>
          <property name="text">
           <string>Cancel</string>
@@ -647,11 +616,17 @@ QTabBar::tab:!selected {
   </layout>
  </widget>
  <tabstops>
+  <tabstop>lnedGlobalId</tabstop>
+  <tabstop>cboxLTERloc</tabstop>
+  <tabstop>lnedMetadataUrl</tabstop>
   <tabstop>btnVerifyMeta</tabstop>
+  <tabstop>rbtnCsv</tabstop>
   <tabstop>rbtnExcel</tabstop>
+  <tabstop>lnedExcelSheet</tabstop>
   <tabstop>rbtnTxt</tabstop>
-  <tabstop>btnSaveClose</tabstop>
-  <tabstop>btnCancel</tabstop>
+  <tabstop>lnedDelimiter</tabstop>
+  <tabstop>lnedSkipTop</tabstop>
+  <tabstop>lnedSkipBottom</tabstop>
  </tabstops>
  <resources/>
  <connections/>

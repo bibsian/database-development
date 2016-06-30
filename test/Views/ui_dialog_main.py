@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/bibsian/Dropbox/database-development/test/Views/ui_dialog_main.ui'
+# Form implementation generated from reading ui file 'C:\Users\MillerLab\Dropbox\database-development\test\Views\ui_dialog_main.ui'
 #
 # Created by: PyQt4 UI code generator 4.11.4
 #
@@ -129,9 +129,11 @@ class Ui_Dialog(object):
         spacerItem2 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_7.addItem(spacerItem2)
         self.btnSaveClose = QtGui.QPushButton(Dialog)
+        self.btnSaveClose.setFocusPolicy(QtCore.Qt.ClickFocus)
         self.btnSaveClose.setObjectName(_fromUtf8("btnSaveClose"))
         self.horizontalLayout_7.addWidget(self.btnSaveClose)
         self.btnCancel = QtGui.QPushButton(Dialog)
+        self.btnCancel.setFocusPolicy(QtCore.Qt.ClickFocus)
         self.btnCancel.setObjectName(_fromUtf8("btnCancel"))
         self.horizontalLayout_7.addWidget(self.btnCancel)
         self.verticalLayout_5.addLayout(self.horizontalLayout_7)

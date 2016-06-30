@@ -10,6 +10,9 @@
     <height>512</height>
    </rect>
   </property>
+  <property name="focusPolicy">
+   <enum>Qt::TabFocus</enum>
+  </property>
   <property name="windowTitle">
    <string>Observation Information</string>
   </property>
@@ -144,7 +147,7 @@
                     </sizepolicy>
                    </property>
                    <property name="focusPolicy">
-                    <enum>Qt::TabFocus</enum>
+                    <enum>Qt::StrongFocus</enum>
                    </property>
                    <property name="inputMask">
                     <string/>
@@ -175,7 +178,7 @@
                     </sizepolicy>
                    </property>
                    <property name="focusPolicy">
-                    <enum>Qt::TabFocus</enum>
+                    <enum>Qt::StrongFocus</enum>
                    </property>
                    <property name="inputMask">
                     <string/>
@@ -196,6 +199,9 @@
                  </item>
                  <item row="5" column="2">
                   <widget class="QCheckBox" name="ckStructure">
+                   <property name="focusPolicy">
+                    <enum>Qt::TabFocus</enum>
+                   </property>
                    <property name="text">
                     <string>Structure Data Note Present</string>
                    </property>
@@ -210,6 +216,9 @@
                  </item>
                  <item row="4" column="2">
                   <widget class="QCheckBox" name="ckRep4">
+                   <property name="focusPolicy">
+                    <enum>Qt::TabFocus</enum>
+                   </property>
                    <property name="text">
                     <string>Level 4 Not Present</string>
                    </property>
@@ -227,7 +236,7 @@
                     </sizepolicy>
                    </property>
                    <property name="focusPolicy">
-                    <enum>Qt::TabFocus</enum>
+                    <enum>Qt::StrongFocus</enum>
                    </property>
                    <property name="inputMask">
                     <string/>
@@ -265,7 +274,7 @@
                     </sizepolicy>
                    </property>
                    <property name="focusPolicy">
-                    <enum>Qt::TabFocus</enum>
+                    <enum>Qt::StrongFocus</enum>
                    </property>
                    <property name="inputMask">
                     <string/>
@@ -286,6 +295,9 @@
                  </item>
                  <item row="3" column="2">
                   <widget class="QCheckBox" name="ckRep3">
+                   <property name="focusPolicy">
+                    <enum>Qt::TabFocus</enum>
+                   </property>
                    <property name="text">
                     <string>Level 3 Not Present</string>
                    </property>
@@ -293,6 +305,9 @@
                  </item>
                  <item row="2" column="2">
                   <widget class="QCheckBox" name="ckRep2">
+                   <property name="focusPolicy">
+                    <enum>Qt::TabFocus</enum>
+                   </property>
                    <property name="text">
                     <string>Level 2 Not Present</string>
                    </property>
@@ -310,7 +325,7 @@
                     </sizepolicy>
                    </property>
                    <property name="focusPolicy">
-                    <enum>Qt::TabFocus</enum>
+                    <enum>Qt::StrongFocus</enum>
                    </property>
                    <property name="inputMask">
                     <string/>
@@ -352,6 +367,9 @@
                  </item>
                  <item row="6" column="2">
                   <widget class="QCheckBox" name="ckIndividual">
+                   <property name="focusPolicy">
+                    <enum>Qt::TabFocus</enum>
+                   </property>
                    <property name="text">
                     <string>Indivdual ID's Not Present</string>
                    </property>
@@ -369,7 +387,7 @@
                     </sizepolicy>
                    </property>
                    <property name="focusPolicy">
-                    <enum>Qt::TabFocus</enum>
+                    <enum>Qt::StrongFocus</enum>
                    </property>
                    <property name="inputMask">
                     <string/>
@@ -407,7 +425,7 @@
                     </sizepolicy>
                    </property>
                    <property name="focusPolicy">
-                    <enum>Qt::TabFocus</enum>
+                    <enum>Qt::NoFocus</enum>
                    </property>
                    <property name="inputMask">
                     <string/>
