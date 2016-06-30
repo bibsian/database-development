@@ -8,9 +8,7 @@ sys.path.append(os.path.realpath(os.path.dirname(__file__)))
 import class_inputhandler as ini
 import class_userfacade as face
 from class_helpers import *
-import class_merger as mrg
 from collections import OrderedDict
-import config as orm
 
 @pytest.fixture
 def AbstractTableBuilder():
@@ -117,13 +115,28 @@ def AbstractTableBuilder():
             'depend': True
         }
 
+        updatetable = {
+            'columns': [
+                'studystartyr', 'studyendyr', 'sitestartyr',
+                'siteendyr', 'totalobs', 'uniquetaxaunits',
+                'sp_rep1_label', 'sp_rep1_uniquelevels',
+                'sp_rep2_label', 'sp_rep2_uniquelevels',
+                'sp_rep3_label', 'sp_rep3_uniquelevels',
+                'sp_rep4_label', 'sp_rep4_uniquelevels'
+            ],
+            'time': False,
+            'cov': False,
+            'depend':False
+        }
+
         tabledict = {
             'climaterawtable': climaterawtable,
             'stationtable': stationtable,
             'sitetable': sitetable,
             'maintable': maintable,
             'taxatable': taxatable,
-            'rawtable': rawtable
+            'rawtable': rawtable,
+            'updatetable': updatetable
         }
 
         def get_table_name(self):
@@ -142,35 +155,10 @@ def AbstractTableBuilder():
                 self._inputs.tablename]['columns']
             return [x for x in allcol if x not in availcol]
 
-        def get_time_status(self):
-            return  self.tabledict[
-                self._inputs.tablename]['time']
-
-        @abc.abstractmethod
-        def get_time_data(self):
-            pass
-        
-        def get_cov_status(self):
-            return self.tabledict[
-                self._inputs.tablename]['cov']
-
-        @abc.abstractmethod
-        def get_cov_data(self):
-            pass
-
-        
-        def get_dependent_status(self):
-            return self.tabledict[
-                self._inputs.tablename]['depend']
-        
-        @abc.abstractmethod
-        def get_dependent_data(self):
-            pass
-
         @abc.abstractmethod
         def get_dataframe(self):
             pass
-            
+
     return AbstractTableBuilder
 
 @pytest.fixture
@@ -185,16 +173,11 @@ def SiteTableBuilder(AbstractTableBuilder):
         def get_dataframe(
                 self, dataframe, acols, nullcols, dbcol,
                 globalid, siteid, sitelevels):
-            try:
-                assert acols is not None
-            except Exception as e:
-                print(str(e))
-                raise AssertionError('Columns names not set')
-            try:
-                assert dataframe is not None
-            except Exception as e:
-                print(str(e))
-                raise AssertionError('Raw dataframe not set')
+
+            acols = [x.rstrip() for x in acols]
+            nullcols = [x.rstrip() for x in nullcols]
+            dbcol = [x.rstrip() for x in dbcol]
+            
             if 'lterid' in dbcol:
                 dbcol.remove('lterid')
             else:
@@ -231,16 +214,11 @@ def MainTableBuilder(AbstractTableBuilder):
         def get_dataframe(
                 self, dataframe, acols, nullcols, dbcol,
                 globalid, siteid, sitelevels):
-            try:
-                assert acols is not None
-            except Exception as e:
-                print(str(e))
-                raise AssertionError('Columns names not set')
-            try:
-                assert dataframe is not None
-            except Exception as e:
-                print(str(e))
-                raise AssertionError('Raw dataframe not set')
+
+            acols = [x.rstrip() for x in acols]
+            nullcols = [x.rstrip() for x in nullcols]
+            dbcol = [x.rstrip() for x in dbcol]
+            
             if 'projid' in dbcol:
                 dbcol.remove('projid')
             else:
@@ -290,7 +268,7 @@ def MainTableBuilder(AbstractTableBuilder):
                     'sp_rep1_ext_units': 'NULL',
                     'sp_rep1_label': 'NULL',
                     'sp_rep1_uniquelevels': 'NULL',
-                    'sp_rep2_ext': 'NULL,',
+                    'sp_rep2_ext': 'NULL',
                     'sp_rep2_ext_units': 'NULL',
                     'sp_rep2_label': 'NULL',
                     'sp_rep2_uniquelevels': 'NULL',
@@ -345,16 +323,11 @@ def TaxaTableBuilder(AbstractTableBuilder):
         def get_dataframe(
                 self, dataframe, acols, nullcols, dbcol,
                 globalid, siteid, sitelevels):
-            try:
-                assert acols is not None
-            except Exception as e:
-                print(str(e))
-                raise AssertionError('Columns names not set')
-            try:
-                assert dataframe is not None
-            except Exception as e:
-                print(str(e))
-                raise AssertionError('Raw dataframe not set')
+            
+            acols = [x.rstrip() for x in acols]
+            nullcols = [x.rstrip() for x in nullcols]
+            dbcol = [x.rstrip() for x in dbcol]
+
             if 'projid' in dbcol:
                 dbcol.remove('projid')
             else:
@@ -363,22 +336,31 @@ def TaxaTableBuilder(AbstractTableBuilder):
                 nullcols.remove('projid')
             else:
                 pass
+
+            print('SELF INPUTS: ', self._inputs.checks)
+            print('ALL COLUMNS: ', acols)
+            print('DB COLUMNS: ', dbcol)
+            print('DF COLUMNS: ', dataframe.columns.values.tolist())
+            print('NULL COLUMNS: ', nullcols)
+
+            if self._inputs.checks['taxacreate'] is True:
+                dfcol = dataframe.columns.values.tolist()
+                columns_create = [x for x in acols if x not in dfcol]
+                print('CREATE :', columns_create)
+                for i in columns_create:
+                    dataframe.loc[:, i] = i
+                print('DF COLUMNS (added): ', dataframe.columns.values.tolist())
+
+            else:
+                pass
             
             dbcolrevised = [x for x in dbcol if x not in nullcols]
             uniquesubset_site_list = []
-            self.dependentdf = produce_null_df(
-                ncols=2, colnames=['uniquetaxaunits', 'siteid'],
-                dflength=len(sitelevels), nullvalue='NULL'
-            )
             for i,item in enumerate(sitelevels):                
                 unqdf = dataframe[dataframe[siteid]==item]
                 uniquesubset = unqdf[acols]
                 unique = uniquesubset.drop_duplicates()
                 unique = unique.reset_index(drop=True)
-                self.dependentdf[
-                    'uniquetaxaunits'].iloc[i] = len(uniquesubset)
-                self.dependentdf['siteid'].iloc[i] = item
-
                 sitelevel = produce_null_df(
                     ncols=len(unique),
                     colnames=[siteid],
@@ -405,47 +387,8 @@ def TaxaTableBuilder(AbstractTableBuilder):
                 final.rename(
                     columns={acols[i]:item},
                     inplace=True)
-
-            query_class = mrg.Merger(globalid)
-            sitefilter = sitelevels
-            q_data = query_class.query_database(
-                'maintable', sitefilter)
-            taxa_merge = pd.merge(
-                final, q_data,
-                left_on=siteid, right_on='siteid',
-                how='left'
-            )
-
-            self.dependentdf = pd.merge(
-                taxa_merge, self.dependentdf,
-                left_on='siteid', right_on='siteid',
-                how='left'
-            )
-
-
-            dbcol.insert(0,'projid')
-            return taxa_merge[dbcol]
-
-        def get_dependent_data(self):
-            maindata = self.dependentdf[
-                ['projid','uniquetaxaunits_y']].drop_duplicates()
-            maindata.columns = ['projid', 'uniquetaxaunits']
-            maindata = maindata.reset_index()
-            mainqueries = {}
-
-            try:
-                for i in range(len(maindata)):
-                    mainqueries[i] = orm.session.query(
-                        orm.Maintable).filter(
-                            orm.Maintable.projid ==
-                            maindata['projid'][i])
-                    mainqueries[i].one().uniquetaxaunits = (
-                        maindata['uniquetaxaunits'][i])
-                orm.session.flush()
-            except Exception as e:
-                print(str(e))
-                raise ValueError(
-                    'Could not modified maintable uniquetaxaunits')
+            dbcol.append(siteid)
+            return final[dbcol]
 
     return TaxaTableBuilder
 
@@ -460,21 +403,28 @@ def RawTableBuilder(AbstractTableBuilder):
         def get_dataframe(
                 self, dataframe, acols, nullcols, dbcol,
                 globalid, siteid, sitelevels):
-            try:
-                assert acols is not None
-            except Exception as e:
-                print(str(e))
-                raise AssertionError('Columns names not set')
-            try:
-                assert dataframe is not None
-            except Exception as e:
-                print(str(e))
-                raise AssertionError('Raw dataframe not set')
-            acols.remove('sampleid')
-            acols.remove('covariates')
-            acols.remove('year')
-            acols.remove('month')
-            acols.remove('day')
+
+            acols = [x.rstrip() for x in acols]
+            nullcols = [x.rstrip() for x in nullcols]
+            dbcol = [x.rstrip() for x in dbcol]
+            
+            autoupdated = [
+                'taxaid', 'projid', 'year',
+                'month', 'day', 'covariates']
+            acols.insert(0,siteid)
+            
+            nullcols.remove('spt_rep1')
+            nullcols.remove('taxaid')
+            nullcols.remove('projid')
+            nullcols.remove('year')
+            nullcols.remove('month')
+            nullcols.remove('day')
+            nullcols.remove('covariates')
+
+            dbcolrevised = [
+                x for x in dbcol if x not in autoupdated and x
+                not in nullcols]
+
             uniquesubset = dataframe[acols]
             nullsubset = produce_null_df(
                 ncols=len(nullcols),
@@ -485,12 +435,43 @@ def RawTableBuilder(AbstractTableBuilder):
             concat =  pd.concat(
                 [uniquesubset, nullsubset], axis=1).reset_index(
                     drop=True)
-            final = concat.drop_duplicates().reset_index(drop=True) 
-            final.columns =dbcol
-            return final
+            final = concat.reset_index(drop=True) 
+
+            try:
+                assert (len(acols) == len(dbcolrevised)) is True
+                for i,item in enumerate(dbcolrevised):
+                    final.rename(
+                        columns={acols[i]:item}, inplace=True)
+                return final
+
+            except Exception as e:
+                print(str(e))
+                raise AttributeError('Column renaming error')
 
 
     return RawTableBuilder 
+
+@pytest.fixture
+def UpdaterTableBuilder(AbstractTableBuilder):
+    class UpdaterTableBuilder(AbstractTableBuilder):
+        '''
+        Concrete table builder implementation: Site
+        Note, no get methods because there is no
+        alternate informatoin needed
+        '''
+        def get_dataframe(
+                self, dataframe, acols, nullcols, dbcol,
+                globalid, siteid, sitelevels):
+
+            # Columns that will be updated later in the
+            # program
+
+            updatedf = produce_null_df(
+                len(dbcol), dbcol, len(sitelevels), 'NULL')
+            updatedf['siteid'] = sitelevels
+            return updatedf
+
+    return UpdaterTableBuilder 
 
 
 @pytest.fixture
@@ -502,13 +483,6 @@ def DatabaseTable():
             self._null = None
             self._availcols = None
             self._availdf = None
-            self._time = None
-            self._timedf = None
-            self._cov = None
-            self._covdf = None
-            self._depend = None
-            self._dependdf = None
-            self._foreigndf = None
 
         def set_table_name(self, tablename):
             self._name = tablename
@@ -524,15 +498,6 @@ def DatabaseTable():
 
         def set_dataframe(self, availdf):
             self._availdf = availdf
-            
-        def set_time_status(self, timebool):
-            self._time = timebool
-
-        def set_cov_status(self, covbool):
-            self._cov = covbool
-
-        def set_dependent_status(self, dependitems):
-            self._depend = dependitems
             
     return DatabaseTable
 
@@ -573,14 +538,14 @@ def TableDirector(DatabaseTable):
                 assert self._rawdata is not None
             except Exception as e:
                 print(str(e))
-                raise AssertionError('Data not set')
+                raise AssertionError('Data frame not set')
 
         def set_globalid(self, globalid):
             try:
                 assert globalid is not None
             except Exception as e:
                 print(str(e))
-                raise AttributeError('Global Id is not registered')
+                raise AttributeError('Global Id not registered')
             self._globalid = globalid
             
         def set_siteid(self, siteid):
@@ -623,22 +588,6 @@ def TableDirector(DatabaseTable):
                 self._globalid, self._siteid, self._sitelevels)
 
             dbtable.set_dataframe(adata)
-            
-            time = self._builder.get_time_status()
-            dbtable.set_time_status(time)
-
-            cov = self._builder.get_cov_status()
-            dbtable.set_cov_status(cov)
-
-            dep = self._builder.get_dependent_status()
-            dbtable.set_dependent_status(dep)
-            print(dep)
-            if dep is True:
-                print('in the build block')
-                self._builder.get_dependent_data()
-                print('executed the dependent command')
-            else:
-                pass
 
             return dbtable
 
@@ -727,8 +676,9 @@ def test_maintable_build(
 
     maintab = director.get_database_table()
     showmain = maintab._availdf
+    print(showmain)
     assert (isinstance(showmain, pd.DataFrame)) is True
-
+    
 
 @pytest.fixture
 def taxa_user_input():
@@ -795,12 +745,11 @@ def test_taxatable_build(
     director.set_globalid(2)
     director.set_siteid('SITE')
     director.set_sitelevels(sitelevels)
-
+    
     taxatable = director.get_database_table()
     showtaxa = taxatable._availdf
     assert isinstance(showtaxa,pd.DataFrame)    
 
-    print(showtaxa)
     testphylum = showtaxa['phylum'].values.tolist()
     testorder = showtaxa['order'].values.tolist()
     testspecies = showtaxa['species'].values.tolist()
@@ -812,3 +761,170 @@ def test_taxatable_build(
     assert (testphylum == truephylum) is True
     assert (testorder == trueorder) is True
     assert (testspecies == truespecies) is True
+
+@pytest.fixture
+def taxa_user_input_create():
+    taxalned = OrderedDict((
+        ('sppcode', ''),
+        ('kingdom', 'Animalia'),
+        ('phylum', 'TAXON_PHYLUM'),
+        ('clss', 'TAXON_CLASS'),
+        ('order', 'TAXON_ORDER'),
+        ('family', 'TAXON_FAMILY'),
+        ('genus', 'TAXON_GENUS'),
+        ('species', 'TAXON_SPECIES') 
+    ))
+
+    taxackbox = OrderedDict((
+        ('sppcode', False),
+        ('kingdom', True),
+        ('phylum', True),
+        ('clss', True),
+        ('order', True),
+        ('family', True),
+        ('genus', True),
+        ('species', True) 
+    ))
+
+    taxacreate = {
+        'taxacreate': True
+    }
+    
+    available = [
+        x for x,y in zip(
+            list(taxalned.keys()), list(
+                taxackbox.values()))
+        if y is True
+    ]
+    
+    taxaini = ini.InputHandler(
+        name='taxainput',
+        tablename='taxatable',
+        lnedentry= extract(taxalned, available),
+        checks=taxacreate)
+    return taxaini
+
+def test_taxatable_build_create(
+        TaxaTableBuilder, TableDirector, taxa_user_input_create, df,
+        taxadfexpected):
+    sitelevels = df['SITE'].drop_duplicates().values.tolist()
+    sitelevels.sort()
+    facade = face.Facade()
+    facade.input_register(taxa_user_input_create)
+    face_input = facade._inputs[taxa_user_input_create.name]
+    taxabuilder = TaxaTableBuilder()
+    assert (isinstance(taxabuilder, TaxaTableBuilder)) is True
+
+    director = TableDirector()
+    assert (isinstance(director, TableDirector)) is True
+    director.set_user_input(face_input)
+    director.set_builder(taxabuilder)
+    director.set_data(df)
+    director.set_globalid(2)
+    director.set_siteid('SITE')
+    director.set_sitelevels(sitelevels)
+    
+    taxatable = director.get_database_table()
+    showtaxa = taxatable._availdf
+    assert isinstance(showtaxa,pd.DataFrame)    
+    print(showtaxa)
+    assert 0
+    testphylum = showtaxa['phylum'].values.tolist()
+    testorder = showtaxa['order'].values.tolist()
+    testspecies = showtaxa['species'].values.tolist()
+
+    truephylum = taxadfexpected['phylum'].values.tolist()
+    trueorder = taxadfexpected['order'].values.tolist()
+    truespecies = taxadfexpected['species'].values.tolist()
+
+    assert (testphylum == truephylum) is True
+    assert (testorder == trueorder) is True
+    assert (testspecies == truespecies) is True
+    
+@pytest.fixture
+def raw_userinput():
+    obslned = OrderedDict((
+        ('spt_rep2', ''),
+        ('spt_rep3', ''),
+        ('spt_rep4', ''),
+        ('structure', ''),
+        ('individ', ''),
+        ('unitobs', 'COUNT')
+    ))
+    
+    obsckbox = OrderedDict((
+        ('spt_rep2', False),
+        ('spt_rep3', False),
+        ('spt_rep4', False),
+        ('structure', False),
+        ('individ', False),
+        ('unitobs', True)
+    ))
+    available = [
+        x for x,y in zip(
+            list(obslned.keys()), list(
+                obsckbox.values()))
+        if y is True
+    ]
+
+    rawini = ini.InputHandler(
+        name='rawinfo',
+        tablename='rawtable',
+        lnedentry= extract(obslned, available),
+        checks=obsckbox)
+
+    return rawini
+    
+def test_rawtable_build(
+        TableDirector, raw_userinput, df, RawTableBuilder):
+    sitelevels = df['SITE'].drop_duplicates().values.tolist()
+    sitelevels.sort()
+    facade = face.Facade()
+    facade.input_register(raw_userinput)
+    face_input = facade._inputs[raw_userinput.name]
+    rawbuilder = RawTableBuilder()
+    assert (isinstance(rawbuilder, RawTableBuilder)) is True
+
+    director = TableDirector()
+    assert (isinstance(director, TableDirector)) is True
+    director.set_user_input(face_input)
+    director.set_builder(rawbuilder)
+    director.set_data(df)
+    director.set_globalid(2)
+    director.set_siteid('SITE')
+    director.set_sitelevels(sitelevels)
+    rawtable = director.get_database_table()
+    showraw = rawtable._availdf
+
+    counttest = showraw['unitobs'].values.tolist()
+    counttrue = df['COUNT'].values.tolist()
+
+    sitetest = showraw['spt_rep1'].values.tolist()
+    sitetrue = df['SITE'].values.tolist()
+
+    assert (counttest == counttrue) is True
+    assert (sitetest == sitetrue) is True
+
+def test_update_table(
+        TableDirector, raw_userinput, df, UpdaterTableBuilder):
+    sitelevels = df['SITE'].drop_duplicates().values.tolist()
+    sitelevels.sort()
+    facade = face.Facade()
+    facade.input_register(raw_userinput)
+    face_input = facade._inputs[raw_userinput.name]
+    updatebuilder = UpdaterTableBuilder()
+    assert (isinstance(updatebuilder, UpdaterTableBuilder)) is True
+
+    director = TableDirector()
+    assert (isinstance(director, TableDirector)) is True
+    director.set_user_input(face_input)
+    director.set_builder(updatebuilder)
+    director.set_data(df)
+    director.set_globalid(2)
+    director.set_siteid('SITE')
+    director.set_sitelevels(sitelevels)
+    updatedf = director.get_database_table()
+    showupdate = updatedf._availdf
+    print(showupdate)
+    assert isinstance(showupdate, pd.DataFrame) is True
+    assert (len(showupdate) == len(sitelevels)) is True
