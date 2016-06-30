@@ -79,14 +79,13 @@ def test_onetomany_failures(df):
         test.do()
 
     # Wrong column location
-    test = OneToMany(df, 'splitme', 1, ['genus', 'species'])
+    test = OneToMany(df, 'splitme_wrong', 1, ['genus', 'species'])
     with pytest.raises(AssertionError):
         test.do()
 
     # Right column location records not equal across dataframe
-    test = OneToMany(df, 'splitme', 2, ['genus', 'species'])
+    test = OneToMany(df, 'splitme_right', 2, ['genus', 'species'])
     with pytest.raises(LookupError):
         test.do()
-    print(test.display_mod())
 
     

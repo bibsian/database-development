@@ -5,8 +5,22 @@ sys.path.append(os.path.realpath(os.path.dirname(__file__)))
 import re
 from numpy import where
 from collections import OrderedDict
+from itertools import chain
+
+def string_to_list(userinput):
+    '''
+    Function to take a string with names separated by
+    commas and turn that into a list of names
+    '''
+    strtolist = re.sub(
+        ",\s", " ", userinput.rstrip()).split()
+    return strtolist
+
 
 def strip_time(data, col):
+    '''
+    Method to remove delimiter from date time data columns
+    '''
     strippedlist = []
     for i in list(set(col)):
         strippedlist.append([
@@ -17,7 +31,7 @@ def strip_time(data, col):
 def year_strip(dateformat):
     '''
     Takes a string specifying a date format and then extracts the
-    year format for help with processing.
+    year format for help with processing.----DELETE?
     '''
     f = dateformat
     found = re.search('Y+', f)
@@ -25,7 +39,7 @@ def year_strip(dateformat):
     return ylength
 
 def extract(d,keys):
-    ''' return subset of dictionary based on list of keys'''
+    ''' returns subset of dictionary based on list of keys'''
     return OrderedDict((k, d[k]) for k in d if k in keys)
 
 def check_int(x):
@@ -76,13 +90,13 @@ def check_registration(clss, inputname):
         print(str(e))
         raise ValueError('Input Not Registered')
 
-
 class UniqueReplace(object):
-    ''' Class to perform the work of returning unique
-    combinations of levels given 'n' number of columns
+    ''' 
+    Class to perform the work of returning a dataframe with unique
+    combinations of factors from 'x' number of columns
     '''
     def __init__(self, dataframe, clsinstance):
-        self._data = pd.DataFrame(dataframe)
+        self._data = dataframe.copy()
         self.userinput = clsinstance
         self.lookup = list(clsinstance.lnedentry.values())
         self.levels = None
@@ -103,7 +117,8 @@ class UniqueReplace(object):
             print(str(e))
             raise LookupError('Invalid column names')
 
-    def replace_levels(self, usermodifiedlist):
+    def replace_levels(
+            self, modifiedlevelname, allotherlevels=None):
         '''
         Takes a modified list of factor level labels and converts
         the original labels in the dataframe into
@@ -114,26 +129,35 @@ class UniqueReplace(object):
         except Exception as e:
             print(str(e))
             raise AssertionError(
-                'To replace values to must input only one column' +
+                'To replace values input only one column' +
                 ' name.')
 
-        if self.levels is not None:
-            self.original = self.levels[self.lookup].values.tolist()
-            self.modified = usermodifiedlist
-            tochange = [
-                [x, y] for x, y in zip(
-                    self.original, self.modified) if x != y]
-            fromlist = []
-            tolist = []
-            for i,item in enumerate(tochange):
-                fromlist.append(item[0])
-                tolist.append(item[1])
-            return self._data.replace(fromlist, tolist)
-
+        self.modified = modifiedlevelname
+        self.original = self._data[self.lookup].drop_duplicates()
+        og_list = self.original[self.lookup].values.tolist()
+        if any(isinstance(i, list) for i in og_list):
+            og_list = list(chain.from_iterable(og_list))
         else:
-            raise AssertionError(
-                'Must use get_levels method before replacing' +
-                ' values.')
+            pass
+
+        level_name_changed_from = [
+            x for x in og_list if x not in allotherlevels]
+        print(level_name_changed_from, self.modified)
+
+        try:
+            assert (
+                len(self.modified) == len(level_name_changed_from))
+
+            self._data = self._data.replace(
+                {self.lookup[0]: {
+                    level_name_changed_from[0]: self.modified[0]}},
+            )
+            return self._data
+
+        except Exception as e:
+            print(str(e))
+            raise AttributeError('Too many levels to replace')
+        return self._data
 
     def replace_values(self):
         '''
@@ -164,6 +188,7 @@ class UniqueReplace(object):
 
             return modified
 
+
 def updated_df_values(olddataframe,newdataframe,logger, name):
     '''
     Helper function to aid in logging the difference between
@@ -186,15 +211,42 @@ def updated_df_values(olddataframe,newdataframe,logger, name):
         raise AttributeError(
             'Dataframe columns are not equivalent')
     diffdf = (olddataframe != newdataframe)
+    if (len(olddataframe) == 0 or
+        olddataframe is None or
+        len(olddataframe.columns) == 0):
+        logger.info('{} "{}"'.format(
+            name,
+            'NULL'))
+    else:
 
-    for i,item in enumerate(diffdf.columns):
-        if any(diffdf[item].values.tolist()):
-            index = where(diffdf[item].values)[0].tolist()
-            logger.info('{} "{}" = {} to {}'.format(
-                name,
-                item,
-                olddataframe.loc[index,item].values.tolist(),
-                newdataframe.loc[index,item].values.tolist()))
-        else:
-            pass
+        diffdf = (olddataframe != newdataframe)
+
+        for i,item in enumerate(diffdf.columns):
+            if any(diffdf[item].values.tolist()):
+                index = where(diffdf[item].values)[0].tolist()
+                logger.info('{} "{}" = {} to {}'.format(
+                    name,
+                    item,
+                    olddataframe.loc[index,item].values.tolist(),
+                    newdataframe.loc[index,item].values.tolist()))
+            else:
+                pass
+
+def write_column_to_log(dictionary, logger, tablename):
+    '''
+    Function to data a dictionary of column headers/entries,
+    turn it into a dataframe, and log the entries as
+    a function to the name.
+    '''
+    coldf = pd.DataFrame([dictionary])
+    nulldf = produce_null_df(
+        len(coldf.values.tolist()),
+        coldf.columns.values.tolist(),
+        len(coldf),
+        'NULL'
+    )
+    updated_df_values(
+        nulldf, coldf, logger, tablename
+    )
+
 

@@ -120,18 +120,25 @@ def updated_df_values():
             print(str(e))
             raise AttributeError(
                 'Dataframe columns are not equivalent')
-        diffdf = (olddataframe != newdataframe)
+        if (len(olddataframe) == 0 or
+            olddataframe is None or
+            len(olddataframe.columns) == 0):
+            logger.info('{} "{}"'.format(
+                name,
+                'NULL'))
+        else:
+            diffdf = (olddataframe != newdataframe)
             
-        for i,item in enumerate(diffdf.columns):
-            if any(diffdf[item].values.tolist()):
-                index = where(diffdf[item].values)[0].tolist()
-                logger.info('{} "{}" = {} to {}'.format(
-                    name,
-                    item,
-                    olddataframe.loc[index,item].values.tolist(),
-                    newdataframe.loc[index,item].values.tolist()))
-            else:
-                pass
+            for i,item in enumerate(diffdf.columns):
+                if any(diffdf[item].values.tolist()):
+                    index = where(diffdf[item].values)[0].tolist()
+                    logger.info('{} "{}" = {} to {}'.format(
+                        name,
+                        item,
+                        olddataframe.loc[index,item].values.tolist(),
+                        newdataframe.loc[index,item].values.tolist()))
+                else:
+                    pass
     return updated_df_values
 
 @pytest.fixture
@@ -233,3 +240,75 @@ def test_year_strip(year_strip):
     assert (year_strip(ym4) == 4) is True
     assert (year_strip(y4) == 4) is True
     assert (year_strip(y) == 4) is True
+
+@pytest.fixture
+def write_column_to_log(produce_null_df, updated_df_values):
+    def write_column_to_log(dictionary, logger, tablename):
+        coldf = pd.DataFrame([dictionary])
+        nulldf = produce_null_df(
+            len(coldf.values.tolist()),
+            coldf.columns.values.tolist(),
+            len(coldf),
+            'NULL'
+        )
+        
+        updated_df_values(
+            nulldf, coldf, logger, tablename
+        )
+    return write_column_to_log
+
+def test_write_column(write_column_to_log, mylog):
+    testdict = {'columnname':'uniquevalue'}
+    write_column_to_log(testdict, mylog, 'testtable')
+
+@pytest.fixture
+def date_strip():
+    return pd.read_csv('raw_data_test_dialogsite.csv')
+
+@pytest.fixture
+def strip_time():
+    '''
+    Function to strip a single date time column
+    with all potential delimiters (leaving a space
+    where the delimiter used to be). This is necessary
+    to standardize the data enabling the effective use
+    of the pandas as_datetime method.
+    '''
+    def strip_time(data, col):
+        strippedlist = []
+        for i in list(set(col)):
+            print([
+                re.sub("/|,|-|;"," ", x) for x in list(
+                    data[i].astype(str))])
+            strippedlist.append([
+                re.sub("/|,|-|;"," ", x) for x in list(
+                    data[i].astype(str))])
+        return strippedlist
+
+        strippedlist = []
+        for i in list(set(col)):
+            strippedlist.append([
+                re.sub("/|,|-|;"," ", x) for x in list(
+                    data[i].astype(str))])
+        return strippedlist
+    return strip_time
+
+def test_strip_time(date_strip, strip_time):
+    test = strip_time(date_strip, ['DATE'])
+    print(test)
+    assert isinstance(test, list) is True
+
+@pytest.fixture
+def string_to_list():
+    def string_to_list(userinput):
+        strtolist = re.sub(
+            ",\s", " ", userinput.rstrip()).split()
+        return strtolist
+
+    return string_to_list
+
+def test_string_to_list(string_to_list):
+    teststring = 'DEPTH, REP, TEMP'
+    test = string_to_list(teststring)
+    print(test)
+    assert isinstance(test, list) is True
