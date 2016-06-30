@@ -60,8 +60,7 @@ climate_raw_table = Table(
     Column('metarecordid', Integer, primary_key=True),
     Column('title', TEXT),
     Column('stationid', None, ForeignKey(
-        'climate_station_table.stationid', ondelete="CASCADE",
-        onupdate="CASCADE")),
+        'climate_station_table.stationid', ondelete="CASCADE")),
     Column('year', NUMERIC),
     Column('month', NUMERIC),
     Column('day', NUMERIC),
@@ -126,7 +125,7 @@ climate_station_table = Table(
     'climate_station_table', metadata,
     Column('stationid', VARCHAR(200), primary_key=True),
     Column('lterid', None,
-           ForeignKey('lter_table.lterid', onupdate="CASCADE")),
+           ForeignKey('lter_table.lterid')),
     Column('lat', NUMERIC),
     Column('lng', NUMERIC),
     Column('descript', TEXT))
@@ -153,7 +152,7 @@ site_table = Table(
     'site_table', metadata,
     Column('siteid', VARCHAR(200), primary_key=True),
     Column('lterid', VARCHAR(10),
-           ForeignKey('lter_table.lterid', onupdate="CASCADE")),
+           ForeignKey('lter_table.lterid')),
     Column('lat', NUMERIC),
     Column('lng', NUMERIC),
     Column('descript', TEXT))
@@ -184,7 +183,7 @@ main_table = Table(
     Column('studystartyr', NUMERIC),
     Column('studyendyr', NUMERIC),
     Column('siteid', VARCHAR(200),
-           ForeignKey('site_table.siteid', onupdate="CASCADE")),
+           ForeignKey('site_table.siteid')),
     # DERIVED: start year of data collection for
     # a particular site
     Column('sitestartyr', NUMERIC),
@@ -206,7 +205,7 @@ main_table = Table(
     # META: This column indicates whether the study contained
     # community level data (i.e. data over multiple
     # taxonomic groups
-    Column('community', BOOLEAN),
+    Column('community', VARCHAR(50)),
     # DERIVED: calculates the number of unique
     # taxonomic units from raw data
     Column('uniquetaxaunits', NUMERIC),
@@ -263,8 +262,8 @@ main_table = Table(
 taxa_table = Table(
     'taxa_table', metadata,
     Column('taxaid', Integer, primary_key=True),
-    Column('projid', Integer, ForeignKey('main_table.projid',
-           ondelete="CASCADE", onupdate="CASCADE")),
+    Column('projid', Integer, ForeignKey(
+        'main_table.projid', ondelete="CASCADE")),
     Column('sppcode', VARCHAR(100)),
     Column('kingdom', VARCHAR(100)),
     Column('phylum', VARCHAR(100)),
@@ -283,9 +282,9 @@ raw_table = Table(
     'raw_table', metadata,
     Column('sampleid', Integer, primary_key=True),
     Column('taxaid', None, ForeignKey(
-        'taxa_table.taxaid', ondelete="CASCADE", onupdate="CASCADE")),
+        'taxa_table.taxaid', ondelete="CASCADE")),
     Column('projid', None, ForeignKey(
-        'main_table.projid', ondelete="CASCADE", onupdate="CASCADE")),
+        'main_table.projid', ondelete="CASCADE")),
     Column('year', NUMERIC),
     Column('month', NUMERIC),
     Column('day', NUMERIC),
