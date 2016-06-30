@@ -84,9 +84,22 @@ class FileHandler(object):
 
         elif self.file_id.ext is not None:
             try:
-                memento = FileMemento(dfstate= self.readoptions[
+                dfstate = self.readoptions[
                     self.file_id.ext](eval(
-                        self.inputoptions[self.file_id.ext])).copy(),
+                        self.inputoptions[
+                            self.file_id.ext])).copy()
+                for i, item in enumerate(dfstate.columns):
+                    if isinstance(
+                            dfstate.dtypes.values.tolist()[i],
+                            object):
+                        try:
+                            dfstate.loc[:, item] = dfstate.loc[
+                                :,item].str.rstrip()
+                        except:
+                            pass
+                    else:
+                            pass
+                memento = FileMemento(dfstate= dfstate,
                             state= self.state)
                 return memento
 

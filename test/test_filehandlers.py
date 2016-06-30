@@ -85,7 +85,8 @@ def FileHandler(FileMemento):
             '''
             Adding a method to set the protected data
             attribute. Three criteria must be met for an attempted
-            set method to proceed.
+            set method to proceed. Additionally strip trailing
+            white space from all columns that could be strings
             '''
 
             if self.filetoload is None:
@@ -96,9 +97,23 @@ def FileHandler(FileMemento):
 
             elif self.file_id.ext is not None:
                 try:
-                    memento = FileMemento(dfstate= self.readoptions[
+                    dfstate = self.readoptions[
                         self.file_id.ext](eval(
-                            self.inputoptions[self.file_id.ext])).copy(),
+                            self.inputoptions[
+                                self.file_id.ext])).copy()
+                    for i, item in enumerate(dfstate.columns):
+                        if isinstance(
+                                dfstate.dtypes.values.tolist()[i],
+                                object):
+                            try:
+                                dfstate.loc[:, item] = dfstate.loc[
+                                    :,item].str.rstrip()
+                            except:
+                                pass
+                        else:
+                                pass
+
+                    memento = FileMemento(dfstate= dfstate,
                                 state= self.state)
                     return memento
 
