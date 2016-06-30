@@ -1,16 +1,16 @@
 #!/usr/bin/env python
-
 from PyQt4 import QtGui, QtCore
 import pandas as pd
+from collections import OrderedDict
 import ui_dialog_site as dsite
 import class_inputhandler as ini
 import class_modelviewpandas as view
 import class_helpers as hlp
+import class_flusher as flsh
 import config as orm
 
 class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
 
-    changed_data = QtCore.pyqtSignal(object)
     site_unlocks = QtCore.pyqtSignal(object)
 
     def __init__(self,  parent=None):
@@ -22,6 +22,8 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
         # logging class
         self.siteini = None
         self._log = None
+        self._data = None
+        self.sitelned = None
 
         # Placeholders:
         # Site Table from Raw data
@@ -68,59 +70,10 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
         self.message = QtGui.QMessageBox
 
         # Signals and slots
-        self.btnSiteID.clicked.connect(self.site_handler)
-        self.btnSaveClose.clicked.connect(self.submit_change)
+        self.btnSiteID.clicked.connect(self.submit_change)
+        self.btnSaveClose.clicked.connect(self.save_close)
         self.btnSkip.clicked.connect(self.close)
-        self.btnQuery.clicked.connect(self.query_database)
-
-    def site_handler(self):
-        ''' 
-        Method to take user input from line edit and
-        wrap it with a InputHandler. Then send 
-        the wrapped object to the Main Window.
-        '''
-        lned = {'siteid': self.lnedSiteID.text().strip()}
-        self.siteloc['siteid'] = self.lnedSiteID.text().strip()            
-        self.siteini = ini.InputHandler(
-            name='siteinfo', tablename='sitetable',
-            lnedentry=lned)
-
-        self.facade.input_register(self.siteini)
-
-        self.site_manager()
-        self.message.about(
-            self, 'Status', 'Site Column Recorded')
-
-    def site_manager(self):
-        '''
-        Receives an InputHandler object from the Site Dialog
-        box. Registers the object to the Facade class
-        and initiates a method to do work on that user input.
-        '''
-        try:
-            self.sitedirector = self.facade.make_table('siteinfo')
-            self._log = self.facade._tablelog['sitetable']
-
-            self.facade.register_site_levels(
-                self.sitedirector._availdf[
-                    'siteid'].values.tolist())
-
-            
-        except Exception as e:
-            print(str(e))
-            self.error.showMessage(str(e))
-            raise AttributeError('Column name not valid')
-
-        if self.queryupdate is None:
-            self.rawdataog = (
-                self.sitedirector._availdf.sort_values(
-                    by='siteid'))
-            self.sitetablemodel= self.viewEdit(
-                self.rawdataog)
-            self.listviewSiteLabels.setModel(
-                self.sitetablemodel)
-        else:
-            pass
+        self.btnUpdate.clicked.connect(self.update_data)
 
     def submit_change(self):
         '''
@@ -134,80 +87,63 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
         More tabs in teh MainWindow are enabled once
         this dialog box is completed
         '''
-        if not self.sitedbtable.values.tolist():
-            self.sitetabledata = self.sitetablemodel.data(
-                None, QtCore.Qt.UserRole)
-        else:
-            self.sitetabledata = self.sitedbtablemodel.data(
-                None, QtCore.Qt.UserRole)
-        self.changed_data.emit(self.facade._data)
-
-        # Logging changes
-        if self.rawdata is None:
-            hlp.updated_df_values(
-                self.sitedirector._availdf.reset_index(drop=True),
-                self.sitetabledata.reset_index(drop=True),
-                self._log, 'sitetable')
-        else:
-            hlp.updated_df_values(
-                self.rawdata.reset_index(drop=True),
-                self.sitetabledata.reset_index(drop=True),
-                self._log, 'sitetable')
-        # End logging
-
-        remove = self.sitetabledata['siteid'].isin(
-            self.sitedbtable['siteid'].values.tolist())
-        self.sitetabledata = self.sitetabledata[~remove]
-        self.sitemodlist = self.sitetabledata[
-            list(self.siteloc.keys())].values.tolist()
-
+        # Registering information to facade class
+        self.sitelned = {'siteid': self.lnedSiteID.text().strip()}
+        self.siteloc['siteid'] = self.lnedSiteID.text().strip()
+        self.facade.create_log_record('sitetable')        
+        self._log = self.facade._tablelog['sitetable']
+        
         try:
-            self.facade.replace_levels(
-                'siteinfo', self.sitemodlist)
+            self.facade._data[self.siteloc['siteid']]
         except Exception as e:
             print(str(e))
-            self.error.showMessage('Could not modified levels')
-            raise ValueError
-        finally:
-            for i in range(len(self.sitetabledata)):
-                self.siteorms[i] = orm.Sitetable(
-                    siteid=self.sitetabledata.loc[i,'siteid'])
-                orm.session.add(self.siteorms[i])
-            orm.session.flush()
-            for i in range(len(self.sitetabledata)):
-                dbupload = self.sitetabledata.loc[
-                    i,self.sitetabledata.columns].to_dict()
-                for key in dbupload.items():
-                    setattr(self.siteorms[i], key[0], key[1])
+            self._log.debug(str(e))
+            self.error.showMessage(
+                self.siteloc['siteid'] +
+                ' not in dataframe')
+            raise KeyError(
+                self.siteloc['siteid'] +
+                ' not in dataframe')
 
-            orm.session.flush()
-            self.site_unlocks.emit('Tables Enabled')
-            self.site_manager()
-            self.close()
+        self.siteini = ini.InputHandler(
+            name='siteinfo', tablename='sitetable',
+            lnedentry=self.sitelned)
+        self.facade.input_register(self.siteini)
+        self.facade._valueregister['siteid'] = self.lnedSiteID.text(
+            ).strip()
+        self.message.about(
+            self, 'Status', 'Information recorded')
 
-    def query_database(self):
-        '''
-        Method to query the database based on the current
-        levels of our 'siteid' column.
+        # Creating site table, initiating, logging
+        # and register site levels with facade
+        self.sitedirector = self.facade.make_table('siteinfo')
+        self.facade.register_site_levels(
+            self.sitedirector._availdf[
+                'siteid'].values.tolist())
 
-        Return quries are display in the tabviewDbSiteQuery
-        QtTableModel
+        # Setting original data
+        self.rawdataog = (
+            self.sitedirector._availdf.sort_values(
+                by='siteid'))
+        self.facade.push_tables['sitetable'] = self.rawdataog
+        self.sitetablemodel = self.viewEdit(
+            self.rawdataog)
+        self.listviewSiteLabels.setModel(
+            self.sitetablemodel)
 
-        listviewSiteLabels QtTable model is updated with 
-        an appended list to remove rows that already have
-        a record inside the database
-        '''
+        # Setting query table for site list data
         try:
+            lterid = self.facade._valueregister['lterid']
             qsitecondition = self.sitetablemodel.data(
                 None, QtCore.Qt.UserRole)
             self.queryupdate = qsitecondition[
                 'siteid'].values.tolist()
-
             dbsites = orm.session.query(
                 orm.Sitetable).order_by(
                     orm.Sitetable.siteid).filter(
-                    orm.Sitetable.siteid.in_(self.queryupdate))
-
+                    orm.Sitetable.siteid.in_(
+                        self.queryupdate)).filter(
+                            orm.Sitetable.lterid == lterid)
             self.sitedbtable = pd.read_sql(
                 dbsites.statement, dbsites.session.bind)
             self.sitequerymodel = self.view(
@@ -215,12 +151,15 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
             self.tabviewDbSiteQuery.setModel(
                 self.sitequerymodel)
 
-            self.message.about(self, 'Status', 'Database Queried')
+            # Setting updated table for site list
+            # i.e. removing sites from list already present
+            # in database
             if not self.sitedbtable.values.tolist():
+                # True if list is empty
                 pass
             else:
                 remove = self.rawdataog['siteid'].isin(
-                    self.sitedbtable['siteid'].values.tolist())            
+                    self.sitedbtable['siteid'].values.tolist())
                 self.rawdata = self.rawdataog[~remove]
                 self.sitedbtablemodel= self.viewEdit(
                     self.rawdataog[~remove])
@@ -229,4 +168,170 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
 
         except Exception as e:
             print(str(e))
-            raise LookupError('Could not query database')
+            self._log.debug(str(e))
+            self.error.showMessage(
+                'Could not update site tables')
+            raise LookupError(e)
+
+    def update_data(self):
+        '''
+        Method to dynamically update the list of site
+        information to be pushed to the database.
+        These methods include dynamically updating
+        query results as well as saving all modifications
+        to site level names in persisten data
+        if changed during the user interaction.
+        '''
+        lterid = self.facade._valueregister['lterid']
+
+        site_data_director = self.facade.make_table('siteinfo')
+
+        # Setting original data, site list, and dictionary
+        original_data = site_data_director._availdf.copy()
+        self.facade.push_tables['sitetable'] = original_data
+        original_site_list = original_data[
+                'siteid'].values.tolist()
+        original_site_list.sort()
+        self._log.info('original site list: ', original_site_list)
+
+        original_site_ordered = []
+        for i in original_site_list:
+            original_site_ordered.append((i, i))
+        site_dict = OrderedDict(original_site_ordered)
+
+        # Setting query data, sitelist
+        dbquery = orm.session.query(
+            orm.Sitetable).order_by(
+                orm.Sitetable.siteid).filter(
+                        orm.Sitetable.lterid == lterid)
+
+        database_data = pd.read_sql(
+            dbquery.statement, dbquery.session.bind)
+        database_site_list = database_data[
+            'siteid'].values.tolist()
+        self._log.info('database_site_list: ', database_site_list)
+
+        # Setting database data, sitelist
+        updated_data = self.sitedbtablemodel.data(
+            None, QtCore.Qt.UserRole)
+        updated_site_list = updated_data[
+            'siteid'].values.tolist()
+        self._log.info('updated_site_list: ', updated_site_list)
+
+        user_modified_sites = [
+            x for x in list(site_dict.keys())
+            if x not in database_site_list and
+            x not in updated_site_list
+        ]
+        self._log.info('user_modified_sites: ', user_modified_sites)
+
+        not_in_db_change_site_to = [
+            x for x in updated_site_list
+            if x not in list(site_dict.keys()) and
+            x not in original_site_list
+        ]
+        [
+            not_in_db_change_site_to.append(x)
+            for x in database_site_list
+            if x not in list(site_dict.keys()) and
+            x not in updated_site_list
+        ]    
+        self._log.info(
+            'not_in_db_change_site_to: ',
+            set(not_in_db_change_site_to))
+
+        self._log.info(
+            'about to enter modified sites list loop: ',
+            user_modified_sites)
+        for j, site_i in enumerate(
+                list(set(not_in_db_change_site_to))):
+            sites_not_updated = [
+                x for x in list(site_dict.keys())
+                if x not in user_modified_sites
+            ]
+            self._log.info('site_i, not update: ',
+                  site_i, sites_not_updated)
+            self.facade.replace_levels(
+                'siteinfo', [site_i], sites_not_updated)
+        self.submit_change()
+
+    def save_close(self):
+        '''
+        Method to log data including logging whether all the 
+        site information for a dataset 
+        is already in the database (program logs nulls).
+        '''
+        lterid = self.facade._valueregister['lterid']
+        print(lterid)
+        try:
+            if self.sitedbtablemodel is None:
+                self.sitedbtable = self.sitetablemodel.data(
+                    None, QtCore.Qt.UserRole)
+            else:
+                self.sitedbtable = self.sitedbtablemodel.data(
+                    None, QtCore.Qt.UserRole)
+                print('sitedbtable: ', self.sitedbtable)
+
+            if len(self.sitedbtable) == 0:
+                self.sitedbtable = self.sitedbtable.append(
+                    pd.DataFrame(
+                        {
+                            'siteid':'NULL',
+                            'lat': 'nan',
+                            'lng': 'nan',
+                            'descript': 'NULL'
+                        }, index=[0])
+                )
+
+            lterid_df = hlp.produce_null_df(
+                1, ['lterid'], len(self.sitedbtable), 'SBC')
+            print(lterid_df)
+            self.sitedbtable = pd.concat(
+                [self.sitedbtable, lterid_df]
+                , axis=1).reset_index(drop=True)
+            print(self.sitedbtable)
+
+        except Exception as e:
+            print(str(e))
+            self._log.debug(str(e))
+            self.error.showMessage(
+                'Site column not set')
+            raise AttributeError('Site column not set')
+
+        if (len(self.sitedbtable) == 1):
+            self._log.info('Skipping database transaction')
+            pass
+        else:
+            self._log.info('Making database transaction')
+            try:
+                site_flush = flsh.Flusher(
+                    self.sitedbtable, 'sitetable',
+                    'siteid', self.facade._valueregister['lterid'])
+                ck = site_flush.database_check(
+                    self.facade._valueregister['sitelevels'])                
+                if ck is True:
+                    site_flush.go()
+                else:
+                    raise AttributeError
+
+            except Exception as e:
+                print(str(e))
+                self._log.debug(str(e))
+                raise AttributeError(
+                    'Could not map to database')
+
+        hlp.write_column_to_log(
+            self.sitelned, self._log, 'sitetable_c')
+
+        oldsitetable = hlp.produce_null_df(
+            len(self.sitedbtable.columns),
+            self.sitedbtable.columns.values.tolist(),
+            len(self.sitedbtable),
+            'nan'
+        )
+        hlp.updated_df_values(
+            oldsitetable, self.sitedbtable, self._log, 'sitetable'
+        )
+
+        self.site_unlocks.emit(self.facade._data)
+        self.close()
