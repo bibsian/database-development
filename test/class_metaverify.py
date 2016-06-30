@@ -17,13 +17,13 @@ class MetaVerifier(object):
 
     if _platform == "darwin":
         metapath = (
-        "/Users/bibsian/Dropbox/database-development/data" +
-        "/meta_file_test.csv")
+        "/Users/bibsian/Dropbox/database-development/test/" +
+        "Datasets_manual_test/meta_file_test.csv")
 
     elif _platform == "win32":
         metapath = (
         "C:\\Users\MillerLab\\Dropbox\\database-development" +
-        "\\data\\meta_file_test.csv")
+        "\\test\\Datasets_manual_test\\meta_file_test.csv")
 
     _meta = pd.read_csv(metapath, encoding='iso-8859-11')
 
