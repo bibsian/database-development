@@ -12,7 +12,6 @@ import ui_logic_preview as tprev
 import class_modelviewpandas as view
 import class_helpers as hlp
 from collections import OrderedDict
-import config as orm
 
 @pytest.fixture
 def metahandle():
@@ -121,6 +120,7 @@ def TimeDialog(sitehandle, filehandle, metahandle, taxahandle):
             self.timetable = None
             # Placeholder for maindata Orms
             self.timeorms = {}
+
             # Actions
             self.btnPreview.clicked.connect(self.submit_change)
             self.btnSaveClose.clicked.connect(self.submit_change)
@@ -140,38 +140,61 @@ def TimeDialog(sitehandle, filehandle, metahandle, taxahandle):
                 'monthform': self.cboxMonth.currentText(),
                 'yearname': self.lnedYear.text(),
                 'yearform': self.cboxYear.currentText(),
-                'jd': self.ckJulian,
-                'mspell': self.ckMonthSpelling
+                'jd': self.ckJulian.isChecked(),
+                'mspell': self.ckMonthSpelling.isChecked()
             }
-            
+
+            # Input handler
             self.timeini = ini.InputHandler(
                 name='timeinfo', tablename='timetable',
                 lnedentry=self.timelned)
             self.facade.input_register(self.timeini)
+
+            # Initiating time parser class
             self.timetable = tmpa.TimeParse(
-                self.facade._data, self.timelned,
-                self.facade._valueregister['sitelevels'])
-            
+                self.facade._data, self.timelned)
+
+            # Logger
+            self.facade.create_log_record('timetable')
+            self._log = self.facade._tablelog['timetable']            
 
             try:
+                # Calling formater method
                 timeview =self.timetable.formater().copy()
             except Exception as e:
                 print(str(e))
+                self._log.debug(str(e))
+                self.error.showMessage(
+                    'Could not format dates - ' +
+                    'Check entries for errors'
+                )
                 raise ValueError(
                     'Could not format dates - ' +
                     'Check entries for errors')
+            self.facade._valueregister['sitelevels']
             
             if sender is self.btnPreview:
                 timeview = timeview.applymap(str)
                 self.timemodel = self.viewEdit(timeview)
                 self.preview.tabviewPreview.setModel(self.timemodel)
                 self.preview.show()
-                print(timeview)
 
             elif sender is self.btnSaveClose:
-
-                self.facade._dbtabledict['timetable'] = (
-                    timeview.applymap(int))
+                hlp.write_column_to_log(
+                    self.timelned, self._log, 'timetable'
+                )
+                try:
+                    timeview = timeview.applymap(int)
+                    self.facade.push_tables['timetable'] = (
+                        timeview)
+                    assert timeview is not None
+                except Exception as e:
+                    print(str(e))
+                    self._log.debug(str(e))
+                    self.error.showMessage(
+                        'Could not convert data to integers')
+                    raise TypeError(
+                        'Could not convert data to integers')
                 self.close()
 
     return TimeDialog()
@@ -181,4 +204,3 @@ def test_dialog_site(qtbot, TimeDialog):
     qtbot.addWidget(TimeDialog)
 
     qtbot.stopForInteraction()
-

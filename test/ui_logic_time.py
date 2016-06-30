@@ -4,9 +4,10 @@ sys.path.append(os.path.realpath(os.path.dirname(__file__)))
 import class_inputhandler as ini
 import class_timeparse as tmpa
 import class_modelviewpandas as view
+import class_helpers as hlp
 import ui_dialog_time as uitime
 import ui_logic_preview as tprev
-
+import config as orm
 
 class TimeDialog(QtGui.QDialog, uitime.Ui_Dialog):
     def __init__(self, parent=None):
@@ -42,33 +43,60 @@ class TimeDialog(QtGui.QDialog, uitime.Ui_Dialog):
             'monthform': self.cboxMonth.currentText(),
             'yearname': self.lnedYear.text(),
             'yearform': self.cboxYear.currentText(),
-            'jd': self.ckJulian,
-            'mspell': self.ckMonthSpelling
+            'jd': self.ckJulian.isChecked(),
+            'mspell': self.ckMonthSpelling.isChecked()
         }
 
+        # Input handler
         self.timeini = ini.InputHandler(
             name='timeinfo', tablename='timetable',
             lnedentry=self.timelned)
         self.facade.input_register(self.timeini)
+
+        # Initiating time parser class
         self.timetable = tmpa.TimeParse(
             self.facade._data, self.timelned)
 
+        # Logger
+        self.facade.create_log_record('timetable')
+        self._log = self.facade._tablelog['timetable']            
+
         try:
+            # Calling formater method
             timeview =self.timetable.formater().copy()
         except Exception as e:
             print(str(e))
+            self._log.debug(str(e))
+            self.error.showMessage(
+                'Could not format dates - ' +
+                'Check entries for errors'
+            )
             raise ValueError(
                 'Could not format dates - ' +
                 'Check entries for errors')
+        self.facade._valueregister['sitelevels']
 
         if sender is self.btnPreview:
             timeview = timeview.applymap(str)
             self.timemodel = self.viewEdit(timeview)
             self.preview.tabviewPreview.setModel(self.timemodel)
             self.preview.show()
-            print(timeview)
 
         elif sender is self.btnSaveClose:
-            self.facade._dbtabledict['timetable'] = (
-                timeview.applymap(int))
+            hlp.write_column_to_log(
+                self.timelned, self._log, 'timetable'
+            )
+            try:
+                timeview
+                orm.convert_types(timeview, orm.rawtypes)
+                self.facade.push_tables['timetable'] = (
+                    timeview)
+                assert timeview is not None
+            except Exception as e:
+                print(str(e))
+                self._log.debug(str(e))
+                self.error.showMessage(
+                    'Could not convert data to integers')
+                raise TypeError(
+                    'Could not convert data to integers')
             self.close()
