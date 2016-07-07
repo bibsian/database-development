@@ -1,13 +1,11 @@
 from PyQt4 import QtGui
-import sys, os
-sys.path.append(os.path.realpath(os.path.dirname(__file__)))
-import class_inputhandler as ini
-import class_timeparse as tmpa
-import class_modelviewpandas as view
-import class_helpers as hlp
-import ui_dialog_time as uitime
-import ui_logic_preview as tprev
-import config as orm
+from poplerGUI import class_inputhandler as ini
+from poplerGUI import class_modelviewpandas as view
+from poplerGUI import ui_dialog_time as uitime
+from poplerGUI import ui_logic_preview as tprev
+from poplerGUI.logiclayer import class_helpers as hlp
+from poplerGUI.logiclayer import class_timeparse as tmpa
+from logiclayer.datalayer import config as orm
 
 class TimeDialog(QtGui.QDialog, uitime.Ui_Dialog):
     def __init__(self, parent=None):
@@ -63,7 +61,7 @@ class TimeDialog(QtGui.QDialog, uitime.Ui_Dialog):
 
         try:
             # Calling formater method
-            timeview =self.timetable.formater().copy()
+            timeview =self.timetable.formater()
         except Exception as e:
             print(str(e))
             self._log.debug(str(e))

@@ -30,10 +30,87 @@ QFrame{
 
 QTableView{
 	background: white;
+}
+
+
+.QLineEdit{
+	padding: 1px;
+	border-style: solid;
+	border: 1px solid black;
+	border-radius: 8px;
+	margin: 0px;
+}
+
+.QPushButton {
+	color: black;
+	background: #EEEEEE;
+	border-width: 1px;
+	border-color: black;
+	border-style: solid;
+	border-radius: 7;
+	margin-top: 0px;
+	margin-left: 5px;
+	margin-right:5px;	
+	padding-left: 5px;
+	padding-right: 5px;
+	padding-top: 3px;
+	padding-bottom: 3px;
 }</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="horizontalLayout_3">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_4">
+      <property name="spacing">
+       <number>10</number>
+      </property>
+      <item>
+       <widget class="QPushButton" name="btnUrlback">
+        <property name="font">
+         <font>
+          <pointsize>14</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>⇦</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btnUrlforward">
+        <property name="font">
+         <font>
+          <pointsize>14</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>⇨</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btnUrlrefresh">
+        <property name="font">
+         <font>
+          <pointsize>14</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>↻</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="lnedUrl">
+        <property name="font">
+         <font>
+          <pointsize>14</pointsize>
+         </font>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
     <item>
      <widget class="QWebView" name="webView">
       <property name="url">
@@ -212,19 +289,49 @@ QTableView{
      <addaction name="separator"/>
      <addaction name="actionValue"/>
     </widget>
+    <widget class="QMenu" name="menuModify_one_to_many_records">
+     <property name="title">
+      <string>Modify one to many records..</string>
+     </property>
+     <addaction name="actionNot_implemented_5"/>
+    </widget>
+    <widget class="QMenu" name="menuDisplay_unique">
+     <property name="title">
+      <string>Display unique</string>
+     </property>
+     <addaction name="actionNot_implemented_4"/>
+    </widget>
     <addaction name="menuReplace"/>
-    <addaction name="actionDisplay_unique"/>
+    <addaction name="menuDisplay_unique"/>
     <addaction name="separator"/>
-    <addaction name="actionModify_ontomany_entries"/>
+    <addaction name="menuModify_one_to_many_records"/>
    </widget>
    <widget class="QMenu" name="menuSplit">
     <property name="title">
      <string>Split</string>
     </property>
-    <addaction name="actionOne_to_many"/>
-    <addaction name="actionMany_to_one"/>
+    <widget class="QMenu" name="menuOne_to_many">
+     <property name="title">
+      <string>One to many</string>
+     </property>
+     <addaction name="actionNot_implemented_3"/>
+    </widget>
+    <widget class="QMenu" name="menuMany_to_one">
+     <property name="title">
+      <string>Many to one</string>
+     </property>
+     <addaction name="actionNot_implemented_2"/>
+    </widget>
+    <widget class="QMenu" name="menuString_split">
+     <property name="title">
+      <string>String split</string>
+     </property>
+     <addaction name="actionNot_implemented"/>
+    </widget>
+    <addaction name="menuOne_to_many"/>
+    <addaction name="menuMany_to_one"/>
     <addaction name="separator"/>
-    <addaction name="actionString_split"/>
+    <addaction name="menuString_split"/>
     <addaction name="separator"/>
    </widget>
    <widget class="QMenu" name="menuDatabase">
@@ -257,26 +364,6 @@ QTableView{
   <action name="actionLoad_File">
    <property name="text">
     <string>Load File</string>
-   </property>
-  </action>
-  <action name="actionOne_to_many">
-   <property name="text">
-    <string>One to many</string>
-   </property>
-  </action>
-  <action name="actionMany_to_one">
-   <property name="text">
-    <string>Many to one</string>
-   </property>
-  </action>
-  <action name="actionDisplay_unique">
-   <property name="text">
-    <string>Display unique</string>
-   </property>
-  </action>
-  <action name="actionString_split">
-   <property name="text">
-    <string>String split</string>
    </property>
   </action>
   <action name="actionUploaded_tables">
@@ -379,17 +466,6 @@ QTableView{
     </font>
    </property>
   </action>
-  <action name="actionModify_ontomany_entries">
-   <property name="text">
-    <string>Modify one to many records..</string>
-   </property>
-   <property name="font">
-    <font>
-     <weight>75</weight>
-     <bold>true</bold>
-    </font>
-   </property>
-  </action>
   <action name="actionTimeFormat">
    <property name="enabled">
     <bool>false</bool>
@@ -426,7 +502,7 @@ QTableView{
   </action>
   <action name="actionFactor_levels">
    <property name="text">
-    <string>Factor levels</string>
+    <string>not implemented</string>
    </property>
   </action>
   <action name="actionValue">
@@ -437,6 +513,31 @@ QTableView{
   <action name="actionCommit">
    <property name="text">
     <string>Commit</string>
+   </property>
+  </action>
+  <action name="actionNot_implemented">
+   <property name="text">
+    <string>not implemented</string>
+   </property>
+  </action>
+  <action name="actionNot_implemented_2">
+   <property name="text">
+    <string>not implemented</string>
+   </property>
+  </action>
+  <action name="actionNot_implemented_3">
+   <property name="text">
+    <string>not implemented</string>
+   </property>
+  </action>
+  <action name="actionNot_implemented_4">
+   <property name="text">
+    <string>not implemented</string>
+   </property>
+  </action>
+  <action name="actionNot_implemented_5">
+   <property name="text">
+    <string>not implemented</string>
    </property>
   </action>
  </widget>

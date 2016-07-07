@@ -1,10 +1,10 @@
 from PyQt4 import QtGui
 from collections import OrderedDict
-import class_inputhandler as ini
-import class_modelviewpandas as view
-import ui_dialog_taxa as uitax
-import ui_logic_preview as tprev
-import class_helpers as hlp
+from poplerGUI import class_inputhandler as ini
+from poplerGUI import class_modelviewpandas as view
+from poplerGUI import ui_dialog_taxa as uitax
+from poplerGUI import ui_logic_preview as tprev
+from poplerGUI.logiclayer import class_helpers as hlp
 
 class TaxaDialog(QtGui.QDialog, uitax.Ui_Dialog):
     def __init__(self, parent=None):

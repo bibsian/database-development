@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\MillerLab\Dropbox\database-development\test\Views\ui_dialog_main.ui'
+# Form implementation generated from reading ui file '/Users/bibsian/Dropbox/database-development/test/Views/ui_dialog_main.ui'
 #
 # Created by: PyQt4 UI code generator 4.11.4
 #
@@ -61,7 +61,6 @@ class Ui_Dialog(object):
 "    border-style: solid;\n"
 "    border-radius: 7;\n"
 "    margin-top: 0px;\n"
-"    maring-bottom: 0px;\n"
 "    margin-left: 5px;\n"
 "    margin-right:5px;    \n"
 "    padding-left: 5px;\n"

@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 from PyQt4 import QtGui, QtCore
-import ui_dialog_session as dsess
-import class_inputhandler as ini
-import class_modelviewpandas as view
+from poplerGUI import ui_dialog_session as dsess
+from poplerGUI import class_inputhandler as ini
+from poplerGUI import class_modelviewpandas as view
 
 class SessionDialog(QtGui.QDialog, dsess.Ui_Dialog):
     '''

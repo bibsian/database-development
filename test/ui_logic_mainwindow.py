@@ -2,26 +2,27 @@
 from PyQt4 import QtGui, QtCore
 from pandas import read_csv
 import subprocess
-import sys, os
-sys.path.append(os.path.realpath(os.path.dirname(__file__)))
-import ui_mainrefactor as mw
-import ui_logic_session as sesslogic
-import ui_logic_site as sitelogic
-import ui_logic_main as mainlogic
-import ui_logic_taxa as taxalogic
-import ui_logic_time as timelogic
-import ui_logic_obs as rawlogic
-import ui_logic_covar as covarlogic
-import class_userfacade as face
-import class_modelviewpandas as view
-import class_inputhandler as ini
 
+import sys, os
 if sys.platform == 'darwin':
     os.chdir(
-        '/Users/bibsian/Dropbox/database-development/test/')
+        '/Users/bibsian/Dropbox/database-development/poplerGUI/')
 elif sys.platform == 'win32':
     os.chdir(
-        'C:\\Users\\MillerLab\\Dropbox\\database-development\\test')
+        'C:\\Users\\MillerLab\\Dropbox\\database-development\\poplerGUI')
+
+from poplerGUI import ui_mainrefactor as mw
+from poplerGUI import ui_logic_session as sesslogic
+from poplerGUI import ui_logic_site as sitelogic
+from poplerGUI import ui_logic_main as mainlogic
+from poplerGUI import ui_logic_taxa as taxalogic
+from poplerGUI import ui_logic_time as timelogic
+from poplerGUI import ui_logic_obs as rawlogic
+from poplerGUI import ui_logic_covar as covarlogic
+from poplerGUI import class_inputhandler as ini
+from poplerGUI import class_modelviewpandas as view
+from poplerGUI.logiclayer import class_userfacade as face
+
 
 
 class UiMainWindow(QtGui.QMainWindow, mw.Ui_MainWindow):
@@ -30,7 +31,6 @@ class UiMainWindow(QtGui.QMainWindow, mw.Ui_MainWindow):
     of various dialog boxes, the facade class, model-viewer
     tables, and menu actions.
     '''
-
     def __init__(self, parent=None):
         super().__init__(parent)
         # attributes
@@ -43,7 +43,7 @@ class UiMainWindow(QtGui.QMainWindow, mw.Ui_MainWindow):
         self.dtime = timelogic.TimeDialog()
         self.draw = rawlogic.ObsDialog()
         self.dcovar = covarlogic.CovarDialog()
-        
+
         # Actions
         self.actionSiteTable.triggered.connect(self.site_display)
         self.actionStart_Session.triggered.connect(
@@ -56,7 +56,19 @@ class UiMainWindow(QtGui.QMainWindow, mw.Ui_MainWindow):
         self.actionRawTable.triggered.connect(self.obs_display)
         self.actionCovariates.triggered.connect(self.covar_display)
         self.actionCommit.triggered.connect(self.commit_data)
-        
+        self.webView.show()
+
+        # web toolbar
+        self.lnedUrl.setEnabled(True)
+        self.btnUrlforward.setEnabled(True)
+        self.btnUrlback.setEnabled(True)
+        self.btnUrlrefresh.setEnabled(True)
+
+        self.lnedUrl.returnPressed.connect(self.Enter)
+        self.btnUrlback.clicked.connect(self.Back)
+        self.btnUrlforward.clicked.connect(self.Forward)
+        self.btnUrlrefresh.clicked.connect(self.Refresh)
+
         # Custom Signals
         self.dsite.site_unlocks.connect(self.site_complete_enable)
         self.dsession.raw_data_model.connect(
@@ -71,7 +83,7 @@ class UiMainWindow(QtGui.QMainWindow, mw.Ui_MainWindow):
         metadf = read_csv('Datasets_manual_test/meta_file_test.csv')
         metamodel = view.PandasTableModel(metadf)
         self.tblViewMeta.setModel(metamodel)
-        
+
     def update_data_model(self):
         newdatamodel = view.PandasTableModel(self.facade._data)
         self.tblViewRaw.setModel(newdatamodel)
@@ -80,6 +92,37 @@ class UiMainWindow(QtGui.QMainWindow, mw.Ui_MainWindow):
     @QtCore.pyqtSlot(object)
     def update_webview(self, url):
         self.webView.load(QtCore.QUrl(url))
+
+    def Enter(self):
+        url = self.lnedUrl.text().strip()
+
+        http = 'http://'
+        www = 'www.'
+
+        if www in url and http not in url:
+            url = http + url
+        elif "." not in url:
+            url = 'http://www.google.com/search?q='+url
+        elif http in url and www not in url:
+            url = url[:7] + www + url[7:]
+        elif http and www not in url:
+            url = http + www + url
+        try:
+            self.webView.load(QtCore.QUrl(url))
+        except Exception as e:
+            print(str(e))
+            self.message.about(
+                self, 'status',
+                'Could not connect to {}'.format(url))
+
+    def Back(self):
+        self.webView.back()
+
+    def Forward(self):
+        self.webView.forward()
+
+    def Refresh(self):
+        self.webView.reload()
 
     @QtCore.pyqtSlot(object)
     def site_complete_enable(self):
@@ -144,9 +187,12 @@ class UiMainWindow(QtGui.QMainWindow, mw.Ui_MainWindow):
             print(str(e))
             self.facade._tablelog['maintable'].debug(str(e))
             self.error.showMessage(
-                'Datbase transaction error: '+ str(e))
+                'Datbase transaction error: '+ str(e) +
+                '. May need to alter site abbreviations.')
+            raise ValueError(str(e))
 
     def end_session(self):
-
-        self.close()
         subprocess.call("python" + " runmain.py", shell=True)
+        self.close()
+
+

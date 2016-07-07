@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 from PyQt4 import QtGui
-import class_inputhandler as ini
-import class_helpers as hlp
-import class_dictionarydataframe as ddf
-import class_modelviewpandas as views
-import ui_dialog_covariate as covar
-import ui_logic_preview as tprev
+from poplerGUI import class_modelviewpandas as views
+from poplerGUI import ui_dialog_covariate as covar
+from poplerGUI import ui_logic_preview as tprev
+from poplerGUI import class_inputhandler as ini
+from poplerGUI.logiclayer import class_helpers as hlp
+from logiclayer import class_dictionarydataframe as ddf
 
 class CovarDialog(QtGui.QDialog, covar.Ui_Dialog):
     '''

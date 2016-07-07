@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/bibsian/Dropbox/database-development/test/Views/ui_dialog_table_preview.ui'
+# Form implementation generated from reading ui file '/Users/bibsian/Dropbox/database-development/test/Views/ui_dialog_sitechange.ui'
 #
 # Created by: PyQt4 UI code generator 4.11.4
 #
@@ -25,7 +25,7 @@ except AttributeError:
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName(_fromUtf8("Dialog"))
-        Dialog.resize(563, 452)
+        Dialog.resize(649, 454)
         Dialog.setStyleSheet(_fromUtf8(".QLabel{\n"
 "    background: None;\n"
 "    padding: 0px;\n"
@@ -92,6 +92,15 @@ class Ui_Dialog(object):
         self.groupBox.setObjectName(_fromUtf8("groupBox"))
         self.verticalLayout = QtGui.QVBoxLayout(self.groupBox)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
+        self.label_2 = QtGui.QLabel(self.groupBox)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.label_2.sizePolicy().hasHeightForWidth())
+        self.label_2.setSizePolicy(sizePolicy)
+        self.label_2.setAlignment(QtCore.Qt.AlignCenter)
+        self.label_2.setObjectName(_fromUtf8("label_2"))
+        self.verticalLayout.addWidget(self.label_2)
         self.verticalLayout_2 = QtGui.QVBoxLayout()
         self.verticalLayout_2.setContentsMargins(0, -1, 5, -1)
         self.verticalLayout_2.setSpacing(0)
@@ -122,6 +131,15 @@ class Ui_Dialog(object):
         self.tabviewPreview.setObjectName(_fromUtf8("tabviewPreview"))
         self.verticalLayout_2.addWidget(self.tabviewPreview)
         self.verticalLayout.addLayout(self.verticalLayout_2)
+        self.label = QtGui.QLabel(self.groupBox)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
+        self.label.setSizePolicy(sizePolicy)
+        self.label.setAlignment(QtCore.Qt.AlignCenter)
+        self.label.setObjectName(_fromUtf8("label"))
+        self.verticalLayout.addWidget(self.label)
         self.verticalLayout_4.addWidget(self.groupBox)
         self.verticalLayout_5.addWidget(self.frame)
         self.horizontalLayout_7 = QtGui.QHBoxLayout()
@@ -129,8 +147,13 @@ class Ui_Dialog(object):
         spacerItem2 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_7.addItem(spacerItem2)
         self.btnCancel = QtGui.QPushButton(Dialog)
+        self.btnCancel.setFocusPolicy(QtCore.Qt.ClickFocus)
         self.btnCancel.setObjectName(_fromUtf8("btnCancel"))
         self.horizontalLayout_7.addWidget(self.btnCancel)
+        self.btnAccept = QtGui.QPushButton(Dialog)
+        self.btnAccept.setFocusPolicy(QtCore.Qt.ClickFocus)
+        self.btnAccept.setObjectName(_fromUtf8("btnAccept"))
+        self.horizontalLayout_7.addWidget(self.btnAccept)
         self.verticalLayout_5.addLayout(self.horizontalLayout_7)
         self.verticalLayout_3.addLayout(self.verticalLayout_5)
 
@@ -139,6 +162,11 @@ class Ui_Dialog(object):
 
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(_translate("Dialog", "Dialog", None))
+        self.label_2.setText(_translate("Dialog", "The listed site abbreviations already present in database under the current LTER. \n"
+" Validate entries to proceed.", None))
         self.label_3.setText(_translate("Dialog", "Table Preview", None))
-        self.btnCancel.setText(_translate("Dialog", "Close", None))
+        self.label.setText(_translate("Dialog", "To keep these abbreviations click \'Accept Change\'  \n"
+" Only accept the names if the sites listed above are exactly the same sites in the current dataframe", None))
+        self.btnCancel.setText(_translate("Dialog", "Cancel", None))
+        self.btnAccept.setText(_translate("Dialog", "Accept Change", None))
 

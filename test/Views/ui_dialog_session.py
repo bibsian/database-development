@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\MillerLab\Dropbox\database-development\test\Views\ui_dialog_session.ui'
+# Form implementation generated from reading ui file '/Users/bibsian/Dropbox/database-development/test/Views/ui_dialog_session.ui'
 #
 # Created by: PyQt4 UI code generator 4.11.4
 #
@@ -46,7 +46,6 @@ class Ui_Dialog(object):
 "    border-style: solid;\n"
 "    border: 1px solid black;\n"
 "    border-radius: 8px;\n"
-"    text-size: 8pt;\n"
 "}\n"
 "\n"
 ".QPushButton {\n"

@@ -1,11 +1,10 @@
 from PyQt4 import QtGui, QtCore
 from pandas import read_sql
-import ui_dialog_main as dmainw
-import class_inputhandler as ini
-import class_modelviewpandas as view
-import class_helpers as hlp
-import class_flusher as flsh
-import config as orm
+from poplerGUI import ui_dialog_main as dmainw
+from poplerGUI import class_inputhandler as ini
+from poplerGUI import class_modelviewpandas as view
+from logiclayer import class_helpers as hlp
+from logiclayer.datalayer import config as orm
 
 class MainDialog(QtGui.QDialog, dmainw.Ui_Dialog):
     def __init__(self, parent=None):
@@ -59,7 +58,8 @@ class MainDialog(QtGui.QDialog, dmainw.Ui_Dialog):
         self.facade.push_tables['maintable'] = self.maintablemod
         
         try:
-            maincheck = orm.session.query(
+            session = orm.Session()
+            maincheck = session.query(
                 orm.Maintable.metarecordid).order_by(
                     orm.Maintable.metarecordid)
             maincheckdf = read_sql(
@@ -76,28 +76,15 @@ class MainDialog(QtGui.QDialog, dmainw.Ui_Dialog):
                 pass
 
             orm.convert_types(self.maintable, orm.maintypes)
-            orm.convert_types(self.maintablemod, orm.maintypes)
-
+            orm.convert_types(self.maintablemod, orm.maintypes)            
             hlp.updated_df_values(
                 self.maintable, self.maintablemod,
-                self._log, 'maintable'
-            )
-            main_flush = flsh.Flusher(
-                self.maintablemod, 'maintable',
-                'siteid', self.facade._valueregister['lterid'])
-            ck = main_flush.database_check(
-                self.facade._valueregister['sitelevels'])                
-            if ck is True:
-                main_flush.go()
-            else:
-                raise AttributeError
+                self._log, 'maintable')
             self.close()
+
         except Exception as e:
             print(str(e))
-            self._log.debug(str(e))
             self.error.showMessage(
-                'Incorrect datatypes in columns. ' +
-                'Check if column should be numeric or text.')
+                'Global Id already present in database')
             raise AttributeError(
-                'Incorrect datatypes in columns. ' +
-                'Check if column should be numeric or text.')
+                'Global Id already present in database')

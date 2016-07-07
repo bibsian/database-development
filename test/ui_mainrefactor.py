@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\MillerLab\Dropbox\database-development\test\Views\ui_mainrefactor.ui'
+# Form implementation generated from reading ui file '/Users/bibsian/Dropbox/database-development/test/Views/ui_mainrefactor.ui'
 #
 # Created by: PyQt4 UI code generator 4.11.4
 #
@@ -37,15 +37,68 @@ class Ui_MainWindow(object):
 "\n"
 "QTableView{\n"
 "    background: white;\n"
+"}\n"
+"\n"
+"\n"
+".QLineEdit{\n"
+"    padding: 1px;\n"
+"    border-style: solid;\n"
+"    border: 1px solid black;\n"
+"    border-radius: 8px;\n"
+"    margin: 0px;\n"
+"}\n"
+"\n"
+".QPushButton {\n"
+"    color: black;\n"
+"    background: #EEEEEE;\n"
+"    border-width: 1px;\n"
+"    border-color: black;\n"
+"    border-style: solid;\n"
+"    border-radius: 7;\n"
+"    margin-top: 0px;\n"
+"    margin-left: 5px;\n"
+"    margin-right:5px;    \n"
+"    padding-left: 5px;\n"
+"    padding-right: 5px;\n"
+"    padding-top: 3px;\n"
+"    padding-bottom: 3px;\n"
 "}"))
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
-        self.horizontalLayout_3 = QtGui.QHBoxLayout(self.centralwidget)
-        self.horizontalLayout_3.setObjectName(_fromUtf8("horizontalLayout_3"))
+        self.verticalLayout = QtGui.QVBoxLayout(self.centralwidget)
+        self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
+        self.horizontalLayout_4 = QtGui.QHBoxLayout()
+        self.horizontalLayout_4.setSpacing(10)
+        self.horizontalLayout_4.setObjectName(_fromUtf8("horizontalLayout_4"))
+        self.btnUrlback = QtGui.QPushButton(self.centralwidget)
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        self.btnUrlback.setFont(font)
+        self.btnUrlback.setObjectName(_fromUtf8("btnUrlback"))
+        self.horizontalLayout_4.addWidget(self.btnUrlback)
+        self.btnUrlforward = QtGui.QPushButton(self.centralwidget)
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        self.btnUrlforward.setFont(font)
+        self.btnUrlforward.setObjectName(_fromUtf8("btnUrlforward"))
+        self.horizontalLayout_4.addWidget(self.btnUrlforward)
+        self.btnUrlrefresh = QtGui.QPushButton(self.centralwidget)
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        self.btnUrlrefresh.setFont(font)
+        self.btnUrlrefresh.setObjectName(_fromUtf8("btnUrlrefresh"))
+        self.horizontalLayout_4.addWidget(self.btnUrlrefresh)
+        self.lnedUrl = QtGui.QLineEdit(self.centralwidget)
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        self.lnedUrl.setFont(font)
+        self.lnedUrl.setObjectName(_fromUtf8("lnedUrl"))
+        self.horizontalLayout_4.addWidget(self.lnedUrl)
+        self.verticalLayout.addLayout(self.horizontalLayout_4)
         self.webView = QtWebKit.QWebView(self.centralwidget)
         self.webView.setUrl(QtCore.QUrl(_fromUtf8("https://www.lternet.edu/")))
         self.webView.setObjectName(_fromUtf8("webView"))
-        self.horizontalLayout_3.addWidget(self.webView)
+        self.verticalLayout.addWidget(self.webView)
         MainWindow.setCentralWidget(self.centralwidget)
         self.statusbar = QtGui.QStatusBar(MainWindow)
         self.statusbar.setObjectName(_fromUtf8("statusbar"))
@@ -126,8 +179,18 @@ class Ui_MainWindow(object):
         self.menuEdit.setObjectName(_fromUtf8("menuEdit"))
         self.menuReplace = QtGui.QMenu(self.menuEdit)
         self.menuReplace.setObjectName(_fromUtf8("menuReplace"))
+        self.menuModify_one_to_many_records = QtGui.QMenu(self.menuEdit)
+        self.menuModify_one_to_many_records.setObjectName(_fromUtf8("menuModify_one_to_many_records"))
+        self.menuDisplay_unique = QtGui.QMenu(self.menuEdit)
+        self.menuDisplay_unique.setObjectName(_fromUtf8("menuDisplay_unique"))
         self.menuSplit = QtGui.QMenu(self.menubar)
         self.menuSplit.setObjectName(_fromUtf8("menuSplit"))
+        self.menuOne_to_many = QtGui.QMenu(self.menuSplit)
+        self.menuOne_to_many.setObjectName(_fromUtf8("menuOne_to_many"))
+        self.menuMany_to_one = QtGui.QMenu(self.menuSplit)
+        self.menuMany_to_one.setObjectName(_fromUtf8("menuMany_to_one"))
+        self.menuString_split = QtGui.QMenu(self.menuSplit)
+        self.menuString_split.setObjectName(_fromUtf8("menuString_split"))
         self.menuDatabase = QtGui.QMenu(self.menubar)
         self.menuDatabase.setObjectName(_fromUtf8("menuDatabase"))
         MainWindow.setMenuBar(self.menubar)
@@ -137,14 +200,6 @@ class Ui_MainWindow(object):
         self.actionEnd_Session.setObjectName(_fromUtf8("actionEnd_Session"))
         self.actionLoad_File = QtGui.QAction(MainWindow)
         self.actionLoad_File.setObjectName(_fromUtf8("actionLoad_File"))
-        self.actionOne_to_many = QtGui.QAction(MainWindow)
-        self.actionOne_to_many.setObjectName(_fromUtf8("actionOne_to_many"))
-        self.actionMany_to_one = QtGui.QAction(MainWindow)
-        self.actionMany_to_one.setObjectName(_fromUtf8("actionMany_to_one"))
-        self.actionDisplay_unique = QtGui.QAction(MainWindow)
-        self.actionDisplay_unique.setObjectName(_fromUtf8("actionDisplay_unique"))
-        self.actionString_split = QtGui.QAction(MainWindow)
-        self.actionString_split.setObjectName(_fromUtf8("actionString_split"))
         self.actionUploaded_tables = QtGui.QAction(MainWindow)
         self.actionUploaded_tables.setObjectName(_fromUtf8("actionUploaded_tables"))
         self.actionTables_to_upload = QtGui.QAction(MainWindow)
@@ -195,12 +250,6 @@ class Ui_MainWindow(object):
         font.setStrikeOut(False)
         self.actionClimateRawTable.setFont(font)
         self.actionClimateRawTable.setObjectName(_fromUtf8("actionClimateRawTable"))
-        self.actionModify_ontomany_entries = QtGui.QAction(MainWindow)
-        font = QtGui.QFont()
-        font.setBold(True)
-        font.setWeight(75)
-        self.actionModify_ontomany_entries.setFont(font)
-        self.actionModify_ontomany_entries.setObjectName(_fromUtf8("actionModify_ontomany_entries"))
         self.actionTimeFormat = QtGui.QAction(MainWindow)
         self.actionTimeFormat.setEnabled(False)
         font = QtGui.QFont()
@@ -223,6 +272,16 @@ class Ui_MainWindow(object):
         self.actionValue.setObjectName(_fromUtf8("actionValue"))
         self.actionCommit = QtGui.QAction(MainWindow)
         self.actionCommit.setObjectName(_fromUtf8("actionCommit"))
+        self.actionNot_implemented = QtGui.QAction(MainWindow)
+        self.actionNot_implemented.setObjectName(_fromUtf8("actionNot_implemented"))
+        self.actionNot_implemented_2 = QtGui.QAction(MainWindow)
+        self.actionNot_implemented_2.setObjectName(_fromUtf8("actionNot_implemented_2"))
+        self.actionNot_implemented_3 = QtGui.QAction(MainWindow)
+        self.actionNot_implemented_3.setObjectName(_fromUtf8("actionNot_implemented_3"))
+        self.actionNot_implemented_4 = QtGui.QAction(MainWindow)
+        self.actionNot_implemented_4.setObjectName(_fromUtf8("actionNot_implemented_4"))
+        self.actionNot_implemented_5 = QtGui.QAction(MainWindow)
+        self.actionNot_implemented_5.setObjectName(_fromUtf8("actionNot_implemented_5"))
         self.toolBar.addAction(self.actionSiteTable)
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionMainTable)
@@ -245,14 +304,19 @@ class Ui_MainWindow(object):
         self.menuReplace.addAction(self.actionFactor_levels)
         self.menuReplace.addSeparator()
         self.menuReplace.addAction(self.actionValue)
+        self.menuModify_one_to_many_records.addAction(self.actionNot_implemented_5)
+        self.menuDisplay_unique.addAction(self.actionNot_implemented_4)
         self.menuEdit.addAction(self.menuReplace.menuAction())
-        self.menuEdit.addAction(self.actionDisplay_unique)
+        self.menuEdit.addAction(self.menuDisplay_unique.menuAction())
         self.menuEdit.addSeparator()
-        self.menuEdit.addAction(self.actionModify_ontomany_entries)
-        self.menuSplit.addAction(self.actionOne_to_many)
-        self.menuSplit.addAction(self.actionMany_to_one)
+        self.menuEdit.addAction(self.menuModify_one_to_many_records.menuAction())
+        self.menuOne_to_many.addAction(self.actionNot_implemented_3)
+        self.menuMany_to_one.addAction(self.actionNot_implemented_2)
+        self.menuString_split.addAction(self.actionNot_implemented)
+        self.menuSplit.addAction(self.menuOne_to_many.menuAction())
+        self.menuSplit.addAction(self.menuMany_to_one.menuAction())
         self.menuSplit.addSeparator()
-        self.menuSplit.addAction(self.actionString_split)
+        self.menuSplit.addAction(self.menuString_split.menuAction())
         self.menuSplit.addSeparator()
         self.menuDatabase.addAction(self.actionCommit)
         self.menubar.addAction(self.menuFile.menuAction())
@@ -265,23 +329,27 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(_translate("MainWindow", "Data Formatter", None))
+        self.btnUrlback.setText(_translate("MainWindow", "⇦", None))
+        self.btnUrlforward.setText(_translate("MainWindow", "⇨", None))
+        self.btnUrlrefresh.setText(_translate("MainWindow", "↻", None))
         self.dockWidgetRaw.setWindowTitle(_translate("MainWindow", "Raw Data Viewer", None))
         self.dockWidgetMeta.setWindowTitle(_translate("MainWindow", "Metadata Viewer", None))
         self.toolBar.setWindowTitle(_translate("MainWindow", "Data Cleaner", None))
         self.menuFile.setTitle(_translate("MainWindow", "File", None))
         self.menuEdit.setTitle(_translate("MainWindow", "Edit", None))
         self.menuReplace.setTitle(_translate("MainWindow", "Replace..", None))
+        self.menuModify_one_to_many_records.setTitle(_translate("MainWindow", "Modify one to many records..", None))
+        self.menuDisplay_unique.setTitle(_translate("MainWindow", "Display unique", None))
         self.menuSplit.setTitle(_translate("MainWindow", "Split", None))
+        self.menuOne_to_many.setTitle(_translate("MainWindow", "One to many", None))
+        self.menuMany_to_one.setTitle(_translate("MainWindow", "Many to one", None))
+        self.menuString_split.setTitle(_translate("MainWindow", "String split", None))
         self.menuDatabase.setTitle(_translate("MainWindow", "Database", None))
         self.actionStart_Session.setText(_translate("MainWindow", "New Session...", None))
         self.actionStart_Session.setShortcut(_translate("MainWindow", "Ctrl+N", None))
         self.actionEnd_Session.setText(_translate("MainWindow", "End Session...", None))
         self.actionEnd_Session.setShortcut(_translate("MainWindow", "Ctrl+E", None))
         self.actionLoad_File.setText(_translate("MainWindow", "Load File", None))
-        self.actionOne_to_many.setText(_translate("MainWindow", "One to many", None))
-        self.actionMany_to_one.setText(_translate("MainWindow", "Many to one", None))
-        self.actionDisplay_unique.setText(_translate("MainWindow", "Display unique", None))
-        self.actionString_split.setText(_translate("MainWindow", "String split", None))
         self.actionUploaded_tables.setText(_translate("MainWindow", "Uploaded tables", None))
         self.actionTables_to_upload.setText(_translate("MainWindow", "Tables to upload..", None))
         self.actionSiteTable.setText(_translate("MainWindow", "Sites", None))
@@ -290,11 +358,15 @@ class Ui_MainWindow(object):
         self.actionRawTable.setText(_translate("MainWindow", "Observations", None))
         self.actionClimateSiteTable.setText(_translate("MainWindow", "Climate Sites", None))
         self.actionClimateRawTable.setText(_translate("MainWindow", "Climate Observations", None))
-        self.actionModify_ontomany_entries.setText(_translate("MainWindow", "Modify one to many records..", None))
         self.actionTimeFormat.setText(_translate("MainWindow", "Format Time", None))
         self.actionCovariates.setText(_translate("MainWindow", "Covariates", None))
-        self.actionFactor_levels.setText(_translate("MainWindow", "Factor levels", None))
+        self.actionFactor_levels.setText(_translate("MainWindow", "not implemented", None))
         self.actionValue.setText(_translate("MainWindow", "Value", None))
         self.actionCommit.setText(_translate("MainWindow", "Commit", None))
+        self.actionNot_implemented.setText(_translate("MainWindow", "not implemented", None))
+        self.actionNot_implemented_2.setText(_translate("MainWindow", "not implemented", None))
+        self.actionNot_implemented_3.setText(_translate("MainWindow", "not implemented", None))
+        self.actionNot_implemented_4.setText(_translate("MainWindow", "not implemented", None))
+        self.actionNot_implemented_5.setText(_translate("MainWindow", "not implemented", None))
 
 from PyQt4 import QtWebKit
