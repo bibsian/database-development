@@ -166,7 +166,7 @@ site_table = Table(
 # any site data entered comes from
 main_table = Table(
     'main_table', metadata,
-    Column('projid', Integer, primary_key=True),
+    Column('lter_proj_site', Integer, primary_key=True),
     Column('metarecordid', INTEGER),
     Column('title', TEXT),
     # META: This column specifies the type of information
@@ -262,8 +262,8 @@ main_table = Table(
 taxa_table = Table(
     'taxa_table', metadata,
     Column('taxaid', Integer, primary_key=True),
-    Column('projid', Integer, ForeignKey(
-        'main_table.projid', ondelete="CASCADE")),
+    Column('lter_proj_site', Integer, ForeignKey(
+        'main_table.lter_proj_site', ondelete="CASCADE")),
     Column('sppcode', VARCHAR(100)),
     Column('kingdom', VARCHAR(100)),
     Column('phylum', VARCHAR(100)),
@@ -277,14 +277,14 @@ taxa_table = Table(
 
 # count: Table containing the raw count data that is populating
 # the database.
-# 'foreign key' = 'siteid', 'projid', 'taxaid'
+# 'foreign key' = 'siteid', 'lter_proj_site', 'taxaid'
 raw_table = Table(
     'raw_table', metadata,
     Column('sampleid', Integer, primary_key=True),
     Column('taxaid', None, ForeignKey(
         'taxa_table.taxaid', ondelete="CASCADE")),
-    Column('projid', None, ForeignKey(
-        'main_table.projid', ondelete="CASCADE")),
+    Column('lter_proj_site', None, ForeignKey(
+        'main_table.lter_proj_site', ondelete="CASCADE")),
     Column('year', NUMERIC),
     Column('month', NUMERIC),
     Column('day', NUMERIC),
