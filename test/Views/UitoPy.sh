@@ -15,6 +15,12 @@ echo site dialog updated
 cp /Users/bibsian/Dropbox/database-development/test/Views/ui_dialog_site.py /Users/bibsian/Dropbox/database-development/test/ui_dialog_site.py
 echo site dialog copied
 
+python /Users/bibsian/.virtualenvs/lter/lib/python3.4/site-packages/PyQt4/uic/pyuic.py /Users/bibsian/Dropbox/database-development/test/Views/ui_dialog_sitechange.ui -o /Users/bibsian/Dropbox/database-development/test/Views/ui_dialog_sitechange.py
+echo site change dialog updated
+
+cp /Users/bibsian/Dropbox/database-development/test/Views/ui_dialog_sitechange.py /Users/bibsian/Dropbox/database-development/test/ui_dialog_sitechange.py
+echo site change dialog copied
+
 python /Users/bibsian/.virtualenvs/lter/lib/python3.4/site-packages/PyQt4/uic/pyuic.py /Users/bibsian/Dropbox/database-development/test/Views/ui_dialog_main.ui -o /Users/bibsian/Dropbox/database-development/test/Views/ui_dialog_main.py
 echo main dialog updated
 
@@ -56,3 +62,7 @@ echo preview dialog updated
 
 cp /Users/bibsian/Dropbox/database-development/test/Views/ui_dialog_table_preview.py /Users/bibsian/Dropbox/database-development/test/ui_dialog_table_preview.py
 echo preview dialog copied
+
+echo trying to run bash script
+bash /Users/bibsian/Dropbox/database-development/test/update_source.sh
+echo Update poplerGUI

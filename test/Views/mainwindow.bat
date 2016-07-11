@@ -54,5 +54,3 @@ echo climate site dialog updated
 
 cp C:\Users\MillerLab\Dropbox\database-development\test\Views\ui_dialog_climatesite.py C:\Users\MillerLab\Dropbox\database-development\test\ui_dialog_climatesite.py
 echo climate site dialog copied
-
-
