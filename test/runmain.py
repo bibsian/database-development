@@ -1,5 +1,5 @@
-#!usr/bin/env python
-import ui_logic_mainwindow as uv
+#!/usr/bin/env python
+from test import ui_logic_mainwindow as uv
 from PyQt4 import QtGui
 import sys
 
