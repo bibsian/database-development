@@ -1,10 +1,22 @@
-#!usr/bin/env python
+#! /usr/bin/env python
 import pytest
-import pandas as pd
-from sys import platform as _platform
+from pandas import read_csv
 import sys, os
-sys.path.append(os.path.realpath(os.path.dirname(__file__)))
-from class_inputhandler import InputHandler
+if sys.platform == "darwin":
+    rootpath = (
+        "/Users/bibsian/Dropbox/database-development/" +
+        "test/")
+    end = "/"
+elif sys.platform == "win32":
+    rootpath = (
+        "C:\\Users\MillerLab\\Dropbox\\database-development" +
+        "\\test\\")
+    end = "\\"
+sys.path.append(os.path.realpath(os.path.dirname(
+    rootpath + 'logiclayer' + end)))
+os.chdir(rootpath)
+import class_inputhandler as ini
+
 
 class MetaVerifier(object):
     """
@@ -19,17 +31,17 @@ class MetaVerifier(object):
     metaurl: string
     """
 
-    if _platform == "darwin":
+    if sys.platform == "darwin":
         metapath = (
-        "/Users/bibsian/Dropbox/database-development/data" +
+        "/Users/bibsian/Dropbox/database-development/test/Datasets_manual_test" +
         "/meta_file_test.csv")
 
-    elif _platform == "win32":
+    elif sys.platform == "win32":
         metapath = (
         "C:\\Users\MillerLab\\Dropbox\\database-development" +
-        "\\data\\meta_file_test.csv")
+        "\\test\\Datasets_manual_test\\meta_file_test.csv")
 
-    _meta = pd.read_csv(metapath, encoding='iso-8859-11')
+    _meta = read_csv(metapath, encoding='iso-8859-11')
 
     def __init__(self,  inputclsinstance):
         self.idnumber = int(inputclsinstance.lnedentry['globalid'])
@@ -83,7 +95,7 @@ class MetaVerifier(object):
 def metahandle():
     lentry = {'globalid': 2, 'metaurl': 'https://test', 'lter': 'SBC'}
     ckentry = {}
-    metainput = InputHandler(
+    metainput = ini.InputHandler(
         name='metacheck', tablename=None, lnedentry=lentry,
         checks=ckentry)
     return metainput
@@ -98,7 +110,7 @@ def metahandlecorrect():
 
         'lter': 'SBC'}
     ckentry = {}
-    metainput = InputHandler(
+    metainput = ini.InputHandler(
         name='metacheck', tablename=None, lnedentry=lentry,
         checks=ckentry)
     return metainput
