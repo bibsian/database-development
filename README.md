@@ -8,13 +8,13 @@ This project aims to create an open source database that wil contain raw aggrega
  
 # Database Overview
 The database will have seven tables.
-1) raw_climate: Table of orginal (or aggregated) meteorlogical data from individual LTER stations 
-2) climate_site: Table of meteorlogical sites wiht a given LTER station
-3) lter_table: Table of all LTER stations and site abbreviations (w/ lat & long)
-4) site_table: Table of designated sites within a study that gathered data at a LTER station (w/ lat & log if available)
-5) main_table: Table of metadata that describes a study (includes temporal information, levels of spatial replication, PI's, contact emails, community data set indicator, etc). See the 'db' folder for a complete overview of fields.
-6) taxa_table: Table of unique instances of a record regarding the taxonomy of study organisms
-7) raw_table: Table of the orginal observations gathered from the study.
+1. raw_climate: Table of orginal (or aggregated) meteorlogical data from individual LTER stations 
+2. climate_site: Table of meteorlogical sites wiht a given LTER station
+3. lter_table: Table of all LTER stations and site abbreviations (w/ lat & long)
+4. site_table: Table of designated sites within a study that gathered data at a LTER station (w/ lat & log if available)
+5. main_table: Table of metadata that describes a study (includes temporal information, levels of spatial replication, PI's, contact emails, community data set indicator, etc). See the 'db' folder for a complete overview of fields.
+6. taxa_table: Table of unique instances of a record regarding the taxonomy of study organisms
+7. raw_table: Table of the orginal observations gathered from the study.
 
 Note, in order to keep all spatial and temporal replication intact the main_table and taxa_table had to have the records on a per research site (with an LTER study) basis. Our R package will deal with this detail when summarizing database informatoin.
 
