@@ -23,6 +23,23 @@ metadf = pd.read_csv(metapath, encoding='iso-8859-11')
 datadf = pd.read_csv(testdatapath)
 
 
+
+original = [
+    'Site1', 'Site2', 'Site3', 'Site4', 'Site5', 'Site6', 'Site7']
+original.sort()
+updated = ['Site1','SITEMOD3', 'Site6']
+removed = ['Site2', 'Site4', 'Site5', 'Site7']
+new = []
+for i in original:
+    new.append((i, i))
+sitedict = OrderedDict(new)
+
+missing = [x for x in list(sitedict.keys()) if x not in updated and x not in removed]
+addto = [x for x in updated if x in original and x not in removed]
+changeme = [x for x in updated if x not in original and x not in removed]
+notin = {}
+
+
 tup = ('siteinfo', 'siteid')
 tup[1]
 
@@ -316,3 +333,5 @@ maindata
 
 
 
+
+w = 'what is giong on'
