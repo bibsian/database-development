@@ -1,14 +1,15 @@
+*/*/*/*.py~
 */*.py~
 *.py~
+
 
 data/.Rhistory
 /data/RawTestTableModications.R
 
 */__pycache__
-*/__pycache__/*
 */*/__pycache__
 */*/*/__pycache__
-*/_*
+*/*/*/*/__pychache__
 
 */#*
 */#*/#*
@@ -16,11 +17,6 @@ data/.Rhistory
 .*
 */.*
 */*/.*
-
-
-*.ini
-*/*.ini
-*/*/*.ini
 
 
 LTER_connect*
@@ -51,13 +47,20 @@ UMLdiagrams/*~
 
 test/#*
 test/.coverage
-test/__*
 test/config.py
 test/logging.config
 test/Logs*/*
+test/scratch2*
+test/scratch3*
+test/obsolete*
+test/incomplete*
+test/*/incomplete*
+test/*/*/incomplete*
+
+test/DatabaseConfig/nopy*
 
 LTER*
-Ubuntu*
+_Ubuntu*
 
 */*/*/.DS_Store
 */*/.DS_Store
