@@ -46,3 +46,5 @@ poplerGUI/*: All files are orginized into python packages. This is the source fo
 poplerGUI_alpha_deprecated/*: All files related to the ALPHA version of the GUI that was created to populate the ALPHA version of the database. We are currently using the BETA version of the GUI (see 'poplerGUI' folder).
 
 test/*: All unit test, python modules, and database scripts that were written for the BETA version of our GUI.
+
+poplerGUI_run_main.py: This file starts the program to upload data to a database. To use this file you must have all python dependencies installed, postgresql installed, and edit the config file to contect to a database created on your server/local machine.
