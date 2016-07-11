@@ -112,59 +112,11 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
         self.sitelevels = self.facade._valueregister['sitelevels']
         self._log.debug(
             'sitelevels (submit): ' + ' '.join(self.sitelevels))
-        session = orm.Session()
-        site_query = (
-            session.query(orm.Sitetable).
-            order_by(orm.Sitetable.siteid).
-            filter(orm.Sitetable.siteid.in_(self.sitelevels)).
-            filter(orm.Sitetable.lterid == self.lter))
-        session.close()
-        site_query_df = read_sql(
-            site_query.statement, site_query.session.bind)
-        self.sitequerymodel = self.view(
-            site_query_df.sort_values(by='siteid'))
-        self.tabviewDbSiteQuery.setModel(
-            self.sitequerymodel)
-
-        if site_query_df is None:
-            s_query_list = []
-        else:
-            s_query_list = site_query_df['siteid'].values.tolist()
-        self._log.debug(
-            'site query (submit): ' + ' '.join(s_query_list))
-
-        s_in_databaase = [
-            x for x in self.sitelevels if x in s_query_list
-        ]
-        self._log.debug(
-            'sites in db (submit): ' + ' '.join(s_in_databaase))
-
-        if not s_in_databaase:
-            self._log.debug('No sites in database')
-            self.sitelevels_updated = self.rawdata[
-                'siteid'].values.tolist()
-            site_display_df = self.rawdata
-
-        else:
-            self._log.debug('Sites in database')
-            self.sitelevels_updated = [
-                x for x in self.sitelevels
-                if x not in s_in_databaase
-            ]
-            site_display_df = self.rawdata[
-                self.rawdata['siteid'].isin(
-                    self.sitelevels_updated)] 
-
-        self._log.debug(
-            'sitelevels_updated (submit block): ' +
-            ' '.join(self.sitelevels_updated))
 
         # Setting Table Model View
-        self.sitetablemodel = self.viewEdit(site_display_df)
+        self.sitetablemodel = self.viewEdit(self.rawdata)
         self.listviewSiteLabels.setModel(self.sitetablemodel)
-        self.facade.push_tables['sitetable'] = self.rawdata
         self.btnSiteID.setEnabled(False)
-
 
     def update_data(self):
         changed_df = self.sitetablemodel.data(
@@ -173,6 +125,22 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
 
         self._log.debug(
             'changed_site_list: ' + ' '.join(changed_site_list))
+        self._log.debug('sitelevels list: ' + ' ' +
+                        ' '.join(self.sitelevels))
+
+        if len(changed_df) == 0:
+            pass
+        else:
+            try:
+                for i,item in enumerate(changed_site_list):
+                    self.facade._data.replace(
+                        {self.sitelevels[i]: item.rstrip()},
+                        inplace=True)
+            except Exception as e:
+                print(str(e))
+                self._log.debug(str(e))
+                self.error.showMessage(
+                    'could not alter levels: ' + str(e))
 
         session = orm.Session()
         sitecheck = session.query(
@@ -203,85 +171,52 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
 
         print('checker status: ', checker)
         if checker == True:
-            self.validated()
+            pass
         else:
             check_view = view.PandasTableModel(
             sitecheckdf[sitecheckdf['siteid'].isin(check)])
             self.preview_validate.tabviewPreview.setModel(
                 check_view)
+            self.sitequerymodel = check_view
+            self.tabviewDbSiteQuery.setModel(self.sitequerymodel)
+            self.sitelevels = changed_site_list
             self.preview_validate.show()
 
     def validated(self):
         self.preview_validate.close()
         changed_df = self.sitetablemodel.data(
             None, QtCore.Qt.UserRole)
-
         changed_site_list = changed_df['siteid'].values.tolist()
 
-        for i,item in enumerate(changed_site_list):
-            self.facade._data.replace(
-                {self.sitelevels_updated[i]: item.rstrip()},
-                inplace=True)
 
-        self.rawdata = self.facade.make_table(
-            'siteinfo')._availdf.sort_values('siteid')
+        query_match = self.sitequerymodel.data(
+                None, QtCore.Qt.UserRole)
+        site_q_list = query_match['siteid'].values.tolist()
 
-        self.sitelevels = self.rawdata['siteid'].values.tolist()
-        session = orm.Session()
-        site_query = (
-            session.query(orm.Sitetable).
-            order_by(orm.Sitetable.siteid).
-            filter(orm.Sitetable.siteid.in_(self.sitelevels)).
-            filter(orm.Sitetable.lterid == self.lter))
-        session.close()
-        site_query_df = read_sql(
-            site_query.statement, site_query.session.bind)
-        s_query_list = site_query_df['siteid'].values.tolist()
-
-        self.sitequerymodel = self.view(
-            site_query_df.sort_values(by='siteid'))
-        self.tabviewDbSiteQuery.setModel(
-            self.sitequerymodel)
-        s_in_databaase = [
-            x for x in self.sitelevels if x in s_query_list
+        s_not_in_databaase = [
+            x for x in changed_site_list if x not in site_q_list
         ]
+        print('s_not_in_databaase: ' + ' '.join(s_not_in_databaase))
 
-        if not s_in_databaase:
+        if not s_not_in_databaase:
             self._log.debug('No sites in database (update)')
-            self.sitelevels_updated = self.rawdata[
-                'siteid'].values.tolist()
-            site_display_df = changed_df[
-                changed_df['siteid'].isin(
-                    self.sitelevels_updated)]
-
         else:
             self._log.debug('Sites in database (update)')
-            self.sitelevels_updated = [
-                x for x in self.sitelevels
-                if x not in s_in_databaase
-            ]
             site_display_df = changed_df[
                 changed_df['siteid'].isin(
-                    self.sitelevels_updated)]
+                    s_not_in_databaase)]
+            print('site df (val): ', site_display_df)
+            self.sitetablemodel = self.viewEdit(site_display_df)
+            self.listviewSiteLabels.setModel(self.sitetablemodel)
 
-        self._log.debug(
-            'updated_site_list (update block): ' +
-            ' '.join(self.sitelevels_updated))
+            self.sitelevels = self.sitetablemodel.data(
+                None, QtCore.Qt.UserRole)
+            self._log.debug(
+                'sitelevels (updated)' + ' '.join(self.sitelevels))
 
-
-        # Setting Table Model View
-        self.sitetablemodel = self.viewEdit(site_display_df)
-        self.listviewSiteLabels.setModel(self.sitetablemodel)
-        self.facade.push_tables['sitetable'] = self.rawdata
-        self.btnSiteID.setEnabled(False)
-
-        # Updating  site levels
-        self.facade.register_site_levels(
-            self.facade._data[
-                self.siteloc[
-                    'siteid']].drop_duplicates().values.tolist())
 
     def save_close(self):
+        self.update_data()
         session = orm.Session()
         sitecheck = session.query(
             orm.Sitetable.siteid).order_by(
@@ -321,6 +256,12 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
         self.save_data = self.sitetablemodel.data(
             None, QtCore.Qt.UserRole)
 
+        # Updating  site levels
+        self.facade.register_site_levels(
+            self.facade._data[
+                self.siteloc[
+                    'siteid']].drop_duplicates().values.tolist())
+
         if len(self.save_data) == 0:
             self.save_data= self.save_data.append(
                 DataFrame(
@@ -358,4 +299,8 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
         )
 
         self.site_unlocks.emit(self.facade._data)
+        self._log.debug(
+            'facade site levels' +
+            ' '.join(self.facade._valueregister['sitelevels']))
+        self.submit_change()
         self.close()

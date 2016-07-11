@@ -1,3 +1,4 @@
+#! /usr/bin/env python
 from PyQt4 import QtGui
 from poplerGUI import class_inputhandler as ini
 from poplerGUI import class_modelviewpandas as view

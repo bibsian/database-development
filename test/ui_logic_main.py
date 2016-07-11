@@ -43,11 +43,13 @@ class MainDialog(QtGui.QDialog, dmainw.Ui_Dialog):
             self.maindirector = self.facade.make_table('maininfo')
             self.facade.create_log_record('maintable')
             self._log = self.facade._tablelog['maintable']
-            self.maintable = self.maindirector._availdf.copy()
-            self.maintable = self.maintable.reset_index(drop=True)
+            self.maintable = (
+                self.maindirector._availdf.copy().reset_index(
+                    drop=True))
+
         else:
             self.maintable = self.mainmodel.data(
-                None, QtCore.Qt.UserRole).reset_index(drop=True)
+                None, QtCore.Qt.UserRole).reset_index()
 
         self.mainmodel = self.viewEdit(self.maintable)
         self.tabviewMetadata.setModel(self.mainmodel)
@@ -56,7 +58,9 @@ class MainDialog(QtGui.QDialog, dmainw.Ui_Dialog):
         self.maintablemod = self.mainmodel.data(
             None, QtCore.Qt.UserRole).reset_index(drop=True)
         self.facade.push_tables['maintable'] = self.maintablemod
-        
+        self._log.debug(
+            'maintable mod: ' +
+            ' '.join(self.maintablemod.columns.values.tolist()))
         try:
             session = orm.Session()
             maincheck = session.query(

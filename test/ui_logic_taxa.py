@@ -1,3 +1,4 @@
+#! /usr/bin/env python
 from PyQt4 import QtGui
 from collections import OrderedDict
 from poplerGUI import class_inputhandler as ini

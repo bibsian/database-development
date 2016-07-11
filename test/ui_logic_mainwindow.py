@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#! /usr/bin/env python
 from PyQt4 import QtGui, QtCore
 from pandas import read_csv
 import subprocess
@@ -90,8 +90,8 @@ class UiMainWindow(QtGui.QMainWindow, mw.Ui_MainWindow):
         self.dsite.facade = self.facade
 
     @QtCore.pyqtSlot(object)
-    def update_webview(self, url):
-        self.webView.load(QtCore.QUrl(url))
+    def update_webview(self, url_sess):
+        self.webView.load(QtCore.QUrl(url_sess))
 
     def Enter(self):
         url = self.lnedUrl.text().strip()
@@ -108,6 +108,7 @@ class UiMainWindow(QtGui.QMainWindow, mw.Ui_MainWindow):
         elif http and www not in url:
             url = http + www + url
         try:
+            self.lnedUrl.setText(url)
             self.webView.load(QtCore.QUrl(url))
         except Exception as e:
             print(str(e))
