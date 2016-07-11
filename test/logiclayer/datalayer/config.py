@@ -43,7 +43,7 @@ def adapt_numpy_int64(numpy_int64):
 register_adapter(numpy.int64, adapt_numpy_int64)
 
 engine = create_engine(
-    'postgresql+psycopg2://postgres:demography@localhost/LTERV2',
+    'postgresql+psycopg2://username@host/LTERV2',
     echo=True)
 conn = engine.connect()
 
