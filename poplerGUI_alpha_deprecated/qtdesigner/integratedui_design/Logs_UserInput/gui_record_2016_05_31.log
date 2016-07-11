@@ -1,0 +1,146 @@
+2016-05-31 17:30:48,891 - setup - INFO - globalid=2
+2016-05-31 17:30:52,614 - setup - INFO - lterid=SBC
+2016-05-31 17:30:55,007 - setup - INFO - metadata=http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.17
+2016-05-31 17:31:08,209 - setup - INFO - filename=/Users/bibsian/Dropbox/database-development/data/raw_data_test.csv
+2016-05-31 17:31:50,604 - site - INFO - sitelocation=SITE
+2016-05-31 17:31:50,652 - site - INFO - UniqueSitesDerived=['Site1', 'Site2', 'Site3']
+2016-05-31 17:32:17,252 - site - INFO - siteNames=['sitename1', 'sitename2', 'sitename3']
+2016-05-31 17:32:47,035 - sitecheck - INFO - ckSiteCoordN=True
+2016-05-31 17:32:47,035 - sitecheck - INFO - ckSiteCoordY=False
+2016-05-31 17:32:47,035 - site - INFO - UniqueSitesInput=['Site1', 'Site2', 'Site3']
+2016-05-31 17:32:56,734 - main - INFO - mainTable=[['SBC LTER: Reef: Kelp Forest Community Dynamics: Fish abundance' 'NULL'
+  'count' 'NULL' 2000 2014 'yr' 2.0 'obs' 'yes' 'Site1' nan nan nan nan
+  'http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.17'
+  'knb-lter-sbc.17.28']
+ ['SBC LTER: Reef: Kelp Forest Community Dynamics: Fish abundance' 'NULL'
+  'count' 'NULL' 2000 2014 'yr' 2.0 'obs' 'yes' 'Site2' nan nan nan nan
+  'http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.17'
+  'knb-lter-sbc.17.28']
+ ['SBC LTER: Reef: Kelp Forest Community Dynamics: Fish abundance' 'NULL'
+  'count' 'NULL' 2000 2014 'yr' 2.0 'obs' 'yes' 'Site3' nan nan nan nan
+  'http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.17'
+  'knb-lter-sbc.17.28']]
+2016-05-31 17:34:05,835 - taxa - INFO - taxalocation=['projID', 'TAXON_PHYLUM', 'TAXON_CLASS', 'TAXON_ORDER', 'TAXON_FAMILY', 'TAXON_GENUS', 'TAXON_SPECIES']
+2016-05-31 17:34:05,836 - taxa - INFO - taxamissing=['sppcode', 'kingdom', 'authority']
+2016-05-31 17:34:05,853 - taxa - INFO - taxaprojID=[1, 2, 3]
+2016-05-31 17:35:45,816 - time - INFO - Trying different date format.
+2016-05-31 17:35:45,820 - time - INFO - Trying different date format.
+2016-05-31 17:35:45,821 - time - INFO - Trying different date format.
+2016-05-31 17:35:45,822 - time - INFO - Trying different date format.
+2016-05-31 17:35:45,824 - time - INFO - Trying different date format.
+2016-05-31 17:35:45,825 - time - INFO - Trying different date format.
+2016-05-31 17:35:45,826 - time - INFO - Trying different date format.
+2016-05-31 17:35:45,827 - time - INFO - Trying different date format.
+2016-05-31 17:35:45,828 - time - INFO - Trying different date format.
+2016-05-31 17:35:45,829 - time - INFO - Trying different date format.
+2016-05-31 17:35:45,830 - time - INFO - Trying different date format.
+2016-05-31 17:35:45,831 - time - INFO - Trying different date format.
+2016-05-31 17:35:45,832 - time - INFO - Trying different date format.
+2016-05-31 17:35:45,834 - time - INFO - Trying different date format.
+2016-05-31 17:35:45,835 - time - INFO - Trying different date format.
+2016-05-31 17:35:45,836 - time - INFO - Trying different date format.
+2016-05-31 17:35:45,836 - time - INFO - timecolumn1=DATE
+2016-05-31 17:35:53,279 - time - INFO - Trying different date format.
+2016-05-31 17:35:53,280 - time - INFO - Trying different date format.
+2016-05-31 17:35:53,281 - time - INFO - Trying different date format.
+2016-05-31 17:35:53,282 - time - INFO - Trying different date format.
+2016-05-31 17:35:53,282 - time - INFO - Trying different date format.
+2016-05-31 17:35:53,283 - time - INFO - Trying different date format.
+2016-05-31 17:35:53,284 - time - INFO - Trying different date format.
+2016-05-31 17:35:53,284 - time - INFO - Trying different date format.
+2016-05-31 17:35:53,285 - time - INFO - Trying different date format.
+2016-05-31 17:35:53,285 - time - INFO - Trying different date format.
+2016-05-31 17:35:53,286 - time - INFO - Trying different date format.
+2016-05-31 17:35:53,286 - time - INFO - Trying different date format.
+2016-05-31 17:35:53,287 - time - INFO - Trying different date format.
+2016-05-31 17:35:53,287 - time - INFO - Trying different date format.
+2016-05-31 17:35:53,288 - time - INFO - Trying different date format.
+2016-05-31 17:35:53,289 - time - INFO - Trying different date format.
+2016-05-31 17:35:53,289 - time - INFO - timecolumn1=DATE
+2016-05-31 17:37:02,382 - setup - INFO - filename=/Users/bibsian/Dropbox/database-development/data/raw_data_test.csv
+2016-05-31 17:37:07,133 - time - INFO - Trying different date format.
+2016-05-31 17:37:07,134 - time - INFO - Trying different date format.
+2016-05-31 17:37:07,134 - time - INFO - Trying different date format.
+2016-05-31 17:37:07,135 - time - INFO - Trying different date format.
+2016-05-31 17:37:07,135 - time - INFO - Trying different date format.
+2016-05-31 17:37:07,136 - time - INFO - Trying different date format.
+2016-05-31 17:37:07,136 - time - INFO - Trying different date format.
+2016-05-31 17:37:07,137 - time - INFO - Trying different date format.
+2016-05-31 17:37:07,137 - time - INFO - Trying different date format.
+2016-05-31 17:37:07,138 - time - INFO - Trying different date format.
+2016-05-31 17:37:07,138 - time - INFO - Trying different date format.
+2016-05-31 17:37:07,139 - time - INFO - Trying different date format.
+2016-05-31 17:37:07,139 - time - INFO - Trying different date format.
+2016-05-31 17:37:07,140 - time - INFO - Trying different date format.
+2016-05-31 17:37:07,140 - time - INFO - Trying different date format.
+2016-05-31 17:37:07,141 - time - INFO - Trying different date format.
+2016-05-31 17:37:07,141 - time - INFO - timecolumn1=DATE
+2016-05-31 17:37:12,144 - time - INFO - Trying different date format.
+2016-05-31 17:37:12,144 - time - INFO - Trying different date format.
+2016-05-31 17:37:12,145 - time - INFO - Trying different date format.
+2016-05-31 17:37:12,145 - time - INFO - Trying different date format.
+2016-05-31 17:37:12,146 - time - INFO - Trying different date format.
+2016-05-31 17:37:12,146 - time - INFO - Trying different date format.
+2016-05-31 17:37:12,147 - time - INFO - Trying different date format.
+2016-05-31 17:37:12,147 - time - INFO - Trying different date format.
+2016-05-31 17:37:12,148 - time - INFO - Trying different date format.
+2016-05-31 17:37:12,148 - time - INFO - Trying different date format.
+2016-05-31 17:37:12,149 - time - INFO - Trying different date format.
+2016-05-31 17:37:12,149 - time - INFO - Trying different date format.
+2016-05-31 17:37:12,150 - time - INFO - Trying different date format.
+2016-05-31 17:37:12,150 - time - INFO - Trying different date format.
+2016-05-31 17:37:12,151 - time - INFO - Trying different date format.
+2016-05-31 17:37:12,151 - time - INFO - Trying different date format.
+2016-05-31 17:37:12,151 - time - INFO - timecolumn1=YEAR
+2016-05-31 17:37:19,726 - time - INFO - dateformat=y
+2016-05-31 17:37:19,726 - time - INFO - timecolumn1=YEAR
+2016-05-31 17:37:27,607 - taxa - INFO - taxalocation=['projID', 'TAXON_PHYLUM', 'TAXON_CLASS', 'TAXON_ORDER', 'TAXON_FAMILY', 'TAXON_GENUS', 'TAXON_SPECIES']
+2016-05-31 17:37:27,608 - taxa - INFO - taxamissing=['sppcode', 'kingdom', 'authority']
+2016-05-31 17:37:27,621 - taxa - INFO - taxaprojID=[1, 2, 3]
+2016-05-31 17:37:51,138 - time - INFO - dateformat=m
+2016-05-31 17:37:51,138 - time - INFO - timecolumn2=MONTH
+2016-05-31 17:37:55,880 - time - INFO - timeNullColumns=day
+2016-05-31 17:38:28,047 - raw - INFO - spt_rep2=REP
+2016-05-31 17:38:33,302 - raw - INFO - indivID
+2016-05-31 17:38:33,302 - raw - INFO - structure=
+2016-05-31 17:38:35,932 - raw - INFO - indivID
+2016-05-31 17:38:35,933 - raw - INFO - structure=
+2016-05-31 17:38:48,532 - raw - INFO - indivID
+2016-05-31 17:38:48,532 - raw - INFO - structure=
+2016-05-31 17:38:48,534 - raw - INFO - unitobs=COUNT
+2016-05-31 17:38:49,418 - raw - INFO - spt_rep2=REP
+2016-05-31 17:38:49,419 - raw - INFO - indivID
+2016-05-31 17:38:49,419 - raw - INFO - structure=
+2016-05-31 17:38:49,421 - raw - INFO - unitobs=COUNT
+2016-05-31 17:38:49,426 - raw - INFO - missing=['spt_rep3', 'spt_rep4', 'structure', 'indivID']
+2016-05-31 17:38:52,181 - raw - INFO - spt_rep2=REP
+2016-05-31 17:38:52,182 - raw - INFO - indivID
+2016-05-31 17:38:52,182 - raw - INFO - structure=
+2016-05-31 17:38:52,184 - raw - INFO - unitobs=COUNT
+2016-05-31 17:38:52,187 - raw - INFO - missing=['spt_rep3', 'spt_rep4', 'structure', 'indivID']
+2016-05-31 17:38:52,967 - raw - INFO - spt_rep2=REP
+2016-05-31 17:38:52,968 - raw - INFO - indivID
+2016-05-31 17:38:52,968 - raw - INFO - structure=
+2016-05-31 17:38:52,969 - raw - INFO - unitobs=COUNT
+2016-05-31 17:38:52,973 - raw - INFO - missing=['spt_rep3', 'spt_rep4', 'structure', 'indivID']
+2016-05-31 17:38:53,175 - raw - INFO - spt_rep2=REP
+2016-05-31 17:38:53,176 - raw - INFO - indivID
+2016-05-31 17:38:53,176 - raw - INFO - structure=
+2016-05-31 17:38:53,178 - raw - INFO - unitobs=COUNT
+2016-05-31 17:38:53,182 - raw - INFO - missing=['spt_rep3', 'spt_rep4', 'structure', 'indivID']
+2016-05-31 17:38:55,109 - raw - INFO - spt_rep2=REP
+2016-05-31 17:38:57,447 - raw - INFO - indivID
+2016-05-31 17:38:57,448 - raw - INFO - structure=
+2016-05-31 17:38:57,449 - raw - INFO - unitobs=COUNT
+2016-05-31 17:38:59,156 - raw - INFO - spt_rep2=REP
+2016-05-31 17:38:59,157 - raw - INFO - indivID
+2016-05-31 17:38:59,157 - raw - INFO - structure=
+2016-05-31 17:38:59,159 - raw - INFO - unitobs=COUNT
+2016-05-31 17:38:59,162 - raw - INFO - missing=['spt_rep3', 'spt_rep4', 'structure', 'indivID']
+2016-05-31 17:40:31,500 - raw - INFO - spt_rep2=REP
+2016-05-31 17:40:31,501 - raw - INFO - indivID
+2016-05-31 17:40:31,501 - raw - INFO - structure=
+2016-05-31 17:40:31,502 - raw - INFO - unitobs=COUNT
+2016-05-31 17:40:31,505 - raw - INFO - missing=['spt_rep3', 'spt_rep4', 'structure', 'indivID']
+2016-05-31 17:40:38,044 - cov - INFO - covariatecolumns=['TEMP']
+2016-05-31 17:40:39,997 - cov - INFO - covariatecolumns=['TEMP']

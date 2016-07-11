@@ -1,0 +1,156 @@
+2016-04-22 13:26:20,354 - setup - INFO - globalid=2
+2016-04-22 13:26:23,055 - setup - INFO - lterid=SBC
+2016-04-22 13:26:30,288 - setup - INFO - metadata=http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.17
+2016-04-22 13:26:41,236 - setup - INFO - filename=/Users/bibsian/Dropbox/database-development/data/raw_v2file_test.csv
+2016-04-22 13:26:49,957 - nullvalue - INFO - null=[-9999, -99999, -999999]
+2016-04-22 13:26:54,349 - site - INFO - sitelocation=site
+2016-04-22 13:26:54,385 - site - INFO - UniqueSitesDerived=['ABUR1', 'BRCD', 'AJFG', 'LKEM']
+2016-04-22 13:27:02,718 - site - INFO - sitelocation=site
+2016-04-22 13:27:02,738 - site - INFO - UniqueSitesDerived=['ABUR1', 'BRCD', 'AJFG', 'LKEM']
+2016-04-22 13:27:09,982 - sitecheck - INFO - ckSiteCoordN=True
+2016-04-22 13:27:09,982 - sitecheck - INFO - ckSiteCoordY=False
+2016-04-22 13:27:09,982 - site - INFO - UniqueSitesInput=['ABUR1', 'BRCD']
+2016-04-22 13:27:15,793 - sitecheck - INFO - ckSiteCoordN=True
+2016-04-22 13:27:15,793 - sitecheck - INFO - ckSiteCoordY=False
+2016-04-22 13:27:15,793 - site - INFO - UniqueSitesInput=['ABUR1', 'BRCD', 'AJFG', 'LKEM']
+2016-04-22 13:27:29,562 - site - INFO - siteNames=['something', 'something', 'something', 'something']
+2016-04-22 13:32:47,757 - setup - INFO - filename=/Users/bibsian/Dropbox/database-development/data/raw_v2file_test.csv
+2016-04-22 13:32:52,921 - site - INFO - sitelocation=site
+2016-04-22 13:32:52,960 - site - INFO - UniqueSitesDerived=['ABUR1', 'BRCD', 'AJFG', 'LKEM']
+2016-04-22 13:33:04,305 - site - INFO - sitelocation=site
+2016-04-22 13:33:04,325 - site - INFO - UniqueSitesDerived=['ABUR1', 'BRCD', 'AJFG', 'LKEM']
+2016-04-22 13:33:16,619 - sitecheck - INFO - ckSiteCoordN=True
+2016-04-22 13:33:16,619 - sitecheck - INFO - ckSiteCoordY=False
+2016-04-22 13:33:16,620 - site - INFO - UniqueSitesInput=['ABUR1', 'BRCD', 'AJFG', 'LKEM']
+2016-04-22 13:33:29,865 - site - INFO - siteNames=['something', 'something', 'something', 'something']
+2016-04-22 13:33:54,867 - setup - INFO - globalid=2
+2016-04-22 13:33:57,648 - setup - INFO - lterid=SBC
+2016-04-22 13:34:04,437 - setup - INFO - metadata=http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.17
+2016-04-22 13:34:13,771 - nullvalue - INFO - null=[-9999, -99999, -999999]
+2016-04-22 14:03:33,134 - setup - INFO - globalid=2
+2016-04-22 14:03:33,830 - setup - INFO - globalid=0
+2016-04-22 14:03:34,158 - setup - INFO - globalid=2
+2016-04-22 14:03:36,311 - setup - INFO - lterid=SBC
+2016-04-22 14:03:42,336 - setup - INFO - metadata=http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.17
+2016-04-22 14:03:56,602 - setup - INFO - filename=/Users/bibsian/Dropbox/database-development/data/raw_v2file_test.csv
+2016-04-22 14:03:58,206 - nullvalue - INFO - null=[-99999]
+2016-04-22 14:04:03,311 - site - INFO - sitelocation=site
+2016-04-22 14:04:03,355 - site - INFO - UniqueSitesDerived=['ABUR1', 'BRCD', 'AJFG', 'LKEM']
+2016-04-22 14:04:18,002 - sitecheck - INFO - ckSiteCoordN=True
+2016-04-22 14:04:18,003 - sitecheck - INFO - ckSiteCoordY=False
+2016-04-22 14:04:18,003 - site - INFO - UniqueSitesInput=['ABUR1', 'BRCD', 'AJFG', 'LKEM']
+2016-04-22 14:04:25,303 - site - INFO - siteNames=['soemthing', 'something', 'something', 'something']
+2016-04-22 14:14:16,525 - setup - INFO - globalid=2
+2016-04-22 14:14:19,497 - setup - INFO - lterid=SBC
+2016-04-22 14:14:25,087 - setup - INFO - metadata=http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.17
+2016-04-22 14:14:33,185 - setup - INFO - filename=/Users/bibsian/Dropbox/database-development/data/raw_v2file_test.csv
+2016-04-22 14:14:36,493 - nullvalue - INFO - null=[-99999]
+2016-04-22 14:14:40,517 - site - INFO - sitelocation=site
+2016-04-22 14:14:40,555 - site - INFO - UniqueSitesDerived=['ABUR1', 'BRCD', 'AJFG', 'LKEM']
+2016-04-22 14:14:56,344 - sitecheck - INFO - ckSiteCoordN=True
+2016-04-22 14:14:56,345 - sitecheck - INFO - ckSiteCoordY=False
+2016-04-22 14:14:56,345 - site - INFO - UniqueSitesInput=['ABUR1', 'BRCD', 'AJFG', 'LKEM']
+2016-04-22 14:15:04,165 - site - INFO - siteNames=['something', 'something', 'something', 'something']
+2016-04-22 14:17:15,672 - setup - INFO - filename=/Users/bibsian/Dropbox/database-development/data/raw_v2file_test.csv
+2016-04-22 14:17:18,487 - setup - INFO - globalid=2
+2016-04-22 14:17:20,911 - setup - INFO - lterid=SBC
+2016-04-22 14:17:26,395 - setup - INFO - metadata=http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.17
+2016-04-22 14:17:29,209 - nullvalue - INFO - null=[-99999]
+2016-04-22 14:17:33,545 - site - INFO - sitelocation=site
+2016-04-22 14:17:33,586 - site - INFO - UniqueSitesDerived=['ABUR1', 'BRCD', 'AJFG', 'LKEM']
+2016-04-22 14:17:48,754 - sitecheck - INFO - ckSiteCoordN=True
+2016-04-22 14:17:48,754 - sitecheck - INFO - ckSiteCoordY=False
+2016-04-22 14:17:48,754 - site - INFO - UniqueSitesInput=['ABUR1', 'BRCD', 'AJFG', 'LKEM']
+2016-04-22 14:17:58,049 - site - INFO - siteNames=['something', 'something', 'something', 'something']
+2016-04-22 14:29:37,235 - setup - INFO - filename=/Users/bibsian/Dropbox/database-development/data/raw_v2file_test.csv
+2016-04-22 14:29:43,292 - setup - INFO - globalid=2
+2016-04-22 14:29:46,060 - setup - INFO - lterid=SBC
+2016-04-22 14:29:47,495 - setup - INFO - metadata=http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.17
+2016-04-22 14:29:50,925 - nullvalue - INFO - null=[-99999]
+2016-04-22 14:29:55,669 - site - INFO - sitelocation=site
+2016-04-22 14:29:55,711 - site - INFO - UniqueSitesDerived=['ABUR1', 'BRCD', 'AJFG', 'LKEM']
+2016-04-22 14:30:09,701 - sitecheck - INFO - ckSiteCoordN=True
+2016-04-22 14:30:09,702 - sitecheck - INFO - ckSiteCoordY=False
+2016-04-22 14:30:09,702 - site - INFO - UniqueSitesInput=['ABUR1', 'BRCD', 'AJFG', 'LKEM']
+2016-04-22 14:30:21,837 - site - INFO - siteNames=['something', 'something', 'something', 'something']
+2016-04-22 14:33:08,250 - setup - INFO - filename=/Users/bibsian/Dropbox/database-development/data/raw_v2file_test.csv
+2016-04-22 14:33:10,259 - setup - INFO - globalid=2
+2016-04-22 14:33:12,316 - setup - INFO - lterid=SBC
+2016-04-22 14:33:16,751 - setup - INFO - metadata=http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.17
+2016-04-22 14:33:19,821 - nullvalue - INFO - null=[-99999]
+2016-04-22 14:33:23,430 - site - INFO - sitelocation=site
+2016-04-22 14:33:23,465 - site - INFO - UniqueSitesDerived=['ABUR1', 'BRCD', 'AJFG', 'LKEM']
+2016-04-22 14:33:34,718 - sitecheck - INFO - ckSiteCoordN=True
+2016-04-22 14:33:34,718 - sitecheck - INFO - ckSiteCoordY=False
+2016-04-22 14:33:34,718 - site - INFO - UniqueSitesInput=['ABUR1', 'BRCD', 'AJFG', 'LKEM']
+2016-04-22 14:33:38,893 - site - INFO - siteNames=['s', 'a', 'a', 'a']
+2016-04-22 15:59:42,655 - setup - INFO - globalid=2
+2016-04-22 15:59:52,232 - setup - INFO - lterid=SBC
+2016-04-22 15:59:59,269 - setup - INFO - metadata=http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.17
+2016-04-22 16:00:08,718 - setup - INFO - filename=/Users/bibsian/Dropbox/database-development/data/raw_v2file_test.csv
+2016-04-22 16:00:12,762 - nullvalue - INFO - null=[-99999]
+2016-04-22 16:00:19,659 - site - INFO - sitelocation=site
+2016-04-22 16:00:19,700 - site - INFO - UniqueSitesDerived=['ABUR1', 'BRCD', 'AJFG', 'LKEM']
+2016-04-22 16:00:37,747 - sitecheck - INFO - ckSiteCoordN=True
+2016-04-22 16:00:37,748 - sitecheck - INFO - ckSiteCoordY=False
+2016-04-22 16:00:37,748 - site - INFO - UniqueSitesInput=['ABUR1', 'BRCD', 'AJFG', 'LKEM']
+2016-04-22 16:00:42,290 - site - INFO - siteNames=['a', 'a', 'a', 'a']
+2016-04-22 16:00:52,575 - main - INFO - mainTable=[['SBC LTER: Reef: Kelp Forest Community Dynamics: Fish abundance' 'NULL'
+  'count' 'NULL' 2000 2014 'yr' 4.0 'obs' 'yes' 'ABUR1' nan nan nan nan
+  'http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.17'
+  'knb-lter-sbc.17.28']
+ ['SBC LTER: Reef: Kelp Forest Community Dynamics: Fish abundance' 'NULL'
+  'count' 'NULL' 2000 2014 'yr' 5.0 'obs' 'yes' 'BRCD' nan nan nan nan
+  'http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.17'
+  'knb-lter-sbc.17.28']
+ ['SBC LTER: Reef: Kelp Forest Community Dynamics: Fish abundance' 'NULL'
+  'count' 'NULL' 2000 2014 'yr' 5.0 'obs' 'yes' 'AJFG' nan nan nan nan
+  'http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.17'
+  'knb-lter-sbc.17.28']
+ ['SBC LTER: Reef: Kelp Forest Community Dynamics: Fish abundance' 'NULL'
+  'count' 'NULL' 2000 2014 'yr' 5.0 'obs' 'yes' 'LKEM' nan nan nan nan
+  'http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.17'
+  'knb-lter-sbc.17.28']]
+2016-04-22 16:02:13,075 - taxa - INFO - taxalocation=['projID', 'SP_CODE', 'TAXON_KINGDOM', 'TAXON_PHYLUM', 'TAXON_CLASS', 'TAXON_ORDER', 'TAXON_FAMILY', 'TAXON_GENUS', 'TAXON_SPECIES']
+2016-04-22 16:02:13,076 - taxa - INFO - taxamissing=['authority']
+2016-04-22 16:02:13,094 - taxa - INFO - taxaprojID=[1, 2, 3, 4]
+2016-04-22 16:02:25,148 - nullvalue - INFO - null=[-9999]
+2016-04-22 16:02:29,910 - taxa - INFO - taxalocation=['projID', 'SP_CODE', 'TAXON_KINGDOM', 'TAXON_PHYLUM', 'TAXON_CLASS', 'TAXON_ORDER', 'TAXON_FAMILY', 'TAXON_GENUS', 'TAXON_SPECIES']
+2016-04-22 16:02:29,911 - taxa - INFO - taxamissing=['authority']
+2016-04-22 16:02:29,932 - taxa - INFO - taxaprojID=[1, 2, 3, 4]
+2016-04-22 16:03:06,728 - time - INFO - Trying different date format.
+2016-04-22 16:03:06,729 - time - INFO - Trying different date format.
+2016-04-22 16:03:06,731 - time - INFO - Trying different date format.
+2016-04-22 16:03:06,736 - time - INFO - dateformat=%d %y %m
+2016-04-22 16:03:06,736 - time - INFO - timecolumn1=date
+2016-04-22 16:03:17,075 - time - INFO - timeNullColumns=All-Present
+2016-04-22 16:03:25,505 - raw - INFO - spt_rep2=transect
+2016-04-22 16:03:30,609 - raw - INFO - spt_rep2=transect
+2016-04-22 16:03:30,611 - raw - INFO - spt_rep3=QUAD
+2016-04-22 16:03:32,969 - raw - INFO - spt_rep2=transect
+2016-04-22 16:03:32,971 - raw - INFO - spt_rep3=QUAD
+2016-04-22 16:03:32,973 - raw - INFO - spt_rep4=SIDE
+2016-04-22 16:03:34,241 - raw - INFO - indivID
+2016-04-22 16:03:34,241 - raw - INFO - structure=
+2016-04-22 16:03:34,476 - raw - INFO - indivID
+2016-04-22 16:03:34,476 - raw - INFO - structure=
+2016-04-22 16:03:34,907 - raw - INFO - indivID
+2016-04-22 16:03:34,907 - raw - INFO - structure=
+2016-04-22 16:03:39,111 - raw - INFO - indivID
+2016-04-22 16:03:39,113 - raw - INFO - structure=SIZE
+2016-04-22 16:03:40,762 - raw - INFO - indivID
+2016-04-22 16:03:40,764 - raw - INFO - structure=SIZE
+2016-04-22 16:03:42,799 - raw - INFO - indivID
+2016-04-22 16:03:42,801 - raw - INFO - structure=SIZE
+2016-04-22 16:03:42,803 - raw - INFO - unitobs=COUNT
+2016-04-22 16:03:43,734 - raw - INFO - spt_rep2=transect
+2016-04-22 16:03:43,735 - raw - INFO - spt_rep3=QUAD
+2016-04-22 16:03:43,737 - raw - INFO - spt_rep4=SIDE
+2016-04-22 16:03:43,738 - raw - INFO - indivID
+2016-04-22 16:03:43,740 - raw - INFO - structure=SIZE
+2016-04-22 16:03:43,742 - raw - INFO - unitobs=COUNT
+2016-04-22 16:03:43,750 - raw - INFO - missing=['indivID']
+2016-04-22 16:03:43,779 - raw - INFO - rawfutureprojID=[1, 2, 3, 4]
+2016-04-22 16:03:43,780 - raw - INFO - rawfuturetaxaID=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+2016-04-22 16:04:03,360 - cov - INFO - covariatecolumns=['AREA', 'VIS', 'OBS_CODE']
+2016-04-22 16:04:04,750 - cov - INFO - covariatecolumns=['AREA', 'VIS', 'OBS_CODE']

@@ -1,0 +1,88 @@
+2016-04-23 09:00:29,204 - setup - INFO - globalid=3
+2016-04-23 09:00:33,178 - setup - INFO - lterid=SBC
+2016-04-23 09:00:34,894 - setup - INFO - metadata=http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.19
+2016-04-23 09:48:52,578 - setup - INFO - globalid=2
+2016-04-23 09:48:54,834 - setup - INFO - lterid=SBC
+2016-04-23 09:48:56,165 - setup - INFO - metadata=http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.17
+2016-04-23 09:49:13,640 - setup - INFO - filename=/Users/bibsian/Dropbox/database-development/data/raw_v2file_test.csv
+2016-04-23 09:49:16,268 - nullvalue - INFO - null=[-9999, -99999]
+2016-04-23 09:49:20,299 - site - INFO - sitelocation=site
+2016-04-23 09:49:20,454 - site - INFO - UniqueSitesDerived=['ABUR1', 'BRCD', 'AJFG', 'LKEM']
+2016-04-23 09:49:27,148 - main - INFO - mainTable=[['SBC LTER: Reef: Kelp Forest Community Dynamics: Fish abundance' 'NULL'
+  'count' 'NULL' 2000 2014 'yr' 4.0 'obs' 'yes' 'ABUR1' nan nan nan nan
+  'http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.17'
+  'knb-lter-sbc.17.28']
+ ['SBC LTER: Reef: Kelp Forest Community Dynamics: Fish abundance' 'NULL'
+  'count' 'NULL' 2000 2014 'yr' 5.0 'obs' 'yes' 'BRCD' nan nan nan nan
+  'http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.17'
+  'knb-lter-sbc.17.28']
+ ['SBC LTER: Reef: Kelp Forest Community Dynamics: Fish abundance' 'NULL'
+  'count' 'NULL' 2000 2014 'yr' 5.0 'obs' 'yes' 'AJFG' nan nan nan nan
+  'http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.17'
+  'knb-lter-sbc.17.28']
+ ['SBC LTER: Reef: Kelp Forest Community Dynamics: Fish abundance' 'NULL'
+  'count' 'NULL' 2000 2014 'yr' 5.0 'obs' 'yes' 'LKEM' nan nan nan nan
+  'http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.17'
+  'knb-lter-sbc.17.28']]
+2016-04-23 09:52:24,048 - setup - INFO - globalid=3
+2016-04-23 09:52:33,900 - setup - INFO - lterid=SBC
+2016-04-23 09:52:35,530 - setup - INFO - metadata=http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.19
+2016-04-23 09:52:44,625 - setup - INFO - filename=/Users/bibsian/Dropbox/database-development/data/raw_v2file_test.csv
+2016-04-23 09:52:50,696 - nullvalue - INFO - null=[-9999, -99999]
+2016-04-23 09:52:55,968 - site - INFO - sitelocation=site
+2016-04-23 09:52:56,070 - site - INFO - UniqueSitesDerived=['ABUR1', 'BRCD', 'AJFG', 'LKEM']
+2016-04-23 09:53:02,340 - main - INFO - mainTable=[[ 'SBC LTER: Reef: Kelp Forest Community Dynamics: Invertebrate and algal density'
+  'NULL' 'count' 'NULL' 2000 2014 'yr' 4.0 'obs' 'yes' 'ABUR1' nan nan nan
+  nan
+  'http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.19'
+  'knb-lter-sbc.19.21']
+ [ 'SBC LTER: Reef: Kelp Forest Community Dynamics: Invertebrate and algal density'
+  'NULL' 'count' 'NULL' 2000 2014 'yr' 5.0 'obs' 'yes' 'BRCD' nan nan nan
+  nan
+  'http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.19'
+  'knb-lter-sbc.19.21']
+ [ 'SBC LTER: Reef: Kelp Forest Community Dynamics: Invertebrate and algal density'
+  'NULL' 'count' 'NULL' 2000 2014 'yr' 5.0 'obs' 'yes' 'AJFG' nan nan nan
+  nan
+  'http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.19'
+  'knb-lter-sbc.19.21']
+ [ 'SBC LTER: Reef: Kelp Forest Community Dynamics: Invertebrate and algal density'
+  'NULL' 'count' 'NULL' 2000 2014 'yr' 5.0 'obs' 'yes' 'LKEM' nan nan nan
+  nan
+  'http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.19'
+  'knb-lter-sbc.19.21']]
+2016-04-23 09:54:15,432 - taxa - INFO - taxalocation=['projID', 'SP_CODE', 'TAXON_KINGDOM', 'TAXON_PHYLUM', 'TAXON_CLASS', 'TAXON_ORDER', 'TAXON_FAMILY', 'TAXON_GENUS', 'TAXON_SPECIES']
+2016-04-23 09:54:15,433 - taxa - INFO - taxamissing=['authority']
+2016-04-23 09:54:15,452 - taxa - INFO - taxaprojID=[8, 5, 6, 7]
+2016-04-23 09:54:36,137 - time - INFO - Trying different date format.
+2016-04-23 09:54:36,138 - time - INFO - Trying different date format.
+2016-04-23 09:54:36,139 - time - INFO - Trying different date format.
+2016-04-23 09:54:36,144 - time - INFO - dateformat=%d %y %m
+2016-04-23 09:54:36,144 - time - INFO - timecolumn1=date
+2016-04-23 09:55:04,430 - time - INFO - timeNullColumns=All-Present
+2016-04-23 09:55:18,594 - raw - INFO - spt_rep2=transect
+2016-04-23 09:55:22,945 - raw - INFO - spt_rep2=transect
+2016-04-23 09:55:22,947 - raw - INFO - spt_rep3=QUAD
+2016-04-23 09:55:24,689 - raw - INFO - spt_rep2=transect
+2016-04-23 09:55:24,691 - raw - INFO - spt_rep3=QUAD
+2016-04-23 09:55:24,693 - raw - INFO - spt_rep4=SIDE
+2016-04-23 09:55:27,050 - raw - INFO - indivID
+2016-04-23 09:55:27,050 - raw - INFO - structure=
+2016-04-23 09:55:29,575 - raw - INFO - indivID
+2016-04-23 09:55:29,577 - raw - INFO - structure=SIZE
+2016-04-23 09:55:30,769 - raw - INFO - indivID
+2016-04-23 09:55:30,771 - raw - INFO - structure=SIZE
+2016-04-23 09:55:32,687 - raw - INFO - indivID
+2016-04-23 09:55:32,689 - raw - INFO - structure=SIZE
+2016-04-23 09:55:32,691 - raw - INFO - unitobs=COUNT
+2016-04-23 09:55:34,126 - raw - INFO - spt_rep2=transect
+2016-04-23 09:55:34,127 - raw - INFO - spt_rep3=QUAD
+2016-04-23 09:55:34,129 - raw - INFO - spt_rep4=SIDE
+2016-04-23 09:55:34,130 - raw - INFO - indivID
+2016-04-23 09:55:34,132 - raw - INFO - structure=SIZE
+2016-04-23 09:55:34,134 - raw - INFO - unitobs=COUNT
+2016-04-23 09:55:34,142 - raw - INFO - missing=['indivID']
+2016-04-23 09:55:34,173 - raw - INFO - rawfutureprojID=[8, 5, 6, 7]
+2016-04-23 09:55:34,173 - raw - INFO - rawfuturetaxaID=[12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22]
+2016-04-23 09:55:57,489 - cov - INFO - covariatecolumns=['AREA', 'VIS', 'OBS_CODE', 'SURVEY_TIMING']
+2016-04-23 09:56:06,455 - cov - INFO - covariatecolumns=['AREA', 'VIS', 'OBS_CODE', 'SURVEY_TIMING']
