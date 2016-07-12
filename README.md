@@ -8,6 +8,7 @@ This project aims to create an open source database that wil contain raw aggrega
  
 # Database Overview
 The database will have seven tables.
+
 1. raw_climate: Table of orginal (or aggregated) meteorlogical data from individual LTER stations 
 
 2. climate_site: Table of meteorlogical sites wiht a given LTER station
