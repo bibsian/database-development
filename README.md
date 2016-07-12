@@ -4,7 +4,7 @@ Population Dynamics Database
 This project aims to create an open source database that wil contain raw aggregated information from numerous ecological studies on population dynamics (plants, animals, algae, etc). This database will *not* be up to third normal form standards. This is because we wish to have a centralized data repositary where all temporal and spatial replication within the data is preserved; this will allow for more accurate modeling of population dyanimcs through state-space models.
 
 # Identifying Data Sources
- The data sources will come from LTER research station. Individual data entities are given a unique id by us for book keeping purposes. See the 'current' folder for a list of dataset that will be uploaded (sort by our created 'id' number) as of 07/11/16.
+ The data sources will come from LTER research station. Individual data entities are given a unique id by us for book keeping purposes. See the 'current' folder for a list of dataset that will be uploaded (sorted by our created 'id' number) as of 07/11/16.
  
 # Database Overview
 The database will have seven tables.
