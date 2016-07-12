@@ -9,24 +9,24 @@ This project aims to create an open source database that wil contain raw aggrega
 # Database Overview
 The database will have seven tables.
 
-1. raw_climate: Table of orginal (or aggregated) meteorlogical data from individual LTER stations 
+1. raw_climate: Table of orginal (or aggregated) meteorlogical data from individual LTER climate stations 
 
-2. climate_site: Table of meteorlogical sites wiht a given LTER station
+2. climate_site: Table of LTER climate station names within any LTER
 
-3. lter_table: Table of all LTER stations and site abbreviations (w/ lat & long)
+3. lter_table: Table of all LTER research stations (lat/long included)
 
-4. site_table: Table of designated sites within a study that gathered data at a LTER station (w/ lat & log if available)
+4. site_table: Table of designated site names from studies that gathered data at a LTER station (w/ lat & log if available)
 
-5. main_table: Table of metadata that describes a study (includes temporal information, levels of spatial replication, PI's, contact emails, community data set indicator, etc). See the 'db' folder for a complete overview of fields.
+5. main_table: Table of metadata that describes a research study (includes temporal information, levels of spatial replication, PI's, contact emails, community data set indicator, etc). See the 'db' folder for a complete overview of fields
 
-6. taxa_table: Table of unique instances of a record regarding the taxonomy of study organisms
+6. taxa_table: Table of taxonomic classifications for organisms found in a study
 
-7. raw_table: Table of the orginal observations gathered from the study.
+7. raw_table: Table of the orginal observations gathered from the study
 
-Note, in order to keep all spatial and temporal replication intact the main_table and taxa_table had to have the records on a per research site (with an LTER study) basis. Our R package will deal with this detail when summarizing database informatoin.
+Note, in order to keep all spatial and temporal replication intact, the main_table and taxa_table had to have the records split up on a per research site basis (within an LTER).For example if study A has three sites, site1, site2, and site3, records in the main table will have metadata for that study and site (studyA-site1, studyA-site2, studyA-site3). This lead to some redundant data but various fields in the table can vary by site. Our R package will deal with this detail when summarizing database informatoin.
 
 # Overview of Methods to Populate the Database
- Raw data gather from LTER research stations were formated and uploaded with a computer program written in python. This program has a graphical user interface (GUI) to enable various personal to upload data in a repeatable, recordable, and standarized way). I believe we might be able to turn this into a tool to help other scientist create databases that sythensize various independent if we make it flexible enough.
+ Raw data was gathered from LTER research stations and were formated and uploaded to the databse with our poplerGUI computer program. This program has a graphical user interface (GUI) to enable various people to upload data to the database in a repeatable, recordable, and standarized way. This could be turned into a tool to help other scientist create databases that sythensize various independent.
 
 # Future goal
 We would like to create a website and web application to access the database (this will only be done if we have enough time/manpower)
