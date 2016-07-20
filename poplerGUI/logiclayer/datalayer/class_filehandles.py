@@ -97,6 +97,35 @@ class FileHandler(object):
                         try:
                             dfstate.loc[:, item] = dfstate.loc[
                                 :, item].str.rstrip()
+                            na_vals = [
+                                9999, 99999, 999999,
+                                -9999, -99999, -999999]
+                            na_vals_float = [
+                                9999.0, 99999.0, 999999.0,
+                                -9999.0, -99999.0, -999999.0]
+                            na_text_vals = [
+                                '9999', '99999', '999999',
+                                '-9999', '-99999', '-999999']
+                            for j,text_val in enumerate(
+                                    na_text_vals):
+                                if (
+                                        (
+                                            dfstate[item].dtypes
+                                            == int)
+                                        or
+                                        (
+                                            dfstate[item].dtypes
+                                            == float)):
+                                    dfstate[item].replace(
+                                        {na_vals[j]: 'NA'},
+                                        inplace=True)
+                                    dfstate[item].replace(
+                                        {na_vals_float[j]: 'NA'},
+                                        inplace=True)
+                                else:
+                                    dfstate[item].replace(
+                                        {text_val: 'NA'},
+                                        inplace=True)
                         except:
                             pass
                     else:
