@@ -128,7 +128,8 @@ class Flusher(object):
             del session
             print(str(e))
             raise ValueError(
-                'Could not update '+self.tablename+' values')
+                'Could not update '+ self.tablename +
+                ' values. ' + str(e))
 
 def flush(df,tablename,log,lter, sess):
     save_data = df

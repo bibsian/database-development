@@ -88,7 +88,9 @@ class AbstractTableBuilder(object):
             'sp_rep3_uniquelevels',
             'sp_rep4_ext', 'sp_rep4_ext_units', 'sp_rep4_label',
             'sp_rep4_uniquelevels',
-            'authors', 'authors_contact', 'metalink', 'knbid'],
+            'authors', 'authors_contact', 'metalink', 'knbid',
+            'treatment_type', 'num_treatments',
+            'exp_maintainence', 'trt_label'],
         'time': False,
         'cov': False,
         'depend': False
@@ -105,7 +107,8 @@ class AbstractTableBuilder(object):
         'columns': [
             'taxaid', 'lter_proj_site', 'year', 'month', 'day',
             'spt_rep1', 'spt_rep2', 'spt_rep3', 'spt_rep4',
-            'structure', 'individ', 'unitobs', 'covariates'],
+            'structure', 'individ', 'trt_label',
+            'unitobs', 'covariates'],
         'time': True,
         'cov': True ,
         'depend': True
@@ -117,7 +120,8 @@ class AbstractTableBuilder(object):
             'sp_rep1_label', 'sp_rep1_uniquelevels',
             'sp_rep2_label', 'sp_rep2_uniquelevels',
             'sp_rep3_label', 'sp_rep3_uniquelevels',
-            'sp_rep4_label', 'sp_rep4_uniquelevels'
+            'sp_rep4_label', 'sp_rep4_uniquelevels',
+            'num_treatments'
         ],
         'time': False,
         'cov': False,
@@ -179,16 +183,22 @@ class SiteTableBuilder(AbstractTableBuilder):
             nullcols.remove('lterid')
         else:
             pass
+        nullcols.remove('descript')
         uniquesubset = dataframe[acols]
         nullsubset = hlp.produce_null_df(
             ncols=len(nullcols),
             colnames=nullcols,
             dflength=len(uniquesubset),
             nullvalue='NaN')
+        nullsubset2 = hlp.produce_null_df(
+            ncols=1,
+            colnames=['descript'],
+            dflength=len(uniquesubset),
+            nullvalue='NA')
 
         _concat =  concat(
-            [uniquesubset, nullsubset], axis=1).reset_index(
-                drop=True)
+            [uniquesubset, nullsubset, nullsubset2],
+            axis=1).reset_index(drop=True)
         final = _concat.drop_duplicates().reset_index(drop=True) 
         final.columns =dbcol
         return final
@@ -231,7 +241,8 @@ class MainTableBuilder(AbstractTableBuilder):
              'sp_rep1_label', 'sp_rep1_uniquelevels',
              'sp_rep2_label', 'sp_rep2_uniquelevels',
              'sp_rep3_label', 'sp_rep3_uniquelevels',
-             'sp_rep4_label', 'sp_rep4_uniquelevels'
+             'sp_rep4_label', 'sp_rep4_uniquelevels',
+            'num_treatments'
         ]
 
         # Creating main data table
@@ -239,40 +250,45 @@ class MainTableBuilder(AbstractTableBuilder):
             {
                 'metarecordid':dataframe['global_id'], 
                 'title': dataframe['title'],
-                'samplingunits': 'NULL',
+                'samplingunits': 'NA',
                 'samplingprotocol': dataframe['data_type'],
-                'structured': 'NULL',
-                'studystartyr': 'NULL',
-                'studyendyr': 'NULL',
-                'siteid': 'NULL',
-                'sitestartyr': 'NULL',
-                'siteendyr': 'NULL',
+                'structured': 'NA',
+                'studystartyr': 'NA',
+                'studyendyr': 'NA',
+                'siteid': 'NA',
+                'sitestartyr': 'NA',
+                'siteendyr': 'NA',
                 'samplefreq': dataframe['temp_int'],
-                'totalobs': 'NULL',
+                'totalobs': 'NA',
                 'studytype': dataframe['study_type'],
                 'community': dataframe['comm_data'],
-                'uniquetaxaunits': 'NULL',
+                'uniquetaxaunits': 'NA',
                 # Spatial repliaction attributes
-                'sp_rep1_ext': 'NULL',
-                'sp_rep1_ext_units': 'NULL',
-                'sp_rep1_label': 'NULL',
-                'sp_rep1_uniquelevels': 'NULL',
-                'sp_rep2_ext': 'NULL',
-                'sp_rep2_ext_units': 'NULL',
-                'sp_rep2_label': 'NULL',
-                'sp_rep2_uniquelevels': 'NULL',
-                'sp_rep3_ext': 'NULL',
-                'sp_rep3_ext_units': 'NULL',
-                'sp_rep3_label': 'NULL',
-                'sp_rep3_uniquelevels': 'NULL',
-                'sp_rep4_ext': 'NULL',
-                'sp_rep4_ext_units': 'NULL',
-                'sp_rep4_label': 'NULL',
-                'sp_rep4_uniquelevels': 'NULL',
-                'authors': 'NULL',
-                'authors_contact': 'NULL',
+                'sp_rep1_ext': -99999,
+                'sp_rep1_ext_units': 'NA',
+                'sp_rep1_label': 'NA',
+                'sp_rep1_uniquelevels': 'NA',
+                'sp_rep2_ext': -99999,
+                'sp_rep2_ext_units': 'NA',
+                'sp_rep2_label': 'NA',
+                'sp_rep2_uniquelevels': 'NA',
+                'sp_rep3_ext': -99999,
+                'sp_rep3_ext_units': 'NA',
+                'sp_rep3_label': 'NA',
+                'sp_rep3_uniquelevels': 'NA',
+                'sp_rep4_ext': -99999,
+                'sp_rep4_ext_units': 'NA',
+                'sp_rep4_label': 'NA',
+                'sp_rep4_uniquelevels': 'NA',
+                'authors': 'NA',
+                'authors_contact': 'NA',
                 'metalink': dataframe['site_metadata'],
-                'knbid': dataframe['portal_id']
+                'knbid': dataframe['portal_id'],
+                'treatment_type': dataframe['treatment_type'],
+                'num_treatments': 'NA',
+                'exp_maintainence': dataframe['exp_maintainence'],
+                'trt_label': 'NA'
+
             },
             columns = [
             'metarecordid', 'title', 'samplingunits',
@@ -289,8 +305,9 @@ class MainTableBuilder(AbstractTableBuilder):
             'sp_rep3_uniquelevels',
             'sp_rep4_ext', 'sp_rep4_ext_units', 'sp_rep4_label',
             'sp_rep4_uniquelevels',
-            'authors', 'authors_contact', 'metalink', 'knbid'
-            ], index=[0])
+                'authors', 'authors_contact', 'metalink', 'knbid',
+            'treatment_type', 'num_treatments',
+            'exp_maintainence', 'trt_label'], index=[0])
 
         _concat =  concat(
             [maindata]*len(sitelevels))
@@ -346,7 +363,7 @@ class TaxaTableBuilder(AbstractTableBuilder):
                 ncols=len(nullcols),
                 colnames=nullcols,
                 dflength=len(unique),
-                nullvalue='NaN')
+                nullvalue='NA')
 
             unique = concat(
                 [unique,nullsubset,sitelevel], axis=1)
@@ -393,13 +410,13 @@ class RawTableBuilder(AbstractTableBuilder):
         else:
             acols.append('taxaid')
             acols.append('lter_proj_site')
-
+        
         uniquesubset = dataframe[acols]
         nullsubset = hlp.produce_null_df(
             ncols=len(nullcols),
             colnames=nullcols,
             dflength=len(uniquesubset),
-            nullvalue='NaN')
+            nullvalue='NA')
         _concat =  concat(
             [uniquesubset, nullsubset], axis=1).reset_index(
                 drop=True)
@@ -542,7 +559,7 @@ class UpdaterTableBuilder(AbstractTableBuilder):
         # Columns that will be updated later in the
         # program
         updatedf = hlp.produce_null_df(
-            len(dbcol), dbcol, len(sitelevels), 'NULL')
+            len(dbcol), dbcol, len(sitelevels), 'NA')
         updatedf['siteid'] = sitelevels
         return updatedf
 
