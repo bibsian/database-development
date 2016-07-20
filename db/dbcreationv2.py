@@ -26,7 +26,7 @@ ltertablename = 'lter_table'
 # Note, postgres is the super user and can do
 # everything possible (CREATE,INSERT, MANIPULATE, etc.)
 engine = create_engine(
-    'postgresql+psycopg2://username@host/LTERV2',
+    'postgresql+psycopg2://postgres:demography@localhost/popler',
     echo=True)
 
 # Note that the relationships in the database (i.e. entity-relation
