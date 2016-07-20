@@ -67,4 +67,16 @@ _Ubuntu*
 */.DS_Store
 /.DS_Store
 
+test/DatabaseConfig/covar_table_test.csv
+test/DatabaseConfig/main_table_test.csv
+test/DatabaseConfig/raw_data_test.csv
+test/DatabaseConfig/raw_table_test.csv
+test/DatabaseConfig/site_table_test.csv
+test/DatabaseConfig/taxa_table_test.csv
+test/DatabaseConfig/time_table_test.csv
+test/DatabaseConfig/update_rec1.py
 
+test/Dataset_manual_test/raw_data_test_6.csv
+test/logiclayer/Logs_DbTransactions/*
+test/logiclayer/Logs_UI/*
+test/logiclayer/scratch.py
