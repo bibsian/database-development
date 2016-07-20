@@ -108,6 +108,7 @@ class Facade:
         self._tablelog = {
             'sitetable': None,
             'maintable': None,
+            'maintable_update': None,
             'timetable': None,
             'taxatable': None,
             'rawtable': None,
@@ -341,9 +342,12 @@ class Facade:
         else:
             return
 
-        for i in self.push_tables.values():
+        for i, item in enumerate(self.push_tables.values()):
             try:
-                assert (i is not None) is True
+                if list(self.push_tables.keys())[i] == 'sitetable':
+                    pass
+                else:
+                    assert (item is not None) is True
             except Exception as e:
                 print(str(e))
                 raise AttributeError(
@@ -371,8 +375,11 @@ class Facade:
 
         session = orm.Session()
         orm.convert_types(maintable, orm.maintypes)
-        if self.sitepushed is None:
+        if (self.sitepushed is None) and (sitetable is not None):
             try:
+                sitetable.replace(
+                    {'NaN': -99999}, inplace=True)
+
                 flsh.flush(
                     sitetable,
                     'sitetable',
@@ -385,7 +392,7 @@ class Facade:
                 raise ValueError(
                     'Site abbreviations already in database ' +
                     'from an different LTER. Please modify ' +
-                    'abbreviations.')
+                    'abbreviations. ' + str(e))
         else:
             pass
         if self.mainpushed is None:
@@ -400,7 +407,7 @@ class Facade:
                 print(str(e))
                 self._tablelog['maintable'].debug(str(e))
                 raise ValueError(
-                'Main table data will not upload.')
+                    'Main table data will not upload. ' + str(e))
         else:
             pass
 
@@ -521,6 +528,9 @@ class Facade:
 
         if self.rawpushed is None:
             try:
+                rawpush[
+                    'unitobs'].fillna(-99999, inplace=True)
+
                 flsh.flush(
                     rawpush,
                     'rawtable',
@@ -621,31 +631,41 @@ class Facade:
         # Spt_rep unique levels
         updatetable.loc[:, 'sp_rep1_label'] = siteloc
         updatetable.loc[:, 'sp_rep1_uniquelevels'] = 1
-        bool_list = list(rawloc.values())
+
         updated_cols = updatetable.columns.values.tolist()
         print(updated_cols)
         print('past updating columns')
-        for i, label in enumerate(rawloc):
-            if ((bool_list[i] is False) and
-                (label in updated_cols)):
-                og_col_name = list(rawlabel.values())[i]
+        label_index = [
+            x for x,y in
+            zip(list(rawloc.keys()),list(rawloc.values()))
+            if y is False]
+
+        for i, label in enumerate(label_index):
+            og_col_name = list(rawlabel.values())[i]
+            updatetable.loc[
+                :, label] = og_col_name
+            for j, site in enumerate(sitelevels):
+                levelcount = []
+                uqleveldf = rawmergedf_all[
+                    rawmergedf_all[siteloc] == site][
+                        og_col_name].copy()
+                levelcount.append(
+                    len(uqleveldf.unique()))
+
+                col = list(rawlabel.keys())[i]
+                print(col)
+                updated_col_name = col
+                if 'sp' in col:
+                    updated_col_name = col.replace(
+                        't', '') + '_uniquelevels'
+                elif 'trt_label' in col:
+                    updated_col_name = col.replace(
+                        'trt_label', '') + 'num_treatments'
+                print('UPDATED!!!!!: ', updated_col_name)
+
                 updatetable.loc[
-                    :, label] = og_col_name 
-                for j, site in enumerate(sitelevels):
-                    levelcount = []
-                    uqleveldf = rawmergedf_all[
-                        rawmergedf_all[siteloc] == site][
-                            og_col_name].copy()
-                    levelcount.append(
-                        len(uqleveldf.unique()))
-                    updated_col_name = list(
-                        rawlabel.keys())[i].replace(
-                            't', '') + '_uniquelevels'
-                    updatetable.loc[
-                        updatetable.siteid ==
-                        site, updated_col_name] = levelcount[0]
-            else:
-                pass
+                    updatetable.siteid ==
+                    site, updated_col_name] = levelcount[0]
         print('past spatial replication')
 
         updatetable_merge = merge(
@@ -667,9 +687,10 @@ class Facade:
         print(updatetable_null)
         print('past updating dataframe')
 
+        self.create_log_record('maintable_update')
         updated_df_values(
             updatenull, updatemerged,
-            self._tablelog['maintable'], 'maintable'
+            self._tablelog['maintable_update'], 'maintable'
         )
 
         # Creating orms for updating tables: Must be done
