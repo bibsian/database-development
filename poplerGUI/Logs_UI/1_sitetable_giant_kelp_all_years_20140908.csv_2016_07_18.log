@@ -1,0 +1,11 @@
+2016-07-18 15:56:31 - DEBUG - sitelevels (submit): ABUR AHND AQUE BULL CARP GOLB IVEE MOHK NAPL SCDI SCTW
+2016-07-18 16:03:23 - DEBUG - changed_site_list: ABUR AHND AQUE BULL CARP GOLB IVEE MOHK NAPL SCDI SCTW
+2016-07-18 16:03:23 - DEBUG - sitelevels list:  ABUR AHND AQUE BULL CARP GOLB IVEE MOHK NAPL SCDI SCTW
+2016-07-18 16:03:24 - INFO - sitetable_c "siteid" = ['NULL'] to ['SITE']
+2016-07-18 16:03:24 - INFO - sitetable "siteid" = ['nan', 'nan', 'nan', 'nan', 'nan', 'nan', 'nan', 'nan', 'nan', 'nan', 'nan'] to ['ABUR', 'AHND', 'AQUE', 'BULL', 'CARP', 'GOLB', 'IVEE', 'MOHK', 'NAPL', 'SCDI', 'SCTW']
+2016-07-18 16:03:24 - INFO - sitetable "lat" = ['nan', 'nan', 'nan', 'nan', 'nan', 'nan', 'nan', 'nan', 'nan', 'nan', 'nan'] to ['34.400275', '34.471817', '34.45850533', '34.45850533', '34.3916319', '34.4137165', '34.402783', '34.3940708', '34.4221216', '34.05865', '34.0444335']
+2016-07-18 16:03:24 - INFO - sitetable "lng" = ['nan', 'nan', 'nan', 'nan', 'nan', 'nan', 'nan', 'nan', 'nan', 'nan', 'nan'] to ['-119.7445915', '-120.1426165', '-120.11905', '-120.33349', '-119.5416933', '-119.8221', '-119.85755', '-119.72957', '-119.95154', '-119.75763', '-119.71513']
+2016-07-18 16:03:24 - INFO - sitetable "descript" = ['nan', 'nan', 'nan', 'nan', 'nan', 'nan', 'nan', 'nan', 'nan', 'nan', 'nan'] to ['Arroyo Burro Reef', 'Arroyo Hondo Reef', 'Arroyo Quemado Reef', 'Bulito', 'Carpinteria Reef', 'Goleta Bay', 'Isla Vista Reef', 'Mohawk Reef', 'Naples Reef', 'Santa Cruze Islan, Diablo', 'Santa Cruz Island, Twin Harbor West']
+2016-07-18 16:03:24 - INFO - sitetable "lterid" = ['nan', 'nan', 'nan', 'nan', 'nan', 'nan', 'nan', 'nan', 'nan', 'nan', 'nan'] to ['SBC', 'SBC', 'SBC', 'SBC', 'SBC', 'SBC', 'SBC', 'SBC', 'SBC', 'SBC', 'SBC']
+2016-07-18 16:03:24 - DEBUG - facade site levelsABUR AHND AQUE BULL CARP GOLB IVEE MOHK NAPL SCDI SCTW
+2016-07-18 16:03:24 - DEBUG - sitelevels (submit): ABUR AHND AQUE BULL CARP GOLB IVEE MOHK NAPL SCDI SCTW
