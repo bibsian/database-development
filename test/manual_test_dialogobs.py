@@ -44,7 +44,9 @@ def filehandle():
     fileinput = ini.InputHandler(
         name='fileoptions',tablename=None, lnedentry=lned,
         rbtns=rbtn, checks=ckentry, session=True,
-        filename='raw_data_test.csv')
+        filename=
+        str(os.getcwd()) + '/Datasets_manual_test/' +
+        'raw_data_test_1.csv')
 
     return fileinput
 
@@ -109,6 +111,7 @@ def ObsDialog(sitehandle, filehandle, metahandle):
                 ('spt_rep4', self.lnedRep4.text()),
                 ('structure', self.lnedStructure.text()),
                 ('individ', self.lnedIndividual.text()),
+                ('trt_label', self.lnedTreatment.text()),
                 ('unitobs', self.lnedRaw.text())
             ))
 
@@ -118,6 +121,7 @@ def ObsDialog(sitehandle, filehandle, metahandle):
                 ('spt_rep4', self.ckRep4.isChecked()),
                 ('structure', self.ckStructure.isChecked()),
                 ('individ', self.ckIndividual.isChecked()),
+                ('trt_label', self.ckTreatment.isChecked()),
                 ('unitobs', False)
             ))
 

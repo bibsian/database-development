@@ -196,7 +196,7 @@ def MainWindow():
                 pass
             else:
                 check_view = view.PandasTableModel(
-                sitecheckdf[sitecheckdf['siteid'].isin(check)])
+                    sitecheckdf[sitecheckdf['siteid'].isin(check)])
                 self.preview_validate.tabviewPreview.setModel(
                     check_view)
                 self.sitequerymodel = check_view
@@ -218,24 +218,20 @@ def MainWindow():
             s_not_in_databaase = [
                 x for x in changed_site_list if x not in site_q_list
             ]
-            print('s_not_in_databaase: ' + ' '.join(s_not_in_databaase))
+            self._log.debug(
+                's_not_in_databaase: ' + ' '.join(s_not_in_databaase))
 
-            if not s_not_in_databaase:
-                self._log.debug('No sites in database (update)')
-            else:
-                self._log.debug('Sites in database (update)')
-                site_display_df = changed_df[
-                    changed_df['siteid'].isin(
-                        s_not_in_databaase)]
-                print('site df (val): ', site_display_df)
-                self.sitetablemodel = self.viewEdit(site_display_df)
-                self.listviewSiteLabels.setModel(self.sitetablemodel)
+            site_display_df = changed_df[
+                changed_df['siteid'].isin(
+                    s_not_in_databaase)]
+            print('site df (val): ', site_display_df)
+            self.sitetablemodel = self.viewEdit(site_display_df)
+            self.listviewSiteLabels.setModel(self.sitetablemodel)
 
-                self.sitelevels = self.sitetablemodel.data(
-                    None, QtCore.Qt.UserRole)
-                self._log.debug(
-                    'sitelevels (updated)' + ' '.join(self.sitelevels))
-
+            self.sitelevels = self.sitetablemodel.data(
+                None, QtCore.Qt.UserRole)
+            self._log.debug(
+                'sitelevels (updated)' + ' '.join(self.sitelevels))
 
         def save_close(self):
             self.update_data()

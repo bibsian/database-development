@@ -5,16 +5,15 @@ from PyQt4 import QtGui, QtCore
 from pandas import read_sql
 import sys, os
 sys.path.append(os.path.realpath(os.path.dirname(__file__)))
-import ui_mainrefactor as mw
-import ui_logic_session as logicsess
-import ui_logic_site as logicsite
-import ui_dialog_main as dmainw
-import class_userfacade as face
-import class_inputhandler as ini
-import class_helpers as hlp
-import class_modelviewpandas as view
-import config as orm
-import class_flusher as flsh
+from test import ui_mainrefactor as mw
+from test import ui_logic_session as logicsess
+from test import ui_logic_site as logicsite
+from test import ui_dialog_main as dmainw
+from test import class_inputhandler as ini
+from test import class_modelviewpandas as view
+from test.logiclayer.datalayer import config as orm
+from test.logiclayer import class_userfacade as face
+from test.logiclayer import class_helpers as hlp
 
 @pytest.fixture
 def MainWindow():
@@ -63,10 +62,11 @@ def MainWindow():
                 self.facade.create_log_record('maintable')
                 self._log = self.facade._tablelog['maintable']
                 self.maintable = self.maindirector._availdf.copy()
-                self.maintable = self.maintable.reset_index()
+                self.maintable = self.maintable.reset_index(
+                    drop=True)
             else:
                 self.maintable = self.mainmodel.data(
-                    None, QtCore.Qt.UserRole).reset_index()
+                    None, QtCore.Qt.UserRole).reset_index(drop=True)
 
             self.mainmodel = self.viewEdit(self.maintable)
             self.tabviewMetadata.setModel(self.mainmodel)
@@ -77,6 +77,10 @@ def MainWindow():
             self.facade.push_tables['maintable'] = self.maintablemod
             print('retrieved edited data')
             print('main mod: ', self.maintablemod)
+            self._log.debug(
+                'maintable mod: ' +
+                ' '.join(self.maintablemod.columns.values.tolist()))
+
             try:
                 session = orm.Session()
                 maincheck = session.query(
@@ -86,6 +90,8 @@ def MainWindow():
                     maincheck.statement, maincheck.session.bind)
                 metaid_entered = maincheckdf[
                     'metarecordid'].values.tolist()
+                print(metaid_entered)
+                print(self.facade._valueregister['globalid'])
                 if self.facade._valueregister[
                         'globalid'] in metaid_entered:
                     self.message.about(
@@ -96,15 +102,7 @@ def MainWindow():
                     pass
 
                 orm.convert_types(self.maintable, orm.maintypes)
-                orm.convert_types(self.maintablemod, orm.maintypes)            
-
-                session = orm.Session()
-                flsh.flush(
-                    self.maintablemod,
-                    'maintable',
-                    self.facade._tablelog['maintable'],
-                    self.facade._valueregister['lterid'],
-                    session)
+                orm.convert_types(self.maintablemod, orm.maintypes)
 
                 hlp.updated_df_values(
                     self.maintable, self.maintablemod,

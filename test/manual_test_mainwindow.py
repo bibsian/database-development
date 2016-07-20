@@ -5,6 +5,7 @@ from PyQt4 import QtGui, QtCore
 from pandas import read_csv
 import subprocess
 import sys,os
+import unicodedata
 if sys.platform == "darwin":
     rootpath = (
         "/Users/bibsian/Dropbox/database-development/" +
@@ -13,9 +14,6 @@ elif sys.platform == "win32":
     rootpath = (
         "C:\\Users\MillerLab\\Dropbox\\database-development" +
         "\\test\\")
-sys.path.append(os.path.realpath(os.path.dirname(
-    rootpath)))
-os.chdir(rootpath)
 
 from test import ui_mainrefactor as mw
 from test import ui_logic_session as sesslogic
@@ -34,7 +32,7 @@ if sys.platform == 'darwin':
         '/Users/bibsian/Dropbox/database-development/test/')
 elif sys.platform == 'win32':
     os.chdir(
-        'C:\\Users\\MillerLab\\Dropbox\\database-development\\test')
+        'C:\\Users\\MillerLab\\Dropbox\\database-development\\test\\')
 
 @pytest.fixture
 def MainWindow():
@@ -70,25 +68,15 @@ def MainWindow():
             self.actionRawTable.triggered.connect(self.obs_display)
             self.actionCovariates.triggered.connect(self.covar_display)
             self.actionCommit.triggered.connect(self.commit_data)
-            self.webView.show()
-            
-            # web toolbar
-            self.lnedUrl.setEnabled(True)
-            self.btnUrlforward.setEnabled(True)
-            self.btnUrlback.setEnabled(True)
-            self.btnUrlrefresh.setEnabled(True)
-            
-            self.lnedUrl.returnPressed.connect(self.Enter)
-            self.btnUrlback.clicked.connect(self.Back)
-            self.btnUrlforward.clicked.connect(self.Forward)
-            self.btnUrlrefresh.clicked.connect(self.Refresh)
 
+
+            self.mdiArea.addSubWindow(self.subwindow_2)
+            self.mdiArea.addSubWindow(self.subwindow_1)
+            
             # Custom Signals
             self.dsite.site_unlocks.connect(self.site_complete_enable)
             self.dsession.raw_data_model.connect(
                 self.update_data_model)
-            self.dsession.webview_url.connect(
-                self.update_webview)
 
             # Dialog boxes for user feedback
             self.error = QtGui.QErrorMessage()
@@ -105,44 +93,12 @@ def MainWindow():
 
         @QtCore.pyqtSlot(object)
         def update_webview(self, url):
-            self.webView.load(QtCore.QUrl(url))
-
-        def Enter(self):
-            url = self.lnedUrl.text().strip()
-
-            http = 'http://'
-            www = 'www.'
-
-            if www in url and http not in url:
-                url = http + url
-            elif "." not in url:
-                url = 'http://www.google.com/search?q='+url
-            elif http in url and www not in url:
-                url = url[:7] + www + url[7:]
-            elif http and www not in url:
-                url = http + www + url
-            try:
-                self.lnedUrl.setText(url)
-                self.webView.load(QtCore.QUrl(url))
-            except Exception as e:
-                print(str(e))
-                self.message.about(
-                    self, 'status',
-                    'Could not connect to {}'.format(url))
-
-        def Back(self):
-            self.webView.back()
-
-        def Forward(self):
-            self.webView.forward()
-
-        def Refresh(self):
-            self.webView.reload()
+            print(url)
             
         @QtCore.pyqtSlot(object)
         def site_complete_enable(self):
             ''' 
-            Method to enable actions for display dialog 
+            Method to enable actions for display dialog
             boxes that corresond to different database tables
             '''
             self.actionMainTable.setEnabled(True)
@@ -197,23 +153,26 @@ def MainWindow():
                 self.facade.update_main()
                 self.actionCommit.setEnabled(False)
                 self.message.about(
-                    self,'Status', 'Database transaction complete')
+                    self, 'Status', 'Database transaction complete')
             except Exception as e:
                 print(str(e))
                 self.facade._tablelog['maintable'].debug(str(e))
                 self.error.showMessage(
-                    'Datbase transaction error: '+ str(e) +
+                    'Datbase transaction error: ' + str(e) +
                     '. May need to alter site abbreviations.')
                 raise ValueError(str(e))
 
         def end_session(self):
-            subprocess.call("python" + " runmain.py", shell=True)
+            subprocess.call(
+                "python" + " poplerGUI_run_main.py", shell=True)
             self.close()
 
     return UiMainWindow()
-            
+
+
 def test_dialog_site(qtbot, MainWindow):
     MainWindow.show()
+
     qtbot.addWidget(MainWindow)
 
     qtbot.stopForInteraction()
