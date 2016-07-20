@@ -1,4 +1,5 @@
 #! /usr/bin/env python
+
 import pytest
 from collections import namedtuple, OrderedDict
 import datetime as tm
@@ -16,29 +17,29 @@ elif sys.platform == "win32":
         "\\test\\")
     end = "\\"
 
-from class_commanders import LoadDataCommander, DataCommandReceiver
-from class_commanders import CommandInvoker
-from class_commanders import MakeProxyCommander, MakeProxyReceiver
-from class_commanders import CareTakerCommand, CareTakerReceiver
-from class_metaverify import MetaVerifier
+from test.logiclayer.class_commanders import LoadDataCommander, DataCommandReceiver
+from test.logiclayer.class_commanders import CommandInvoker
+from test.logiclayer.class_commanders import MakeProxyCommander, MakeProxyReceiver
+from test.logiclayer.class_commanders import CareTakerCommand, CareTakerReceiver
+from test.logiclayer.class_metaverify import MetaVerifier
 
-from class_helpers import (
+from test.logiclayer.class_helpers import (
     UniqueReplace, check_registration, extract, string_to_list,
     updated_df_values, produce_null_df)
-from class_tablebuilder import (
+from test.logiclayer.class_tablebuilder import (
     SiteTableBuilder, TableDirector, MainTableBuilder,
     TaxaTableBuilder, RawTableBuilder, UpdaterTableBuilder)
 
-import class_dictionarydataframe as ddf
-import class_timeparse as tparse
-import class_logconfig as log
-import class_flusher as flsh
-import class_merger as mrg
-import datalayer.config as orm
+from test.logiclayer import class_dictionarydataframe as ddf
+from test.logiclayer import class_timeparse as tparse
+from test.logiclayer import class_logconfig as log
+from test.logiclayer import class_flusher as flsh
+from test.logiclayer import class_merger as mrg
+from test.logiclayer.datalayer import config as orm
 
 sys.path.append(os.path.realpath(os.path.dirname(
     rootpath + 'logiclayer' + end)))
-from class_inputhandler import InputHandler
+from test.class_inputhandler import InputHandler
 
 @pytest.fixture
 def Facade():
@@ -130,6 +131,7 @@ def Facade():
             self._tablelog = {
                 'sitetable': None,
                 'maintable': None,
+                'maintable_update': None,
                 'timetable': None,
                 'taxatable': None,
                 'rawtable': None,
@@ -363,15 +365,18 @@ def Facade():
             else:
                 return
 
-            for i in self.push_tables.values():
+            for i, item in enumerate(self.push_tables.values()):
                 try:
-                    assert (i is not None) is True
+                    if list(self.push_tables.keys())[i] == 'sitetable':
+                        pass
+                    else:
+                        assert (item is not None) is True
                 except Exception as e:
                     print(str(e))
                     raise AttributeError(
                         'Not all data tables have been completed: ' +
                         str(e))
-
+            
             # Stored Variables required for merges
             globalid = self._valueregister['globalid']
             lter = self._valueregister['lterid']
@@ -388,6 +393,7 @@ def Facade():
             print('taxatable (facade): ', taxatable)
             timetable = self.push_tables['timetable']
             rawtable = self.push_tables['rawtable']
+            rawtable.replace({'NaN': -99999}, inplace=True)
             covartable = self.push_tables['covariates']
             print('rawtable (facade): ', rawtable)
 
@@ -395,12 +401,16 @@ def Facade():
             orm.convert_types(maintable, orm.maintypes)
             if self.sitepushed is None:
                 try:
+                    sitetable.replace(
+                            {'NaN': -99999}, inplace=True)
+
                     flsh.flush(
                         sitetable,
                         'sitetable',
                         self._tablelog['sitetable'],
                         lter, session)
                     self.sitepushed = True
+
                 except Exception as e:
                     print(str(e))
                     self._tablelog['sitetable'].debug(str(e))
@@ -417,12 +427,13 @@ def Facade():
                         'maintable',
                         self._tablelog['maintable'],
                         lter, session)
+
                     self.mainpushed = True
                 except Exception as e:
                     print(str(e))
                     self._tablelog['maintable'].debug(str(e))
                     raise ValueError(
-                    'Main table data will not upload.')
+                        'Main table data will not upload. ' + str(e))
             else:
                 pass
 
@@ -543,6 +554,8 @@ def Facade():
 
             if self.rawpushed is None:
                 try:
+                    rawpush[
+                        'unitobs'].fillna(-99999, inplace=True)
                     flsh.flush(
                         rawpush,
                         'rawtable',
@@ -643,32 +656,49 @@ def Facade():
             # Spt_rep unique levels
             updatetable.loc[:, 'sp_rep1_label'] = siteloc
             updatetable.loc[:, 'sp_rep1_uniquelevels'] = 1
-            bool_list = list(rawloc.values())
+            print('updatetable col: ', updatetable.columns)
+            print('rawmergedf_all.columns: ', rawmergedf_all.columns)
+
+
+            print('rawloc: ', rawloc)
+            print('rawlabel: ', rawlabel)
             updated_cols = updatetable.columns.values.tolist()
             print(updated_cols)
             print('past updating columns')
-            for i, label in enumerate(rawloc):
-                if ((bool_list[i] is False) and
-                    (label in updated_cols)):
-                    og_col_name = list(rawlabel.values())[i]
+            print('og_col_name: ', list(rawlabel.values()))
+
+            label_index = [
+                x for x,y in
+                zip(list(rawloc.keys()),list(rawloc.values()))
+                if y is False]
+
+            for i, label in enumerate(label_index):
+                og_col_name = list(rawlabel.values())[i]
+                updatetable.loc[
+                    :, label] = og_col_name
+                for j, site in enumerate(sitelevels):
+                    levelcount = []
+                    uqleveldf = rawmergedf_all[
+                        rawmergedf_all[siteloc] == site][
+                            og_col_name].copy()
+                    levelcount.append(
+                        len(uqleveldf.unique()))
+
+                    col = list(rawlabel.keys())[i]
+                    print(col)
+                    updated_col_name = col
+                    if 'sp' in col:
+                        updated_col_name = col.replace(
+                            't', '') + '_uniquelevels'
+                    elif 'trt_label' in col:
+                        updated_col_name = col.replace(
+                            'trt_label', '') + 'num_treatments'
+                    print('UPDATED!!!!!: ', updated_col_name)
+                    
                     updatetable.loc[
-                        :, label] = og_col_name 
-                    for j, site in enumerate(sitelevels):
-                        levelcount = []
-                        uqleveldf = rawmergedf_all[
-                            rawmergedf_all[siteloc] == site][
-                                og_col_name].copy()
-                        levelcount.append(
-                            len(uqleveldf.unique()))
-                        updated_col_name = list(
-                            rawlabel.keys())[i].replace(
-                                't', '') + '_uniquelevels'
-                        updatetable.loc[
-                            updatetable.siteid ==
-                            site, updated_col_name] = levelcount[0]
-                else:
-                    pass
-            print('past spatial replication')
+                        updatetable.siteid ==
+                        site, updated_col_name] = levelcount[0]
+            print('past spatial and treatment replication')
 
             updatetable_merge = merge(
                 updatetable,
@@ -689,11 +719,13 @@ def Facade():
             print(updatetable_null)
             print('past updating dataframe')
 
+            self.create_log_record('maintable_update')
             updated_df_values(
                 updatenull, updatemerged,
-                self._tablelog['maintable'], 'maintable'
+                self._tablelog['maintable_update'], 'maintable'
             )
 
+            
             # Creating orms for updating tables: Must be done
             # AFTER COMMITTING SITE AND MAIN TABLE INFORMATION
             mainupdates = {}
@@ -705,7 +737,6 @@ def Facade():
                 self._tablelog['maintable'].debug(str(e))
 
             print('converting types')
-
             try:
                 session = orm.Session()
                 for i in range(len(updatetable_merge)):
@@ -732,7 +763,6 @@ def Facade():
                 session.rollback()
                 del session
     return Facade
-
 
 @pytest.fixture
 def metahandle():
@@ -770,7 +800,9 @@ def filehandle():
     fileinput = InputHandler(
         name='fileoptions',tablename=None, lnedentry=lned,
         rbtns=rbtn, checks=ckentry, session=True,
-        filename='Datasets_manual_test/DataRawTestFile.csv')
+        filename=(
+            rootpath + end +
+            'Datasets_manual_test/DataRawTestFile.csv'))
 
     return fileinput
 
@@ -988,6 +1020,7 @@ def raw_userinput():
         ('spt_rep4', ''),
         ('structure', ''),
         ('individ', ''),
+        ('trt_label', ''),
         ('unitobs', 'COUNT')
     ))
     
@@ -997,6 +1030,7 @@ def raw_userinput():
         ('spt_rep4', True),
         ('structure', True),
         ('individ', True),
+        ('trt_label', True),
         ('unitobs', False)
     ))
     available = [
@@ -1055,7 +1089,9 @@ def filehandle1():
     fileinput = InputHandler(
         name='fileoptions',tablename=None, lnedentry=lned,
         rbtns=rbtn, checks=ckentry, session=True,
-        filename='Datasets_manual_test/raw_data_test_1.csv')
+        filename=(
+            rootpath + end +
+            'Datasets_manual_test/raw_data_test_1.csv'))
 
     return fileinput
 
@@ -1140,6 +1176,7 @@ def obshandle1():
         ('spt_rep4', ''),
         ('structure', ''),
         ('individ', ''),
+        ('trt_label', 'DEPTH'),
         ('unitobs', 'COUNT')
     ))
     
@@ -1149,6 +1186,7 @@ def obshandle1():
         ('sp_rep4_label', True),
         ('structure', True),
         ('individ', True),
+        ('trt_label', False),
         ('unitobs', False)
     ))
     available = [
@@ -1263,49 +1301,6 @@ def test_push_data_1(
     facade.merge_push_data()
     facade.update_main()
 
-@pytest.fixture
-def df1():
-    return read_csv('Datasets_manual_test/raw_data_test_1.csv')
-
-def test_querys(
-        df1, metahandle1, sitehandle1, taxahandle1, obshandle1):
-
-    metadata_number = metahandle1.lnedentry['globalid']
-    session = orm.Session()
-    rawq1 = session.query(
-        orm.Rawtable, orm.Taxatable).filter(
-            orm.Rawtable.taxaid==orm.Taxatable.taxaid).join(
-                orm.Maintable).filter(
-                    orm.Maintable.metarecordid==metadata_number)
-    session.close()
-    rawdf1 = read_sql(rawq1.statement, rawq1.session.bind)
-    print(rawdf1)
-
-    true_sites =df1[sitehandle1.lnedentry['siteid']].values.tolist()
-    test_sites = rawdf1['spt_rep1'].values.tolist()
-    assert (true_sites == test_sites) is True
-
-    taxa_col_key = list(taxahandle1.lnedentry.items())
-    true_taxa_col = [x[1] for x in taxa_col_key]
-    test_taxa_col = [x[0] for x in taxa_col_key]
-
-    true_taxa = df1[true_taxa_col]
-    test_taxa = rawdf1[test_taxa_col]
-    true_taxa.columns = test_taxa_col    
-
-    assert_taxa = (true_taxa == test_taxa)
-    assert all(assert_taxa.apply(all).values.tolist()) is True
-
-    raw_col_key = list(obshandle1.lnedentry.items())
-    true_raw_col = [x[1] for x in raw_col_key]
-    test_raw_col = [x[0] for x in raw_col_key]
-
-    true_raw = df1[true_raw_col]
-    test_raw = rawdf1[test_raw_col]
-    true_raw.columns = test_raw_col    
-
-    assert_raw = (true_raw == test_raw)
-    assert all(assert_raw.apply(all).values.tolist()) is True
 
 # TESTING THE PUSH METHODS
 @pytest.fixture
@@ -1329,7 +1324,9 @@ def filehandle2():
     fileinput = InputHandler(
         name='fileoptions',tablename=None, lnedentry=lned,
         rbtns=rbtn, checks=ckentry, session=True,
-        filename='Datasets_manual_test/raw_data_test_2.csv')
+        filename=(
+            rootpath + end +
+            'Datasets_manual_test/raw_data_test_2.csv'))
 
     return fileinput
 
@@ -1414,6 +1411,7 @@ def obshandle2():
         ('spt_rep4', ''),
         ('structure', ''),
         ('individ', ''),
+        ('trt_label', ''),
         ('unitobs', 'COUNT')
     ))
     
@@ -1423,6 +1421,7 @@ def obshandle2():
         ('sp_rep4_label', True),
         ('structure', True),
         ('individ', True),
+        ('trt_label', True),
         ('unitobs', False)
     ))
     available = [
@@ -1537,7 +1536,9 @@ def test_push_data_2(
 
 @pytest.fixture
 def df2():
-    return read_csv('Datasets_manual_test/raw_data_test_2.csv')
+    return read_csv(
+        rootpath + end +
+        'Datasets_manual_test/raw_data_test_2.csv')
 
 def test_query2(df2, metahandle2, sitehandle2, taxahandle2, obshandle2):
     metadata_number = metahandle2.lnedentry['globalid']
@@ -1611,7 +1612,9 @@ def filehandle3():
     fileinput = InputHandler(
         name='fileoptions',tablename=None, lnedentry=lned,
         rbtns=rbtn, checks=ckentry, session=True,
-        filename='Datasets_manual_test/raw_data_test_3.csv')
+        filename=(
+            rootpath + end +
+            'Datasets_manual_test/raw_data_test_3.csv'))
 
     return fileinput
 
@@ -1698,6 +1701,7 @@ def obshandle3():
         ('spt_rep4', ''),
         ('structure', ''),
         ('individ', ''),
+        ('trt_label', ''),
         ('unitobs', 'biomass')
     ))
     
@@ -1707,6 +1711,7 @@ def obshandle3():
         ('sp_rep4_label', True),
         ('structure', True),
         ('individ', True),
+        ('trt_label', True),
         ('unitobs', False)
     ))
     available = [
@@ -1817,7 +1822,9 @@ def test_push_data_3(
 
 @pytest.fixture
 def df3():
-    return read_csv('Datasets_manual_test/raw_data_test_3.csv')
+    return read_csv(
+        rootpath + end +
+        'Datasets_manual_test/raw_data_test_3.csv')
 
 def test_query3(df3, metahandle3, sitehandle3, taxahandle3, obshandle3):
     metadata_number = metahandle3.lnedentry['globalid']
@@ -1853,11 +1860,4 @@ def test_query3(df3, metahandle3, sitehandle3, taxahandle3, obshandle3):
         test_raw[test_raw_col[i]] = test_raw[
             test_raw_col[i]].astype(str)
         true_raw[item] = true_raw[item].astype(str)
-    
-    print(test_raw.dtypes)
-    print(true_raw.dtypes)
 
-    assert_raw = (true_raw == test_raw)
-    print(assert_raw)
-    assert all(assert_raw.apply(all).values.tolist()) is True
-    

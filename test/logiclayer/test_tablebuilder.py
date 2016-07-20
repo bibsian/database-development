@@ -17,10 +17,10 @@ elif sys.platform == "win32":
     end = "\\"
 sys.path.append(os.path.realpath(os.path.dirname(
     rootpath + 'logiclayer' + end)))
-import class_helpers as hlp
-import class_userfacade as face
+from poplerGUI.logiclayer import class_helpers as hlp
+from poplerGUI.logiclayer import class_userfacade as face
 os.chdir(rootpath)
-import class_inputhandler as ini
+from poplerGUI import class_inputhandler as ini
 
 
 
@@ -107,7 +107,9 @@ def AbstractTableBuilder():
                 'sp_rep3_uniquelevels',
                 'sp_rep4_ext', 'sp_rep4_ext_units', 'sp_rep4_label',
                 'sp_rep4_uniquelevels',
-                'authors', 'authors_contact', 'metalink', 'knbid'],
+                'authors', 'authors_contact', 'metalink', 'knbid',
+                'treatment_type', 'num_treatments',
+                'exp_maintainence', 'trt_label'],
             'time': False,
             'cov': False,
             'depend': False
@@ -124,7 +126,8 @@ def AbstractTableBuilder():
             'columns': [
                 'taxaid', 'lter_proj_site', 'year', 'month', 'day',
                 'spt_rep1', 'spt_rep2', 'spt_rep3', 'spt_rep4',
-                'structure', 'individ', 'unitobs', 'covariates'],
+                'structure', 'individ', 'trt_label',
+                'unitobs', 'covariates'],
             'time': True,
             'cov': True ,
             'depend': True
@@ -137,7 +140,8 @@ def AbstractTableBuilder():
                 'sp_rep1_label', 'sp_rep1_uniquelevels',
                 'sp_rep2_label', 'sp_rep2_uniquelevels',
                 'sp_rep3_label', 'sp_rep3_uniquelevels',
-                'sp_rep4_label', 'sp_rep4_uniquelevels'
+                'sp_rep4_label', 'sp_rep4_uniquelevels',
+                'num_treatments'
             ],
             'time': False,
             'cov': False,
@@ -201,15 +205,23 @@ def SiteTableBuilder(AbstractTableBuilder):
                 nullcols.remove('lterid')
             else:
                 pass
+            nullcols.remove('descript')
+            
             uniquesubset = dataframe[acols]
             nullsubset = hlp.produce_null_df(
                 ncols=len(nullcols),
                 colnames=nullcols,
                 dflength=len(uniquesubset),
                 nullvalue='NaN')
+            nullsubset2 = hlp.produce_null_df(
+                ncols=1,
+                colnames=['descript'],
+                dflength=len(uniquesubset),
+                nullvalue='NA')
+
             _concat =  concat(
-                [uniquesubset, nullsubset], axis=1).reset_index(
-                    drop=True)
+                [uniquesubset, nullsubset, nullsubset2],
+                axis=1).reset_index(drop=True)
             final = _concat.drop_duplicates().reset_index(drop=True) 
 
             final.columns =dbcol
@@ -258,7 +270,8 @@ def MainTableBuilder(AbstractTableBuilder):
                  'sp_rep1_label', 'sp_rep1_uniquelevels',
                  'sp_rep2_label', 'sp_rep2_uniquelevels',
                  'sp_rep3_label', 'sp_rep3_uniquelevels',
-                 'sp_rep4_label', 'sp_rep4_uniquelevels'
+                 'sp_rep4_label', 'sp_rep4_uniquelevels',
+                'num_treatments'
             ]
 
             # Creating main data table
@@ -266,40 +279,45 @@ def MainTableBuilder(AbstractTableBuilder):
                 {
                     'metarecordid':dataframe['global_id'], 
                     'title': dataframe['title'],
-                    'samplingunits': 'NULL',
+                    'samplingunits': 'NA',
                     'samplingprotocol': dataframe['data_type'],
-                    'structured': 'NULL',
-                    'studystartyr': 'NULL',
-                    'studyendyr': 'NULL',
-                    'siteid': 'NULL',
-                    'sitestartyr': 'NULL',
-                    'siteendyr': 'NULL',
+                    'structured': 'NA',
+                    'studystartyr': 'NA',
+                    'studyendyr': 'NA',
+                    'siteid': 'NA',
+                    'sitestartyr': 'NA',
+                    'siteendyr': 'NA',
                     'samplefreq': dataframe['temp_int'],
-                    'totalobs': 'NULL',
+                    'totalobs': 'NA',
                     'studytype': dataframe['study_type'],
                     'community': dataframe['comm_data'],
-                    'uniquetaxaunits': 'NULL',
+                    'uniquetaxaunits': 'NA',
                     # Spatial repliaction attributes
-                    'sp_rep1_ext': 'NULL',
-                    'sp_rep1_ext_units': 'NULL',
-                    'sp_rep1_label': 'NULL',
-                    'sp_rep1_uniquelevels': 'NULL',
-                    'sp_rep2_ext': 'NULL',
-                    'sp_rep2_ext_units': 'NULL',
-                    'sp_rep2_label': 'NULL',
-                    'sp_rep2_uniquelevels': 'NULL',
-                    'sp_rep3_ext': 'NULL',
-                    'sp_rep3_ext_units': 'NULL',
-                    'sp_rep3_label': 'NULL',
-                    'sp_rep3_uniquelevels': 'NULL',
-                    'sp_rep4_ext': 'NULL',
-                    'sp_rep4_ext_units': 'NULL',
-                    'sp_rep4_label': 'NULL',
-                    'sp_rep4_uniquelevels': 'NULL',
-                    'authors': 'NULL',
-                    'authors_contact': 'NULL',
+                    'sp_rep1_ext': -99999,
+                    'sp_rep1_ext_units': 'NA',
+                    'sp_rep1_label': 'NA',
+                    'sp_rep1_uniquelevels': 'NA',
+                    'sp_rep2_ext': -99999,
+                    'sp_rep2_ext_units': 'NA',
+                    'sp_rep2_label': 'NA',
+                    'sp_rep2_uniquelevels': 'NA',
+                    'sp_rep3_ext': -99999,
+                    'sp_rep3_ext_units': 'NA',
+                    'sp_rep3_label': 'NA',
+                    'sp_rep3_uniquelevels': 'NA',
+                    'sp_rep4_ext': -99999,
+                    'sp_rep4_ext_units': 'NA',
+                    'sp_rep4_label': 'NA',
+                    'sp_rep4_uniquelevels': 'NA',
+                    'authors': 'NA',
+                    'authors_contact': 'NA',
                     'metalink': dataframe['site_metadata'],
-                    'knbid': dataframe['portal_id']
+                    'knbid': dataframe['portal_id'],
+                    'treatment_type': dataframe['treatment_type'],
+                    'num_treatments': 'NA',
+                    'exp_maintainence': dataframe['exp_maintainence'],
+                    'trt_label': 'NA'
+
                 },
                 columns = [
                 'metarecordid', 'title', 'samplingunits',
@@ -316,8 +334,9 @@ def MainTableBuilder(AbstractTableBuilder):
                 'sp_rep3_uniquelevels',
                 'sp_rep4_ext', 'sp_rep4_ext_units', 'sp_rep4_label',
                 'sp_rep4_uniquelevels',
-                'authors', 'authors_contact', 'metalink', 'knbid'
-                ], index=[0])
+                    'authors', 'authors_contact', 'metalink', 'knbid',
+                'treatment_type', 'num_treatments',
+                'exp_maintainence', 'trt_label'], index=[0])
 
             _concat =  concat(
                 [maindata]*len(sitelevels))
@@ -386,7 +405,7 @@ def TaxaTableBuilder(AbstractTableBuilder):
                     ncols=len(nullcols),
                     colnames=nullcols,
                     dflength=len(unique),
-                    nullvalue='NaN')
+                    nullvalue='NA')
 
                 unique = concat(
                     [unique,nullsubset,sitelevel], axis=1)
@@ -445,7 +464,7 @@ def RawTableBuilder(AbstractTableBuilder):
                 ncols=len(nullcols),
                 colnames=nullcols,
                 dflength=len(uniquesubset),
-                nullvalue='NaN')
+                nullvalue='NA')
             print('build class (null): ', nullsubset)
             print('build class: ',dataframe)
             print('uq subset build: ', uniquesubset)
@@ -490,9 +509,13 @@ def UpdaterTableBuilder(AbstractTableBuilder):
             # Columns that will be updated later in the
             # program
 
+            print('update builder dbcol: ', dbcol)
             updatedf = hlp.produce_null_df(
-                len(dbcol), dbcol, len(sitelevels), 'NULL')
+                len(dbcol), dbcol, len(sitelevels), 'NA')
             updatedf['siteid'] = sitelevels
+            print('update builder: ', updatedf)
+
+
             return updatedf
 
     return UpdaterTableBuilder 
@@ -700,9 +723,8 @@ def test_maintable_build(
 
     maintab = director.get_database_table()
     showmain = maintab._availdf
-    print(showmain)
+    print('maintable: ', showmain)
     assert (isinstance(showmain, DataFrame)) is True
-    
 
 @pytest.fixture
 def taxa_user_input():
@@ -873,6 +895,7 @@ def raw_userinput():
         ('spt_rep4', ''),
         ('structure', ''),
         ('individ', ''),
+        ('trt_label', ''),
         ('unitobs', 'COUNT')
     ))
     
@@ -882,6 +905,7 @@ def raw_userinput():
         ('spt_rep4', True),
         ('structure', True),
         ('individ', True),
+        ('trt_label', True),
         ('unitobs', False)
     ))
     available = [
@@ -919,7 +943,7 @@ def test_rawtable_build(
     director.set_sitelevels(sitelevels)
     rawtable = director.get_database_table()
     showraw = rawtable._availdf
-
+    print('finished: ', showraw)
     counttest = showraw['unitobs'].values.tolist()
     counttrue = df['COUNT'].values.tolist()
 
@@ -949,6 +973,6 @@ def test_update_table(
     director.set_sitelevels(sitelevels)
     updatedf = director.get_database_table()
     showupdate = updatedf._availdf
-    print(showupdate)
+    print('finished update: ', showupdate)
     assert isinstance(showupdate, DataFrame) is True
     assert (len(showupdate) == len(sitelevels)) is True
