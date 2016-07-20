@@ -5,6 +5,5 @@ cp /Users/bibsian/Dropbox/database-development/test/logiclayer/{class_*,__init__
 echo updated logiclayer folder
 cp /Users/bibsian/Dropbox/database-development/test/logiclayer/datalayer/{class_*,__init__,config}.py /Users/bibsian/Dropbox/database-development/poplerGUI/logiclayer/datalayer/
 echo updated datalayer folder
-cp /Users/bibsian/Dropbox/database-development/test/DatabaseConfig/{dbcreationv2.py,LTERV2.png} /Users/bibsian/Dropbox/database-development/db/
-echo database folder
+
 
