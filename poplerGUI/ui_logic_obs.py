@@ -48,6 +48,7 @@ class ObsDialog(QtGui.QDialog, obs.Ui_Dialog):
             ('spt_rep4', self.lnedRep4.text()),
             ('structure', self.lnedStructure.text()),
             ('individ', self.lnedIndividual.text()),
+            ('trt_label', self.lnedTreatment.text()),
             ('unitobs', self.lnedRaw.text())
         ))
         # Log input (put in after test)
@@ -58,6 +59,7 @@ class ObsDialog(QtGui.QDialog, obs.Ui_Dialog):
             ('sp_rep4_label', self.ckRep4.isChecked()),
             ('structure', self.ckStructure.isChecked()),
             ('individ', self.ckIndividual.isChecked()),
+            ('trt_label', self.ckTreatment.isChecked()),
             ('unitobs', False)
         ))
 

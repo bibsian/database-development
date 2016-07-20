@@ -29,6 +29,7 @@ class MainDialog(QtGui.QDialog, dmainw.Ui_Dialog):
         self.btnCancel.clicked.connect(self.close)
 
         self.error = QtGui.QErrorMessage()
+        self.message = QtGui.QMessageBox
 
     def set_data(self):
         '''
@@ -43,13 +44,13 @@ class MainDialog(QtGui.QDialog, dmainw.Ui_Dialog):
             self.maindirector = self.facade.make_table('maininfo')
             self.facade.create_log_record('maintable')
             self._log = self.facade._tablelog['maintable']
-            self.maintable = (
-                self.maindirector._availdf.copy().reset_index(
-                    drop=True))
+            self.maintable = self.maindirector._availdf.copy()
+            self.maintable = self.maintable.reset_index(
+                drop=True)
 
         else:
             self.maintable = self.mainmodel.data(
-                None, QtCore.Qt.UserRole).reset_index()
+                None, QtCore.Qt.UserRole).reset_index(drop=True)
 
         self.mainmodel = self.viewEdit(self.maintable)
         self.tabviewMetadata.setModel(self.mainmodel)
@@ -89,6 +90,6 @@ class MainDialog(QtGui.QDialog, dmainw.Ui_Dialog):
         except Exception as e:
             print(str(e))
             self.error.showMessage(
-                'Global Id already present in database')
+                'Global Id already present in database. ' + str(e))
             raise AttributeError(
-                'Global Id already present in database')
+                'Global Id already present in database. ' + str(e))
