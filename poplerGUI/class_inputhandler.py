@@ -21,7 +21,7 @@ class InputHandler(object):
         self.checks = checks
         self.cboxs = cbox
         self.rbtns = rbtns
-        self.verifty = verify
+        self.verify = verify
         self.session = session
         self.filename = filename
         self.timedata = timedata
