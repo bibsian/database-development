@@ -98,7 +98,7 @@ class AbstractTableBuilder(object):
     taxatable = {
         'columns': [
             'lter_proj_site', 'sppcode', 'kingdom', 'phylum', 'clss',
-            'order','family', 'genus', 'species', 'authority'],
+            'ordr','family', 'genus', 'species', 'authority'],
         'time': False,
         'cov': False,
         'depend': True
@@ -563,3 +563,73 @@ class UpdaterTableBuilder(AbstractTableBuilder):
         updatedf['siteid'] = sitelevels
         return updatedf
 
+class ClimateTableBuilder(AbstractTableBuilder):
+    '''
+    Concrete table builder for climate data.
+    '''
+    def get_dataframe(
+            self, dataframe, acols, nullcols, dbcol,
+            globalid, siteid, sitelevels):
+
+        col_booleans = list(self._inputs.checks.values())
+        col_names = list(self._inputs.checks.keys())
+        acols = [
+            x.rstrip() for x,y in zip(acols, col_booleans)
+            if y is False]
+        acols_rename = [
+            x.rstrip() for x,y in zip(col_names, col_booleans)
+            if y is False]
+        nullcols = [
+            x.rstrip() for x,y in zip(col_names, col_booleans)
+            if y is True]
+        dbcol.remove('stationid')
+
+        for i in dbcol:
+            if i not in nullcols:
+                nullcols.append(i)
+            else:
+                pass
+
+
+        print('siteid: ', siteid)
+        print('col bools: ', col_booleans)
+        print('avaialable cols: ', acols)
+        print('null cols: ', nullcols)
+        print('db cols: ', dbcol)
+
+        print('dataframe climate build: ', dataframe)
+
+        try:
+            dataframe[acols]
+        except:
+            print('could not find column, trying numeric index')
+            acols = [int(x) for x in acols]
+
+        finally:
+            acols.append(siteid)
+
+        uniquesubset = dataframe[acols]
+        nullsubset = hlp.produce_null_df(
+            ncols=len(nullcols),
+            colnames=nullcols,
+            dflength=len(uniquesubset),
+            nullvalue='NA')
+        print('uq subset build: ', uniquesubset)
+        _concat =  concat(
+            [uniquesubset, nullsubset], axis=1).reset_index(
+                )
+        final = _concat.reset_index() 
+
+        try:
+            print('build siteid: ', siteid)
+            acols_rename.append('stationid')
+            for i,item in enumerate(acols_rename):
+                final.rename(
+                    columns={acols[i]:item}, inplace=True)
+
+            print('final build class: ', final.columns)
+            return final
+
+        except Exception as e:
+            print(str(e))
+            raise AttributeError('Column renaming error')

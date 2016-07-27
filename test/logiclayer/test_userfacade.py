@@ -7,7 +7,7 @@ from pandas import merge, concat, DataFrame, read_csv, read_sql
 import sys, os
 if sys.platform == "darwin":
     rootpath = (
-        "/Users/bibsian/Dropbox/database-development/" +
+        "/Users/bibsian/Desktop/git/database-development/" +
         "test/")
     end = "/"
 
@@ -135,7 +135,9 @@ def Facade():
                 'timetable': None,
                 'taxatable': None,
                 'rawtable': None,
-                'covartable': None
+                'covartable': None,
+                'climatesite': None,
+                'climateobs': None
             }
 
             self._colinputlog = {
@@ -199,6 +201,15 @@ def Facade():
             check_registration(self, 'metacheck')
             
             verifier = MetaVerifier(self._inputs['metacheck'])
+
+            if self._inputs['metacheck'].verify is None:
+                pass
+            else:
+                verifier._meta = read_csv((
+                    rootpath +
+                    '/Datasets_manual_test/meta_climate_test.csv'),
+                    encoding='iso-8859-11')
+
             try:
                 assert verifier.verify_entries()
             except Exception as e:
@@ -639,7 +650,7 @@ def Facade():
 
             # Unique Taxa units    
             taxa_col_list = [
-                'sppcode', 'kingdom', 'phylum', 'clss', 'order',
+                'sppcode', 'kingdom', 'phylum', 'clss', 'ordr',
                 'family', 'genus', 'species']
             taxa_col_list_y = [x + '_y' for x in taxa_col_list]
             taxa_col_list_y.append('siteid')
@@ -958,7 +969,7 @@ def taxa_user_input():
         ('kingdom', ''),
         ('phylum', 'TAXON_PHYLUM'),
         ('class', 'TAXON_CLASS'),
-        ('order', 'TAXON_ORDER'),
+        ('ordr', 'TAXON_ORDER'),
         ('family', 'TAXON_FAMILY'),
         ('genus', 'TAXON_GENUS'),
         ('species', 'TAXON_SPECIES') 
@@ -969,7 +980,7 @@ def taxa_user_input():
         ('kingdom', False),
         ('phylum', True),
         ('class', True),
-        ('order', True),
+        ('ordr', True),
         ('family', True),
         ('genus', True),
         ('species', True) 
@@ -1115,7 +1126,7 @@ def taxahandle1():
         ('kingdom', ''),
         ('phylum', 'TAXON_PHYLUM'),
         ('clss', 'TAXON_CLASS'),
-        ('order', 'TAXON_ORDER'),
+        ('ordr', 'TAXON_ORDER'),
         ('family', 'TAXON_FAMILY'),
         ('genus', 'TAXON_GENUS'),
         ('species', 'TAXON_SPECIES') 
@@ -1126,7 +1137,7 @@ def taxahandle1():
         ('kingdom', False),
         ('phylum', True),
         ('clss', True),
-        ('order', True),
+        ('ordr', True),
         ('family', True),
         ('genus', True),
         ('species', True) 
@@ -1350,7 +1361,7 @@ def taxahandle2():
         ('kingdom', ''),
         ('phylum', 'TAXON_PHYLUM'),
         ('clss', 'TAXON_CLASS'),
-        ('order', 'TAXON_ORDER'),
+        ('ordr', 'TAXON_ORDER'),
         ('family', 'TAXON_FAMILY'),
         ('genus', 'TAXON_GENUS'),
         ('species', 'TAXON_SPECIES') 
@@ -1361,7 +1372,7 @@ def taxahandle2():
         ('kingdom', False),
         ('phylum', True),
         ('clss', True),
-        ('order', True),
+        ('ordr', True),
         ('family', True),
         ('genus', True),
         ('species', True) 
@@ -1638,7 +1649,7 @@ def taxahandle3():
         ('kingdom', ''),
         ('phylum', ''),
         ('clss', ''),
-        ('order', ''),
+        ('ordr', ''),
         ('family', ''),
         ('genus', 'genus_test3'),
         ('species', 'species_test3') 
@@ -1649,7 +1660,7 @@ def taxahandle3():
         ('kingdom', False),
         ('phylum', False),
         ('clss', False),
-        ('order', False),
+        ('ordr', False),
         ('family', False),
         ('genus', True),
         ('species', True) 

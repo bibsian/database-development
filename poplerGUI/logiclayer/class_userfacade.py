@@ -2,7 +2,7 @@
 from collections import namedtuple
 import os
 import datetime as tm
-from pandas import merge, concat, DataFrame
+from pandas import merge, concat, DataFrame, read_csv
 from poplerGUI.logiclayer.class_metaverify import MetaVerifier
 from poplerGUI.logiclayer.class_commanders import (
     LoadDataCommander, DataCommandReceiver,
@@ -112,7 +112,9 @@ class Facade:
             'timetable': None,
             'taxatable': None,
             'rawtable': None,
-            'covartable': None
+            'covartable': None,
+            'climatesite': None,
+            'climateobs': None
         }
 
         self._colinputlog = {
@@ -176,6 +178,15 @@ class Facade:
         check_registration(self, 'metacheck')
 
         verifier = MetaVerifier(self._inputs['metacheck'])
+        
+        if self._inputs['metacheck'].verify is None:
+            pass
+        else:
+            verifier._meta = read_csv((
+                str(os.getcwd()) + 
+                '/Datasets_manual_test/meta_climate_test.csv'),
+                encoding='iso-8859-11')
+
         try:
             assert verifier.verify_entries()
         except Exception as e:
@@ -614,7 +625,7 @@ class Facade:
 
         # Unique Taxa units    
         taxa_col_list = [
-            'sppcode', 'kingdom', 'phylum', 'clss', 'order',
+            'sppcode', 'kingdom', 'phylum', 'clss', 'ordr',
             'family', 'genus', 'species']
         taxa_col_list_y = [x + '_y' for x in taxa_col_list]
         taxa_col_list_y.append('siteid')

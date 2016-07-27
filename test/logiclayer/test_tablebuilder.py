@@ -1,12 +1,12 @@
 #! /usr/bin/env python
 import pytest
-from pandas import concat, DataFrame, read_csv
+from pandas import concat, DataFrame, read_csv, read_table
 import abc
 from collections import OrderedDict
 import sys, os
 if sys.platform == "darwin":
     rootpath = (
-        "/Users/bibsian/Dropbox/database-development/" +
+        "/Users/bibsian/Desktop/git/database-development/" +
         "test/")
     end = "/"
 
@@ -38,6 +38,7 @@ def AbstractTableBuilder():
         # List of column names within each table of the database
         climaterawtable = {
             'columns': [
+                'metarecordid_',
                 'title', 'stationid', 'year', 'month', 'day',
                 # temp
                 'avetempobs', 'avetempmeasure',
@@ -72,7 +73,8 @@ def AbstractTableBuilder():
                 'minturbidityobs', 'minturbiditymeasure',
                 'maxturbidityobs', 'maxturbiditymeasure',
                 # other
-                'covariates'],
+                'covariates',
+                'knbid_', 'metalink_', 'authors_', 'authors_contact_'],
             'time': True,
             'cov': True,
             'depend': False
@@ -117,7 +119,7 @@ def AbstractTableBuilder():
         taxatable = {
             'columns': [
                 'lter_proj_site', 'sppcode', 'kingdom', 'phylum', 'clss',
-                'order','family', 'genus', 'species', 'authority'],
+                'ordr','family', 'genus', 'species', 'authority'],
             'time': False,
             'cov': False,
             'depend': True
@@ -687,7 +689,7 @@ def main_user_input():
 def metadf():
     if sys.platform == "darwin":
         metapath = (
-            "/Users/bibsian/Dropbox/database-development/test/Datasets_manual_test/" +
+            "/Users/bibsian/Desktop/git/database-development/test/Datasets_manual_test/" +
             "meta_file_test.csv")
             
     elif sys.platform == "win32":
@@ -733,7 +735,7 @@ def taxa_user_input():
         ('kingdom', 'TAXON_KINGDOM'),
         ('phylum', 'TAXON_PHYLUM'),
         ('clss', 'TAXON_CLASS'),
-        ('order', 'TAXON_ORDER'),
+        ('ordr', 'TAXON_ORDER'),
         ('family', 'TAXON_FAMILY'),
         ('genus', 'TAXON_GENUS'),
         ('species', 'TAXON_SPECIES') 
@@ -744,7 +746,7 @@ def taxa_user_input():
         ('kingdom', True),
         ('phylum', True),
         ('clss', True),
-        ('order', True),
+        ('ordr', True),
         ('family', True),
         ('genus', True),
         ('species', True) 
@@ -797,7 +799,7 @@ def test_taxatable_build(
     assert isinstance(showtaxa,DataFrame)    
 
     testphylum = showtaxa['phylum'].values.tolist()
-    testorder = showtaxa['order'].values.tolist()
+    testorder = showtaxa['ordr'].values.tolist()
     testspecies = showtaxa['species'].values.tolist()
 
     truephylum = taxadfexpected['phylum'].values.tolist()
@@ -815,7 +817,7 @@ def taxa_user_input_create():
         ('kingdom', 'TAXON_KINGDOM'),
         ('phylum', 'TAXON_PHYLUM'),
         ('clss', 'TAXON_CLASS'),
-        ('order', 'TAXON_ORDER'),
+        ('ordr', 'TAXON_ORDER'),
         ('family', 'TAXON_FAMILY'),
         ('genus', 'TAXON_GENUS'),
         ('species', 'TAXON_SPECIES') 
@@ -826,7 +828,7 @@ def taxa_user_input_create():
         ('kingdom', True),
         ('phylum', True),
         ('clss', True),
-        ('order', True),
+        ('ordr', True),
         ('family', True),
         ('genus', True),
         ('species', True) 
@@ -876,7 +878,7 @@ def test_taxatable_build_create(
     print(showtaxa)
 
     testphylum = showtaxa['phylum'].values.tolist()
-    testorder = showtaxa['order'].values.tolist()
+    testorder = showtaxa['ordr'].values.tolist()
     testspecies = showtaxa['species'].values.tolist()
 
     truephylum = taxadfexpected['phylum'].values.tolist()
@@ -976,3 +978,407 @@ def test_update_table(
     print('finished update: ', showupdate)
     assert isinstance(showupdate, DataFrame) is True
     assert (len(showupdate) == len(sitelevels)) is True
+
+@pytest.fixture
+def climate_user_input():
+    lned = OrderedDict((
+        ('avetempobs', ''),
+        ('aveprecipobs', '2'),
+        ('avewindobs', ''),
+        ('avewindobs', ''),
+        ('avelightobs', ''),
+        ('avewatertempobs', ''),
+        ('avephobs', ''),
+        ('avecondobs', ''),
+        ('aveturbidityobs', ''),
+        ('maxtempobs', ''),
+        ('maxprecipobs', ''),
+        ('maxwindobs', ''),
+        ('maxwindobs', ''),
+        ('maxlightobs', ''),
+        ('maxwatertempobs', ''),
+        ('maxphobs', ''),
+        ('maxcondobs', ''),
+        ('maxturbidityobs', ''),
+        ('mintempobs', ''),
+        ('minprecipobs', ''),
+        ('minwindobs', ''),
+        ('minwindobs', ''),
+        ('minlightobs', ''),
+        ('minwatertempobs', ''),
+        ('minphobs', ''),
+        ('mincondobs', ''),
+        ('minturbidityobs', '')
+    ))
+
+    cks = OrderedDict((
+        ('avetempobs', True),
+        ('aveprecipobs', False),
+        ('avewindobs', True),
+        ('avewindobs', True),
+        ('avelightobs', True),
+        ('avewatertempobs', True),
+        ('avephobs', True),
+        ('avecondobs', True),
+        ('aveturbidityobs', True),
+        ('maxtempobs', True),
+        ('maxprecipobs', True),
+        ('maxwindobs', True),
+        ('maxwindobs', True),
+        ('maxlightobs', True),
+        ('maxwatertempobs', True),
+        ('maxphobs', True),
+        ('maxcondobs', True),
+        ('maxturbidityobs', True),
+        ('mintempobs', True),
+        ('minprecipobs', True),
+        ('minwindobs', True),
+        ('minwindobs', True),
+        ('minlightobs', True),
+        ('minwatertempobs', True),
+        ('minphobs', True),
+        ('mincondobs', True),
+        ('minturbidityobs', True)
+    ))
+
+    user_input = ini.InputHandler(
+        name='siteinfo', tablename='climaterawtable', lnedentry=lned,
+        checks=cks
+    )
+    return user_input
+
+@pytest.fixture
+def all_units():
+    lnedunits = OrderedDict((
+        ('avetempobsmeasure', ''),
+        ('aveprecipobsmeasure', 'cm'),
+        ('avewindobsmeasure', ''),
+        ('avewindobsmeasure', ''),
+        ('avelightobsmeasure', ''),
+        ('avewatertempobsmeasure', ''),
+        ('avephobsmeasure', ''),
+        ('avecondobsmeasure', ''),
+        ('aveturbidityobsmeasure', ''),
+        ('maxtempobsmeasure', ''),
+        ('maxprecipobsmeasure', ''),
+        ('maxwindobsmeasure', ''),
+        ('maxwindobsmeasure', ''),
+        ('maxlightobsmeasure', ''),
+        ('maxwatertempobsmeasure', ''),
+        ('maxphobsmeasure', ''),
+        ('maxcondobsmeasure', ''),
+        ('maxturbidityobsmeasure', ''),
+        ('mintempobsmeasure', ''),
+        ('minprecipobsmeasure', ''),
+        ('minwindobsmeasure', ''),
+        ('minwindobsmeasure', ''),
+        ('minlightobsmeasure', ''),
+        ('minwatertempobsmeasure', ''),
+        ('minphobsmeasure', ''),
+        ('mincondobsmeasuremeasure', ''),
+        ('minturbidityobsmeasure', '')
+    ))
+    return lnedunits
+
+@pytest.fixture
+def cov_lned():
+    lnedcovs = OrderedDict((
+        ('covavg', ''),
+        ('covmin', ''),
+        ('covmax', '')
+    ))
+    return lnedcovs
+
+@pytest.fixture
+def cov_ck():
+    ckcovs = OrderedDict((
+        ('covavg', True),
+        ('covmin', True),
+        ('covmax', True)
+    ))
+    return ckcovs
+
+@pytest.fixture
+def cov_units():
+    lnedunitscov = OrderedDict((
+        ('covavgmeasure', ''),
+        ('covminmeasure', ''),
+        ('covmaxmeasure', '')
+    ))
+    return lnedunitscov
+
+@pytest.fixture
+def climatedf():
+    return read_table((
+        rootpath + 
+        'Datasets_manual_test/climate_precip.txt'
+    ), header=-1, engine='c')
+
+@pytest.fixture
+def ClimateTableBuilder(AbstractTableBuilder):
+    class ClimateTableBuilder(AbstractTableBuilder):
+        '''
+        Concrete table builder for climate data.
+        '''
+        def get_dataframe(
+                self, dataframe, acols, nullcols, dbcol,
+                globalid, siteid, sitelevels):
+
+            col_booleans = list(self._inputs.checks.values())
+            col_names = list(self._inputs.checks.keys())
+            acols = [
+                x.rstrip() for x,y in zip(acols, col_booleans)
+                if y is False]
+            acols_rename = [
+                x.rstrip() for x,y in zip(col_names, col_booleans)
+                if y is False]
+            nullcols = [
+                x.rstrip() for x,y in zip(col_names, col_booleans)
+                if y is True]
+            dbcol.remove('stationid')
+
+            for i in dbcol:
+                if i not in nullcols:
+                    nullcols.append(i)
+                else:
+                    pass
+            
+            
+            print('siteid: ', siteid)
+            print('col bools: ', col_booleans)
+            print('avaialable cols: ', acols)
+            print('null cols: ', nullcols)
+            print('db cols: ', dbcol)
+            
+            print('dataframe climate build: ', dataframe)
+            
+            try:
+                dataframe[acols]
+            except:
+                print('could not find column, trying numeric index')
+                acols = [int(x) for x in acols]
+
+            finally:
+                acols.append(siteid)
+                
+            uniquesubset = dataframe[acols]
+            nullsubset = hlp.produce_null_df(
+                ncols=len(nullcols),
+                colnames=nullcols,
+                dflength=len(uniquesubset),
+                nullvalue='NA')
+            print('uq subset build: ', uniquesubset)
+            _concat =  concat(
+                [uniquesubset, nullsubset], axis=1).reset_index(
+                    )
+            final = _concat.reset_index() 
+
+            try:
+                print('build siteid: ', siteid)
+                acols_rename.append('stationid')
+                for i,item in enumerate(acols_rename):
+                    final.rename(
+                        columns={acols[i]:item}, inplace=True)
+
+                print('final build class: ', final.columns)
+                return final
+            
+            except Exception as e:
+                print(str(e))
+                raise AttributeError('Column renaming error')
+
+    return ClimateTableBuilder
+
+
+def test_climate_obs(
+        TableDirector, climatedf, climate_user_input,
+        ClimateTableBuilder, all_units, cov_lned, cov_ck, cov_units):    
+
+    climatedf['site_a'] = 'site_a'
+    print(climatedf)
+    sitelevels = climatedf[
+        'site_a'].drop_duplicates().values.tolist()
+    sitelevels.sort()
+    facade = face.Facade()
+    facade.input_register(climate_user_input)
+    face_input = facade._inputs[climate_user_input.name]
+    climatebuilder = ClimateTableBuilder()
+
+    director = TableDirector()
+    assert (isinstance(director, TableDirector)) is True
+    director.set_user_input(face_input)
+    director.set_builder(climatebuilder)
+    director.set_data(climatedf)
+    director.set_globalid(1)
+    director.set_siteid('site_a')
+    director.set_sitelevels(sitelevels)
+    updatedf = director.get_database_table()
+    showupdate = updatedf._availdf
+    print(showupdate['stationid'])
+    assert isinstance(showupdate, DataFrame) is True
+    assert (len(showupdate) == len(climatedf)) is True
+
+@pytest.fixture
+def climate_user_input2():
+    lned = OrderedDict((
+        ('avetempobs', 'Temperature'),
+        ('aveprecipobs', ''),
+        ('avewindobs', ''),
+        ('avewindobs', ''),
+        ('avelightobs', ''),
+        ('avewatertempobs', ''),
+        ('avephobs', ''),
+        ('avecondobs', ''),
+        ('aveturbidityobs', ''),
+        ('maxtempobs', ''),
+        ('maxprecipobs', ''),
+        ('maxwindobs', ''),
+        ('maxwindobs', ''),
+        ('maxlightobs', ''),
+        ('maxwatertempobs', ''),
+        ('maxphobs', ''),
+        ('maxcondobs', ''),
+        ('maxturbidityobs', ''),
+        ('mintempobs', ''),
+        ('minprecipobs', ''),
+        ('minwindobs', ''),
+        ('minwindobs', ''),
+        ('minlightobs', ''),
+        ('minwatertempobs', ''),
+        ('minphobs', ''),
+        ('mincondobs', ''),
+        ('minturbidityobs', '')
+    ))
+
+    cks = OrderedDict((
+        ('avetempobs', False),
+        ('aveprecipobs', True),
+        ('avewindobs', True),
+        ('avewindobs', True),
+        ('avelightobs', True),
+        ('avewatertempobs', True),
+        ('avephobs', True),
+        ('avecondobs', True),
+        ('aveturbidityobs', True),
+        ('maxtempobs', True),
+        ('maxprecipobs', True),
+        ('maxwindobs', True),
+        ('maxwindobs', True),
+        ('maxlightobs', True),
+        ('maxwatertempobs', True),
+        ('maxphobs', True),
+        ('maxcondobs', True),
+        ('maxturbidityobs', True),
+        ('mintempobs', True),
+        ('minprecipobs', True),
+        ('minwindobs', True),
+        ('minwindobs', True),
+        ('minlightobs', True),
+        ('minwatertempobs', True),
+        ('minphobs', True),
+        ('mincondobs', True),
+        ('minturbidityobs', True)
+    ))
+
+    user_input = ini.InputHandler(
+        name='siteinfo', tablename='climaterawtable', lnedentry=lned,
+        checks=cks
+    )
+    return user_input
+
+@pytest.fixture
+def all_units2():
+    lnedunits = OrderedDict((
+        ('avetempobsmeasure', 'F'),
+        ('aveprecipobsmeasure', ''),
+        ('avewindobsmeasure', ''),
+        ('avewindobsmeasure', ''),
+        ('avelightobsmeasure', ''),
+        ('avewatertempobsmeasure', ''),
+        ('avephobsmeasure', ''),
+        ('avecondobsmeasure', ''),
+        ('aveturbidityobsmeasure', ''),
+        ('maxtempobsmeasure', ''),
+        ('maxprecipobsmeasure', ''),
+        ('maxwindobsmeasure', ''),
+        ('maxwindobsmeasure', ''),
+        ('maxlightobsmeasure', ''),
+        ('maxwatertempobsmeasure', ''),
+        ('maxphobsmeasure', ''),
+        ('maxcondobsmeasure', ''),
+        ('maxturbidityobsmeasure', ''),
+        ('mintempobsmeasure', ''),
+        ('minprecipobsmeasure', ''),
+        ('minwindobsmeasure', ''),
+        ('minwindobsmeasure', ''),
+        ('minlightobsmeasure', ''),
+        ('minwatertempobsmeasure', ''),
+        ('minphobsmeasure', ''),
+        ('mincondobsmeasuremeasure', ''),
+        ('minturbidityobsmeasure', '')
+    ))
+    return lnedunits
+
+@pytest.fixture
+def cov_lned2():
+    lnedcovs = OrderedDict((
+        ('covavg', ''),
+        ('covmin', ''),
+        ('covmax', '')
+    ))
+    return lnedcovs
+
+@pytest.fixture
+def cov_ck2():
+    ckcovs = OrderedDict((
+        ('covavg', True),
+        ('covmin', True),
+        ('covmax', True)
+    ))
+    return ckcovs
+
+@pytest.fixture
+def cov_units2():
+    lnedunitscov = OrderedDict((
+        ('covavgmeasure', ''),
+        ('covminmeasure', ''),
+        ('covmaxmeasure', '')
+    ))
+    return lnedunitscov
+
+@pytest.fixture
+def climatedf2():
+    return read_table((
+        rootpath + 
+        'Datasets_manual_test/climate_temp_test.txt'
+    ), header='infer', engine='c', delimiter=',')
+
+def test_climate_2_obs(
+        TableDirector, climatedf2, climate_user_input2,
+        ClimateTableBuilder, all_units2, cov_lned2,
+        cov_ck2, cov_units2):    
+
+    climatedf2['site_a'] = 'site_a'
+    print(climatedf2)
+    sitelevels = climatedf2[
+        'site_a'].drop_duplicates().values.tolist()
+    sitelevels.sort()
+    facade = face.Facade()
+    facade.input_register(climate_user_input2)
+    face_input = facade._inputs[climate_user_input2.name]
+    climatebuilder = ClimateTableBuilder()
+
+    director = TableDirector()
+    assert (isinstance(director, TableDirector)) is True
+    director.set_user_input(face_input)
+    director.set_builder(climatebuilder)
+    director.set_data(climatedf2)
+    director.set_globalid(1)
+    director.set_siteid('site_a')
+    director.set_sitelevels(sitelevels)
+    updatedf = director.get_database_table()
+    showupdate = updatedf._availdf
+    print(showupdate.columns)
+    print(showupdate)
+    assert isinstance(showupdate, DataFrame) is True
+    assert (len(showupdate) == len(climatedf2)) is True
