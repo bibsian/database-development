@@ -30,27 +30,49 @@ class FileHandler(object):
 
     def __init__(self, inputclsinstance):
         self.filetoload = inputclsinstance.filename
-        self.sheet = inputclsinstance.lnedentry['sheet']
-        self.topskiplines = inputclsinstance.lnedentry['tskip']
-        self.bottomskiplines = inputclsinstance.lnedentry['bskip']
-        self.delimitchar = inputclsinstance.lnedentry['delim']
+        if inputclsinstance.lnedentry['sheet'] is not '':
+            self.sheet = inputclsinstance.lnedentry['sheet']
+        else:
+            self.sheet = None
+        if inputclsinstance.lnedentry['tskip'] is not '':
+            self.topskiplines = inputclsinstance.lnedentry[
+                'tskip']
+        else:
+            self.topskiplines = None
+
+        if inputclsinstance.lnedentry['bskip'] is not '':
+            self.bottomskiplines = inputclsinstance.lnedentry[
+                'bskip']
+        else:
+            self.bottomskiplines = 0
+
+        if inputclsinstance.lnedentry['delim'] is not '':
+            self.delimitchar = inputclsinstance.lnedentry[
+                'delim']
+        else:
+            self.delimitchar = '\t'
+
+        if inputclsinstance.checks is True:
+            self.header = -1
+        else:
+            self.header = 'infer'
+
         self._data = None
-
-        self.readoptions = {
-            '.csv': read_csv,
-            '.xlsx': read_excel,
-            '.xls': read_excel,
-            '.txt': read_table
-        }
-
         self.inputoptions = {
-            '.csv': 'self.filetoload',
-            '.xlsx': 'self.filetoload, sheet=self.sheet',
-            '.xls': 'self.filetoload, sheet=self.sheet',
-            '.txt': (
-                'self.filetoload, skiprows=self.topskiplines' +
-                ' skipfooter=self.bottomskiplines' +
-                'delimiter=self.delimitchar, error_bad_lines=False')
+            '.csv': {
+                'filename':self.filetoload
+            },
+            '.xlsx': {
+                'filename':self.filetoload,
+                'sheet':self.sheet
+            },
+            '.txt': {
+                'filename': self.filetoload,
+                'skiprows': self.topskiplines,
+                'skipfooter': self.bottomskiplines,
+                'delimiter': self.delimitchar,
+                'header': self.header
+            }
         }
 
     @property
@@ -64,18 +86,22 @@ class FileHandler(object):
             try:
                 filename, ex = os.path.splitext(self.filetoload)
                 if '.' in ex:
+                    print('filename (class): ', filename, ex)
                     return self.get_info(
                         name=filename, ext=ex, version=self.state)
+
                 else:
                     raise IOError(self.ext_error)
             except:
                 raise IOError(self.ext_error)
 
+
     def create_memento(self):
         '''
         Adding a method to set the protected data
         attribute. Three criteria must be met for an attempted
-        set method to proceed.
+        set method to proceed. Additionally strip trailing
+        white space from all columns that could be strings
         '''
 
         if self.filetoload is None:
@@ -86,17 +112,41 @@ class FileHandler(object):
 
         elif self.file_id.ext is not None:
             try:
-                dfstate = self.readoptions[
-                    self.file_id.ext](eval(
+                if self.file_id.ext == '.csv':
+                    dfstate = read_csv(
                         self.inputoptions[
-                            self.file_id.ext])).copy()
+                            '.csv']['filename']
+                        )
+                elif (
+                        self.file_id.ext == '.xls' or
+                        self.file_id.ext == '.xlsx'):
+                    dfstate = read_excel(
+                        self.inputoptions[
+                            'xlsx']['filename'],
+                        sheetname=self.inputoptions[
+                            'xlsx']['sheet']
+                        )
+                elif self.file_id.ext == '.txt':
+                    dfstate = read_table(
+                        self.inputoptions[
+                            '.txt']['filename'],
+                        delimiter=self.inputoptions[
+                            '.txt']['delimiter'],
+                        skiprows=self.inputoptions[
+                            '.txt']['skiprows'],
+                        header=self.inputoptions[
+                            '.txt']['header'],
+                        error_bad_lines=False,
+                        engine='c'
+                        )
+                print('read with options')
                 for i, item in enumerate(dfstate.columns):
                     if isinstance(
                             dfstate.dtypes.values.tolist()[i],
                             object):
                         try:
                             dfstate.loc[:, item] = dfstate.loc[
-                                :, item].str.rstrip()
+                                :,item].str.rstrip()
                             na_vals = [
                                 9999, 99999, 999999,
                                 -9999, -99999, -999999]
@@ -126,10 +176,12 @@ class FileHandler(object):
                                     dfstate[item].replace(
                                         {text_val: 'NA'},
                                         inplace=True)
+
                         except:
                             pass
                     else:
                             pass
+
                 memento = FileMemento(dfstate= dfstate,
                             state= self.state)
                 return memento

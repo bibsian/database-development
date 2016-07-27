@@ -5,7 +5,7 @@ from collections import namedtuple
 import sys, os
 if sys.platform == "darwin":
     rootpath = (
-        "/Users/bibsian/Dropbox/database-development/" +
+        "/Users/bibsian/Desktop/git/database-development/" +
         "test/")
     end = "/"
     
@@ -14,10 +14,9 @@ elif sys.platform == "win32":
         "C:\\Users\MillerLab\\Dropbox\\database-development" +
         "\\test\\")
     end = "\\"
-
 sys.path.append(os.path.realpath(os.path.dirname(
     rootpath + 'logiclayer' + end)))
-import class_inputhandler as ini
+from test import class_inputhandler as ini
 os.chdir(rootpath)
 
 @pytest.fixture
@@ -47,28 +46,49 @@ def FileHandler(FileMemento):
 
         def __init__(self, inputclsinstance):
             self.filetoload = inputclsinstance.filename
-            if 'sheet' in inputclsinstance.lnedentry.values():
+            if inputclsinstance.lnedentry['sheet'] is not '':
                 self.sheet = inputclsinstance.lnedentry['sheet']
             else:
                 self.sheet = None
-            self.topskiplines = inputclsinstance.lnedentry['tskip']
-            self.bottomskiplines = inputclsinstance.lnedentry['bskip']
-            self.delimitchar = inputclsinstance.lnedentry['delim']
+            if inputclsinstance.lnedentry['tskip'] is not '':
+                self.topskiplines = inputclsinstance.lnedentry[
+                    'tskip']
+            else:
+                self.topskiplines = None
+
+            if inputclsinstance.lnedentry['bskip'] is not '':
+                self.bottomskiplines = inputclsinstance.lnedentry[
+                    'bskip']
+            else:
+                self.bottomskiplines = 0
+
+            if inputclsinstance.lnedentry['delim'] is not '':
+                self.delimitchar = inputclsinstance.lnedentry[
+                    'delim']
+            else:
+                self.delimitchar = '\t'
+
+            if inputclsinstance.checks is True:
+                self.header = -1
+            else:
+                self.header = 'infer'
+                
             self._data = None
-            self.readoptions = {
-                '.csv': read_csv,
-                '.xlsx': read_excel,
-                '.xls': read_excel,
-                '.txt': read_table
-            }
             self.inputoptions = {
-                '.csv': 'self.filetoload',
-                '.xlsx': 'self.filetoload, sheet=self.sheet',
-                '.xls': 'self.filetoload, sheet=self.sheet',
-                '.txt': (
-                    'self.filetoload, skiprows=self.topskiplines' +
-                    ' skipfooter=self.bottomskiplines' +
-                    'delimiter=self.delimitchar, error_bad_lines=False')
+                '.csv': {
+                    'filename':self.filetoload
+                },
+                '.xlsx': {
+                    'filename':self.filetoload,
+                    'sheet':self.sheet
+                },
+                '.txt': {
+                    'filename': self.filetoload,
+                    'skiprows': self.topskiplines,
+                    'skipfooter': self.bottomskiplines,
+                    'delimiter': self.delimitchar,
+                    'header': self.header
+                }
             }
 
         @property
@@ -82,8 +102,10 @@ def FileHandler(FileMemento):
                 try:
                     filename, ex = os.path.splitext(self.filetoload)
                     if '.' in ex:
+                        print('filename (class): ', filename, ex)
                         return self.get_info(
                             name=filename, ext=ex, version=self.state)
+
                     else:
                         raise IOError(self.ext_error)
                 except:
@@ -106,10 +128,34 @@ def FileHandler(FileMemento):
 
             elif self.file_id.ext is not None:
                 try:
-                    dfstate = self.readoptions[
-                        self.file_id.ext](eval(
+                    if self.file_id.ext == '.csv':
+                        dfstate = read_csv(
                             self.inputoptions[
-                                self.file_id.ext])).copy()
+                                '.csv']['filename']
+                            )
+                    elif (
+                            self.file_id.ext == '.xls' or
+                            self.file_id.ext == '.xlsx'):
+                        dfstate = read_excel(
+                            self.inputoptions[
+                                'xlsx']['filename'],
+                            sheetname=self.inputoptions[
+                                'xlsx']['sheet']
+                            )
+                    elif self.file_id.ext == '.txt':
+                        dfstate = read_table(
+                            self.inputoptions[
+                                '.txt']['filename'],
+                            delimiter=self.inputoptions[
+                                '.txt']['delimiter'],
+                            skiprows=self.inputoptions[
+                                '.txt']['skiprows'],
+                            header=self.inputoptions[
+                                '.txt']['header'],
+                            error_bad_lines=False,
+                            engine='c'
+                            )
+                    print('read with options')
                     for i, item in enumerate(dfstate.columns):
                         if isinstance(
                                 dfstate.dtypes.values.tolist()[i],
@@ -236,7 +282,11 @@ def user_input():
     fname = 'Datasets_manual_test/DataRawTestFile.csv'
 
     user_input = ini.InputHandler(
-        name='fileoptions', lnedentry=lned, rbtns=rbtn, filename=fname)
+        name='fileoptions',
+        lnedentry=lned,
+        rbtns=rbtn,
+        filename=fname,
+        checks=False)
 
     return user_input
 
@@ -256,3 +306,67 @@ def test_csv_reader(
 
     assert isinstance(fileproxy._data, DataFrame)
     print(fileproxy._data)
+
+@pytest.fixture
+def user_txt():
+    rbtn = {'csv': False, 'xlsx': False, 'txt': True}
+    lned = {'sheet': '', 'delim': '', 'tskip': '', 'bskip': ''}
+    fname = 'Datasets_manual_test/climate_precip.txt'
+
+    user_input = ini.InputHandler(
+        name='fileoptions',
+        lnedentry=lned,
+        rbtns=rbtn,
+        filename=fname,
+        checks=True)
+
+    return user_input
+
+def test_txt_reader(
+        user_txt, DataProxy, FileCaretaker,
+        FileHandler, FileMemento):
+    filecaretaker = FileCaretaker()
+    loaded = FileHandler(user_txt)
+    assert isinstance(loaded, FileHandler)
+
+    # Register memento before loading data
+    filecaretaker.save_to_memento(loaded.create_memento())
+    loaded.set_data(filecaretaker, 'original')
+
+    fileproxy = DataProxy(loaded._data, 'proxy')
+
+    assert isinstance(fileproxy._data, DataFrame)
+    print(fileproxy._data)
+
+@pytest.fixture
+def user_txt_delim():
+    rbtn = {'csv': False, 'xlsx': False, 'txt': True}
+    lned = {'sheet': '', 'delim': ',', 'tskip': '', 'bskip': ''}
+    fname = 'Datasets_manual_test/climate_temp_test.txt'
+
+    user_input = ini.InputHandler(
+        name='fileoptions',
+        lnedentry=lned,
+        rbtns=rbtn,
+        filename=fname,
+        checks=False)
+
+    return user_input
+
+def test_txt_delimiter_reader(
+        user_txt_delim, DataProxy, FileCaretaker,
+        FileHandler, FileMemento):
+    filecaretaker = FileCaretaker()
+    loaded = FileHandler(user_txt_delim)
+    assert isinstance(loaded, FileHandler)
+
+    # Register memento before loading data
+    filecaretaker.save_to_memento(loaded.create_memento())
+    loaded.set_data(filecaretaker, 'original')
+
+    fileproxy = DataProxy(loaded._data, 'proxy')
+
+    assert isinstance(fileproxy._data, DataFrame)
+    print(fileproxy._data)
+    
+    
