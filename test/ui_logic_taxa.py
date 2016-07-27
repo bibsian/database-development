@@ -51,7 +51,7 @@ class TaxaDialog(QtGui.QDialog, uitax.Ui_Dialog):
             ('kingdom', self.lnedKingdom.text().strip()),
             ('phylum', self.lnedPhylum.text().strip()),
             ('clss', self.lnedClass.text().strip()),
-            ('order', self.lnedOrder.text().strip()),
+            ('ordr', self.lnedOrder.text().strip()),
             ('family', self.lnedFamily.text().strip()),
             ('genus', self.lnedGenus.text().strip()),
             ('species', self.lnedSpp.text().strip())
@@ -64,7 +64,7 @@ class TaxaDialog(QtGui.QDialog, uitax.Ui_Dialog):
             ('kingdom', self.ckKingdom.isChecked()),
             ('phylum', self.ckPhylum.isChecked()),
             ('clss', self.ckClass.isChecked()),
-            ('order', self.ckOrder.isChecked()),
+            ('ordr', self.ckOrder.isChecked()),
             ('family', self.ckFamily.isChecked()),
             ('genus', self.ckGenus.isChecked()),
             ('species', self.ckSpp.isChecked())

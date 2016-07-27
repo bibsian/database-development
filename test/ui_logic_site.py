@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#! /usr/bin/env python
 from PyQt4 import QtGui, QtCore
 from pandas import read_sql, DataFrame, concat
 from poplerGUI import ui_dialog_site as dsite

@@ -6,7 +6,7 @@ import subprocess
 import sys, os
 if sys.platform == 'darwin':
     os.chdir(
-        '/Users/bibsian/Dropbox/database-development/poplerGUI/')
+        '/Users/bibsian/Desktop/git/database-development/poplerGUI/')
     metapath = (
     	str(os.getcwd()) + 
     	'/Metadata_and_og_data/Cataloged_Data_Current_sorted.csv')
@@ -158,7 +158,7 @@ class UiMainWindow(QtGui.QMainWindow, mw.Ui_MainWindow):
 
     def end_session(self):
         subprocess.call(
-            "python" + " poplerGUI_run_main.py", shell=True)
+            "python" + " ../poplerGUI_run_main.py", shell=True)
         self.close()
 
 

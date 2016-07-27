@@ -25,6 +25,7 @@ class SessionDialog(QtGui.QDialog, dsess.Ui_Dialog):
         # Attributes
         self.metaini = None
         self.fileini = None
+        self.verify = None
 
         # User facade composed from main window
         self.facade = None
@@ -53,7 +54,7 @@ class SessionDialog(QtGui.QDialog, dsess.Ui_Dialog):
         }
         self.metaini = ini.InputHandler(
             name='metacheck', tablename=None,
-            lnedentry=entries)
+            lnedentry=entries, verify=self.verify)
 
         self.facade.input_register(self.metaini)
 
@@ -89,10 +90,11 @@ class SessionDialog(QtGui.QDialog, dsess.Ui_Dialog):
         }
         name = QtGui.QFileDialog.getOpenFileName(
             self, 'Select File')
-
+        headers = self.ckHeader.isChecked()
         self.fileini = ini.InputHandler(
             name='fileoptions', tablename=None,
-            rbtns=rbtn, lnedentry=lned, filename=name
+            rbtns=rbtn, lnedentry=lned, filename=name,
+            checks=headers
         )
         self.facade.input_register(self.fileini)
 
@@ -103,7 +105,7 @@ class SessionDialog(QtGui.QDialog, dsess.Ui_Dialog):
             self.raw_data_model.emit(rawdatamodel)
 
         except Exception as e:
-            self.filetypeReceive.emit(str(e))
+            raise IOError('Could not load data')
 
     @QtCore.pyqtSlot(object)
     def info_updates(self, message):

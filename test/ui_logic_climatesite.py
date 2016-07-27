@@ -1,16 +1,17 @@
-#! /usr/bin/env python
 from PyQt4 import QtGui, QtCore
-from pandas import read_sql, DataFrame, concat
+from pandas import read_sql, DataFrame, concat, read_csv
 from poplerGUI import ui_dialog_site as dsite
+from poplerGUI import ui_dialog_climatesite as climsite
 from poplerGUI import ui_logic_sitechange as chg
 from poplerGUI import class_inputhandler as ini
 from poplerGUI import class_modelviewpandas as view
 from poplerGUI.logiclayer import class_helpers as hlp
 from logiclayer.datalayer import config as orm
 
-class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
 
-    site_unlocks = QtCore.pyqtSignal(object)
+class ClimateSite(QtGui.QDialog, climsite.Ui_Dialog):
+
+    climatesite_unlocks = QtCore.pyqtSignal(object)
 
     def __init__(self,  parent=None):
         super().__init__(parent)
@@ -23,6 +24,8 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
         self._log = None
         self._data = None
         self.sitelned = None
+        self.sitecreate = None
+        self.verify = 'climate'
 
         # Placeholders:
         # Site Table from Raw data
@@ -76,8 +79,20 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
         # Registering information to facade class
         self.sitelned = {'siteid': self.lnedSiteID.text().strip()}
         self.siteloc['siteid'] = self.lnedSiteID.text().strip()
-        self.facade.create_log_record('sitetable')        
-        self._log = self.facade._tablelog['sitetable']
+        self.facade.create_log_record('climatesite')
+
+        self._log = self.facade._tablelog['climatesite']
+
+        if self.ckCreate.isChecked() is True:
+            print('Box is checked')
+            print('Site line entry: ', self.siteloc['siteid'])
+            print('facade data (before): ', self.facade._data)
+            self.facade._data[self.siteloc[
+                'siteid']] = self.siteloc['siteid']
+            print('facade data (after): ', self.facade._data)
+
+        else:
+            pass
 
         try:
             self.facade._data[self.siteloc['siteid']]
@@ -94,8 +109,10 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
 
         self.siteini = ini.InputHandler(
             name='siteinfo', tablename='sitetable',
-            lnedentry=self.sitelned)
+            lnedentry=self.sitelned, verify=self.verify)
         self.facade.input_register(self.siteini)
+
+
         self.facade._valueregister['siteid'] = self.siteloc[
             'siteid']
         self.message.about(self, 'Status', 'Information recorded')
@@ -117,6 +134,7 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
         self.sitetablemodel = self.viewEdit(self.rawdata)
         self.listviewSiteLabels.setModel(self.sitetablemodel)
         self.btnSiteID.setEnabled(False)
+
 
     def update_data(self):
         changed_df = self.sitetablemodel.data(
@@ -144,9 +162,9 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
 
         session = orm.Session()
         sitecheck = session.query(
-            orm.Sitetable).order_by(
-                orm.Sitetable.siteid).filter(
-                    orm.Sitetable.lterid ==
+            orm.Climatesite).order_by(
+                orm.Climatesite.stationid).filter(
+                    orm.Climatesite.lterid ==
                     self.facade._valueregister['lterid'])
         session.close()
         sitecheckdf = read_sql(
@@ -196,7 +214,8 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
         s_not_in_databaase = [
             x for x in changed_site_list if x not in site_q_list
         ]
-        print('s_not_in_databaase: ' + ' '.join(s_not_in_databaase))
+        self._log.debug(
+            's_not_in_databaase: ' + ' '.join(s_not_in_databaase))
 
         site_display_df = changed_df[
             changed_df['siteid'].isin(
@@ -209,7 +228,6 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
             None, QtCore.Qt.UserRole)
         self._log.debug(
             'sitelevels (updated)' + ' '.join(self.sitelevels))
-
 
     def save_close(self):
         self.update_data()
@@ -294,7 +312,7 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
             oldsitetable, self.save_data, self._log, 'sitetable'
         )
 
-        self.site_unlocks.emit(self.facade._data)
+        self.climatesite_unlocks.emit(self.facade._data)
         self._log.debug(
             'facade site levels' +
             ' '.join(self.facade._valueregister['sitelevels']))
