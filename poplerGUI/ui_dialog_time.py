@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/bibsian/Dropbox/database-development/test/Views/ui_dialog_time.ui'
+# Form implementation generated from reading ui file '/Users/bibsian/Desktop/git/database-development/test/Views/ui_dialog_time.ui'
 #
 # Created by: PyQt4 UI code generator 4.11.4
 #
@@ -263,7 +263,7 @@ class Ui_Dialog(object):
         self.cboxDay.setItemText(7, _translate("Dialog", "julian day - YYYY (Any Order)", None))
         self.cboxDay.setItemText(8, _translate("Dialog", "julian day - YY (Any Order)", None))
         self.cboxDay.setItemText(9, _translate("Dialog", "julian day", None))
-        self.ckMonthSpelling.setText(_translate("Dialog", "Month Spelled Out", None))
+        self.ckMonthSpelling.setText(_translate("Dialog", " hr : min : sec Present in Column", None))
         self.ckJulian.setText(_translate("Dialog", "Julian Day", None))
         self.label_3.setText(_translate("Dialog", "Year", None))
         self.cboxMonth.setItemText(0, _translate("Dialog", "NULL", None))

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/bibsian/Dropbox/database-development/test/Views/ui_dialog_covariate.ui'
+# Form implementation generated from reading ui file '/Users/bibsian/Desktop/git/database-development/test/Views/ui_dialog_covariate.ui'
 #
 # Created by: PyQt4 UI code generator 4.11.4
 #
