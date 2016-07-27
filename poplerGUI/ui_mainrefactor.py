@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/bibsian/Dropbox/database-development/test/Views/ui_mainrefactor.ui'
+# Form implementation generated from reading ui file '/Users/bibsian/Desktop/git/database-development/test/Views/ui_mainrefactor.ui'
 #
 # Created by: PyQt4 UI code generator 4.11.4
 #
@@ -251,6 +251,10 @@ class Ui_MainWindow(object):
         self.actionNot_implemented_4.setObjectName(_fromUtf8("actionNot_implemented_4"))
         self.actionNot_implemented_5 = QtGui.QAction(MainWindow)
         self.actionNot_implemented_5.setObjectName(_fromUtf8("actionNot_implemented_5"))
+        self.actionNew_Climate = QtGui.QAction(MainWindow)
+        self.actionNew_Climate.setObjectName(_fromUtf8("actionNew_Climate"))
+        self.actionEnd_Climate = QtGui.QAction(MainWindow)
+        self.actionEnd_Climate.setObjectName(_fromUtf8("actionEnd_Climate"))
         self.toolBar.addAction(self.actionSiteTable)
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionMainTable)
@@ -268,6 +272,8 @@ class Ui_MainWindow(object):
         self.toolBar.addAction(self.actionClimateRawTable)
         self.menuFile.addAction(self.actionStart_Session)
         self.menuFile.addAction(self.actionEnd_Session)
+        self.menuFile.addAction(self.actionNew_Climate)
+        self.menuFile.addAction(self.actionEnd_Climate)
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionLoad_File)
         self.menuReplace.addAction(self.actionFactor_levels)
@@ -334,4 +340,6 @@ class Ui_MainWindow(object):
         self.actionNot_implemented_3.setText(_translate("MainWindow", "not implemented", None))
         self.actionNot_implemented_4.setText(_translate("MainWindow", "not implemented", None))
         self.actionNot_implemented_5.setText(_translate("MainWindow", "not implemented", None))
+        self.actionNew_Climate.setText(_translate("MainWindow", "New Climate...", None))
+        self.actionEnd_Climate.setText(_translate("MainWindow", "End Climate...", None))
 

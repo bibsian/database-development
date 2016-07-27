@@ -243,6 +243,8 @@ QTableView{
     </property>
     <addaction name="actionStart_Session"/>
     <addaction name="actionEnd_Session"/>
+    <addaction name="actionNew_Climate"/>
+    <addaction name="actionEnd_Climate"/>
     <addaction name="separator"/>
     <addaction name="actionLoad_File"/>
    </widget>
@@ -507,6 +509,16 @@ QTableView{
   <action name="actionNot_implemented_5">
    <property name="text">
     <string>not implemented</string>
+   </property>
+  </action>
+  <action name="actionNew_Climate">
+   <property name="text">
+    <string>New Climate...</string>
+   </property>
+  </action>
+  <action name="actionEnd_Climate">
+   <property name="text">
+    <string>End Climate...</string>
    </property>
   </action>
  </widget>
