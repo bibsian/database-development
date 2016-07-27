@@ -1,11 +1,12 @@
 #! /usr/bin/env python
 import pytest
 from itertools import chain
-from pandas import DataFrame, concat, read_csv, to_datetime
+from pandas import (
+    DataFrame, concat, read_csv, to_datetime, read_table, to_datetime)
 import sys, os
 if sys.platform == "darwin":
     rootpath = (
-        "/Users/bibsian/Dropbox/database-development/" +
+        "/Users/bibsian/Desktop/git/database-development/" +
         "test/")
     end = "/"
 
@@ -51,7 +52,7 @@ def yearonly():
         'yearname': 'y',
         'yearform': 'YYYY',
         'jd': False,
-        'mspell': False
+        'hms': False
     }
     return d
 
@@ -65,7 +66,7 @@ def yearonly2():
         'yearname': 'YEAR',
         'yearform': 'YYYY',
         'jd': False,
-        'mspell': False
+        'hms': False
     }
     return d
 
@@ -80,7 +81,7 @@ def monthonly():
         'yearname': '',
         'yearform': 'NULL',
         'jd': False,
-        'mspell': False
+        'hms': False
     }
     return d
 
@@ -94,7 +95,7 @@ def dayonly():
         'yearname': '',
         'yearform': 'NULL',
         'jd': False,
-        'mspell': False
+        'hms': False
     }
     return d
 
@@ -112,7 +113,7 @@ def monthyear4():
         'yearname': 'y',
         'yearform': 'YYYY',
         'jd': False,
-        'mspell': False
+        'hms': False
     }
     return d
 
@@ -126,7 +127,7 @@ def dayyear4():
         'yearname': 'y',
         'yearform': 'YYYY',
         'jd': False,
-        'mspell': False
+        'hms': False
     }
     return d
 
@@ -140,7 +141,7 @@ def daymonth():
         'yearname': '',
         'yearform': 'NULL',
         'jd': False,
-        'mspell': False
+        'hms': False
     }
     return d
 
@@ -154,7 +155,7 @@ def monthyear4same():
         'yearname': 'my',
         'yearform': 'mm-YY (Any Order)',
         'jd': False,
-        'mspell': False
+        'hms': False
     }
     return d
 
@@ -168,7 +169,7 @@ def dayyear4same():
         'yearname': 'y',
         'yearform': 'YYYY',
         'jd': False,
-        'mspell': False
+        'hms': False
     }
     return d
 
@@ -182,7 +183,7 @@ def julianyear4():
         'yearname': 'YEAR',
         'yearform': 'YYYY',
         'jd': True,
-        'mspell': False
+        'hms': False
     }
     return d
 
@@ -196,7 +197,7 @@ def julianyear4_timedataset():
         'yearname': 'y',
         'yearform': 'YYYY',
         'jd': True,
-        'mspell': False
+        'hms': False
     }
     return d
 
@@ -213,7 +214,7 @@ def monthdayyear4():
         'yearname': 'mdy',
         'yearform': 'dd-mm-YYYY (Any Order)',
         'jd': False,
-        'mspell': False
+        'hms': False
     }
     return d
 
@@ -227,7 +228,7 @@ def daymonthyear4():
         'yearname': 'dmy',
         'yearform': 'dd-mm-YYYY (Any Order)',
         'jd': False,
-        'mspell': False
+        'hms': False
     }
     return d
 
@@ -241,7 +242,7 @@ def daymonthyear4_df2():
         'yearname': 'DATE',
         'yearform': 'dd-mm-YYYY (Any Order)',
         'jd': False,
-        'mspell': False
+        'hms': False
     }
     return d
 
@@ -256,7 +257,7 @@ def daymonthyear4_separate():
         'yearname': 'y',
         'yearform': 'dd-mm-YYYY (Any Order)',
         'jd': False,
-        'mspell': False
+        'hms': False
     }
     return d
 
@@ -270,7 +271,7 @@ def daymonthyear4_same():
         'yearname': 'dmy',
         'yearform': 'dd-mm-YYYY (Any Order)',
         'jd': False,
-        'mspell': False
+        'hms': False
     }
     return d
 
@@ -285,7 +286,7 @@ def dmy4_two_col_diff():
         'yearname': 'y',
         'yearform': 'YYYY',
         'jd': False,
-        'mspell': False
+        'hms': False
     }
     return d
 
@@ -297,15 +298,15 @@ def TimeParse():
     class TimeParse(object):
         def __init__(self, dataframe, datadict):
             self.data = dataframe
-            print('initialized data: ', self.data)
-            self.dayname = datadict['dayname']
-            self.dayform = datadict['dayform']
-            self.monthname = datadict['monthname']
-            self.monthform = datadict['monthform']
-            self.yearname = datadict['yearname']
-            self.yearform = datadict['yearform']
-            self.jd = datadict['jd']
-            self.mspell = datadict['mspell']
+            self.datadict = datadict
+            self.dayname = self.datadict['dayname']
+            self.dayform = self.datadict['dayform']
+            self.monthname = self.datadict['monthname']
+            self.monthform = self.datadict['monthform']
+            self.yearname = self.datadict['yearname']
+            self.yearform = self.datadict['yearform']
+            self.jd = self.datadict['jd']
+            self.hms = self.datadict['hms']
             self.mdyformat = [
                 '%d %m %Y',  '%d %Y %m', '%m %d %Y', '%m %Y %d',
                 '%Y %d %m', '%d %y %m','%d %m %y',
@@ -335,6 +336,25 @@ def TimeParse():
             self.mformat = ['%m', '%B', '%b']
             self.dformat = ['%d']
 
+        @property
+        def key_check(self):
+            '''
+            Procedure to check if the column names provided by
+            the users should be used as an index rather than 
+            a string
+            '''
+            try:
+                for i,item in enumerate(list(self.datadict.values())):
+                    self.data[item]
+            except:
+                for i,item in enumerate(list(self.datadict.values())):
+                    list(self.datadict.values())[i] = int(item)
+                print(
+                    'Trying to converty column names' +
+                    ' to integer index')
+
+        
+        
         @staticmethod
         def concatenator(
                 data, name1_keep, name2_change, block, name3=None):
@@ -343,10 +363,18 @@ def TimeParse():
             into multiple columns (this makes it easier for formatting
             into the table into the database's structure)
             '''
-            print('In '+block+' block')
+            try:
+                data[name1_keep]
+            except:
+                name1_keep= int(name1_keep)
+                name2_change=int(name2_change)
+                print('Chaning column to index concatenator block')
+                if name3 is not None:
+                    name3 = int(name3)
 
-            print('n1: '+ name1_keep)
-            print('n2: '+ name2_change)
+            print('In '+block+' block')
+            print('n1: '+ str(name1_keep))
+            print('n2: '+ str(name2_change))
             try:
                 if name1_keep == name2_change:
                     concatname = name1_keep
@@ -581,6 +609,22 @@ def TimeParse():
 
             # Three column entries for date information
             elif 'NULL' not in [month,day,year] and len(count) == 0:
+                if self.hms is True:
+                    try:
+                        assert day == month
+                        assert month == year
+                        self.data[day] = to_datetime(
+                            self.data[day],
+                            infer_datetime_formate=True)
+                        datadict = {
+                            'formatted': self.data,
+                            'null': DataFrame()}
+                        return self.mapper(
+                            datadict, ['month','day','year'])
+                    except:
+                        raise IOError(
+                            'Could not format input column ' +
+                            'names (pandas inferred)' )
                 colnameslist = [
                     self.monthname, self.dayname, self.yearname]
                 # 1 Column entry ALL data present
@@ -821,5 +865,38 @@ def test_year2(yearonly2, TimeParse, df_test_5):
     ytest = TimeParse(df_test_5, yearonly2)
     ytest = ytest.formater()
     print(ytest)
+
+
+@pytest.fixture
+def df_txt_hms():
+    return read_table(
+        'Datasets_manual_test/climate_precip.txt',
+        header=-1, engine='c')
+
+@pytest.fixture
+def df_no_header():
+    return read_table(
+        'Datasets_manual_test/climate_temp_test_noheader.txt',
+        header=-1, engine='c', delimiter=',')
+
+@pytest.fixture
+def txt_input_noheader():
+    d = {
+        'dayname': '2',
+        'dayform': 'dd',
+        'monthname': '1',
+        'monthform': 'mm',
+        'yearname': '0',
+        'yearform': 'YYYY',
+        'jd': False,
+        'hms': False
+    }
+    return d
+
+def test_no_header(
+        df_no_header, txt_input_noheader, TimeParse):
+    nohead_test = TimeParse(df_no_header, txt_input_noheader)
+    nohead_test = nohead_test.formater()
+    print('final: ', nohead_test)
 
 

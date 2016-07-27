@@ -4,7 +4,7 @@ from pandas import DataFrame
 import sys, os
 if sys.platform == "darwin":
     rootpath = (
-        "/Users/bibsian/Dropbox/database-development/" +
+        "/Users/bibsian/Desktop/git/database-development/" +
         "test/")
     end = "/"
     

@@ -7,7 +7,7 @@ import decimal as dc
 import sys, os
 if sys.platform == "darwin":
     rootpath = (
-        "/Users/bibsian/Dropbox/database-development/" +
+        "/Users/bibsian/Desktop/git/database-development/" +
         "test/")
     end = "/"
 
@@ -180,7 +180,7 @@ def mylog():
 def metadf_og():
     if sys.platform == "darwin":
         metapath = (
-            "/Users/bibsian/Dropbox/database-development/test/Datasets_manual_test" +
+            "/Users/bibsian/Desktop/git/database-development/test/Datasets_manual_test" +
             "/meta_file_test.csv")
             
     elif sys.platform == "win32":
