@@ -1,0 +1,1069 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1210</width>
+    <height>548</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">.QLabel{
+	background: None;
+	padding: 0px;
+	margin: 0px;
+}
+.QComboBox {
+    border: 1px solid gray;
+    border-radius: 7px;
+    padding: 2px;
+	padding-left: 15px;
+	background: #EEEEEE;
+}
+.QFrame, .QWidget{
+	border-radius: 7;
+	background: white;
+}	
+
+
+
+.QLineEdit{
+	padding: 1px;
+	border-style: solid;
+	border: 1px solid black;
+	border-radius: 8px;
+	margin: 0px;
+}
+
+.QPushButton {
+	color: black;
+	background: #EEEEEE;
+	border-width: 1px;
+	border-color: black;
+	border-style: solid;
+	border-radius: 7;
+	margin-top: 0px;
+	margin-left: 5px;
+	margin-right:5px;	
+	padding-left: 5px;
+	padding-right: 5px;
+	padding-top: 3px;
+	padding-bottom: 3px;
+}
+</string>
+  </property>
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>23</x>
+     <y>13</y>
+     <width>1149</width>
+     <height>518</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_3">
+    <property name="spacing">
+     <number>0</number>
+    </property>
+    <item>
+     <widget class="QFrame" name="frame">
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout_6">
+       <item>
+        <widget class="QGroupBox" name="groupBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="title">
+          <string>Climate Observations</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_2">
+            <property name="spacing">
+             <number>7</number>
+            </property>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_4">
+              <item>
+               <spacer name="horizontalSpacer_7">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <layout class="QVBoxLayout" name="verticalLayout">
+                <property name="spacing">
+                 <number>5</number>
+                </property>
+                <item>
+                 <layout class="QHBoxLayout" name="horizontalLayout_2">
+                  <item>
+                   <spacer name="horizontalSpacer_2">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                  <item>
+                   <layout class="QGridLayout" name="gridLayout">
+                    <property name="topMargin">
+                     <number>5</number>
+                    </property>
+                    <property name="verticalSpacing">
+                     <number>0</number>
+                    </property>
+                    <item row="0" column="0">
+                     <widget class="QLabel" name="label_10">
+                      <property name="font">
+                       <font>
+                        <weight>75</weight>
+                        <bold>true</bold>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>Dataset Title</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="2" column="0">
+                     <widget class="QLineEdit" name="lnedTitle"/>
+                    </item>
+                    <item row="0" column="1">
+                     <widget class="QLabel" name="label_11">
+                      <property name="font">
+                       <font>
+                        <weight>75</weight>
+                        <bold>true</bold>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>Metarecord ID</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="2" column="1">
+                     <widget class="QLineEdit" name="lnedMetarecordid"/>
+                    </item>
+                   </layout>
+                  </item>
+                  <item>
+                   <spacer name="horizontalSpacer">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <layout class="QFormLayout" name="formLayout">
+                  <property name="labelAlignment">
+                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                  </property>
+                  <property name="verticalSpacing">
+                   <number>-1</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>5</number>
+                  </property>
+                  <item row="0" column="0">
+                   <widget class="QRadioButton" name="rbtnAggregate">
+                    <property name="text">
+                     <string>Aggregate Records</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="0">
+                   <widget class="QRadioButton" name="rbtNoaggregate">
+                    <property name="text">
+                     <string>Daily Records Present</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="2" column="0">
+                   <layout class="QHBoxLayout" name="horizontalLayout_3">
+                    <item>
+                     <spacer name="horizontalSpacer_4">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>40</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="btnDateformat">
+                      <property name="text">
+                       <string>Format Date Columns</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <spacer name="horizontalSpacer_3">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>40</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                   </layout>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_5">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QGridLayout" name="gridLayout_2">
+              <property name="leftMargin">
+               <number>10</number>
+              </property>
+              <property name="topMargin">
+               <number>10</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>10</number>
+              </property>
+              <property name="spacing">
+               <number>5</number>
+              </property>
+              <item row="5" column="7">
+               <widget class="QCheckBox" name="ckWatertempmin">
+                <property name="focusPolicy">
+                 <enum>Qt::TabFocus</enum>
+                </property>
+                <property name="text">
+                 <string>No Min. Water Temp</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="7">
+               <widget class="QCheckBox" name="ckAirmin">
+                <property name="text">
+                 <string>No Min. Air Temp</string>
+                </property>
+               </widget>
+              </item>
+              <item row="9" column="0">
+               <widget class="QLabel" name="label_8">
+                <property name="text">
+                 <string>Covariates</string>
+                </property>
+               </widget>
+              </item>
+              <item row="7" column="2">
+               <widget class="QLineEdit" name="lnedCondavg"/>
+              </item>
+              <item row="1" column="4">
+               <widget class="QLineEdit" name="lnedAirmax"/>
+              </item>
+              <item row="2" column="2">
+               <widget class="QLineEdit" name="lnedPrecipavg"/>
+              </item>
+              <item row="1" column="5">
+               <widget class="QCheckBox" name="ckAirmax">
+                <property name="text">
+                 <string>No Max. Air Temp</string>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="2">
+               <widget class="QLineEdit" name="lnedWatertempavg"/>
+              </item>
+              <item row="9" column="6">
+               <widget class="QLineEdit" name="lnedCovmin"/>
+              </item>
+              <item row="7" column="7">
+               <widget class="QCheckBox" name="ckCondmin">
+                <property name="text">
+                 <string>No Min. Cond.</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="5">
+               <widget class="QCheckBox" name="ckWindmax">
+                <property name="focusPolicy">
+                 <enum>Qt::TabFocus</enum>
+                </property>
+                <property name="text">
+                 <string>No Max. Wind</string>
+                </property>
+               </widget>
+              </item>
+              <item row="8" column="3">
+               <widget class="QCheckBox" name="ckTurbidityavg">
+                <property name="text">
+                 <string>No Avg. Turbidity</string>
+                </property>
+               </widget>
+              </item>
+              <item row="8" column="2">
+               <widget class="QLineEdit" name="lnedTurbidityavg"/>
+              </item>
+              <item row="9" column="4">
+               <widget class="QLineEdit" name="lnedCovmax"/>
+              </item>
+              <item row="4" column="3">
+               <widget class="QCheckBox" name="ckLightavg">
+                <property name="focusPolicy">
+                 <enum>Qt::TabFocus</enum>
+                </property>
+                <property name="text">
+                 <string>No Avg. Irradiance</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="6">
+               <widget class="QLineEdit" name="lnedPrecipmin"/>
+              </item>
+              <item row="6" column="1">
+               <widget class="QLineEdit" name="lnedPhunits">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+                <property name="placeholderText">
+                 <string>Enter Units</string>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="4">
+               <widget class="QLineEdit" name="lnedWatertempmax"/>
+              </item>
+              <item row="4" column="6">
+               <widget class="QLineEdit" name="lnedLightmin"/>
+              </item>
+              <item row="7" column="5">
+               <widget class="QCheckBox" name="ckCondmax">
+                <property name="text">
+                 <string>No Max. Cond.</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="7">
+               <widget class="QCheckBox" name="ckPrecipmin">
+                <property name="focusPolicy">
+                 <enum>Qt::TabFocus</enum>
+                </property>
+                <property name="text">
+                 <string>No Min. Precip</string>
+                </property>
+               </widget>
+              </item>
+              <item row="9" column="1">
+               <widget class="QLineEdit" name="lnedCovunits">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">QLineEdit{
+	padding: 1px;
+	border-style: solid;
+	border: 1px solid black;
+	margin: 0px;
+}
+
+</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+                <property name="placeholderText">
+                 <string>Enter Units</string>
+                </property>
+               </widget>
+              </item>
+              <item row="7" column="6">
+               <widget class="QLineEdit" name="lnedCondmin"/>
+              </item>
+              <item row="7" column="0">
+               <widget class="QLabel" name="label_9">
+                <property name="text">
+                 <string>Conductivity</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="7">
+               <widget class="QCheckBox" name="ckWindmin">
+                <property name="focusPolicy">
+                 <enum>Qt::TabFocus</enum>
+                </property>
+                <property name="text">
+                 <string>No Min. Wind</string>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="0">
+               <widget class="QLabel" name="label_6">
+                <property name="text">
+                 <string>Water Temperature</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="5">
+               <widget class="QCheckBox" name="ckPrecipmax">
+                <property name="focusPolicy">
+                 <enum>Qt::TabFocus</enum>
+                </property>
+                <property name="text">
+                 <string>No Max. Precip</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="1">
+               <widget class="QLineEdit" name="lnedWindunits">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+                <property name="placeholderText">
+                 <string>Enter Units</string>
+                </property>
+               </widget>
+              </item>
+              <item row="6" column="5">
+               <widget class="QCheckBox" name="ckPhmax">
+                <property name="focusPolicy">
+                 <enum>Qt::TabFocus</enum>
+                </property>
+                <property name="text">
+                 <string>No Max. pH</string>
+                </property>
+               </widget>
+              </item>
+              <item row="6" column="0">
+               <widget class="QLabel" name="label_7">
+                <property name="text">
+                 <string>pH</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="4">
+               <widget class="QLineEdit" name="lnedWindmax"/>
+              </item>
+              <item row="2" column="1">
+               <widget class="QLineEdit" name="lnedPrecipunits">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+                <property name="placeholderText">
+                 <string>Enter Units</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="0">
+               <widget class="QLabel" name="label_4">
+                <property name="text">
+                 <string>Wind</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QLabel" name="label_2">
+                <property name="text">
+                 <string>Air Temperature</string>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="1">
+               <widget class="QLineEdit" name="lnedLightunits">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+                <property name="placeholderText">
+                 <string>Enter Units</string>
+                </property>
+               </widget>
+              </item>
+              <item row="7" column="1">
+               <widget class="QLineEdit" name="lnedCondunits">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">QLineEdit{
+	padding: 1px;
+	border-style: solid;
+	border: 1px solid black;
+	margin: 0px;
+}
+
+</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+                <property name="placeholderText">
+                 <string>Enter Units</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="3">
+               <widget class="QCheckBox" name="ckWindavg">
+                <property name="focusPolicy">
+                 <enum>Qt::TabFocus</enum>
+                </property>
+                <property name="text">
+                 <string>No Avg. Wind</string>
+                </property>
+               </widget>
+              </item>
+              <item row="6" column="7">
+               <widget class="QCheckBox" name="ckPhmin">
+                <property name="focusPolicy">
+                 <enum>Qt::TabFocus</enum>
+                </property>
+                <property name="text">
+                 <string>No Min. pH</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0">
+               <widget class="QLabel" name="label_3">
+                <property name="text">
+                 <string>Precipitation</string>
+                </property>
+               </widget>
+              </item>
+              <item row="6" column="3">
+               <widget class="QCheckBox" name="ckPhavg">
+                <property name="focusPolicy">
+                 <enum>Qt::TabFocus</enum>
+                </property>
+                <property name="text">
+                 <string>No Avg. pH</string>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="3">
+               <widget class="QCheckBox" name="ckWatertempavg">
+                <property name="focusPolicy">
+                 <enum>Qt::TabFocus</enum>
+                </property>
+                <property name="text">
+                 <string>No Avg. Water Temp</string>
+                </property>
+               </widget>
+              </item>
+              <item row="8" column="1">
+               <widget class="QLineEdit" name="lnedTurbidityunits">
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+                <property name="placeholderText">
+                 <string>Enter Units</string>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="0">
+               <widget class="QLabel" name="label_5">
+                <property name="text">
+                 <string>Irradiance (light)</string>
+                </property>
+               </widget>
+              </item>
+              <item row="6" column="6">
+               <widget class="QLineEdit" name="lnedPhmin"/>
+              </item>
+              <item row="2" column="4">
+               <widget class="QLineEdit" name="lnedPrecipmax"/>
+              </item>
+              <item row="6" column="4">
+               <widget class="QLineEdit" name="lnedPhmax"/>
+              </item>
+              <item row="2" column="3">
+               <widget class="QCheckBox" name="ckPrecipavg">
+                <property name="focusPolicy">
+                 <enum>Qt::TabFocus</enum>
+                </property>
+                <property name="text">
+                 <string>No Avg. Precip</string>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="1">
+               <widget class="QLineEdit" name="lnedWwatertempunits">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+                <property name="placeholderText">
+                 <string>Enter Units</string>
+                </property>
+               </widget>
+              </item>
+              <item row="7" column="3">
+               <widget class="QCheckBox" name="ckCondavg">
+                <property name="text">
+                 <string>No Avg. Cond.</string>
+                </property>
+               </widget>
+              </item>
+              <item row="9" column="2">
+               <widget class="QLineEdit" name="lnedCovavg"/>
+              </item>
+              <item row="7" column="4">
+               <widget class="QLineEdit" name="lnedCondmax"/>
+              </item>
+              <item row="1" column="3">
+               <widget class="QCheckBox" name="ckAiravg">
+                <property name="text">
+                 <string>No Avg. Air Temp</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="6">
+               <widget class="QLabel" name="label_14">
+                <property name="font">
+                 <font>
+                  <weight>75</weight>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Minimum Values</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QLineEdit" name="lnedAirunits">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+                <property name="placeholderText">
+                 <string>Enter Units</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="4">
+               <widget class="QLabel" name="label_13">
+                <property name="font">
+                 <font>
+                  <weight>75</weight>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Maximum Values</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="2">
+               <widget class="QLineEdit" name="lnedWindavg"/>
+              </item>
+              <item row="6" column="2">
+               <widget class="QLineEdit" name="lnedPhavg"/>
+              </item>
+              <item row="4" column="2">
+               <widget class="QLineEdit" name="lnedLightavg"/>
+              </item>
+              <item row="3" column="6">
+               <widget class="QLineEdit" name="lnedWindmin"/>
+              </item>
+              <item row="4" column="4">
+               <widget class="QLineEdit" name="lnedLightmax"/>
+              </item>
+              <item row="5" column="5">
+               <widget class="QCheckBox" name="ckWatertempmax">
+                <property name="focusPolicy">
+                 <enum>Qt::TabFocus</enum>
+                </property>
+                <property name="text">
+                 <string>No Max. Water Temp</string>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="5">
+               <widget class="QCheckBox" name="ckLightmax">
+                <property name="focusPolicy">
+                 <enum>Qt::TabFocus</enum>
+                </property>
+                <property name="text">
+                 <string>No Max. irradiance</string>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="7">
+               <widget class="QCheckBox" name="ckLightmin">
+                <property name="focusPolicy">
+                 <enum>Qt::TabFocus</enum>
+                </property>
+                <property name="text">
+                 <string>No Min. Irradiance</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="6">
+               <widget class="QLineEdit" name="lnedAirmin"/>
+              </item>
+              <item row="0" column="0">
+               <widget class="QLabel" name="label">
+                <property name="font">
+                 <font>
+                  <weight>75</weight>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Columns</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="6">
+               <widget class="QLineEdit" name="lnedWatertempmin"/>
+              </item>
+              <item row="0" column="2">
+               <widget class="QLabel" name="label_12">
+                <property name="font">
+                 <font>
+                  <weight>75</weight>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Averages</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="2">
+               <widget class="QLineEdit" name="lnedAiravg"/>
+              </item>
+              <item row="8" column="4">
+               <widget class="QLineEdit" name="lnedTurbiditymax"/>
+              </item>
+              <item row="8" column="6">
+               <widget class="QLineEdit" name="lnedTurbiditymin"/>
+              </item>
+              <item row="8" column="5">
+               <widget class="QCheckBox" name="ckTurbiditymax">
+                <property name="text">
+                 <string>No Max. Turbidity</string>
+                </property>
+               </widget>
+              </item>
+              <item row="8" column="7">
+               <widget class="QCheckBox" name="ckTurbiditymin">
+                <property name="text">
+                 <string>No Min. Turbidity</string>
+                </property>
+               </widget>
+              </item>
+              <item row="9" column="3">
+               <widget class="QCheckBox" name="ckCovavg">
+                <property name="text">
+                 <string>No Covariate Avgs</string>
+                </property>
+               </widget>
+              </item>
+              <item row="9" column="5">
+               <widget class="QCheckBox" name="ckCovmax">
+                <property name="text">
+                 <string>No Covariate Max.'s</string>
+                </property>
+               </widget>
+              </item>
+              <item row="9" column="7">
+               <widget class="QCheckBox" name="ckCovmin">
+                <property name="text">
+                 <string>No Covariate Min.'s</string>
+                </property>
+               </widget>
+              </item>
+              <item row="8" column="0">
+               <widget class="QLabel" name="label_16">
+                <property name="text">
+                 <string>Turbidity</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </item>
+         </layout>
+         <zorder></zorder>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_7">
+      <item>
+       <spacer name="horizontalSpacer_8">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btnPreview">
+        <property name="text">
+         <string>Preview</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_6">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <property name="spacing">
+         <number>10</number>
+        </property>
+        <item>
+         <widget class="QPushButton" name="btnSaveClose">
+          <property name="text">
+           <string>Save &amp;&amp; Close</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btnCancel">
+          <property name="text">
+           <string>Cancel</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_9">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <tabstops>
+  <tabstop>lnedTitle</tabstop>
+  <tabstop>lnedMetarecordid</tabstop>
+  <tabstop>rbtnAggregate</tabstop>
+  <tabstop>rbtNoaggregate</tabstop>
+  <tabstop>btnDateformat</tabstop>
+  <tabstop>lnedAirunits</tabstop>
+  <tabstop>lnedAiravg</tabstop>
+  <tabstop>ckAiravg</tabstop>
+  <tabstop>lnedAirmax</tabstop>
+  <tabstop>ckAirmax</tabstop>
+  <tabstop>lnedAirmin</tabstop>
+  <tabstop>ckAirmin</tabstop>
+  <tabstop>lnedPrecipunits</tabstop>
+  <tabstop>lnedPrecipavg</tabstop>
+  <tabstop>ckPrecipavg</tabstop>
+  <tabstop>lnedPrecipmax</tabstop>
+  <tabstop>ckPrecipmax</tabstop>
+  <tabstop>lnedPrecipmin</tabstop>
+  <tabstop>ckPrecipmin</tabstop>
+  <tabstop>lnedWindunits</tabstop>
+  <tabstop>lnedWindavg</tabstop>
+  <tabstop>ckWindavg</tabstop>
+  <tabstop>lnedWindmax</tabstop>
+  <tabstop>ckWindmax</tabstop>
+  <tabstop>lnedWindmin</tabstop>
+  <tabstop>ckWindmin</tabstop>
+  <tabstop>lnedLightunits</tabstop>
+  <tabstop>lnedLightavg</tabstop>
+  <tabstop>ckLightavg</tabstop>
+  <tabstop>lnedLightmax</tabstop>
+  <tabstop>ckLightmax</tabstop>
+  <tabstop>lnedLightmin</tabstop>
+  <tabstop>ckLightmin</tabstop>
+  <tabstop>lnedWwatertempunits</tabstop>
+  <tabstop>lnedWatertempavg</tabstop>
+  <tabstop>ckWatertempavg</tabstop>
+  <tabstop>lnedWatertempmax</tabstop>
+  <tabstop>ckWatertempmax</tabstop>
+  <tabstop>lnedWatertempmin</tabstop>
+  <tabstop>ckWatertempmin</tabstop>
+  <tabstop>lnedPhunits</tabstop>
+  <tabstop>lnedPhavg</tabstop>
+  <tabstop>ckPhavg</tabstop>
+  <tabstop>lnedPhmax</tabstop>
+  <tabstop>ckPhmax</tabstop>
+  <tabstop>lnedPhmin</tabstop>
+  <tabstop>ckPhmin</tabstop>
+  <tabstop>lnedCondunits</tabstop>
+  <tabstop>lnedCondavg</tabstop>
+  <tabstop>ckCondavg</tabstop>
+  <tabstop>lnedCondmax</tabstop>
+  <tabstop>ckCondmax</tabstop>
+  <tabstop>lnedCondmin</tabstop>
+  <tabstop>ckCondmin</tabstop>
+  <tabstop>lnedTurbidityunits</tabstop>
+  <tabstop>lnedTurbidityavg</tabstop>
+  <tabstop>ckTurbidityavg</tabstop>
+  <tabstop>lnedTurbiditymax</tabstop>
+  <tabstop>ckTurbiditymax</tabstop>
+  <tabstop>lnedTurbiditymin</tabstop>
+  <tabstop>ckTurbiditymin</tabstop>
+  <tabstop>lnedCovunits</tabstop>
+  <tabstop>lnedCovavg</tabstop>
+  <tabstop>ckCovavg</tabstop>
+  <tabstop>lnedCovmax</tabstop>
+  <tabstop>ckCovmax</tabstop>
+  <tabstop>lnedCovmin</tabstop>
+  <tabstop>ckCovmin</tabstop>
+  <tabstop>btnPreview</tabstop>
+  <tabstop>btnSaveClose</tabstop>
+  <tabstop>btnCancel</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>
