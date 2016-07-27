@@ -15,7 +15,7 @@ elif sys.platform == "win32":
 sys.path.append(os.path.realpath(os.path.dirname(
     rootpath)))
 os.chdir(rootpath)
-from test import ui_dialog_obs as obs
+from test import ui_dialog_climateobs as climobs
 from test import ui_logic_preview as prev
 from test import class_modelviewpandas as view
 from test import class_inputhandler as ini
@@ -25,41 +25,41 @@ from test.logiclayer import class_helpers as hlp
 @pytest.fixture
 def metahandle():
     lentry = {
-        'globalid': 2,
+        'globalid': 1,
         'metaurl': ('http://sbc.lternet.edu/cgi-bin/showDataset' +
-                    '.cgi?docid=knb-lter-sbc.17'),
+                    '.cgi?docid=knb-lter-sbc.18'),
         'lter': 'SBC'}
-    ckentry = {}
     metainput = ini.InputHandler(
         name='metacheck', tablename=None, lnedentry=lentry,
-        checks=ckentry)
+        checks=True)
     return metainput
 
 @pytest.fixture
 def filehandle():
     ckentry = {}
-    rbtn = {'.csv': True, '.txt': False,
-            '.xlsx': False}
+    rbtn = {'.csv': False, '.txt': False,
+            '.xlsx': True}
     lned = {'sheet': '', 'delim': '', 'tskip': '', 'bskip': ''}
     fileinput = ini.InputHandler(
         name='fileoptions',tablename=None, lnedentry=lned,
         rbtns=rbtn, checks=ckentry, session=True,
+        verify='climatesite',
         filename=
         str(os.getcwd()) + '/Datasets_manual_test/' +
-        'raw_data_test_1.csv')
+        'climate_precip.txt')
 
     return fileinput
 
 @pytest.fixture
 def sitehandle():
-    lned = {'siteid': 'SITE'}
+    lned = {'siteid': 'site_a'}
     sitehandle = ini.InputHandler(
         name='siteinfo', lnedentry=lned, tablename='sitetable')
     return sitehandle
     
 @pytest.fixture
-def ObsDialog(sitehandle, filehandle, metahandle):
-    class ObsDialog(QtGui.QDialog, obs.Ui_Dialog):
+def ClimateObsDialog(sitehandle, filehandle, metahandle):
+    class ClimateObsDialog(QtGui.QDialog, climobs.Ui_Dialog):
         def __init__(self, parent=None):
             super().__init__(parent)
             self.setupUi(self)
@@ -105,24 +105,13 @@ def ObsDialog(sitehandle, filehandle, metahandle):
 
         def submit_change(self):
             sender = self.sender()
+
             self.obslned = OrderedDict((
-                ('spt_rep2', self.lnedRep2.text()),
-                ('spt_rep3', self.lnedRep3.text()),
-                ('spt_rep4', self.lnedRep4.text()),
-                ('structure', self.lnedStructure.text()),
-                ('individ', self.lnedIndividual.text()),
-                ('trt_label', self.lnedTreatment.text()),
-                ('unitobs', self.lnedRaw.text())
+
             ))
 
             self.obsckbox = OrderedDict((
-                ('spt_rep2', self.ckRep2.isChecked()),
-                ('spt_rep3', self.ckRep3.isChecked()),
-                ('spt_rep4', self.ckRep4.isChecked()),
-                ('structure', self.ckStructure.isChecked()),
-                ('individ', self.ckIndividual.isChecked()),
-                ('trt_label', self.ckTreatment.isChecked()),
-                ('unitobs', False)
+
             ))
 
             available = [
@@ -165,8 +154,8 @@ def ObsDialog(sitehandle, filehandle, metahandle):
                 self.close()
 
         
-    return ObsDialog()
-def test_dialog_site(qtbot, ObsDialog):
+    return ClimateObsDialog()
+def test_dialog_site(qtbot, ClimateObsDialog):
     ObsDialog.show()
     qtbot.addWidget(ObsDialog)
 

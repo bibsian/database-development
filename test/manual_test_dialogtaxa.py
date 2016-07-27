@@ -6,7 +6,7 @@ from collections import OrderedDict
 import sys,os
 if sys.platform == "darwin":
     rootpath = (
-        "/Users/bibsian/Dropbox/database-development/" +
+        "/Users/bibsian/Desktop/git/database-development/" +
         "test/")
 elif sys.platform == "win32":
     rootpath = (
@@ -125,7 +125,7 @@ def TaxaDialog(sitehandle, filehandle, metahandle, TablePreview):
                 ('kingdom', self.lnedKingdom.text().strip()),
                 ('phylum', self.lnedPhylum.text().strip()),
                 ('clss', self.lnedClass.text().strip()),
-                ('order', self.lnedOrder.text().strip()),
+                ('ordr', self.lnedOrder.text().strip()),
                 ('family', self.lnedFamily.text().strip()),
                 ('genus', self.lnedGenus.text().strip()),
                 ('species', self.lnedSpp.text().strip())
@@ -135,7 +135,7 @@ def TaxaDialog(sitehandle, filehandle, metahandle, TablePreview):
                 ('kingdom', self.ckKingdom.isChecked()),
                 ('phylum', self.ckPhylum.isChecked()),
                 ('clss', self.ckClass.isChecked()),
-                ('order', self.ckOrder.isChecked()),
+                ('ordr', self.ckOrder.isChecked()),
                 ('family', self.ckFamily.isChecked()),
                 ('genus', self.ckGenus.isChecked()),
                 ('species', self.ckSpp.isChecked())

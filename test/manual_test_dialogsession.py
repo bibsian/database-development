@@ -5,7 +5,7 @@ from PyQt4 import QtCore, QtGui, QtWebKit
 import sys,os
 if sys.platform == "darwin":
     rootpath = (
-        "/Users/bibsian/Dropbox/database-development/" +
+        "/Users/bibsian/Desktop/git/database-development/" +
         "test/")
 elif sys.platform == "win32":
     rootpath = (
@@ -39,6 +39,7 @@ def MainWindow():
             # Attributes
             self.metaini = None
             self.fileini = None
+            self.verify = None
 
             # User facade composed from main window
             self.facade = None
@@ -65,7 +66,7 @@ def MainWindow():
             }
             self.metaini = ini.InputHandler(
                 name='metacheck', tablename=None,
-                lnedentry=entries)
+                lnedentry=entries, verify=self.verify)
 
             self.facade.input_register(self.metaini)
 
@@ -98,10 +99,11 @@ def MainWindow():
             }
             name = QtGui.QFileDialog.getOpenFileName(
                 self, 'Select File')
-
+            headers = self.ckHeader.isChecked()
             self.fileini = ini.InputHandler(
                 name='fileoptions', tablename=None,
-                rbtns=rbtn, lnedentry=lned, filename=name
+                rbtns=rbtn, lnedentry=lned, filename=name,
+                checks=headers
             )
             self.facade.input_register(self.fileini)
 
@@ -150,15 +152,14 @@ def MainWindow():
             self.actionStart_Session.triggered.connect(
                 self.session_display)
             
+            self.mdiArea.addSubWindow(self.subwindow_2)
+            self.mdiArea.addSubWindow(self.subwindow_1)
+            
         @QtCore.pyqtSlot(object)
         def update_data_model(self, dataobject):
             newdatamodel = view.PandasTableModel(self.facade._data)
             self.tblViewRaw.setModel(newdatamodel)
             self.raw_data_received.emit('Data loaded')
-
-        @QtCore.pyqtSlot(object)
-        def update_webview(self, url):
-            self.webView.load(QtCore.QUrl(url))
 
         def session_display(self):
             ''' Displays the Site Dialog box'''

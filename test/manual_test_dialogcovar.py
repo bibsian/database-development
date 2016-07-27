@@ -5,7 +5,7 @@ from PyQt4 import QtGui
 import sys,os
 if sys.platform == "darwin":
     rootpath = (
-        "/Users/bibsian/Dropbox/database-development/" +
+        "/Users/bibsian/Desktop/git/database-development/" +
         "test/")
 elif sys.platform == "win32":
     rootpath = (

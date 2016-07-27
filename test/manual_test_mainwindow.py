@@ -8,7 +8,7 @@ import sys,os
 import unicodedata
 if sys.platform == "darwin":
     rootpath = (
-        "/Users/bibsian/Dropbox/database-development/" +
+        "/Users/bibsian/Desktop/git/database-development/" +
         "test/")
 elif sys.platform == "win32":
     rootpath = (
@@ -23,13 +23,14 @@ from test import ui_logic_taxa as taxalogic
 from test import ui_logic_time as timelogic
 from test import ui_logic_obs as rawlogic
 from test import ui_logic_covar as covarlogic
+from test import ui_logic_climatesite as climsitelogic
 from test.logiclayer import class_userfacade as face
 from test import class_modelviewpandas as view
 from test import class_inputhandler as ini
 
 if sys.platform == 'darwin':
     os.chdir(
-        '/Users/bibsian/Dropbox/database-development/test/')
+        '/Users/bibsian/Desktop/git/database-development/test/')
 elif sys.platform == 'win32':
     os.chdir(
         'C:\\Users\\MillerLab\\Dropbox\\database-development\\test\\')
@@ -55,6 +56,8 @@ def MainWindow():
             self.dtime = timelogic.TimeDialog()
             self.draw = rawlogic.ObsDialog()
             self.dcovar = covarlogic.CovarDialog()
+            self.dclimatesite = climsitelogic.ClimateSite()
+            self.dclimatesession = sesslogic.SessionDialog()
 
             # Actions
             self.actionSiteTable.triggered.connect(self.site_display)
@@ -68,6 +71,10 @@ def MainWindow():
             self.actionRawTable.triggered.connect(self.obs_display)
             self.actionCovariates.triggered.connect(self.covar_display)
             self.actionCommit.triggered.connect(self.commit_data)
+            self.actionClimateSiteTable.triggered.connect(
+                self.climate_site_display)
+            self.actionNew_Climate.triggered.connect(
+                self.climate_session_display)
 
 
             self.mdiArea.addSubWindow(self.subwindow_2)
@@ -75,7 +82,11 @@ def MainWindow():
             
             # Custom Signals
             self.dsite.site_unlocks.connect(self.site_complete_enable)
+            self.dclimatesite.climatesite_unlocks.connect(
+                self.climate_site_complete_enabled)
             self.dsession.raw_data_model.connect(
+                self.update_data_model)
+            self.dclimatesession.raw_data_model.connect(
                 self.update_data_model)
 
             # Dialog boxes for user feedback
@@ -90,6 +101,7 @@ def MainWindow():
             newdatamodel = view.PandasTableModel(self.facade._data)
             self.tblViewRaw.setModel(newdatamodel)
             self.dsite.facade = self.facade
+            self.dclimatesite.facade = self.facade
 
         @QtCore.pyqtSlot(object)
         def update_webview(self, url):
@@ -162,9 +174,32 @@ def MainWindow():
                     '. May need to alter site abbreviations.')
                 raise ValueError(str(e))
 
+        def climate_site_display(self):
+            ''' Displays the Site Dialog box'''
+            self.dclimatesite.show()
+            self.dclimatesite.facade = self.facade
+
+        @QtCore.pyqtSlot(object)
+        def climate_site_complete_enabled(self, datamod2):
+            self.actionClimateRawTable.setEnabled(True)
+            self.update_data_model()
+
+        def climate_session_display(self):
+            ''' Displays the Site Dialog box'''
+            self.dclimatesession.show()
+            self.dclimatesession.facade = self.facade
+            self.actionSiteTable.setEnabled(False)
+            self.actionClimateSiteTable.setEnabled(True)
+            metapath = (
+    	        str(os.getcwd()) + 
+    	        '/Datasets_manual_test/meta_climate_test.csv')
+            metadf = read_csv(metapath, encoding='iso-8859-11')
+            metamodel = view.PandasTableModel(metadf)
+            self.tblViewMeta.setModel(metamodel)
+
         def end_session(self):
             subprocess.call(
-                "python" + " poplerGUI_run_main.py", shell=True)
+                "python" + " ../poplerGUI_run_main.py", shell=True)
             self.close()
 
     return UiMainWindow()

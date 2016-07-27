@@ -6,7 +6,7 @@ from PyQt4 import QtGui, QtCore
 import sys,os
 if sys.platform == "darwin":
     rootpath = (
-        "/Users/bibsian/Dropbox/database-development/" +
+        "/Users/bibsian/Desktop/git/database-development/" +
         "test/")
 elif sys.platform == "win32":
     rootpath = (
@@ -354,8 +354,6 @@ def MainWindow():
             # Custom signals
             self.dsession.raw_data_model.connect(
                 self.update_data_model)
-            self.dsession.webview_url.connect(
-                self.update_webview)
             # actions
             self.actionStart_Session.triggered.connect(
                 self.session_display)
@@ -364,10 +362,7 @@ def MainWindow():
         def update_data_model(self):
             newdatamodel = view.PandasTableModel(self.facade._data)
             self.tblViewRaw.setModel(newdatamodel)
-
-        @QtCore.pyqtSlot(object)
-        def update_webview(self, url):
-            self.webView.load(QtCore.QUrl(url))
+            
 
         def session_display(self):
             ''' Displays the Site Dialog box'''
