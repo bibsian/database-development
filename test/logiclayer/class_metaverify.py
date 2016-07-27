@@ -19,7 +19,7 @@ class MetaVerifier(object):
 
     if sys.platform == "darwin":
         metapath = (
-        "/Users/bibsian/Dropbox/database-development/test/" +
+        "/Users/bibsian/Desktop/git/database-development/test/" +
         "Datasets_manual_test/meta_file_test.csv")
 
     elif sys.platform == "win32":
