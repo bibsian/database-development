@@ -13,7 +13,7 @@ if sys.platform == "darwin":
 
 elif sys.platform == "win32":
     rootpath = (
-        "C:\\Users\MillerLab\\Dropbox\\database-development" +
+        "C:\\Users\MillerLab\\Desktop\\database-development" +
         "\\test\\")
     end = "\\"
 

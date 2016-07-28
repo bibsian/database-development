@@ -6,7 +6,7 @@ from poplerGUI import ui_dialog_time as uitime
 from poplerGUI import ui_logic_preview as tprev
 from poplerGUI.logiclayer import class_helpers as hlp
 from poplerGUI.logiclayer import class_timeparse as tmpa
-from logiclayer.datalayer import config as orm
+from poplerGUI.logiclayer.datalayer import config as orm
 
 class TimeDialog(QtGui.QDialog, uitime.Ui_Dialog):
     def __init__(self, parent=None):

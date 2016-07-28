@@ -4,7 +4,7 @@ from poplerGUI import ui_dialog_main as dmainw
 from poplerGUI import class_inputhandler as ini
 from poplerGUI import class_modelviewpandas as view
 from logiclayer import class_helpers as hlp
-from logiclayer.datalayer import config as orm
+from poplerGUI.logiclayer.datalayer import config as orm
 
 class MainDialog(QtGui.QDialog, dmainw.Ui_Dialog):
     def __init__(self, parent=None):

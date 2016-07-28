@@ -4,12 +4,12 @@ from pandas import read_csv
 import sys, os
 if sys.platform == "darwin":
     rootpath = (
-        "/Users/bibsian/Dropbox/database-development/" +
+        "/Users/bibsian/Desktop/git/database-development/" +
         "test/")
     end = "/"
 elif sys.platform == "win32":
     rootpath = (
-        "C:\\Users\MillerLab\\Dropbox\\database-development" +
+        "C:\\Users\MillerLab\\Desktop\\database-development" +
         "\\test\\")
     end = "\\"
 sys.path.append(os.path.realpath(os.path.dirname(
@@ -33,12 +33,12 @@ class MetaVerifier(object):
 
     if sys.platform == "darwin":
         metapath = (
-        "/Users/bibsian/Dropbox/database-development/test/Datasets_manual_test" +
+        "/Users/bibsian/Desktop/git/database-development/test/Datasets_manual_test" +
         "/meta_file_test.csv")
 
     elif sys.platform == "win32":
         metapath = (
-        "C:\\Users\MillerLab\\Dropbox\\database-development" +
+        "C:\\Users\MillerLab\\Desktop\\database-development" +
         "\\test\\Datasets_manual_test\\meta_file_test.csv")
 
     _meta = read_csv(metapath, encoding='iso-8859-11')

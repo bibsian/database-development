@@ -184,7 +184,7 @@ class Facade:
         else:
             verifier._meta = read_csv((
                 str(os.getcwd()) + 
-                '/Datasets_manual_test/meta_climate_test.csv'),
+                '/Metadata_and_og_data/meta_climate_test.csv'),
                 encoding='iso-8859-11')
 
         try:

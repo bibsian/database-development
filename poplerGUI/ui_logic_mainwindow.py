@@ -12,7 +12,7 @@ if sys.platform == 'darwin':
     	'/Metadata_and_og_data/Cataloged_Data_Current_sorted.csv')
 elif sys.platform == 'win32':
     os.chdir( 
-        'C:\\Users\\MillerLab\\Dropbox\\database-development\\poplerGUI\\')
+        'C:\\Users\\MillerLab\\Desktop\\database-development\\poplerGUI\\')
     metapath = (
     	str(os.getcwd()) + 
     	'\\Metadata_and_og_data/Cataloged_Data_Current_sorted.csv')

@@ -9,7 +9,7 @@ if sys.platform == "darwin":
         "test/")
 elif sys.platform == "win32":
     rootpath = (
-        "C:\\Users\MillerLab\\Dropbox\\database-development" +
+        "C:\\Users\MillerLab\\Desktop\\database-development" +
         "\\test\\")
 sys.path.append(os.path.realpath(os.path.dirname(
     rootpath)))

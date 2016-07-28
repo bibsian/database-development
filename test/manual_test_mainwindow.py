@@ -12,7 +12,7 @@ if sys.platform == "darwin":
         "test/")
 elif sys.platform == "win32":
     rootpath = (
-        "C:\\Users\MillerLab\\Dropbox\\database-development" +
+        "C:\\Users\MillerLab\\Desktop\\database-development" +
         "\\test\\")
 
 from test import ui_mainrefactor as mw
@@ -33,7 +33,7 @@ if sys.platform == 'darwin':
         '/Users/bibsian/Desktop/git/database-development/test/')
 elif sys.platform == 'win32':
     os.chdir(
-        'C:\\Users\\MillerLab\\Dropbox\\database-development\\test\\')
+        'C:\\Users\\MillerLab\\Desktop\\database-development\\test\\')
 
 @pytest.fixture
 def MainWindow():

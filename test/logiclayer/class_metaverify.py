@@ -24,7 +24,7 @@ class MetaVerifier(object):
 
     elif sys.platform == "win32":
         metapath = (
-        "C:\\Users\MillerLab\\Dropbox\\database-development" +
+        "C:\\Users\MillerLab\\Desktop\\database-development" +
         "\\test\\Datasets_manual_test\\meta_file_test.csv")
 
     _meta = read_csv(metapath, encoding='iso-8859-11')

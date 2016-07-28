@@ -6,7 +6,7 @@ from poplerGUI import ui_logic_sitechange as chg
 from poplerGUI import class_inputhandler as ini
 from poplerGUI import class_modelviewpandas as view
 from poplerGUI.logiclayer import class_helpers as hlp
-from logiclayer.datalayer import config as orm
+from poplerGUI.logiclayer.datalayer import config as orm
 
 class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
 

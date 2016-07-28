@@ -13,7 +13,7 @@ if sys.platform == "darwin":
     	'/Datasets_manual_test/meta_file_test.csv')
 elif sys.platform == "win32":
     rootpath = (
-        "C:\\Users\MillerLab\\Dropbox\\database-development" +
+        "C:\\Users\MillerLab\\Desktop\\database-development" +
         "\\test\\")
     metapath = (
     	str(os.getcwd()) + 

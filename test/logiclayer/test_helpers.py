@@ -13,7 +13,7 @@ if sys.platform == "darwin":
 
 elif sys.platform == "win32":
     rootpath = (
-        "C:\\Users\MillerLab\\Dropbox\\database-development" +
+        "C:\\Users\MillerLab\\Desktop\\database-development" +
         "\\test\\")
     end = "\\"
 sys.path.append(os.path.realpath(os.path.dirname(
@@ -188,7 +188,7 @@ def metadf_og():
         # Paths to data and conversion of files to dataframe
         #=======================#
         metapath = (
-            "C:\\Users\MillerLab\\Dropbox\\database-development" +
+            "C:\\Users\MillerLab\\Desktop\\database-development" +
             "\\test\\Datasets_manual_test\\meta_file_test.csv")
 
     metadf = read_csv(metapath, encoding="iso-8859-11")
