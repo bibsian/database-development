@@ -5,7 +5,7 @@ from poplerGUI import ui_dialog_covariate as covar
 from poplerGUI import ui_logic_preview as tprev
 from poplerGUI import class_inputhandler as ini
 from poplerGUI.logiclayer import class_helpers as hlp
-from logiclayer import class_dictionarydataframe as ddf
+from poplerGUI.logiclayer import class_dictionarydataframe as ddf
 
 class CovarDialog(QtGui.QDialog, covar.Ui_Dialog):
     '''

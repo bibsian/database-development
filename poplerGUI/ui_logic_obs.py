@@ -5,7 +5,7 @@ from poplerGUI import class_inputhandler as ini
 from poplerGUI import class_modelviewpandas as view
 from poplerGUI import ui_dialog_obs as obs
 from poplerGUI import ui_logic_preview as prev
-from logiclayer import class_helpers as hlp
+from poplerGUI.logiclayer import class_helpers as hlp
 
 
 class ObsDialog(QtGui.QDialog, obs.Ui_Dialog):
