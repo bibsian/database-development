@@ -22,7 +22,7 @@ from test.logiclayer import class_timeparse as tparse
 from test.logiclayer import class_dictionarydataframe as ddf
 from test.logiclayer.datalayer import config as orm
 os.chdir(rootpath)
-import class_inputhandler as ini
+from test import class_inputhandler as ini
 
 @pytest.fixture
 def site_add():
@@ -149,6 +149,7 @@ def Flusher(site_add, main_add, taxa_add, raw_add):
             '''
             method to a
             '''
+
             self.ormtable[self.tablename](
                 self.df, self.pk, self.ormreg, session)
 

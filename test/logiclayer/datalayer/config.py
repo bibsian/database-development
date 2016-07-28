@@ -31,7 +31,7 @@ def adapt_numpy_int64(numpy_int64):
 register_adapter(numpy.int64, adapt_numpy_int64)
 
 engine = create_engine(
-    'postgresql+psycopg2://user:pswd@host/LTERV2',
+    'postgresql+psycopg2:///LTERV2',
     echo=True)
 conn = engine.connect()
 
@@ -155,6 +155,7 @@ class Rawtable(Base):
     individ = Column(VARCHAR)
     unitobs = Column(NUMERIC)
     covariates = Column(TEXT)
+    trt_label = Column(TEXT)
 
 Session = sessionmaker(bind=engine, autoflush=False)
 

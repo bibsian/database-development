@@ -112,6 +112,7 @@ class Flusher(object):
         '''
         self.ormtable[self.tablename](
             self.df, self.pk, self.ormreg, session)
+        print('flusher: ', self.df)
 
         try:
             for i in range(len(self.df)):

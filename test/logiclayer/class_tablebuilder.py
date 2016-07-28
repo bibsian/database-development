@@ -19,6 +19,7 @@ class AbstractTableBuilder(object):
     # List of column names within each table of the database
     climaterawtable = {
         'columns': [
+            'metarecordid_',
             'title', 'stationid', 'year', 'month', 'day',
             # temp
             'avetempobs', 'avetempmeasure',
@@ -53,7 +54,8 @@ class AbstractTableBuilder(object):
             'minturbidityobs', 'minturbiditymeasure',
             'maxturbidityobs', 'maxturbiditymeasure',
             # other
-            'covariates'],
+            'covariates',
+            'knbid_', 'metalink_', 'authors_', 'authors_contact_'],
         'time': True,
         'cov': True,
         'depend': False
@@ -113,6 +115,7 @@ class AbstractTableBuilder(object):
         'cov': True ,
         'depend': True
     }
+
     updatetable = {
         'columns': [
             'studystartyr', 'studyendyr', 'sitestartyr',
@@ -127,6 +130,7 @@ class AbstractTableBuilder(object):
         'cov': False,
         'depend':False
     }
+
     tabledict = {
         'climaterawtable': climaterawtable,
         'stationtable': stationtable,
@@ -149,10 +153,8 @@ class AbstractTableBuilder(object):
 
     def get_null_columns(self):
         availcol = list(self._inputs.lnedentry.keys())
-        print(availcol)
         allcol = self.tabledict[
             self._inputs.tablename]['columns']
-
         return [x for x in allcol if x not in availcol]
 
     @abc.abstractmethod
@@ -339,11 +341,20 @@ class TaxaTableBuilder(AbstractTableBuilder):
         else:
             pass
 
+        print('SELF INPUTS: ', self._inputs.checks)
+        print('ALL COLUMNS: ', acols)
+        print('DB COLUMNS: ', dbcol)
+        print('DF COLUMNS: ', dataframe.columns.values.tolist())
+        print('NULL COLUMNS: ', nullcols)
+
         if self._inputs.checks['taxacreate'] is True:
             dfcol = dataframe.columns.values.tolist()
             columns_create = [x for x in acols if x not in dfcol]
+            print('CREATE :', columns_create)
             for i in columns_create:
                 dataframe.loc[:, i] = i
+            print('DF COLUMNS (added): ', dataframe.columns.values.tolist())
+
         else:
             pass
 
@@ -353,7 +364,7 @@ class TaxaTableBuilder(AbstractTableBuilder):
             unqdf = dataframe[dataframe[siteid]==item]
             uniquesubset = unqdf[acols]
             unique = uniquesubset.drop_duplicates()
-            unique = unique.reset_index(drop=True)
+            unique = unique.reset_index()
             sitelevel = hlp.produce_null_df(
                 ncols=len(unique),
                 colnames=[siteid],
@@ -392,11 +403,13 @@ class RawTableBuilder(AbstractTableBuilder):
     def get_dataframe(
             self, dataframe, acols, nullcols, dbcol,
             globalid, siteid, sitelevels):
+
         acols = [x.rstrip() for x in acols]
         nullcols = [x.rstrip() for x in nullcols]
         dbcol = [x.rstrip() for x in dbcol]
-        acols.insert(0,siteid)
 
+
+        acols.insert(0,siteid)
         nullcols.remove('spt_rep1')
         nullcols.remove('year')
         nullcols.remove('month')
@@ -410,20 +423,24 @@ class RawTableBuilder(AbstractTableBuilder):
         else:
             acols.append('taxaid')
             acols.append('lter_proj_site')
-        
+
         uniquesubset = dataframe[acols]
         nullsubset = hlp.produce_null_df(
             ncols=len(nullcols),
             colnames=nullcols,
             dflength=len(uniquesubset),
             nullvalue='NA')
+        print('build class (null): ', nullsubset)
+        print('build class: ',dataframe)
+        print('uq subset build: ', uniquesubset)
         _concat =  concat(
             [uniquesubset, nullsubset], axis=1).reset_index(
-                drop=True)
-        final = _concat.reset_index(drop=True) 
+                )
+        final = _concat.reset_index() 
+        print('final build class: ', final)
 
         try:
-
+            print('build siteid: ', siteid)
             col_to = list(self._inputs.lnedentry.keys())
             col_to.append('spt_rep1')
             col_from = list(self._inputs.lnedentry.values())
@@ -433,6 +450,7 @@ class RawTableBuilder(AbstractTableBuilder):
                 final.rename(
                     columns={col_from[i]:item}, inplace=True)
             return final
+
 
         except Exception as e:
             print(str(e))

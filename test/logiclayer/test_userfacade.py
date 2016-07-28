@@ -405,6 +405,7 @@ def Facade():
             timetable = self.push_tables['timetable']
             rawtable = self.push_tables['rawtable']
             rawtable.replace({'NaN': -99999}, inplace=True)
+            print('method: ',rawtable)
             covartable = self.push_tables['covariates']
             print('rawtable (facade): ', rawtable)
 
@@ -540,7 +541,7 @@ def Facade():
             print('rawmerge: ', rawmerge)
             print('rawmerge col: ', rawmerge.columns.values.tolist())
             print('rawmerge index: ', rawmerge['m_index'])
-            
+
             director = TableDirector()
             self._inputs['rawinfo'].foreignmergeddata = True
             print('input: ', self._inputs['rawinfo'].foreignmergeddata)
@@ -567,12 +568,13 @@ def Facade():
                 try:
                     rawpush[
                         'unitobs'].fillna(-99999, inplace=True)
+                    print(rawpush['trt_label'])
+                    print(rawpush)
                     flsh.flush(
                         rawpush,
                         'rawtable',
                         self._tablelog['rawtable'],
                         lter, session)
-
                 except Exception as e:
                     print(str(e))
                     self._tablelog['rawtable'].debug(str(e))
@@ -1292,6 +1294,7 @@ def test_push_data_1(
     facade.input_register(obshandle1)
     rawdirector = facade.make_table('rawinfo')
     rawtable = rawdirector._availdf
+    print(rawtable)
     facade.push_tables['rawtable'] = rawtable
     facade.create_log_record('rawtable')
 
@@ -1525,6 +1528,8 @@ def test_push_data_2(
     facade.input_register(obshandle2)
     rawdirector = facade.make_table('rawinfo')
     rawtable = rawdirector._availdf
+    print(rawtable)
+
     facade.push_tables['rawtable'] = rawtable
     facade.create_log_record('rawtable')
 
@@ -1545,6 +1550,7 @@ def test_push_data_2(
     facade.merge_push_data()
     facade.update_main()
 
+    
 @pytest.fixture
 def df2():
     return read_csv(
