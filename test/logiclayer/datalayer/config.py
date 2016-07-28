@@ -1,19 +1,7 @@
 #! /usr/bin/env python
 import sys, os
-if sys.platform == "darwin":
-    rootpath = (
-        "/Users/bibsian/Dropbox/database-development/" +
-        "test/")
-    end = "/"
-    
-elif sys.platform == "win32":
-    rootpath = (
-        "C:\\Users\MillerLab\\Dropbox\\database-development" +
-        "\\test\\")
-    end = "\\"
-os.chdir(rootpath)
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, create_engine
+from sqlalchemy import Column, Integer, create_engine, MetaData
 from sqlalchemy import Table, ForeignKey
 from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.dialects.postgresql import *
@@ -43,16 +31,27 @@ def adapt_numpy_int64(numpy_int64):
 register_adapter(numpy.int64, adapt_numpy_int64)
 
 engine = create_engine(
-    'postgresql+psycopg2://username@host/LTERV2',
+    'postgresql+psycopg2://user:pswd@host/LTERV2',
     echo=True)
 conn = engine.connect()
+
+# Mapping metadata
+metadata = MetaData(bind=engine)
 
 # Creating base
 Base = declarative_base()
 
+
 # Instantiating the classes which represent our database
 # tables and making their names available at the level
 # of the whole UserInterface main window
+class Climatetable(Base):
+    __table__ = Table('climate_raw_table', metadata, autoload=True)
+
+
+class Climatesite(Base):
+    __table__ = Table('climate_station_table', metadata, autoload=True)
+
 
 class Ltertable(Base):
     __tablename__ = 'lter_table'
@@ -115,6 +114,10 @@ class Maintable(Base):
     authors_contact = Column(VARCHAR)
     metalink = Column(VARCHAR)
     knbid = Column(VARCHAR)
+    treatment_type = Column(VARCHAR)
+    num_treatments = Column(VARCHAR)
+    exp_maintainence = Column(VARCHAR)
+    trt_label = Column(VARCHAR)
 
     taxa = relationship(
         'Taxatable', cascade="delete, delete-orphan")
@@ -129,7 +132,7 @@ class Taxatable(Base):
     kingdom = Column(VARCHAR)
     phylum = Column(VARCHAR)
     clss = Column(VARCHAR)
-    order = Column(VARCHAR)
+    ordr = Column(VARCHAR)
     family = Column(VARCHAR)
     genus = Column(VARCHAR)
     species = Column(VARCHAR)

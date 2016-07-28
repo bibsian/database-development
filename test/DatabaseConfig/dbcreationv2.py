@@ -26,7 +26,7 @@ ltertablename = 'lter_table'
 # Note, postgres is the super user and can do
 # everything possible (CREATE,INSERT, MANIPULATE, etc.)
 engine = create_engine(
-    'postgresql+psycopg2://username@host/LTERV2',
+    'postgresql+psycopg2://user:pswd@host/LTERV2',
     echo=True)
 
 # Note that the relationships in the database (i.e. entity-relation
@@ -57,7 +57,7 @@ metadata = MetaData()
 # Raw climate station data
 climate_raw_table = Table(
     'climate_raw_table', metadata,
-    Column('metarecordid', Integer, primary_key=True),
+    Column('metarecordid_', Integer, primary_key=True),
     Column('title', TEXT),
     Column('stationid', None, ForeignKey(
         'climate_station_table.stationid', ondelete="CASCADE")),
@@ -114,8 +114,11 @@ climate_raw_table = Table(
     Column('minturbiditymeasure', VARCHAR(50)),
     Column('maxturbidityobs', NUMERIC),
     Column('maxturbiditymeasure', VARCHAR(50)),
-    Column('covariates', TEXT))
-
+    Column('covariates', TEXT),
+    Column('knbid_', VARCHAR(200)),
+    Column('metalink_', VARCHAR(200)),
+    Column('authors_', VARCHAR(200)),
+    Column('authors_contact_', VARCHAR(200)))
 
 # climate_site_table: This is the initial table
 # that will contain information
@@ -252,7 +255,11 @@ main_table = Table(
     Column('authors', TEXT),
     Column('authors_contact', VARCHAR(200)),
     Column('metalink', VARCHAR(200)),
-    Column('knbid', VARCHAR(200)))
+    Column('knbid', VARCHAR(200)),
+    Column('treatment_type', VARCHAR(200)),
+    Column('num_treatments', VARCHAR(200)),
+    Column('exp_maintainence', VARCHAR(200)),
+    Column('trt_label', VARCHAR(200)))
 
 # taxa: Table regarding taxanomic information. Change from
 # last time involves the forgein key and the addition of
@@ -268,7 +275,7 @@ taxa_table = Table(
     Column('kingdom', VARCHAR(100)),
     Column('phylum', VARCHAR(100)),
     Column('clss', VARCHAR(100)),
-    Column('order', VARCHAR(100)),
+    Column('ordr', VARCHAR(100)),
     Column('family', VARCHAR(100)),
     Column('genus', VARCHAR(100)),
     Column('species', VARCHAR(100)),
@@ -295,7 +302,8 @@ raw_table = Table(
     Column('structure', VARCHAR(50)),
     Column('individ', VARCHAR(50)),
     Column('unitobs', NUMERIC),
-    Column('covariates', TEXT))
+    Column('covariates', TEXT),
+    Column('trt_label', VARCHAR(200)))
 
 
 # This command takes all the information that was stored in the
