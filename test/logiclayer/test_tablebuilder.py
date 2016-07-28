@@ -946,7 +946,7 @@ def test_rawtable_build(
     rawtable = director.get_database_table()
     showraw = rawtable._availdf
     print('finished: ', showraw)
-    assert 0
+
     counttest = showraw['unitobs'].values.tolist()
     counttrue = df['COUNT'].values.tolist()
 

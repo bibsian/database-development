@@ -569,7 +569,11 @@ def Facade():
                     rawpush[
                         'unitobs'].fillna(-99999, inplace=True)
                     print(rawpush['trt_label'])
+                    rawpush.drop('level_0', axis=1, inplace=True)
+                    rawpush.drop('index', axis=1, inplace=True)
                     print(rawpush)
+                    orm.convert_types(rawpush,orm.rawtypes)
+                    print(rawpush.dtypes)
                     flsh.flush(
                         rawpush,
                         'rawtable',

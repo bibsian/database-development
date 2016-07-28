@@ -541,7 +541,9 @@ class Facade:
             try:
                 rawpush[
                     'unitobs'].fillna(-99999, inplace=True)
-
+                rawpush.drop('level_0', axis=1, inplace=True)
+                rawpush.drop('index', axis=1, inplace=True)
+                orm.convert_types(rawpush,orm.rawtypes)
                 flsh.flush(
                     rawpush,
                     'rawtable',
