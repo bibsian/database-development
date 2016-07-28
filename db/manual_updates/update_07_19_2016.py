@@ -87,7 +87,7 @@ rawdf_2  = pd.read_csv(
 
 # Creating database connection and orms
 engine = create_engine(
-    'postgresql+psycopg2://postgres:demography@localhost/popler_',
+    'postgresql+psycopg2://user:pswd@host/popler_',
     echo=False
 )
 metadata = MetaData(bind=engine)
