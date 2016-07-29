@@ -155,6 +155,7 @@ def FileHandler(FileMemento):
                             error_bad_lines=False,
                             engine='c'
                             )
+                    dfstate.fillna('NA',inplace=True)
                     print('read with options')
                     for i, item in enumerate(dfstate.columns):
                         if isinstance(
@@ -192,7 +193,6 @@ def FileHandler(FileMemento):
                                         dfstate[item].replace(
                                             {text_val: 'NA'},
                                             inplace=True)
-
                             except:
                                 pass
                         else:

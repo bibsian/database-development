@@ -140,6 +140,7 @@ class FileHandler(object):
                         engine='c'
                         )
                 print('read with options')
+
                 for i, item in enumerate(dfstate.columns):
                     if isinstance(
                             dfstate.dtypes.values.tolist()[i],
@@ -176,12 +177,11 @@ class FileHandler(object):
                                     dfstate[item].replace(
                                         {text_val: 'NA'},
                                         inplace=True)
-
                         except:
                             pass
                     else:
                             pass
-
+                dfstate.fillna('NA',inplace=True)
                 memento = FileMemento(dfstate= dfstate,
                             state= self.state)
                 return memento
