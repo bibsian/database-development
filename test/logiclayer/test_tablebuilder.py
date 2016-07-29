@@ -798,17 +798,23 @@ def test_taxatable_build(
     showtaxa = taxatable._availdf
     assert isinstance(showtaxa,DataFrame)    
 
-    testphylum = showtaxa['phylum'].values.tolist()
-    testorder = showtaxa['ordr'].values.tolist()
-    testspecies = showtaxa['species'].values.tolist()
+    testphylum = list(set(showtaxa['phylum'].values.tolist()))
+    testphylum.sort()
+    testorder = list(set(showtaxa['ordr'].values.tolist()))
+    testorder.sort()
+    testspecies = list(set(showtaxa['species'].values.tolist()))
+    testspecies.sort()
+    
+    truephylum = list(set(taxadfexpected['phylum'].values.tolist()))
+    truephylum.sort()
+    trueorder = list(set(taxadfexpected['order'].values.tolist()))
+    trueorder.sort()
+    truespecies = list(set(taxadfexpected['species'].values.tolist()))
+    truespecies.sort()
 
-    truephylum = taxadfexpected['phylum'].values.tolist()
-    trueorder = taxadfexpected['order'].values.tolist()
-    truespecies = taxadfexpected['species'].values.tolist()
-
-#    assert (testphylum == truephylum) is True
-#    assert (testorder == trueorder) is True
-#    assert (testspecies == truespecies) is True
+    assert (testphylum == truephylum) is True
+    assert (testorder == trueorder) is True    
+    assert (testspecies == truespecies) is True
 
 @pytest.fixture
 def taxa_user_input_create():
@@ -877,17 +883,161 @@ def test_taxatable_build_create(
     assert isinstance(showtaxa,DataFrame)    
     print(showtaxa)
 
-    testphylum = showtaxa['phylum'].values.tolist()
-    testorder = showtaxa['ordr'].values.tolist()
-    testspecies = showtaxa['species'].values.tolist()
+    testphylum = list(set(showtaxa['phylum'].values.tolist()))
+    testphylum.sort()
+    testorder = list(set(showtaxa['ordr'].values.tolist()))
+    testorder.sort()
+    testspecies = list(set(showtaxa['species'].values.tolist()))
+    testspecies.sort()
+    
+    truephylum = list(set(taxadfexpected['phylum'].values.tolist()))
+    truephylum.sort()
+    trueorder = list(set(taxadfexpected['order'].values.tolist()))
+    trueorder.sort()
+    truespecies = list(set(taxadfexpected['species'].values.tolist()))
+    truespecies.sort()
 
-    truephylum = taxadfexpected['phylum'].values.tolist()
-    trueorder = taxadfexpected['order'].values.tolist()
-    truespecies = taxadfexpected['species'].values.tolist()
+    assert (testphylum == truephylum) is True
+    assert (testorder == trueorder) is True    
+    assert (testspecies == truespecies) is True
 
-#    assert (testphylum == truephylum) is True
-#    assert (testorder == trueorder) is True
-#    assert (testspecies == truespecies) is True
+@pytest.fixture
+def taxa_user_input_raw():
+    taxalned = OrderedDict((
+        ('sppcode', 'SP_CODE'),
+        ('kingdom', 'TAXON_KINGDOM'),
+        ('phylum', 'TAXON_PHYLUM'),
+        ('clss', 'TAXON_CLASS'),
+        ('ordr', 'TAXON_ORDER'),
+        ('family', 'TAXON_FAMILY'),
+        ('genus', 'TAXON_GENUS'),
+        ('species', 'TAXON_SPECIES') 
+    ))
+
+    taxackbox = OrderedDict((
+        ('sppcode', True),
+        ('kingdom', True),
+        ('phylum', True),
+        ('clss', True),
+        ('ordr', True),
+        ('family', True),
+        ('genus', True),
+        ('species', True) 
+    ))
+
+    taxacreate = {
+        'taxacreate': False
+    }
+    
+    available = [
+        x for x,y in zip(
+            list(taxalned.keys()), list(
+                taxackbox.values()))
+        if y is True
+    ]
+    
+    taxaini = ini.InputHandler(
+        name='taxainfo',
+        tablename='taxatable',
+        lnedentry= hlp.extract(taxalned, available),
+        checks=taxacreate)
+    return taxaini
+
+
+@pytest.fixture
+def metahandle_raw():
+    lentry = {
+        'globalid': 4,
+        'metaurl': ('http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.15'),
+        'lter': 'SBC'}
+    ckentry = {}
+    metainput = ini.InputHandler(
+        name='metacheck', tablename=None, lnedentry=lentry,
+        checks=ckentry)
+    return metainput
+
+@pytest.fixture
+def filehandle_raw():
+    ckentry = {}
+    rbtn = {'.csv': True, '.txt': False,
+            '.xlsx': False}
+    lned = {'sheet': '', 'delim': '', 'tskip': '', 'bskip': ''}
+    fileinput = ini.InputHandler(
+        name='fileoptions',tablename=None, lnedentry=lned,
+        rbtns=rbtn, checks=ckentry, session=True,
+        filename=(
+            '/Users/bibsian/Desktop/git/database-development/' +
+            'poplerGUI/Metadata_and_og_data/' +
+            'cover_all_years_20140902.csv' ))
+    return fileinput
+
+@pytest.fixture
+def sitehandle_raw():
+    lned = {'siteid': 'SITE'}
+    sitehandle = ini.InputHandler(
+        name='siteinfo', lnedentry=lned, tablename='sitetable')
+    return sitehandle
+
+def test_taxatable_build_raw_data(
+        TaxaTableBuilder, TableDirector, taxa_user_input_raw,
+        filehandle_raw, metahandle_raw, sitehandle_raw):
+    facade = face.Facade()
+    facade.input_register(metahandle_raw)
+    facade.input_register(filehandle_raw)
+    dfraw = facade.load_data()
+    
+    sitelevels = dfraw['SITE'].drop_duplicates().values.tolist()
+    sitelevels.sort()
+    facade.register_site_levels(sitelevels)
+    facade.input_register(sitehandle_raw)
+    facade.input_register(taxa_user_input_raw)
+    
+    face_input = facade._inputs[taxa_user_input_raw.name]
+    taxabuilder = TaxaTableBuilder()
+    assert (isinstance(taxabuilder, TaxaTableBuilder)) is True
+
+    director = TableDirector()
+    assert (isinstance(director, TableDirector)) is True
+    director.set_user_input(face_input)
+    director.set_builder(taxabuilder)
+    director.set_data(dfraw)
+    director.set_globalid(2)
+    director.set_siteid('SITE')
+    director.set_sitelevels(sitelevels)
+    
+    taxatable = director.get_database_table()
+    showtaxa = taxatable._availdf
+    assert isinstance(showtaxa,DataFrame)    
+    print(showtaxa)
+
+    testphylum = list(set(showtaxa['phylum'].values.tolist()))
+    testphylum.sort()
+#    print('test phylum:', testphylum)
+    testorder = list(set(showtaxa['ordr'].values.tolist()))
+    testorder.sort()
+    testspecies = list(set(showtaxa['species'].values.tolist()))
+    testspecies.sort()
+    print('test species: ', testspecies)
+
+    truephylum = list(set(dfraw['TAXON_PHYLUM'].values.tolist()))
+    truephylum.sort()
+#    print('true phylum: ', truephylum)
+    trueorder = list(set(dfraw['TAXON_ORDER'].values.tolist()))
+    trueorder.sort()
+    truespecies = list(set(dfraw['TAXON_SPECIES'].values.tolist()))
+    truespecies.sort()
+    print('true species: ', truespecies)
+
+    assert (testphylum == truephylum) is True
+    assert (testorder == trueorder) is True    
+    assert (testspecies == truespecies) is True
+
+    taxamade = facade.make_table('taxainfo')
+    taxamade = taxamade._availdf
+    testmadespecies = list(set(taxamade['species'].values.tolist()))
+    testmadespecies.sort()
+    print(testmadespecies)
+    assert (testmadespecies == truespecies) is True
     
 @pytest.fixture
 def raw_userinput():
