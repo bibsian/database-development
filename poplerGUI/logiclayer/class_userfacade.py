@@ -375,21 +375,19 @@ class Facade:
         # User created database tables
         sitetable = self.push_tables['sitetable']
         maintable = self.push_tables['maintable']
-        print(maintable)
         orm.convert_types(maintable, orm.maintypes)
         taxatable = self.push_tables['taxatable']
-        print('taxatable (facade): ', taxatable)
         timetable = self.push_tables['timetable']
         rawtable = self.push_tables['rawtable']
+        rawtable.replace({'NaN': -99999}, inplace=True)
         covartable = self.push_tables['covariates']
-        print('rawtable (facade): ', rawtable)
 
         session = orm.Session()
         orm.convert_types(maintable, orm.maintypes)
-        if (self.sitepushed is None) and (sitetable is not None):
+        if self.sitepushed is None:
             try:
                 sitetable.replace(
-                    {'NaN': -99999}, inplace=True)
+                        {'NaN': -99999}, inplace=True)
 
                 flsh.flush(
                     sitetable,
@@ -397,22 +395,25 @@ class Facade:
                     self._tablelog['sitetable'],
                     lter, session)
                 self.sitepushed = True
+
             except Exception as e:
                 print(str(e))
                 self._tablelog['sitetable'].debug(str(e))
                 raise ValueError(
                     'Site abbreviations already in database ' +
                     'from an different LTER. Please modify ' +
-                    'abbreviations. ' + str(e))
+                    'abbreviations.')
         else:
             pass
         if self.mainpushed is None:
             try:
+
                 flsh.flush(
                     maintable,
                     'maintable',
                     self._tablelog['maintable'],
                     lter, session)
+
                 self.mainpushed = True
             except Exception as e:
                 print(str(e))
@@ -428,12 +429,8 @@ class Facade:
         rawmain_merge = merge(
             rawdata, mainquery,
             left_on=siteid, right_on='siteid', how='left')
+        rawmain_merge.to_csv('raw_main_merge.csv')
         self._datamerged['raw_main'] = rawmain_merge
-        print('merge main: ', rawmain_merge)
-        print('merge main col: ', rawmain_merge.columns)
-        print('merge main: ', rawmain_merge.index.values.tolist())
-        print('merge main siteid: ', rawmain_merge.siteid.values.tolist())
-        print('merge mainsite og: ', rawmain_merge[siteid].values.tolist())
 
         # Editing taxa columns for raw-taxa merge
         taxa_formated_cols = list(
@@ -442,8 +439,6 @@ class Facade:
         taxa_og_cols = list(
             self._inputs['taxainfo'].lnedentry.values())
         taxa_og_cols.append(siteid)
-        print('taxa col format: ', taxa_formated_cols)
-        print('taxa col og: ', taxa_og_cols)
 
         # Merged raw data with taxatable data (via a main merge)
         rawtaxa_merge = merge(
@@ -451,19 +446,14 @@ class Facade:
             how='inner',
             left_on=taxa_formated_cols, right_on=taxa_og_cols   
         )
+        rawtaxa_merge.drop_duplicates(inplace=True)
+
         print(
             'rawtaxamerge col (facade): ' +
             ' '.join(rawtaxa_merge.columns.values.tolist()))
 
         rawtaxa_merge['m_index'] = rawtaxa_merge['index']
         rawtaxa_merge.sort_values('m_index', inplace=True)
-        print('merge main/taxa: ', rawtaxa_merge)
-        print('merge main/taxa col: ', rawtaxa_merge.columns)
-        print('merge m/t index: ', rawtaxa_merge['index'].values.tolist())
-        print('merge m/t siteid: ', rawtaxa_merge.siteid.values.tolist())
-        print('merge m/t site og: ', rawtaxa_merge[siteid].values.tolist())
-        print(siteid)            
-        print('taxatable: ', taxatable)
 
         # Appended taxatable with lter_proj_site's
         taxa_all_columns = taxatable.columns.values.tolist()
@@ -472,9 +462,7 @@ class Facade:
         print('taxa all col: ', taxa_all_columns)
         taxapush = rawtaxa_merge[
             taxa_all_columns].drop_duplicates().reset_index(
-                drop=True)        
-        print('taxapush: ', taxapush)
-        print('taxapush col: ', taxapush.columns)
+                drop=True)
 
         if self.taxapushed is None:
             try:
@@ -497,6 +485,7 @@ class Facade:
         # Making list of lter_proj_site's to filter our taxatable query
         lter_proj_sites = list(set(taxapush['lter_proj_site']))
         taxaquery = q1.query_database('taxatable', lter_proj_sites)
+
         # Appending taxatable columns for taxamerge with
         # taxaquery (this gets us taxaid's) i.e. full
         # rawdata/database primary keys merge
@@ -510,15 +499,15 @@ class Facade:
             rawtaxa_merge, taxaquery,
             left_on=taxa_og_cols, right_on=taxa_formated_cols,
             how='left')
+
         self._datamerged['raw_main_taxa'] = rawmerge
-        print('rawmerge: ', rawmerge)
         print('rawmerge col: ', rawmerge.columns.values.tolist())
         print('rawmerge index: ', rawmerge['m_index'])
 
         director = TableDirector()
         self._inputs['rawinfo'].foreignmergeddata = True
-        print('input: ', self._inputs['rawinfo'].foreignmergeddata)
 
+        rawmerge.to_csv('Raw_merge_taxa_query.csv')
         director.set_user_input(self._inputs['rawinfo'])
         director.set_builder(self._dbtabledict['rawtable'])
         director.set_data(rawmerge)            
@@ -528,13 +517,11 @@ class Facade:
         rawdatabuild = director.get_database_table()
         rawtable = rawdatabuild._availdf
 
-        print('rawtable (facade build): ', rawtable)
         print('rawtable col (facade build: ', rawtable.columns.values.tolist())
 
         rawpush = concat([
             rawtable, timetable, covartable], axis=1)
-
-        print('rawpush: ', rawpush)
+        self.inspectraw = rawpush
         print('rawpush col: ', rawpush.columns.values.tolist())
 
         if self.rawpushed is None:
