@@ -551,7 +551,6 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>lnedRep1</tabstop>
   <tabstop>lnedRep2</tabstop>
   <tabstop>ckRep2</tabstop>
   <tabstop>lnedRep3</tabstop>
@@ -562,6 +561,8 @@
   <tabstop>ckStructure</tabstop>
   <tabstop>lnedIndividual</tabstop>
   <tabstop>ckIndividual</tabstop>
+  <tabstop>lnedTreatment</tabstop>
+  <tabstop>ckTreatment</tabstop>
   <tabstop>lnedRaw</tabstop>
   <tabstop>btnPreview</tabstop>
   <tabstop>btnSaveClose</tabstop>

@@ -290,7 +290,6 @@ class Ui_Dialog(object):
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
-        Dialog.setTabOrder(self.lnedRep1, self.lnedRep2)
         Dialog.setTabOrder(self.lnedRep2, self.ckRep2)
         Dialog.setTabOrder(self.ckRep2, self.lnedRep3)
         Dialog.setTabOrder(self.lnedRep3, self.ckRep3)
@@ -300,7 +299,9 @@ class Ui_Dialog(object):
         Dialog.setTabOrder(self.lnedStructure, self.ckStructure)
         Dialog.setTabOrder(self.ckStructure, self.lnedIndividual)
         Dialog.setTabOrder(self.lnedIndividual, self.ckIndividual)
-        Dialog.setTabOrder(self.ckIndividual, self.lnedRaw)
+        Dialog.setTabOrder(self.ckIndividual, self.lnedTreatment)
+        Dialog.setTabOrder(self.lnedTreatment, self.ckTreatment)
+        Dialog.setTabOrder(self.ckTreatment, self.lnedRaw)
         Dialog.setTabOrder(self.lnedRaw, self.btnPreview)
         Dialog.setTabOrder(self.btnPreview, self.btnSaveClose)
         Dialog.setTabOrder(self.btnSaveClose, self.btnCancel)
