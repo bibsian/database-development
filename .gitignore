@@ -11,6 +11,11 @@ data/.Rhistory
 */*/*/__pycache__
 */*/*/*/__pychache__
 
+*/scratch*
+*/*/scratch*
+*/*scratch*
+*/*/*scratch*
+
 */#*
 */#*/#*
 
@@ -75,6 +80,9 @@ test/DatabaseConfig/site_table_test.csv
 test/DatabaseConfig/taxa_table_test.csv
 test/DatabaseConfig/time_table_test.csv
 test/DatabaseConfig/update_rec1.py
+
+poplerGUI/Metadata*/cover_na*
+poplerGUI/Logs*/*
 
 test/Dataset_manual_test/raw_data_test_6.csv
 test/logiclayer/Logs_DbTransactions/*
