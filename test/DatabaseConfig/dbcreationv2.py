@@ -26,7 +26,7 @@ ltertablename = 'lter_table'
 # Note, postgres is the super user and can do
 # everything possible (CREATE,INSERT, MANIPULATE, etc.)
 engine = create_engine(
-    'postgresql+psycopg2://postgres:demography@localhost/LTERV2',
+    'postgresql+psycopg2:///',
     echo=True)
 
 # Note that the relationships in the database (i.e. entity-relation
@@ -259,7 +259,8 @@ main_table = Table(
     Column('treatment_type', VARCHAR(200)),
     Column('num_treatments', VARCHAR(200)),
     Column('exp_maintainence', VARCHAR(200)),
-    Column('trt_label', VARCHAR(200)))
+    Column('trt_label', VARCHAR(200)),
+    Column('derived', VARCHAR(50)))
 
 # taxa: Table regarding taxanomic information. Change from
 # last time involves the forgein key and the addition of

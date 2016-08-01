@@ -1,5 +1,4 @@
 #! /usr/bin/env python
-
 import pytest
 from collections import namedtuple, OrderedDict
 import datetime as tm
@@ -817,14 +816,315 @@ def Facade():
                 del session
     return Facade
 
+@pytest.fixture
+def metahandle():
+    lentry = {
+        'globalid': 2,
+        'metaurl': ('http://sbc.lternet.edu/cgi-bin/showDataset' +
+                    '.cgi?docid=knb-lter-sbc.17'),
+        'lter': 'SBC'}
+    ckentry = {}
+    metainput = InputHandler(
+        name='metacheck', tablename=None, lnedentry=lentry,
+        checks=ckentry)
+    return metainput
 
+@pytest.fixture
+def badmetahandle():
+    lentry = {
+        'globalid': 5,
+        'metaurl': ('http://sbc.lternet.edu/cgi-bin/showDataset' +
+                    '.cgi?docid=knb-lter-sbc.17'),
+        'lter': 'SBC'}
+    ckentry = {}
+    metainput = InputHandler(
+        name='metacheck', tablename=None, lnedentry=lentry,
+        checks=ckentry)
+    return metainput
+
+
+@pytest.fixture
+def filehandle():
+    ckentry = {}
+    rbtn = {'.csv': True, '.txt': False,
+            '.xlsx': False}
+    lned = {'sheet': '', 'delim': '', 'tskip': '', 'bskip': ''}
+    fileinput = InputHandler(
+        name='fileoptions',tablename=None, lnedentry=lned,
+        rbtns=rbtn, checks=ckentry, session=True,
+        filename=(
+            rootpath + end +
+            'Datasets_manual_test/DataRawTestFile.csv'))
+
+    return fileinput
+
+
+@pytest.fixture
+def replacehandle():
+    lned = {'from': '-99999', 'to': 'NULL'}
+    replaceinput = InputHandler(
+        name='replace', lnedentry=lned)
+    return replaceinput
+
+@pytest.fixture
+def sitehandle():
+    lned = {'siteid': 'site'}
+    sitehandle = InputHandler(
+        name='siteinfo', lnedentry=lned, tablename='sitetable')
+    return sitehandle
+    
+def test_correct_userinput(metahandle, filehandle, Facade):
+    '''
+    Testing input_register command with a correctly enter
+    metadata informatoin. Then trying to load a file
+    without have given a fileopting input to the facade
+    '''
+    # Creating an instance of the facade class. This will
+    # be instansiated within the User interface.
+    face = Facade()
+    # Registering input with the facade (metadata handler)
+    face.input_register(metahandle)
+    assert ('metacheck' in face._inputs.keys()) is True
+    face.meta_verify()
+    # Attempting to load data when there has been no
+    # user inputs for loading a file
+    with pytest.raises(AttributeError):
+        face.load_data()
+
+
+def test_incorrect_userinput(badmetahandle, Facade):
+    '''
+    Testing the input_register command with incorrect
+    metadata inputs (should raise AttributeError)
+    '''
+    
+    face = Facade()
+    face.input_register(badmetahandle)
+    with pytest.raises(AttributeError):
+        face.meta_verify()
+
+def test_file_loader(filehandle, Facade):
+    '''
+    Testing the file_load command of the facade class.
+
+    NOTE ONLY TESTED FOR CSV FILES ****
+    STILL NEED TO EXTEND BEHAVIOR FOR OTHER FILES***
+
+    '''
+    face = Facade()
+    face.input_register(filehandle)
+    face.load_data()
+    assert isinstance(face._data, DataFrame)
+
+def test_register_sitelevels(Facade):
+    test = ['site1', 'site2']
+    face = Facade()
+    face.register_site_levels(test)
+    assert (
+        isinstance(face._valueregister['sitelevels'], list)) is True
+    
+def test_manipulate_data(filehandle, Facade, replacehandle):
+    face = Facade()
+    face.input_register(filehandle)
+    face.load_data()
+
+    face.input_register(replacehandle)
+    face.replace_entry('replace')
+
+    assert ('-99999' not in face._data.values) is True
+    assert (int(-99999) not in face._data.values) is True
+
+def test_view_unique(sitehandle, Facade, filehandle):
+    face = Facade()
+    face.input_register(filehandle)
+    face.load_data()
+
+    face.input_register(sitehandle)
+    ulist = face.view_unique('siteinfo')
+
+def test_replace_list(sitehandle, Facade, filehandle):
+    sitehandle.name = 'replace_site_levels'
+    face = Facade()
+    face.input_register(filehandle)
+    face.load_data()
+
+    face.input_register(sitehandle)
+    ulist = face.view_unique('replace_site_levels')
+    print(ulist)
+    print(type(ulist))
+    modlist = ulist[sitehandle.lnedentry['siteid']].values.tolist()
+    modlist[0] = 'changed'
+    modlist.pop(0)
+    print(modlist)
+    face.replace_levels('replace_site_levels', ['changed'], modlist)
+    print(face._data)
+    assert (
+        ulist.loc[0, sitehandle.lnedentry['siteid']]
+        not in face._data.values) is True
+
+def test_build_site(sitehandle, Facade, filehandle, metahandle):
+    face = Facade()
+    face.input_register(metahandle)
+    face.meta_verify()
+    face.input_register(filehandle)
+    face.load_data()
+    face.input_register(sitehandle)
+
+    sitedirector = face.make_table('siteinfo')
+    df = sitedirector._availdf
+    assert (isinstance(df, DataFrame)) is True
+    print(df)
+    face.create_log_record('sitetable')
+    face._tablelog['sitetable'].info('is this logging?')
+
+@pytest.fixture
+def main_input():
+    main_input = InputHandler(
+        name='maininfo', tablename='maintable')
+    return main_input
+
+def test_build_main(
+        sitehandle, Facade, filehandle, metahandle, main_input):
+    face = Facade()
+    face.input_register(metahandle)
+    face.meta_verify()
+    face.input_register(filehandle)
+    face.load_data()
+    face.input_register(sitehandle)
+    face.input_register(main_input)
+    sitelevels = face._data['site'].drop_duplicates().values.tolist()
+    sitelevels.sort()
+    face.register_site_levels(sitelevels)
+    
+    maindirector = face.make_table('maininfo')
+    df = maindirector._availdf
+    print(df)
+    assert (isinstance(df, DataFrame)) is True
+    face.create_log_record('maintable')
+    face._tablelog['maintable'].info('is this logging?')
+
+@pytest.fixture
+def taxa_user_input():
+    taxalned = OrderedDict((
+        ('sppcode', ''),
+        ('kingdom', ''),
+        ('phylum', 'TAXON_PHYLUM'),
+        ('class', 'TAXON_CLASS'),
+        ('ordr', 'TAXON_ORDER'),
+        ('family', 'TAXON_FAMILY'),
+        ('genus', 'TAXON_GENUS'),
+        ('species', 'TAXON_SPECIES') 
+    ))
+
+    taxackbox = OrderedDict((
+        ('sppcode', False),
+        ('kingdom', False),
+        ('phylum', True),
+        ('class', True),
+        ('ordr', True),
+        ('family', True),
+        ('genus', True),
+        ('species', True) 
+    ))
+
+    taxacreate = {
+        'taxacreate': False
+    }
+    
+    available = [
+        x for x,y in zip(
+            list(taxalned.keys()), list(
+                taxackbox.values()))
+        if y is True
+    ]
+    
+    taxaini = InputHandler(
+        name='taxainfo',
+        tablename='taxatable',
+        lnedentry= extract(taxalned, available),
+        checks=taxacreate)
+    return taxaini
+    
+def test_build_taxa(
+        sitehandle, Facade, filehandle, metahandle,
+        taxa_user_input):
+    face = Facade()
+    face.input_register(metahandle)
+    face.meta_verify()
+    face.input_register(filehandle)
+    face.load_data()
+    face.input_register(sitehandle)
+    face.input_register(taxa_user_input)
+    sitelevels = face._data['site'].drop_duplicates().values.tolist()
+    sitelevels.sort()
+    face.register_site_levels(sitelevels)
+    
+    taxadirector = face.make_table('taxainfo')
+    df = taxadirector._availdf
+    print(df)
+    assert (isinstance(df, DataFrame)) is True
+    
+@pytest.fixture
+def raw_userinput():
+    obslned = OrderedDict((
+        ('spt_rep2', ''),
+        ('spt_rep3', ''),
+        ('spt_rep4', ''),
+        ('structure', ''),
+        ('individ', ''),
+        ('trt_label', ''),
+        ('unitobs', 'COUNT')
+    ))
+    
+    obsckbox = OrderedDict((
+        ('spt_rep2', True),
+        ('spt_rep3', True),
+        ('spt_rep4', True),
+        ('structure', True),
+        ('individ', True),
+        ('trt_label', True),
+        ('unitobs', False)
+    ))
+    available = [
+        x for x,y in zip(
+            list(obslned.keys()), list(
+                obsckbox.values()))
+        if y is False
+    ]
+
+    rawini = InputHandler(
+        name='rawinfo',
+        tablename='rawtable',
+        lnedentry= extract(obslned, available),
+        checks=obsckbox)
+    return rawini
+
+    
+def test_build_raw(
+        sitehandle, Facade, filehandle, metahandle,
+        raw_userinput):
+    face = Facade()
+    face.input_register(metahandle)
+    face.meta_verify()
+    face.input_register(filehandle)
+    face.load_data()
+    face.input_register(sitehandle)
+    face.input_register(raw_userinput)
+    sitelevels = face._data['site'].drop_duplicates().values.tolist()
+    sitelevels.sort()
+    face.register_site_levels(sitelevels)
+    
+    rawdirector = face.make_table('rawinfo')
+    df = rawdirector._availdf
+    print(df)
+    assert (isinstance(df, DataFrame)) is True
 # TESTING THE PUSH METHODS
 @pytest.fixture
 def metahandle1():
     lentry = {
-        'globalid': 4,
-        'metaurl': ('http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.15'),
-        'lter': 'SBC'}
+        'globalid': 7,
+        'metaurl': ('http://and.test.rice.com'),
+        'lter': 'AND'}
     ckentry = {}
     metainput = InputHandler(
         name='metacheck', tablename=None, lnedentry=lentry,
@@ -841,8 +1141,8 @@ def filehandle1():
         name='fileoptions',tablename=None, lnedentry=lned,
         rbtns=rbtn, checks=ckentry, session=True,
         filename=(
-            '/Users/bibsian/Desktop/git/database-development/poplerGUI/'+
-            'Metadata_and_og_data/cover_na_test.csv'))
+            rootpath + end +
+            'Datasets_manual_test/raw_data_test_1.csv'))
 
     return fileinput
 
@@ -862,8 +1162,8 @@ def mainhandle1():
 @pytest.fixture
 def taxahandle1():
     taxalned = OrderedDict((
-        ('sppcode', 'SP_CODE'),
-        ('kingdom', 'TAXON_KINGDOM'),
+        ('sppcode', ''),
+        ('kingdom', ''),
         ('phylum', 'TAXON_PHYLUM'),
         ('clss', 'TAXON_CLASS'),
         ('ordr', 'TAXON_ORDER'),
@@ -873,8 +1173,8 @@ def taxahandle1():
     ))
 
     taxackbox = OrderedDict((
-        ('sppcode', True),
-        ('kingdom', True),
+        ('sppcode', False),
+        ('kingdom', False),
         ('phylum', True),
         ('clss', True),
         ('ordr', True),
@@ -922,6 +1222,804 @@ def timehandle1():
 @pytest.fixture
 def obshandle1():
     obslned = OrderedDict((
+        ('spt_rep2', ''),
+        ('spt_rep3', ''),
+        ('spt_rep4', ''),
+        ('structure', ''),
+        ('individ', ''),
+        ('trt_label', 'DEPTH'),
+        ('unitobs', 'COUNT')
+    ))
+    
+    obsckbox = OrderedDict((
+        ('sp_rep2_label', True),
+        ('sp_rep3_label', True),
+        ('sp_rep4_label', True),
+        ('structure', True),
+        ('individ', True),
+        ('trt_label', False),
+        ('unitobs', False)
+    ))
+    available = [
+        x for x,y in zip(
+            list(obslned.keys()), list(
+                obsckbox.values()))
+        if y is False
+    ]
+
+    rawini = InputHandler(
+        name='rawinfo',
+        tablename='rawtable',
+        lnedentry= extract(obslned, available),
+        checks=obsckbox)
+
+    return rawini
+
+@pytest.fixture
+def covarhandle1():
+    covarlned = {'columns': None}
+    
+    covarlned['columns'] = string_to_list(
+        'DEPTH'
+    )
+
+    covarini = InputHandler(
+        name='covarinfo', tablename='covartable',
+        lnedentry=covarlned)
+
+    return covarini
+
+@pytest.fixture
+def updatehandle1():
+    update_input = InputHandler(
+        name='updateinfo', tablename='updatetable')
+    return update_input
+
+
+# TESTED ON EMPTY DATABASE !!!!!!!!
+def test_push_data_1(
+        Facade, filehandle1, metahandle1, sitehandle1, mainhandle1,
+        taxahandle1, obshandle1, timehandle1, covarhandle1,
+        updatehandle1):
+
+    facade = Facade()
+
+    facade.input_register(metahandle1)
+    facade.meta_verify()
+
+    facade.input_register(filehandle1)
+    facade.load_data()
+
+    facade.input_register(sitehandle1)
+    sitedirector = facade.make_table('siteinfo')
+    sitetable = sitedirector._availdf
+    facade.create_log_record('sitetable')
+    lter = metahandle1.lnedentry['lter']
+    ltercol = produce_null_df(1,['lterid'],len(sitetable),lter)
+    sitetable = concat([sitetable, ltercol], axis=1)
+    print('sitetable: ', sitetable)
+    facade.push_tables['sitetable'] = sitetable
+
+    siteid = sitehandle1.lnedentry['siteid']
+    sitelevels = facade._data[
+        siteid].drop_duplicates().values.tolist()
+    facade.register_site_levels(sitelevels)
+    facade._valueregister['siteid'] = siteid
+
+    facade.input_register(mainhandle1)
+    maindirector = facade.make_table('maininfo')
+    maintable = maindirector._availdf.copy().reset_index(drop=True)
+
+    orm.convert_types(maintable, orm.maintypes)
+    facade.push_tables['maintable'] = maintable
+    facade.create_log_record('maintable')
+
+    
+    facade.input_register(taxahandle1)
+    taxadirector = facade.make_table('taxainfo')
+    taxatable = taxadirector._availdf
+    facade.push_tables['taxatable'] = taxatable
+    facade.create_log_record('taxatable')
+
+    
+    facade.input_register(timehandle1)
+    timetable = tparse.TimeParse(
+        facade._data, timehandle1.lnedentry).formater()
+    facade.push_tables['timetable'] = timetable
+    facade.create_log_record('timetable')
+
+    
+    facade.input_register(obshandle1)
+    rawdirector = facade.make_table('rawinfo')
+    rawtable = rawdirector._availdf
+    print(rawtable)
+    facade.push_tables['rawtable'] = rawtable
+    facade.create_log_record('rawtable')
+
+    
+    facade.input_register(covarhandle1)
+    covartable = ddf.DictionaryDataframe(
+        facade._data,
+        covarhandle1.lnedentry['columns']).convert_records()
+    facade.push_tables['covariates'] = covartable
+    facade.create_log_record('covartable')
+
+    facade._valueregister['globalid'] = metahandle1.lnedentry['globalid']
+    facade._valueregister['lter'] = metahandle1.lnedentry['lter']
+    facade._valueregister['siteid'] = siteid
+
+
+    facade.input_register(updatehandle1)    
+    facade.merge_push_data()
+    facade.update_main()
+
+
+# TESTING THE PUSH METHODS
+@pytest.fixture
+def metahandle2():
+    lentry = {
+        'globalid': 8,
+        'metaurl': ('http://sbc.test.rice.com'),
+        'lter': 'SBC'}
+    ckentry = {}
+    metainput = InputHandler(
+        name='metacheck', tablename=None, lnedentry=lentry,
+        checks=ckentry)
+    return metainput
+
+@pytest.fixture
+def filehandle2():
+    ckentry = {}
+    rbtn = {'.csv': True, '.txt': False,
+            '.xlsx': False}
+    lned = {'sheet': '', 'delim': '', 'tskip': '', 'bskip': ''}
+    fileinput = InputHandler(
+        name='fileoptions',tablename=None, lnedentry=lned,
+        rbtns=rbtn, checks=ckentry, session=True,
+        filename=(
+            rootpath + end +
+            'Datasets_manual_test/raw_data_test_2.csv'))
+
+    return fileinput
+
+@pytest.fixture
+def sitehandle2():
+    lned = {'siteid': 'SITE'}
+    sitehandle = InputHandler(
+        name='siteinfo', lnedentry=lned, tablename='sitetable')
+    return sitehandle
+
+@pytest.fixture
+def mainhandle2():
+    main_input = InputHandler(
+        name='maininfo', tablename='maintable')
+    return main_input
+
+@pytest.fixture
+def taxahandle2():
+    taxalned = OrderedDict((
+        ('sppcode', ''),
+        ('kingdom', ''),
+        ('phylum', 'TAXON_PHYLUM'),
+        ('clss', 'TAXON_CLASS'),
+        ('ordr', 'TAXON_ORDER'),
+        ('family', 'TAXON_FAMILY'),
+        ('genus', 'TAXON_GENUS'),
+        ('species', 'TAXON_SPECIES') 
+    ))
+
+    taxackbox = OrderedDict((
+        ('sppcode', False),
+        ('kingdom', False),
+        ('phylum', True),
+        ('clss', True),
+        ('ordr', True),
+        ('family', True),
+        ('genus', True),
+        ('species', True) 
+    ))
+
+    taxacreate = {
+        'taxacreate': False
+    }
+    
+    available = [
+        x for x,y in zip(
+            list(taxalned.keys()), list(
+                taxackbox.values()))
+        if y is True
+    ]
+    
+    taxaini = InputHandler(
+        name='taxainfo',
+        tablename='taxatable',
+        lnedentry= extract(taxalned, available),
+        checks=taxacreate)
+    return taxaini
+
+@pytest.fixture
+def timehandle2():
+    d = {
+        'dayname': 'DATE',
+        'dayform': 'dd-mm-YYYY (Any Order)',
+        'monthname': 'DATE',
+        'monthform': 'dd-mm-YYYY (Any Order)',
+        'yearname': 'DATE',
+        'yearform': 'dd-mm-YYYY (Any Order)',
+        'jd': False,
+        'mspell': False
+    }
+    timeini = InputHandler(
+        name='timeinfo', tablename='timetable',
+        lnedentry= d)
+    return timeini
+
+
+@pytest.fixture
+def obshandle2():
+    obslned = OrderedDict((
+        ('spt_rep2', 'PLOT'),
+        ('spt_rep3', ''),
+        ('spt_rep4', ''),
+        ('structure', ''),
+        ('individ', ''),
+        ('trt_label', ''),
+        ('unitobs', 'COUNT')
+    ))
+    
+    obsckbox = OrderedDict((
+        ('sp_rep2_label', False),
+        ('sp_rep3_label', True),
+        ('sp_rep4_label', True),
+        ('structure', True),
+        ('individ', True),
+        ('trt_label', True),
+        ('unitobs', False)
+    ))
+    available = [
+        x for x,y in zip(
+            list(obslned.keys()), list(
+                obsckbox.values()))
+        if y is False
+    ]
+
+    rawini = InputHandler(
+        name='rawinfo',
+        tablename='rawtable',
+        lnedentry= extract(obslned, available),
+        checks=obsckbox)
+
+    return rawini
+
+@pytest.fixture
+def covarhandle2():
+    covarlned = {'columns': None}
+    
+    covarlned['columns'] = string_to_list(
+        'DEPTH'
+    )
+
+    covarini = InputHandler(
+        name='covarinfo', tablename='covartable',
+        lnedentry=covarlned)
+
+    return covarini
+
+@pytest.fixture
+def updatehandle2():
+    update_input = InputHandler(
+        name='updateinfo', tablename='updatetable')
+    return update_input
+
+
+# TESTED ON EMPTY DATABASE !!!!!!!!
+def test_push_data_2(
+        Facade, filehandle2, metahandle2, sitehandle2, mainhandle2,
+        taxahandle2, obshandle2, timehandle2, covarhandle2,
+        updatehandle2):
+
+    facade = Facade()
+
+    facade.input_register(metahandle2)
+    facade.meta_verify()
+
+    facade.input_register(filehandle2)
+    facade.load_data()
+
+    facade.input_register(sitehandle2)
+    sitedirector = facade.make_table('siteinfo')
+    sitetable = sitedirector._availdf
+    facade.create_log_record('sitetable')
+    lter = metahandle2.lnedentry['lter']
+    ltercol = produce_null_df(1,['lterid'],len(sitetable),lter)
+    sitetable = concat([sitetable, ltercol], axis=1)
+    print('sitetable: ', sitetable)
+    facade.push_tables['sitetable'] = sitetable
+
+    siteid = sitehandle2.lnedentry['siteid']
+    sitelevels = facade._data[
+        siteid].drop_duplicates().values.tolist()
+    facade.register_site_levels(sitelevels)
+    facade._valueregister['siteid'] = siteid
+
+    facade.input_register(mainhandle2)
+    maindirector = facade.make_table('maininfo')
+    maintable = maindirector._availdf.copy().reset_index(drop=True)
+    orm.convert_types(maintable, orm.maintypes)
+    facade.push_tables['maintable'] = maintable
+    facade.create_log_record('maintable')
+
+    
+    facade.input_register(taxahandle2)
+    taxadirector = facade.make_table('taxainfo')
+    taxatable = taxadirector._availdf
+    facade.push_tables['taxatable'] = taxatable
+    facade.create_log_record('taxatable')
+    
+    facade.input_register(timehandle2)
+    timetable = tparse.TimeParse(
+        facade._data, timehandle2.lnedentry).formater()
+    facade.push_tables['timetable'] = timetable
+    facade.create_log_record('timetable')
+
+    
+    facade.input_register(obshandle2)
+    rawdirector = facade.make_table('rawinfo')
+    rawtable = rawdirector._availdf
+    print(rawtable)
+
+    facade.push_tables['rawtable'] = rawtable
+    facade.create_log_record('rawtable')
+
+    
+    facade.input_register(covarhandle2)
+    covartable = ddf.DictionaryDataframe(
+        facade._data,
+        covarhandle2.lnedentry['columns']).convert_records()
+    facade.push_tables['covariates'] = covartable
+    facade.create_log_record('covartable')
+
+    facade._valueregister['globalid'] = metahandle2.lnedentry['globalid']
+    facade._valueregister['lter'] = metahandle2.lnedentry['lter']
+    facade._valueregister['siteid'] = siteid
+
+
+    facade.input_register(updatehandle2)    
+    facade.merge_push_data()
+    facade.update_main()
+
+    
+@pytest.fixture
+def df2():
+    return read_csv(
+        rootpath + end +
+        'Datasets_manual_test/raw_data_test_2.csv')
+
+def test_query2(df2, metahandle2, sitehandle2, taxahandle2, obshandle2):
+    metadata_number = metahandle2.lnedentry['globalid']
+    session = orm.Session()
+    rawq2 = session.query(
+        orm.Rawtable, orm.Taxatable).filter(
+            orm.Rawtable.taxaid==orm.Taxatable.taxaid).join(
+                orm.Maintable).filter(
+                    orm.Maintable.metarecordid==metadata_number)
+    session.close()
+    rawdf2 = read_sql(rawq2.statement, rawq2.session.bind)
+    print(rawdf2)
+    print(df2)
+    true_sites =df2[sitehandle2.lnedentry['siteid']].values.tolist()
+    test_sites = rawdf2['spt_rep1'].values.tolist()
+    assert (true_sites == test_sites) is True
+
+    taxa_col_key = list(taxahandle2.lnedentry.items())
+    true_taxa_col = [x[1] for x in taxa_col_key]
+    test_taxa_col = [x[0] for x in taxa_col_key]
+
+    true_taxa = df2[true_taxa_col].reset_index(drop=True)
+    test_taxa = rawdf2[test_taxa_col].reset_index(drop=True)
+    true_taxa.columns = test_taxa_col    
+    assert_taxa = (true_taxa == test_taxa)
+    assert all(assert_taxa.apply(all).values.tolist()) is True
+
+    raw_col_key = list(obshandle2.lnedentry.items())
+    true_raw_col = [x[1] for x in raw_col_key]
+    test_raw_col = [x[0] for x in raw_col_key]
+    print('test col: ', test_raw_col)
+    
+    true_raw = df2[true_raw_col].reset_index(drop=True)
+    test_raw = rawdf2[test_raw_col].reset_index(drop=True)
+    true_raw.columns = test_raw_col
+
+    factor_list = ['spt_rep2', 'spt_rep3', 'spt_rep4']
+    factor_in_df = [x for x in test_raw_col if x in factor_list]
+    print(factor_in_df)
+    for i,item in enumerate(factor_in_df):
+        test_raw[test_raw_col[i]] = test_raw[
+            test_raw_col[i]].astype(str)
+        true_raw[item] = true_raw[item].astype(str)
+    
+    print(test_raw.dtypes)
+    print(true_raw.dtypes)
+    
+    assert_raw = (true_raw == test_raw)
+    print(assert_raw)
+    assert all(assert_raw.apply(all).values.tolist()) is True
+
+# TESTING THE PUSH METHODS
+@pytest.fixture
+def metahandle3():
+    lentry = {
+        'globalid': 9,
+        'metaurl': ('http://sbc.2.test.rice.com'),
+        'lter': 'SBC'}
+    ckentry = {}
+    metainput = InputHandler(
+        name='metacheck', tablename=None, lnedentry=lentry,
+        checks=ckentry)
+    return metainput
+
+@pytest.fixture
+def filehandle3():
+    ckentry = {}
+    rbtn = {'.csv': True, '.txt': False,
+            '.xlsx': False}
+    lned = {'sheet': '', 'delim': '', 'tskip': '', 'bskip': ''}
+    fileinput = InputHandler(
+        name='fileoptions',tablename=None, lnedentry=lned,
+        rbtns=rbtn, checks=ckentry, session=True,
+        filename=(
+            rootpath + end +
+            'Datasets_manual_test/raw_data_test_3.csv'))
+
+    return fileinput
+
+@pytest.fixture
+def sitehandle3():
+    lned = {'siteid': 'site'}
+    sitehandle = InputHandler(
+        name='siteinfo', lnedentry=lned, tablename='sitetable')
+    return sitehandle
+
+@pytest.fixture
+def mainhandle3():
+    main_input = InputHandler(
+        name='maininfo', tablename='maintable')
+    return main_input
+
+@pytest.fixture
+def taxahandle3():
+    taxalned = OrderedDict((
+        ('sppcode', ''),
+        ('kingdom', ''),
+        ('phylum', ''),
+        ('clss', ''),
+        ('ordr', ''),
+        ('family', ''),
+        ('genus', 'genus_test3'),
+        ('species', 'species_test3') 
+    ))
+
+    taxackbox = OrderedDict((
+        ('sppcode', False),
+        ('kingdom', False),
+        ('phylum', False),
+        ('clss', False),
+        ('ordr', False),
+        ('family', False),
+        ('genus', True),
+        ('species', True) 
+    ))
+
+    taxacreate = {
+        'taxacreate': True
+    }
+    
+    available = [
+        x for x,y in zip(
+            list(taxalned.keys()), list(
+                taxackbox.values()))
+        if y is True
+    ]
+    
+    taxaini = InputHandler(
+        name='taxainfo',
+        tablename='taxatable',
+        lnedentry= extract(taxalned, available),
+        checks=taxacreate)
+    return taxaini
+
+@pytest.fixture
+def timehandle3():
+    d = {
+        'dayname': '',
+        'dayform': 'NULL',
+        'monthname': 'month',
+        'monthform': 'mm',
+        'yearname': 'year',
+        'yearform': 'YYYY',
+        'jd': False,
+        'mspell': False
+    }
+    timeini = InputHandler(
+        name='timeinfo', tablename='timetable',
+        lnedentry= d)
+
+
+    return timeini
+
+
+@pytest.fixture
+def obshandle3():
+    obslned = OrderedDict((
+        ('spt_rep2', 'plot'),
+        ('spt_rep3', 'quadrat'),
+        ('spt_rep4', ''),
+        ('structure', ''),
+        ('individ', ''),
+        ('trt_label', ''),
+        ('unitobs', 'biomass')
+    ))
+    
+    obsckbox = OrderedDict((
+        ('sp_rep2_label', False),
+        ('sp_rep3_label', False),
+        ('sp_rep4_label', True),
+        ('structure', True),
+        ('individ', True),
+        ('trt_label', True),
+        ('unitobs', False)
+    ))
+    available = [
+        x for x,y in zip(
+            list(obslned.keys()), list(
+                obsckbox.values()))
+        if y is False
+    ]
+
+    rawini = InputHandler(
+        name='rawinfo',
+        tablename='rawtable',
+        lnedentry= extract(obslned, available),
+        checks=obsckbox)
+
+    return rawini
+
+@pytest.fixture
+def covarhandle3():
+    covarlned = {'columns': None}
+    
+    covarlned['columns'] = string_to_list(
+        'temp'
+    )
+
+    covarini = InputHandler(
+        name='covarinfo', tablename='covartable',
+        lnedentry=covarlned)
+
+    return covarini
+
+@pytest.fixture
+def updatehandle3():
+    update_input = InputHandler(
+        name='updateinfo', tablename='updatetable')
+    return update_input
+
+
+def test_push_data_3(
+        Facade, filehandle3, metahandle3, sitehandle3, mainhandle3,
+        taxahandle3, obshandle3, timehandle3, covarhandle3,
+        updatehandle3):
+
+    facade = Facade()
+
+    facade.input_register(metahandle3)
+    facade.meta_verify()
+
+    facade.input_register(filehandle3)
+    facade.load_data()
+
+    facade.input_register(sitehandle3)
+    sitedirector = facade.make_table('siteinfo')
+    sitetable = sitedirector._availdf
+    facade.create_log_record('sitetable')
+    lter = metahandle3.lnedentry['lter']
+    ltercol = produce_null_df(1,['lterid'],len(sitetable),lter)
+    sitetable = concat([sitetable, ltercol], axis=1)
+    print('sitetable: ', sitetable)
+    facade.push_tables['sitetable'] = sitetable
+
+    siteid = sitehandle3.lnedentry['siteid']
+    sitelevels = facade._data[
+        siteid].drop_duplicates().values.tolist()
+    facade.register_site_levels(sitelevels)
+    facade._valueregister['siteid'] = siteid
+
+    facade.input_register(mainhandle3)
+    maindirector = facade.make_table('maininfo')
+    maintable = maindirector._availdf.copy().reset_index(drop=True)
+    orm.convert_types(maintable, orm.maintypes)
+    facade.push_tables['maintable'] = maintable
+    facade.create_log_record('maintable')
+
+    
+    facade.input_register(taxahandle3)
+    taxadirector = facade.make_table('taxainfo')
+    taxatable = taxadirector._availdf
+    facade.push_tables['taxatable'] = taxatable
+    facade.create_log_record('taxatable')
+    
+    facade.input_register(timehandle3)
+    timetable = tparse.TimeParse(
+        facade._data, timehandle3.lnedentry).formater()
+    facade.push_tables['timetable'] = timetable
+    facade.create_log_record('timetable')
+    
+    facade.input_register(obshandle3)
+    rawdirector = facade.make_table('rawinfo')
+    rawtable = rawdirector._availdf
+    facade.push_tables['rawtable'] = rawtable
+    facade.create_log_record('rawtable')
+    
+    facade.input_register(covarhandle3)
+    covartable = ddf.DictionaryDataframe(
+        facade._data,
+        covarhandle3.lnedentry['columns']).convert_records()
+    facade.push_tables['covariates'] = covartable
+    facade.create_log_record('covartable')
+
+    facade._valueregister['globalid'] = metahandle3.lnedentry['globalid']
+    facade._valueregister['lter'] = metahandle3.lnedentry['lter']
+    facade._valueregister['siteid'] = siteid
+
+    facade.input_register(updatehandle3)    
+    facade.merge_push_data()
+    facade.update_main()
+
+@pytest.fixture
+def df3():
+    return read_csv(
+        rootpath + end +
+        'Datasets_manual_test/raw_data_test_3.csv')
+
+def test_query3(df3, metahandle3, sitehandle3, taxahandle3, obshandle3):
+    metadata_number = metahandle3.lnedentry['globalid']
+    session = orm.Session()
+    rawq3 = session.query(
+        orm.Rawtable, orm.Taxatable).filter(
+            orm.Rawtable.taxaid==orm.Taxatable.taxaid).join(
+                orm.Maintable).filter(
+                    orm.Maintable.metarecordid==metadata_number)
+    session.close()
+    rawdf3 = read_sql(rawq3.statement, rawq3.session.bind)
+    print(rawdf3)
+    print(df3)
+    true_sites =df3[sitehandle3.lnedentry['siteid']].values.tolist()
+    test_sites = rawdf3['spt_rep1'].values.tolist()
+    assert (true_sites == test_sites) is True
+
+    # Taxa colums were created in program
+    # and not in original dataset
+    raw_col_key = list(obshandle3.lnedentry.items())
+    true_raw_col = [x[1] for x in raw_col_key]
+    test_raw_col = [x[0] for x in raw_col_key]
+    print('test col: ', test_raw_col)
+    
+    true_raw = df3[true_raw_col].reset_index(drop=True)
+    test_raw = rawdf3[test_raw_col].reset_index(drop=True)
+    true_raw.columns = test_raw_col
+
+    factor_list = ['spt_rep2', 'spt_rep3', 'spt_rep4']
+    factor_in_df = [x for x in test_raw_col if x in factor_list]
+    print(factor_in_df)
+    for i,item in enumerate(factor_in_df):
+        test_raw[test_raw_col[i]] = test_raw[
+            test_raw_col[i]].astype(str)
+        true_raw[item] = true_raw[item].astype(str)
+
+# TESTING THE PUSH METHODS
+@pytest.fixture
+def metahandle_raw():
+    lentry = {
+        'globalid': 4,
+        'metaurl': ('http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.15'),
+        'lter': 'SBC'}
+    ckentry = {}
+    metainput = InputHandler(
+        name='metacheck', tablename=None, lnedentry=lentry,
+        checks=ckentry)
+    return metainput
+
+@pytest.fixture
+def filehandle_raw():
+    ckentry = {}
+    rbtn = {'.csv': True, '.txt': False,
+            '.xlsx': False}
+    lned = {'sheet': '', 'delim': '', 'tskip': '', 'bskip': ''}
+    fileinput = InputHandler(
+        name='fileoptions',tablename=None, lnedentry=lned,
+        rbtns=rbtn, checks=ckentry, session=True,
+        filename=(
+            '/Users/bibsian/Desktop/git/database-development/poplerGUI/'+
+            'Metadata_and_og_data/cover_na_test.csv'))
+
+    return fileinput
+
+@pytest.fixture
+def sitehandle_raw():
+    lned = {'siteid': 'SITE'}
+    sitehandle = InputHandler(
+        name='siteinfo', lnedentry=lned, tablename='sitetable')
+    return sitehandle
+
+@pytest.fixture
+def mainhandle_raw():
+    main_input = InputHandler(
+        name='maininfo', tablename='maintable')
+    return main_input
+
+@pytest.fixture
+def taxahandle_raw():
+    taxalned = OrderedDict((
+        ('sppcode', 'SP_CODE'),
+        ('kingdom', 'TAXON_KINGDOM'),
+        ('phylum', 'TAXON_PHYLUM'),
+        ('clss', 'TAXON_CLASS'),
+        ('ordr', 'TAXON_ORDER'),
+        ('family', 'TAXON_FAMILY'),
+        ('genus', 'TAXON_GENUS'),
+        ('species', 'TAXON_SPECIES') 
+    ))
+
+    taxackbox = OrderedDict((
+        ('sppcode', True),
+        ('kingdom', True),
+        ('phylum', True),
+        ('clss', True),
+        ('ordr', True),
+        ('family', True),
+        ('genus', True),
+        ('species', True) 
+    ))
+
+    taxacreate = {
+        'taxacreate': False
+    }
+    
+    available = [
+        x for x,y in zip(
+            list(taxalned.keys()), list(
+                taxackbox.values()))
+        if y is True
+    ]
+    
+    taxaini = InputHandler(
+        name='taxainfo',
+        tablename='taxatable',
+        lnedentry= extract(taxalned, available),
+        checks=taxacreate)
+    return taxaini
+
+@pytest.fixture
+def timehandle_raw():
+    d = {
+        'dayname': 'DATE',
+        'dayform': 'dd-mm-YYYY (Any Order)',
+        'monthname': 'DATE',
+        'monthform': 'dd-mm-YYYY (Any Order)',
+        'yearname': 'DATE',
+        'yearform': 'dd-mm-YYYY (Any Order)',
+        'jd': False,
+        'mspell': False
+    }
+    timeini = InputHandler(
+        name='timeinfo', tablename='timetable',
+        lnedentry= d)
+    return timeini
+
+
+@pytest.fixture
+def obshandle_raw():
+    obslned = OrderedDict((
         ('spt_rep2', 'TRANSECT'),
         ('spt_rep3', ''),
         ('spt_rep4', ''),
@@ -956,7 +2054,7 @@ def obshandle1():
     return rawini
 
 @pytest.fixture
-def covarhandle1():
+def covarhandle_raw():
     covarlned = {'columns': None}
     
     covarlned['columns'] = string_to_list(
@@ -971,46 +2069,46 @@ def covarhandle1():
     return covarini
 
 @pytest.fixture
-def updatehandle1():
+def updatehandle_raw():
     update_input = InputHandler(
         name='updateinfo', tablename='updatetable')
     return update_input
 
 
 # TESTED ON EMPTY DATABASE !!!!!!!!
-def test_push_data_1(
-        Facade, filehandle1, metahandle1, sitehandle1, mainhandle1,
-        taxahandle1, obshandle1, timehandle1, covarhandle1,
-        updatehandle1):
+def test_push_data_raw(
+        Facade, filehandle_raw, metahandle_raw, sitehandle_raw, mainhandle_raw,
+        taxahandle_raw, obshandle_raw, timehandle_raw, covarhandle_raw,
+        updatehandle_raw):
 
     facade = Facade()
 
-    facade.input_register(metahandle1)
+    facade.input_register(metahandle_raw)
     facade.meta_verify()
 
-    facade.input_register(filehandle1)
+    facade.input_register(filehandle_raw)
     facade.load_data()
 
-    facade.input_register(sitehandle1)
+    facade.input_register(sitehandle_raw)
     sitedirector = facade.make_table('siteinfo')
     sitetable = sitedirector._availdf
 
     print('sitetable (test): ', sitetable)
 
     facade.create_log_record('sitetable')
-    lter = metahandle1.lnedentry['lter']
+    lter = metahandle_raw.lnedentry['lter']
     ltercol = produce_null_df(1,['lterid'],len(sitetable),lter)
     sitetable = concat([sitetable, ltercol], axis=1)
     print('sitetable: ', sitetable)
     facade.push_tables['sitetable'] = sitetable
     
-    siteid = sitehandle1.lnedentry['siteid']
+    siteid = sitehandle_raw.lnedentry['siteid']
     sitelevels = facade._data[
         siteid].drop_duplicates().values.tolist()
     facade.register_site_levels(sitelevels)
     facade._valueregister['siteid'] = siteid
 
-    facade.input_register(mainhandle1)
+    facade.input_register(mainhandle_raw)
     maindirector = facade.make_table('maininfo')
     maintable = maindirector._availdf.copy().reset_index(drop=True)
 
@@ -1019,7 +2117,7 @@ def test_push_data_1(
     facade.create_log_record('maintable')
 
     
-    facade.input_register(taxahandle1)
+    facade.input_register(taxahandle_raw)
     taxadirector = facade.make_table('taxainfo')
 
     
@@ -1028,14 +2126,14 @@ def test_push_data_1(
     facade.create_log_record('taxatable')
 
     
-    facade.input_register(timehandle1)
+    facade.input_register(timehandle_raw)
     timetable = tparse.TimeParse(
-        facade._data, timehandle1.lnedentry).formater()
+        facade._data, timehandle_raw.lnedentry).formater()
     facade.push_tables['timetable'] = timetable
     facade.create_log_record('timetable')
 
     
-    facade.input_register(obshandle1)
+    facade.input_register(obshandle_raw)
     rawdirector = facade.make_table('rawinfo')
     rawtable = rawdirector._availdf
     print(rawtable)
@@ -1043,19 +2141,19 @@ def test_push_data_1(
     facade.create_log_record('rawtable')
 
     
-    facade.input_register(covarhandle1)
+    facade.input_register(covarhandle_raw)
     covartable = ddf.DictionaryDataframe(
         facade._data,
-        covarhandle1.lnedentry['columns']).convert_records()
+        covarhandle_raw.lnedentry['columns']).convert_records()
     facade.push_tables['covariates'] = covartable
     facade.create_log_record('covartable')
 
-    facade._valueregister['globalid'] = metahandle1.lnedentry['globalid']
-    facade._valueregister['lter'] = metahandle1.lnedentry['lter']
+    facade._valueregister['globalid'] = metahandle_raw.lnedentry['globalid']
+    facade._valueregister['lter'] = metahandle_raw.lnedentry['lter']
     facade._valueregister['siteid'] = siteid
 
 
-    facade.input_register(updatehandle1)    
+    facade.input_register(updatehandle_raw)    
     facade.merge_push_data()
     facade.update_main()
     

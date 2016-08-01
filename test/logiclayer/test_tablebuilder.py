@@ -111,7 +111,7 @@ def AbstractTableBuilder():
                 'sp_rep4_uniquelevels',
                 'authors', 'authors_contact', 'metalink', 'knbid',
                 'treatment_type', 'num_treatments',
-                'exp_maintainence', 'trt_label'],
+                'exp_maintainence', 'trt_label', 'derived'],
             'time': False,
             'cov': False,
             'depend': False
@@ -318,7 +318,8 @@ def MainTableBuilder(AbstractTableBuilder):
                     'treatment_type': dataframe['treatment_type'],
                     'num_treatments': 'NA',
                     'exp_maintainence': dataframe['exp_maintainence'],
-                    'trt_label': 'NA'
+                    'trt_label': 'NA',
+                    'derived': 'NA'
 
                 },
                 columns = [
@@ -336,9 +337,9 @@ def MainTableBuilder(AbstractTableBuilder):
                 'sp_rep3_uniquelevels',
                 'sp_rep4_ext', 'sp_rep4_ext_units', 'sp_rep4_label',
                 'sp_rep4_uniquelevels',
-                    'authors', 'authors_contact', 'metalink', 'knbid',
+                'authors', 'authors_contact', 'metalink', 'knbid',
                 'treatment_type', 'num_treatments',
-                'exp_maintainence', 'trt_label'], index=[0])
+                'exp_maintainence', 'trt_label', 'derived'], index=[0])
 
             _concat =  concat(
                 [maindata]*len(sitelevels))
@@ -726,6 +727,7 @@ def test_maintable_build(
     maintab = director.get_database_table()
     showmain = maintab._availdf
     print('maintable: ', showmain)
+    print('maintable col: ', showmain.columns)
     assert (isinstance(showmain, DataFrame)) is True
 
 @pytest.fixture

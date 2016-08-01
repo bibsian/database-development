@@ -31,7 +31,7 @@ def adapt_numpy_int64(numpy_int64):
 register_adapter(numpy.int64, adapt_numpy_int64)
 
 engine = create_engine(
-    'postgresql+psycopg2:///LTERV2',
+    'postgresql+psycopg2:///',
     echo=True)
 conn = engine.connect()
 
@@ -118,6 +118,7 @@ class Maintable(Base):
     num_treatments = Column(VARCHAR)
     exp_maintainence = Column(VARCHAR)
     trt_label = Column(VARCHAR)
+    derived = Column(VARCHAR)
 
     taxa = relationship(
         'Taxatable', cascade="delete, delete-orphan")
