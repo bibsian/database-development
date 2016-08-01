@@ -1,8 +1,0 @@
-2016-07-29 15:48:28 - INFO - covartable "columns" = ['NULL'] to [['AREA', 'VIS', 'OBS_CODE', 'NOTES', 'SURVEY_TIMING', 'GROUP', 'SURVEY', 'Substrate_type', 'Mobility', 'Growth_morph']]
-2016-07-29 15:48:40 - DEBUG - Skipping database transaction
-2016-07-29 15:48:40 - DEBUG - Making database transaction
-2016-07-29 15:48:40 - DEBUG - past database check: maintableTrue
-2016-07-29 15:48:40 - DEBUG - Making database transaction
-2016-07-29 15:48:40 - DEBUG - past database check: taxatableTrue
-2016-07-29 15:48:41 - DEBUG - Making database transaction
-2016-07-29 15:48:43 - DEBUG - past database check: rawtableTrue

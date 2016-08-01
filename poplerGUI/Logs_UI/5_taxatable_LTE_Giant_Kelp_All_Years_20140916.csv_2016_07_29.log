@@ -1,8 +1,0 @@
-2016-07-29 15:28:08 - INFO - taxatable "clss" = ['NULL'] to ['Phaeophyceae']
-2016-07-29 15:28:08 - INFO - taxatable "family" = ['NULL'] to ['Lessoniaceae']
-2016-07-29 15:28:08 - INFO - taxatable "genus" = ['NULL'] to ['Macrocystis']
-2016-07-29 15:28:08 - INFO - taxatable "kingdom" = ['NULL'] to ['Plantae']
-2016-07-29 15:28:08 - INFO - taxatable "ordr" = ['NULL'] to ['Laminariales']
-2016-07-29 15:28:08 - INFO - taxatable "phylum" = ['NULL'] to ['Phaeophyta']
-2016-07-29 15:28:08 - INFO - taxatable "species" = ['NULL'] to ['pyrifera']
-2016-07-29 15:28:08 - INFO - taxatable "sppcode" = ['NULL'] to ['MAPY']

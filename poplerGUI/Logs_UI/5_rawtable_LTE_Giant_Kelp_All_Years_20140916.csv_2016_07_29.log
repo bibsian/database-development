@@ -1,7 +1,0 @@
-2016-07-29 15:29:05 - INFO - rawtable "individ" = ['NULL'] to ['']
-2016-07-29 15:29:05 - INFO - rawtable "spt_rep2" = ['NULL'] to ['TRANSECT']
-2016-07-29 15:29:05 - INFO - rawtable "spt_rep3" = ['NULL'] to ['SIDE']
-2016-07-29 15:29:05 - INFO - rawtable "spt_rep4" = ['NULL'] to ['QUAD']
-2016-07-29 15:29:05 - INFO - rawtable "structure" = ['NULL'] to ['']
-2016-07-29 15:29:05 - INFO - rawtable "trt_label" = ['NULL'] to ['TREATMENT']
-2016-07-29 15:29:05 - INFO - rawtable "unitobs" = ['NULL'] to ['FRONDS']

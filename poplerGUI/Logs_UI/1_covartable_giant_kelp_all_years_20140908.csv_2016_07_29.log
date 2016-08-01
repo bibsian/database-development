@@ -1,9 +1,0 @@
-2016-07-29 14:18:24 - INFO - covartable "columns" = ['NULL'] to [['AREA', 'OBS_CODE', 'NOTES']]
-2016-07-29 14:18:29 - DEBUG - Making database transaction
-2016-07-29 14:18:29 - DEBUG - past database check: sitetableTrue
-2016-07-29 14:18:29 - DEBUG - Making database transaction
-2016-07-29 14:18:29 - DEBUG - past database check: maintableTrue
-2016-07-29 14:18:30 - DEBUG - Making database transaction
-2016-07-29 14:18:30 - DEBUG - past database check: taxatableTrue
-2016-07-29 14:18:31 - DEBUG - Making database transaction
-2016-07-29 14:18:31 - DEBUG - past database check: rawtableTrue
