@@ -429,7 +429,6 @@ class Facade:
         rawmain_merge = merge(
             rawdata, mainquery,
             left_on=siteid, right_on='siteid', how='left')
-        rawmain_merge.to_csv('raw_main_merge.csv')
         self._datamerged['raw_main'] = rawmain_merge
 
         # Editing taxa columns for raw-taxa merge
@@ -507,7 +506,6 @@ class Facade:
         director = TableDirector()
         self._inputs['rawinfo'].foreignmergeddata = True
 
-        rawmerge.to_csv('Raw_merge_taxa_query.csv')
         director.set_user_input(self._inputs['rawinfo'])
         director.set_builder(self._dbtabledict['rawtable'])
         director.set_data(rawmerge)            
