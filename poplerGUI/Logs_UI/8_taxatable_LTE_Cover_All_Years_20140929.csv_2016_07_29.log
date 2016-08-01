@@ -1,0 +1,8 @@
+2016-07-29 16:36:59 - INFO - taxatable "clss" = ['NULL'] to ['TAXON_CLASS']
+2016-07-29 16:36:59 - INFO - taxatable "family" = ['NULL'] to ['TAXON_FAMILY']
+2016-07-29 16:36:59 - INFO - taxatable "genus" = ['NULL'] to ['TAXON_GENUS']
+2016-07-29 16:36:59 - INFO - taxatable "kingdom" = ['NULL'] to ['TAXON_KINGDOM']
+2016-07-29 16:36:59 - INFO - taxatable "ordr" = ['NULL'] to ['TAXON_ORDER']
+2016-07-29 16:36:59 - INFO - taxatable "phylum" = ['NULL'] to ['TAXON_PHYLUM']
+2016-07-29 16:36:59 - INFO - taxatable "species" = ['NULL'] to ['TAXON_SPECIES']
+2016-07-29 16:36:59 - INFO - taxatable "sppcode" = ['NULL'] to ['SP_CODE']

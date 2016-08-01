@@ -1,0 +1,11 @@
+2016-07-29 15:14:53 - INFO - maintable "studystartyr" = ['NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA'] to [2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000]
+2016-07-29 15:14:53 - INFO - maintable "studyendyr" = ['NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA'] to [2014, 2014, 2014, 2014, 2014, 2014, 2014, 2014, 2014, 2014, 2014]
+2016-07-29 15:14:53 - INFO - maintable "sitestartyr" = ['NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA'] to [2001, 2001, 2001, 2000, 2000, 2001, 2001, 2001, 2000, 2004, 2004]
+2016-07-29 15:14:53 - INFO - maintable "siteendyr" = ['NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA'] to [2014, 2014, 2014, 2014, 2014, 2014, 2014, 2014, 2014, 2014, 2014]
+2016-07-29 15:14:53 - INFO - maintable "totalobs" = ['NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA'] to [4147, 4004, 11869, 7293, 17160, 4147, 7150, 4004, 17160, 3146, 3146]
+2016-07-29 15:14:53 - INFO - maintable "uniquetaxaunits" = ['NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA'] to [143, 143, 143, 143, 143, 143, 143, 143, 143, 143, 143]
+2016-07-29 15:14:53 - INFO - maintable "sp_rep1_label" = ['NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA'] to ['SITE', 'SITE', 'SITE', 'SITE', 'SITE', 'SITE', 'SITE', 'SITE', 'SITE', 'SITE', 'SITE']
+2016-07-29 15:14:53 - INFO - maintable "sp_rep1_uniquelevels" = ['NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA'] to [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+2016-07-29 15:14:53 - INFO - maintable "sp_rep2_label" = ['NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA'] to ['TRANSECT', 'TRANSECT', 'TRANSECT', 'TRANSECT', 'TRANSECT', 'TRANSECT', 'TRANSECT', 'TRANSECT', 'TRANSECT', 'TRANSECT', 'TRANSECT']
+2016-07-29 15:14:53 - INFO - maintable "sp_rep2_uniquelevels" = ['NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA'] to [2, 2, 6, 8, 8, 2, 8, 2, 8, 2, 2]
+2016-07-29 15:14:53 - DEBUG - 'unitobs'

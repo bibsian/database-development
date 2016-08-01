@@ -1,0 +1,8 @@
+2016-07-29 14:29:21 - INFO - timetable "dayform" = ['NULL'] to ['dd - mm - YYYY (Any Order)']
+2016-07-29 14:29:21 - INFO - timetable "dayname" = ['NULL'] to ['date']
+2016-07-29 14:29:21 - INFO - timetable "jd" = ['NULL'] to [False]
+2016-07-29 14:29:21 - INFO - timetable "monthform" = ['NULL'] to ['dd - mm - YYYY (Any Order)']
+2016-07-29 14:29:21 - INFO - timetable "monthname" = ['NULL'] to ['date']
+2016-07-29 14:29:21 - INFO - timetable "mspell" = ['NULL'] to [False]
+2016-07-29 14:29:21 - INFO - timetable "yearform" = ['NULL'] to ['dd - mm - YYYY (Any Order)']
+2016-07-29 14:29:21 - INFO - timetable "yearname" = ['NULL'] to ['date']

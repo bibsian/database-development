@@ -1,0 +1,9 @@
+2016-07-29 14:16:42 - INFO - rawtable "individ" = ['NULL'] to ['']
+2016-07-29 14:16:42 - INFO - rawtable "spt_rep2" = ['NULL'] to ['TRANSECT']
+2016-07-29 14:16:42 - INFO - rawtable "spt_rep3" = ['NULL'] to ['SIDE']
+2016-07-29 14:16:42 - INFO - rawtable "spt_rep4" = ['NULL'] to ['QUAD']
+2016-07-29 14:16:42 - INFO - rawtable "structure" = ['NULL'] to ['HLD_DIAM']
+2016-07-29 14:16:42 - INFO - rawtable "trt_label" = ['NULL'] to ['']
+2016-07-29 14:16:42 - INFO - rawtable "unitobs" = ['NULL'] to ['FRONDS']
+2016-07-29 14:18:05 - DEBUG - maintable mod: metarecordid title samplingunits samplingprotocol structured siteid samplefreq studytype community sp_rep1_ext sp_rep1_ext_units sp_rep2_ext sp_rep2_ext_units sp_rep3_ext sp_rep3_ext_units sp_rep4_ext sp_rep4_ext_units authors authors_contact metalink knbid treatment_type exp_maintainence trt_label
+2016-07-29 14:18:05 - INFO - maintable "structured" = ['NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA'] to ['holdfast size (cm)', 'holdfast size (cm)', 'holdfast size (cm)', 'holdfast size (cm)', 'holdfast size (cm)', 'holdfast size (cm)', 'holdfast size (cm)', 'holdfast size (cm)', 'holdfast size (cm)', 'holdfast size (cm)', 'holdfast size (cm)']

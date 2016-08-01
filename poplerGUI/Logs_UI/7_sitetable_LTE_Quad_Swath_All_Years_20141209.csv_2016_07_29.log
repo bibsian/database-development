@@ -1,0 +1,26 @@
+2016-07-29 16:00:25 - DEBUG - sitelevels (submit): AQUE CARP IVEE MOHK NAPL
+2016-07-29 16:00:48 - DEBUG - changed_site_list: AQUE CARP IVEE MOHK NAPL
+2016-07-29 16:00:48 - DEBUG - sitelevels list:  AQUE CARP IVEE MOHK NAPL
+2016-07-29 16:00:50 - DEBUG - changed_site_list: AQUE CARP IVEE MOHK NAPL
+2016-07-29 16:00:50 - DEBUG - sitelevels list:  AQUE CARP IVEE MOHK NAPL
+2016-07-29 16:01:32 - DEBUG - sitelevels (updated)siteid lat lng descript
+2016-07-29 16:01:34 - DEBUG - changed_site_list: 
+2016-07-29 16:01:34 - DEBUG - sitelevels list:  siteid lat lng descript
+2016-07-29 16:01:34 - INFO - sitetable_c "siteid" = ['NULL'] to ['SITE']
+2016-07-29 16:01:34 - INFO - sitetable "descript" = ['nan'] to ['NULL']
+2016-07-29 16:01:34 - INFO - sitetable "siteid" = ['nan'] to ['NULL']
+2016-07-29 16:01:34 - INFO - sitetable "lterid" = ['nan'] to ['SBC']
+2016-07-29 16:01:34 - DEBUG - facade site levelsAQUE CARP IVEE MOHK NAPL
+2016-07-29 16:01:35 - DEBUG - sitelevels (submit): AQUE CARP IVEE MOHK NAPL
+2016-07-29 16:04:05 - DEBUG - sitelevels (submit): AQUE CARP IVEE MOHK NAPL
+2016-07-29 16:04:07 - DEBUG - changed_site_list: AQUE CARP IVEE MOHK NAPL
+2016-07-29 16:04:07 - DEBUG - sitelevels list:  AQUE CARP IVEE MOHK NAPL
+2016-07-29 16:04:12 - DEBUG - sitelevels (updated)siteid lat lng descript
+2016-07-29 16:04:13 - DEBUG - changed_site_list: 
+2016-07-29 16:04:13 - DEBUG - sitelevels list:  siteid lat lng descript
+2016-07-29 16:04:13 - INFO - sitetable_c "siteid" = ['NULL'] to ['SITE']
+2016-07-29 16:04:13 - INFO - sitetable "descript" = ['nan'] to ['NULL']
+2016-07-29 16:04:13 - INFO - sitetable "siteid" = ['nan'] to ['NULL']
+2016-07-29 16:04:13 - INFO - sitetable "lterid" = ['nan'] to ['SBC']
+2016-07-29 16:04:13 - DEBUG - facade site levelsAQUE CARP IVEE MOHK NAPL
+2016-07-29 16:04:13 - DEBUG - sitelevels (submit): AQUE CARP IVEE MOHK NAPL
