@@ -157,8 +157,8 @@ class UiMainWindow(QtGui.QMainWindow, mw.Ui_MainWindow):
             raise ValueError(str(e))
 
     def end_session(self):
+        self.close()
         subprocess.call(
             "python" + " ../poplerGUI_run_main.py", shell=True)
-        self.close()
 
 

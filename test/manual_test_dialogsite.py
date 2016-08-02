@@ -65,7 +65,7 @@ def MainWindow():
             # Data model if updated from query
             self.sitetablemodel = None
             self.sitequerymodel = None
-
+            self.querycheck = None
             # User facade composed from main window
             self.facade = None
             self.lter = None
@@ -73,7 +73,7 @@ def MainWindow():
             # Builder classes
             self.sitedirector = None
             self.siteloc = {'siteid': None}
-
+            self.saved = []
             # Status Message
             self.error = QtGui.QErrorMessage()
             self.message = QtGui.QMessageBox
@@ -92,6 +92,7 @@ def MainWindow():
             self.previous_save = False
 
         def submit_change(self):
+            
             self.lter = self.facade._valueregister['lterid']
 
             # Registering information to facade class
@@ -121,10 +122,14 @@ def MainWindow():
                 'siteid']
             self.message.about(self, 'Status', 'Information recorded')
 
+            if not self.saved:
+                self.sitedirector = self.facade.make_table('siteinfo')
+                self.rawdata = (
+                    self.sitedirector._availdf.sort_values(by='siteid'))
+            else:
+                self.update()
+
             # Make table and Register site levels with facade 
-            self.sitedirector = self.facade.make_table('siteinfo')
-            self.rawdata = (
-                self.sitedirector._availdf.sort_values(by='siteid'))
             self.facade.register_site_levels(
                 self.rawdata['siteid'].drop_duplicates().
                 values.tolist())
@@ -134,16 +139,30 @@ def MainWindow():
             self._log.debug(
                 'sitelevels (submit): ' + ' '.join(self.sitelevels))
 
-            # Setting Table Model View
-            self.sitetablemodel = self.viewEdit(self.rawdata)
-            self.listviewSiteLabels.setModel(self.sitetablemodel)
-            self.btnSiteID.setEnabled(False)
+            if not self.saved:
+                # Setting Table Model View
+                self.sitetablemodel = self.viewEdit(self.rawdata)
+                self.listviewSiteLabels.setModel(self.sitetablemodel)
+            else:
+                session = orm.Session()
+                sitecheck = session.query(
+                    orm.Sitetable.siteid).order_by(
+                        orm.Sitetable.siteid)
+                session.close()
+                sitecheckdf = read_sql(
+                    sitecheck.statement, sitecheck.session.bind)
+                site_in_db = sitecheckdf['siteid'].values.tolist()
 
+                self.sitetablemodel = self.viewEdit(
+                    self.rawdata[~self.siteloc['siteid'].isin(
+                        site_in_db)])
+                self.listviewSiteLabels.setModel(self.sitetablemodel)
 
         def update_data(self):
             changed_df = self.sitetablemodel.data(
                 None, QtCore.Qt.UserRole)
             changed_site_list = changed_df['siteid'].values.tolist()
+
 
             self._log.debug(
                 'changed_site_list: ' + ' '.join(changed_site_list))
@@ -153,16 +172,19 @@ def MainWindow():
             if len(changed_df) == 0:
                 pass
             else:
-                try:
-                    for i,item in enumerate(changed_site_list):
-                        self.facade._data.replace(
-                            {self.sitelevels[i]: item.rstrip()},
-                            inplace=True)
-                except Exception as e:
-                    print(str(e))
-                    self._log.debug(str(e))
-                    self.error.showMessage(
-                        'could not alter levels: ' + str(e))
+                if len(self.sitelevels) == 0:
+                    pass
+                else:
+                    try:
+                        for i,item in enumerate(changed_site_list):
+                            self.facade._data.replace(
+                                {self.sitelevels[i]: item.rstrip()},
+                                inplace=True)
+                    except Exception as e:
+                        print(str(e))
+                        self._log.debug(str(e))
+                        self.error.showMessage(
+                            'could not alter levels: ' + str(e))
 
             session = orm.Session()
             sitecheck = session.query(
@@ -173,7 +195,8 @@ def MainWindow():
             session.close()
             sitecheckdf = read_sql(
                 sitecheck.statement, sitecheck.session.bind)
-
+            
+            
             print('checker df: ', sitecheckdf)
             if sitecheckdf is not None:
                 if len(sitecheckdf) == 0:
@@ -181,6 +204,7 @@ def MainWindow():
                 else:
                     records_entered = sitecheckdf[
                         'siteid'].values.tolist()
+                    
                     check = [
                         x for x in
                         list(set(records_entered)) if
@@ -206,6 +230,7 @@ def MainWindow():
 
         def validated(self):
             self.preview_validate.close()
+
             changed_df = self.sitetablemodel.data(
                 None, QtCore.Qt.UserRole)
             changed_site_list = changed_df['siteid'].values.tolist()
@@ -229,12 +254,14 @@ def MainWindow():
             self.listviewSiteLabels.setModel(self.sitetablemodel)
 
             self.sitelevels = self.sitetablemodel.data(
-                None, QtCore.Qt.UserRole)
+                None, QtCore.Qt.UserRole)['siteid'].values.tolist()
             self._log.debug(
                 'sitelevels (updated)' + ' '.join(self.sitelevels))
+            self.querycheck = 'Checked'
 
         def save_close(self):
             self.update_data()
+            
             session = orm.Session()
             sitecheck = session.query(
                 orm.Sitetable.siteid).order_by(
@@ -242,9 +269,31 @@ def MainWindow():
             session.close()
             sitecheckdf = read_sql(
                 sitecheck.statement, sitecheck.session.bind)
+
             changed_df = self.sitetablemodel.data(
                 None, QtCore.Qt.UserRole)
             changed_site_list = changed_df['siteid'].values.tolist()
+
+            final_check = [
+                x for x in changed_site_list
+                if x not in self.sitelevels]
+            
+            if len(final_check) == 0:
+                pass
+            else:
+                try:
+                    for i,item in enumerate(changed_site_list):
+                        self.facade._data.replace(
+                            {self.sitelevels[i]: item.rstrip()},
+                            inplace=True)
+                    self.preview_validate.show()
+
+                except Exception as e:
+                    print(str(e))
+                    self._log.debug(str(e))
+                    self.error.showMessage(
+                        'could not alter levels (save block): ' +
+                        str(e))
 
             if sitecheckdf is not None:
                 if len(sitecheckdf) == 0:
@@ -300,7 +349,7 @@ def MainWindow():
             self.save_data = concat(
                 [self.save_data, lterid_df]
                 , axis=1).reset_index(drop=True)
-            print(self.save_data)
+            print('Pushed dataset: ', self.save_data)
             self.facade.push_tables['sitetable'] = self.save_data
 
             hlp.write_column_to_log(
@@ -320,7 +369,21 @@ def MainWindow():
             self._log.debug(
                 'facade site levels' +
                 ' '.join(self.facade._valueregister['sitelevels']))
-            self.submit_change()
+
+
+            self.sitedirector = self.facade.make_table('siteinfo')
+            self.rawdata = (
+                self.sitedirector._availdf.sort_values(by='siteid'))
+            self.facade.register_site_levels(
+                self.rawdata['siteid'].drop_duplicates().
+                values.tolist())
+            self.sitelevels = self.facade._valueregister['sitelevels']
+
+            self._log.debug(
+                'sitelevels (Save Block): ' +
+                ' '.join(self.sitelevels))
+
+            self.saved.append(1)
             self.close()
 
         
