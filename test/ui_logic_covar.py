@@ -52,11 +52,13 @@ class CovarDialog(QtGui.QDialog, covar.Ui_Dialog):
 
         try:
             self.facade._data[self.covarlned['columns']]
+
         except Exception as e:
             print(str(e))
             self._log.debug(str(e))
             self.error.showMessage(
-                'Column names not valid: Check spacing ' +
+                'Column names not valid: '+ str(e) +
+                '. Check spacing ' +
                 'and headers.')
             raise ValueError('Column names are incorrect')
 

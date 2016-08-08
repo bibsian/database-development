@@ -8,8 +8,7 @@ from poplerGUI import class_modelviewpandas as view
 from poplerGUI.logiclayer import class_helpers as hlp
 from poplerGUI.logiclayer.datalayer import config as orm
 
-class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
-
+class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):    
     site_unlocks = QtCore.pyqtSignal(object)
 
     def __init__(self,  parent=None):
@@ -31,6 +30,7 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
         self.sitetabledata = None
         self.sitelevels = None
         self.sitelevels_updated = None
+
         # Place holder for sqlalchemy Orms
         self.siteorms = {}
 
@@ -81,8 +81,10 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
         self._log = self.facade._tablelog['sitetable']
 
         try:
-            self.facade._data[self.siteloc['siteid']]
-
+            self.facade._data[
+                self.siteloc['siteid']] = self.facade._data[
+                    self.siteloc['siteid']].astype(str)
+                
         except Exception as e:
             print(str(e))
             self._log.debug(str(e))
@@ -131,39 +133,35 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
             sitecheckdf = read_sql(
                 sitecheck.statement, sitecheck.session.bind)
             site_in_db = sitecheckdf['siteid'].values.tolist()
-
-            self.sitetablemodel = self.viewEdit(
-                self.rawdata[~self.siteloc['siteid'].isin(
-                    site_in_db)])
+            site_in_db['siteid'].drop_duplicates(inplace=True)
+            displayed_data = self.rawdata[
+                ~self.siteloc['siteid'].isin(
+                    site_in_db)].copy()
+            displayed_data.drop_duplicates(inplace=True)
+            self.sitetablemodel = self.viewEdit(displayed_data)
             self.listviewSiteLabels.setModel(self.sitetablemodel)
 
     def update_data(self):
         changed_df = self.sitetablemodel.data(
             None, QtCore.Qt.UserRole)
-        changed_site_list = changed_df['siteid'].values.tolist()
-
+        changed_site_list = changed_df[
+            'siteid'].drop_duplicates().values.tolist()
 
         self._log.debug(
             'changed_site_list: ' + ' '.join(changed_site_list))
         self._log.debug('sitelevels list: ' + ' ' +
                         ' '.join(self.sitelevels))
 
-        if len(changed_df) == 0:
-            pass
-        else:
-            if len(self.sitelevels) == 0:
-                pass
-            else:
-                try:
-                    for i,item in enumerate(changed_site_list):
-                        self.facade._data.replace(
-                            {self.sitelevels[i]: item.rstrip()},
-                            inplace=True)
-                except Exception as e:
-                    print(str(e))
-                    self._log.debug(str(e))
-                    self.error.showMessage(
-                        'could not alter levels: ' + str(e))
+        try:
+            for i,item in enumerate(changed_site_list):
+                self.facade._data.replace(
+                    {self.sitelevels[i]: item.rstrip()},
+                    inplace=True)
+        except Exception as e:
+            print(str(e))
+            self._log.debug(str(e))
+            self.error.showMessage(
+                'could not alter levels: ' + str(e))
 
         session = orm.Session()
         sitecheck = session.query(
@@ -196,7 +194,13 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
 
         print('checker status: ', checker)
         if checker == True:
-            pass
+            '''
+            Updating view in case spelling changes were made
+            '''
+            site_display_df = changed_df.drop_duplicates()
+            print('Site display droped: ', site_display_df)
+            self.sitetablemodel = self.viewEdit(site_display_df)
+            self.listviewSiteLabels.setModel(self.sitetablemodel)
         else:
             check_view = view.PandasTableModel(
                 sitecheckdf[sitecheckdf['siteid'].isin(check)])
@@ -207,13 +211,14 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
             self.sitelevels = changed_site_list
             self.preview_validate.show()
 
+
     def validated(self):
         self.preview_validate.close()
 
         changed_df = self.sitetablemodel.data(
             None, QtCore.Qt.UserRole)
-        changed_site_list = changed_df['siteid'].values.tolist()
-
+        changed_site_list = changed_df[
+            'siteid'].drop_duplicates().values.tolist()
 
         query_match = self.sitequerymodel.data(
                 None, QtCore.Qt.UserRole)
@@ -227,10 +232,15 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
 
         site_display_df = changed_df[
             changed_df['siteid'].isin(
-                s_not_in_databaase)]
+                s_not_in_databaase)].drop_duplicates()
         print('site df (val): ', site_display_df)
+
         self.sitetablemodel = self.viewEdit(site_display_df)
         self.listviewSiteLabels.setModel(self.sitetablemodel)
+
+        self._log.debug(
+            'sitelevels (validated block)' + ' '.join(
+                self.sitelevels))
 
         self.sitelevels = self.sitetablemodel.data(
             None, QtCore.Qt.UserRole)['siteid'].values.tolist()
@@ -239,68 +249,17 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
         self.querycheck = 'Checked'
 
     def save_close(self):
-        self.update_data()
-
-        session = orm.Session()
-        sitecheck = session.query(
-            orm.Sitetable.siteid).order_by(
-                orm.Sitetable.siteid)
-        session.close()
-        sitecheckdf = read_sql(
-            sitecheck.statement, sitecheck.session.bind)
-
-        changed_df = self.sitetablemodel.data(
-            None, QtCore.Qt.UserRole)
-        changed_site_list = changed_df['siteid'].values.tolist()
-
-        final_check = [
-            x for x in changed_site_list
-            if x not in self.sitelevels]
-
-        if len(final_check) == 0:
+        update_message = QtGui.QMessageBox.question(
+            self,'Message', 'Did you update records?',
+            QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+        if update_message == QtGui.QMessageBox.No:
+            return
+        else:
             pass
-        else:
-            try:
-                for i,item in enumerate(changed_site_list):
-                    self.facade._data.replace(
-                        {self.sitelevels[i]: item.rstrip()},
-                        inplace=True)
-                self.preview_validate.show()
 
-            except Exception as e:
-                print(str(e))
-                self._log.debug(str(e))
-                self.error.showMessage(
-                    'could not alter levels (save block): ' +
-                    str(e))
-
-        if sitecheckdf is not None:
-            if len(sitecheckdf) == 0:
-               checker = True
-            else:
-                records_entered = sitecheckdf[
-                    'siteid'].values.tolist()
-                check = [
-                    x for x in
-                    list(set(records_entered)) if
-                    x in changed_site_list]
-                checker = (len(check) == 0)
-        else:
-            checker = True
-
-        if checker is True:
-            pass
-        else:
-            self._log.debug('SiteId present under different LTER')
-            self.error.showMessage(
-                'Site abbreviations already in database ' +
-                'from an different LTER. Please modify ' +
-                'site abbreviations.')
-            raise AttributeError(
-                'SiteID already present under different LTER')
-
-        self.save_data = self.sitetablemodel.data(
+        save_data = self.sitetablemodel.data(
             None, QtCore.Qt.UserRole)
+        self.save_data = save_data.drop_duplicates()
 
         # Updating  site levels
         self.facade.register_site_levels(
@@ -345,18 +304,15 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
         )
 
         self.site_unlocks.emit(self.facade._data)
+        site_unsorted = self.facade._data[
+            self.siteloc[
+                'siteid']].drop_duplicates().values.tolist()
+        site_unsorted.sort()
+        self.sitelevels = site_unsorted
+
         self._log.debug(
             'facade site levels' +
             ' '.join(self.facade._valueregister['sitelevels']))
-
-
-        self.sitedirector = self.facade.make_table('siteinfo')
-        self.rawdata = (
-            self.sitedirector._availdf.sort_values(by='siteid'))
-        self.facade.register_site_levels(
-            self.rawdata['siteid'].drop_duplicates().
-            values.tolist())
-        self.sitelevels = self.facade._valueregister['sitelevels']
 
         self._log.debug(
             'sitelevels (Save Block): ' +

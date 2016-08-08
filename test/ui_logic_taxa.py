@@ -92,7 +92,6 @@ class TaxaDialog(QtGui.QDialog, uitax.Ui_Dialog):
         self._log = self.facade._tablelog['taxatable']
 
         try:
-            print('about to make taxa table')
             self.taxadirector = self.facade.make_table('taxainfo')
             assert self.taxadirector._availdf is not None
         except Exception as e:
