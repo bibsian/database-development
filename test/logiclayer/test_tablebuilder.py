@@ -195,10 +195,13 @@ def SiteTableBuilder(AbstractTableBuilder):
                 self, dataframe, acols, nullcols, dbcol,
                 globalid, siteid, sitelevels):
 
-            acols = [x.rstrip() for x in acols]
-            nullcols = [x.rstrip() for x in nullcols]
-            dbcol = [x.rstrip() for x in dbcol]
-            
+            try:
+                acols = [x.rstrip() for x in acols]
+            except Exception as e:
+                acols = [int(x) for x in acols]
+                uniquesubset = dataframe[acols]
+                print(str(e))
+
             if 'lterid' in dbcol:
                 dbcol.remove('lterid')
             else:
@@ -208,7 +211,8 @@ def SiteTableBuilder(AbstractTableBuilder):
             else:
                 pass
             nullcols.remove('descript')
-            
+
+
             uniquesubset = dataframe[acols]
             nullsubset = hlp.produce_null_df(
                 ncols=len(nullcols),
@@ -362,9 +366,12 @@ def TaxaTableBuilder(AbstractTableBuilder):
                 self, dataframe, acols, nullcols, dbcol,
                 globalid, siteid, sitelevels):
             
-            acols = [x.rstrip() for x in acols]
-            nullcols = [x.rstrip() for x in nullcols]
-            dbcol = [x.rstrip() for x in dbcol]
+            try:
+                acols = [x.rstrip() for x in acols]
+            except Exception as e:
+                acols = [int(x) for x in acols]
+                uniquesubset = dataframe[acols]
+                print(str(e))
 
             if 'lter_proj_site' in dbcol:
                 dbcol.remove('lter_proj_site')
@@ -396,7 +403,11 @@ def TaxaTableBuilder(AbstractTableBuilder):
             uniquesubset_site_list = []
             for i,item in enumerate(sitelevels):                
                 unqdf = dataframe[dataframe[siteid]==item]
-                uniquesubset = unqdf[acols]
+                try:
+                    uniquesubset = unqdf[acols]
+                except Exception as e:
+                    print(str(e))
+                    
                 unique = uniquesubset.drop_duplicates()
                 unique = unique.reset_index()
                 sitelevel = hlp.produce_null_df(
@@ -442,9 +453,12 @@ def RawTableBuilder(AbstractTableBuilder):
                 self, dataframe, acols, nullcols, dbcol,
                 globalid, siteid, sitelevels):
 
-            acols = [x.rstrip() for x in acols]
-            nullcols = [x.rstrip() for x in nullcols]
-            dbcol = [x.rstrip() for x in dbcol]
+            try:
+                acols = [x.rstrip() for x in acols]
+            except Exception as e:
+                acols = [int(x) for x in acols]
+                uniquesubset = dataframe[acols]
+                print(str(e))
 
 
             acols.insert(0,siteid)
@@ -511,6 +525,11 @@ def UpdaterTableBuilder(AbstractTableBuilder):
 
             # Columns that will be updated later in the
             # program
+            try:
+                acols = [x.rstrip() for x in acols]
+            except Exception as e:
+                acols = [int(x) for x in acols]
+                print(str(e))
 
             print('update builder dbcol: ', dbcol)
             updatedf = hlp.produce_null_df(

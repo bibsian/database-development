@@ -2,7 +2,7 @@
 import pytest
 from collections import namedtuple, OrderedDict
 import datetime as tm
-from pandas import merge, concat, DataFrame, read_csv, read_sql
+from pandas import merge, concat, DataFrame, read_csv, read_sql, to_numeric
 import sys, os
 if sys.platform == "darwin":
     rootpath = (
@@ -524,6 +524,7 @@ def Facade():
             taxa_all_columns = taxatable.columns.values.tolist()
             taxa_all_columns.append('lter_proj_site')
             taxa_all_columns.remove(siteid)
+
             print('taxa all col: ', taxa_all_columns)
             taxapush = rawtaxa_merge[
                 taxa_all_columns].drop_duplicates().reset_index(
@@ -531,7 +532,7 @@ def Facade():
             
             print('taxapush: ', taxapush)
             print('taxapush col: ', taxapush.columns)
-            
+
             if self.taxapushed is None:
                 try:
                     flsh.flush(
@@ -708,6 +709,17 @@ def Facade():
             # Spt_rep unique levels
             updatetable.loc[:, 'sp_rep1_label'] = siteloc
             updatetable.loc[:, 'sp_rep1_uniquelevels'] = 1
+
+            change_nan = [
+                'sp_rep1_uniquelevels', 'sp_rep2_uniquelevels',
+                'sp_rep3_uniquelevels', 'sp_rep4_uniquelevels']
+            for i in change_nan:
+                updatetable[i] = to_numeric(
+                    updatetable[i], errors='coerce')
+                updatetable[i].replace(
+                    {None:int(-99999)}, inplace=True)
+                updatetable[i] = updatetable[i].astype(int)
+
             print('updatetable col: ', updatetable.columns)
             print('rawmergedf_all.columns: ', rawmergedf_all.columns)
 
@@ -751,7 +763,7 @@ def Facade():
                         updatetable.siteid ==
                         site, updated_col_name] = levelcount[0]
             print('past spatial and treatment replication')
-
+            
             updatetable_merge = merge(
                 updatetable,
                 rawmergedf_all[['lter_proj_site', 'siteid']],
@@ -765,6 +777,8 @@ def Facade():
             updatemerged = updatetable_merge[compare_columns]
             updatenull = updatetable_null[compare_columns]
 
+            
+            
             print(updatetable_merge.columns)
             print(updatetable_null.columns)
             print(updatetable_merge)
@@ -815,6 +829,7 @@ def Facade():
                 session.rollback()
                 del session
     return Facade
+
 
 @pytest.fixture
 def metahandle():
@@ -1118,6 +1133,7 @@ def test_build_raw(
     df = rawdirector._availdf
     print(df)
     assert (isinstance(df, DataFrame)) is True
+
 # TESTING THE PUSH METHODS
 @pytest.fixture
 def metahandle1():
@@ -2158,4 +2174,30 @@ def test_push_data_raw(
     facade.update_main()
     
 
+# TESTING THE PUSH METHODS
+@pytest.fixture
+def metahandle1():
+    lentry = {
+        'globalid': 7,
+        'metaurl': ('http://and.test.rice.com'),
+        'lter': 'AND'}
+    ckentry = {}
+    metainput = InputHandler(
+        name='metacheck', tablename=None, lnedentry=lentry,
+        checks=ckentry)
+    return metainput
 
+@pytest.fixture
+def filehandle1():
+    ckentry = {}
+    rbtn = {'.csv': True, '.txt': False,
+            '.xlsx': False}
+    lned = {'sheet': '', 'delim': '', 'tskip': '', 'bskip': ''}
+    fileinput = InputHandler(
+        name='fileoptions',tablename=None, lnedentry=lned,
+        rbtns=rbtn, checks=ckentry, session=True,
+        filename=(
+            rootpath + end +
+            'Datasets_manual_test/raw_data_test_1.csv'))
+
+    return fileinput
