@@ -46,6 +46,24 @@ class TimeParse(object):
         self.mformat = ['%m', '%B', '%b']
         self.dformat = ['%d']
 
+    @property
+    def key_check(self):
+        '''
+        Procedure to check if the column names provided by
+        the users should be used as an index rather than 
+        a string
+        '''
+        try:
+            for i,item in enumerate(list(self.datadict.values())):
+                self.data[item]
+        except:
+            for i,item in enumerate(list(self.datadict.values())):
+                list(self.datadict.values())[i] = int(item)
+            print(
+                'Trying to converty column names' +
+                ' to integer index')
+
+            
     @staticmethod
     def concatenator(
             data, name1_keep, name2_change, block, name3=None):
@@ -103,7 +121,6 @@ class TimeParse(object):
         if len(nulls) > 0:
             nulldf = hlp.produce_null_df(
                 len(nulls), nulls, len(data), 'nan')
-
 
         else:
             nulldf = DataFrame()            

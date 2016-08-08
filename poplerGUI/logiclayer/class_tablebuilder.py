@@ -186,7 +186,15 @@ class SiteTableBuilder(AbstractTableBuilder):
         else:
             pass
         nullcols.remove('descript')
-        uniquesubset = dataframe[acols]
+        print('tbuild (acol): ', acols)
+
+        try:
+            uniquesubset = dataframe[acols]
+        except Exception as e:
+            acols = [int(x) for x in acols]
+            uniquesubset = dataframe[acols]
+            print(str(e))
+
         nullsubset = hlp.produce_null_df(
             ncols=len(nullcols),
             colnames=nullcols,
@@ -216,10 +224,11 @@ class MainTableBuilder(AbstractTableBuilder):
             self, dataframe, acols, nullcols, dbcol,
             globalid, siteid, sitelevels):
 
+
         acols = [x.rstrip() for x in acols]
         nullcols = [x.rstrip() for x in nullcols]
         dbcol = [x.rstrip() for x in dbcol]
-
+        
         if 'lter_proj_site' in dbcol:
             dbcol.remove('lter_proj_site')
         else:
@@ -329,6 +338,7 @@ class TaxaTableBuilder(AbstractTableBuilder):
             self, dataframe, acols, nullcols, dbcol,
             globalid, siteid, sitelevels):
 
+
         acols = [x.rstrip() for x in acols]
         nullcols = [x.rstrip() for x in nullcols]
         dbcol = [x.rstrip() for x in dbcol]
@@ -362,8 +372,20 @@ class TaxaTableBuilder(AbstractTableBuilder):
         dbcolrevised = [x for x in dbcol if x not in nullcols]
         uniquesubset_site_list = []
         for i,item in enumerate(sitelevels):                
-            unqdf = dataframe[dataframe[siteid]==item]
-            uniquesubset = unqdf[acols]
+            try:
+                unqdf = dataframe[dataframe[siteid]==item]
+            except Exception as e:
+                siteid = int(siteid)
+                unqdf = dataframe[dataframe[siteid]==item]
+                print(str(e))
+
+            try:
+                uniquesubset = unqdf[acols]
+            except Exception as e:
+                acols = [int(x) for x in acols]
+                uniquesubset = unqdf[acols]
+                print(str(e))
+
             unique = uniquesubset.drop_duplicates()
             unique = unique.reset_index()
             sitelevel = hlp.produce_null_df(
@@ -405,6 +427,7 @@ class RawTableBuilder(AbstractTableBuilder):
             self, dataframe, acols, nullcols, dbcol,
             globalid, siteid, sitelevels):
 
+
         acols = [x.rstrip() for x in acols]
         nullcols = [x.rstrip() for x in nullcols]
         dbcol = [x.rstrip() for x in dbcol]
@@ -425,7 +448,13 @@ class RawTableBuilder(AbstractTableBuilder):
             acols.append('taxaid')
             acols.append('lter_proj_site')
 
-        uniquesubset = dataframe[acols]
+        try:
+            uniquesubset = dataframe[acols]
+        except Exception as e:
+            acols = [int(x) for x in acols]
+            uniquesubset = dataframe[acols]
+            print(str(e))
+
         nullsubset = hlp.produce_null_df(
             ncols=len(nullcols),
             colnames=nullcols,
@@ -575,10 +604,22 @@ class UpdaterTableBuilder(AbstractTableBuilder):
     def get_dataframe(
             self, dataframe, acols, nullcols, dbcol,
             globalid, siteid, sitelevels):
+
+        acols = [x.rstrip() for x in acols]
+        nullcols = [x.rstrip() for x in nullcols]
+        dbcol = [x.rstrip() for x in dbcol]
+
         # Columns that will be updated later in the
         # program
-        updatedf = hlp.produce_null_df(
-            len(dbcol), dbcol, len(sitelevels), 'NA')
+        try:
+            updatedf = hlp.produce_null_df(
+                len(dbcol), dbcol, len(sitelevels), 'NA')
+        except Exception as e:
+            acols = [int(x) for x in acols]
+            updatedf = hlp.produce_null_df(
+                len(dbcol), dbcol, len(sitelevels), 'NA')
+            print(str(e))
+
         updatedf['siteid'] = sitelevels
         return updatedf
 
@@ -589,6 +630,10 @@ class ClimateTableBuilder(AbstractTableBuilder):
     def get_dataframe(
             self, dataframe, acols, nullcols, dbcol,
             globalid, siteid, sitelevels):
+
+        acols = [x.rstrip() for x in acols]
+        nullcols = [x.rstrip() for x in nullcols]
+        dbcol = [x.rstrip() for x in dbcol]
 
         col_booleans = list(self._inputs.checks.values())
         col_names = list(self._inputs.checks.keys())
@@ -609,7 +654,6 @@ class ClimateTableBuilder(AbstractTableBuilder):
             else:
                 pass
 
-
         print('siteid: ', siteid)
         print('col bools: ', col_booleans)
         print('avaialable cols: ', acols)
@@ -618,16 +662,14 @@ class ClimateTableBuilder(AbstractTableBuilder):
 
         print('dataframe climate build: ', dataframe)
 
+        acols.append(siteid)
         try:
-            dataframe[acols]
-        except:
-            print('could not find column, trying numeric index')
+            uniquesubset = dataframe[acols]
+        except Exception as e:
             acols = [int(x) for x in acols]
+            uniquesubset = dataframe[acols]
+            print(str(e))
 
-        finally:
-            acols.append(siteid)
-
-        uniquesubset = dataframe[acols]
         nullsubset = hlp.produce_null_df(
             ncols=len(nullcols),
             colnames=nullcols,

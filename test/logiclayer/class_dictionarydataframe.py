@@ -32,10 +32,15 @@ class DictionaryDataframe():
         try:
             # Creating a separte dictionary for each column
             # and adding to list
-            self.dictstartseq = [
-                {self.data[self.names].columns[i]:None
-                 for i,item in enumerate(self.names)}]
-
+            try:
+                self.dictstartseq = [
+                    {self.data[self.names].columns[i]:None
+                     for i,item in enumerate(self.names)}]
+            except Exception as e:
+                self.names = [int(x) for x in self.names]
+                self.dictstartseq = [
+                    {self.data[self.names].columns[i]:None
+                     for i,item in enumerate(self.names)}]
         except:
             raise AttributeError(
                 'Count not verify column names')

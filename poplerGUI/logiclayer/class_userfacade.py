@@ -2,7 +2,7 @@
 from collections import namedtuple
 import os
 import datetime as tm
-from pandas import merge, concat, DataFrame, read_csv
+from pandas import merge, concat, DataFrame, read_csv, to_numeric
 from poplerGUI.logiclayer.class_metaverify import MetaVerifier
 from poplerGUI.logiclayer.class_commanders import (
     LoadDataCommander, DataCommandReceiver,
@@ -630,6 +630,17 @@ class Facade:
         updatetable.loc[:, 'sp_rep1_label'] = siteloc
         updatetable.loc[:, 'sp_rep1_uniquelevels'] = 1
 
+        change_nan = [
+            'sp_rep1_uniquelevels', 'sp_rep2_uniquelevels',
+            'sp_rep3_uniquelevels', 'sp_rep4_uniquelevels']
+        for i in change_nan:
+            updatetable[i] = to_numeric(
+                updatetable[i], errors='coerce')
+            updatetable[i].replace(
+                {None:int(-99999)}, inplace=True)
+            updatetable[i] = updatetable[i].astype(int)
+
+        
         updated_cols = updatetable.columns.values.tolist()
         print(updated_cols)
         print('past updating columns')
