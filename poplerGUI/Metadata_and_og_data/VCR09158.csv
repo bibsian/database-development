@@ -1,0 +1,97 @@
+#,"Erwin, R.M. 2009. Annual heron counts on Chincoteague Island, Virginia"
+#,"1992-2011. Virginia Coast Reserve Long-Term Ecological Research Project Data"
+#,"Publication knb-lter-vcr.166.14"
+#,"(http://www.vcrlter.virginia.edu/cgi-bin/showDataset.cgi?docid=knb-lter-vcr.166)"
+#,
+#,This dataset is distributed by the Virginia Coast Reserve Long-Term Ecological
+#,Research Project and use is subject to the VCR/LTER Data Access Policy
+#,(http://www.vcrlter.virginia.edu/data/docs/IMPolicy_VCRLTER06.pdf). Data users
+#,working on scientific papers are encouraged to contact the data authors
+#,regarding availability of updated data and/or possible collaborations.
+#,
+#,Full metadata descriptions are available at:
+#,http://www.vcrlter.virginia.edu/cgi-bin/showDataset.cgi?docid=knb-lter-vcr.1
+#,For additional information about the data contact: R. Erwin
+#,(rme5g@virginia.edu)
+#,
+#,Collection and/or distribution of this data was supported by National Science
+#,Foundation grants BSR-8702333-06; DEB-9211772; DEB-9411974; DEB-0080381,
+#,DEB-0621014 and DEB-1237733. VCR/LTER: http://www.vcrlter.virginia.edu
+#,# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+Colony,Year,BC,GE,SE,CE,TH,LH,GI,WI,Total,UTMX,UTMY,Comment
+Willis Creek,1992,47,25,308,175,80,7,100,0,742,462153,4195708,
+Willis Creek,1993,90,124,391,229,99,26,229,0,1182,462153,4195708,
+Willis Creek,1994,40,53,290,95,60,13,175,0,727,462153,4195708,
+Willis Creek,1995,76,171,335,130,41,9,74,0,836,462153,4195708,
+Willis Creek,1996,41,62,37,0,3,0,48,0,191,462153,4195708,
+Willis Creek,1997,35,45,210,2,50,1,18,0,371,462153,4195708,
+Willis Creek,1998,49,39,247,0,5,0,14,0,354,462153,4195708,
+Willis Creek,1999,20,43,284,54,30,10,85,0,526,462153,4195708,
+Willis Creek,2000,,,,,,,,,,462153,4195708,no survey
+Willis Creek,2001,46,75,143,0,8,2,36,0,310,462153,4195708,
+Willis Creek,2002,44,52,211,0,20,7,115,0,450,462153,4195708,
+Willis Creek,2003,79,41,209,9,15,3,113,0,469,462153,4195708,
+Willis Creek,2004,13,30,9,0,0,0,7,0,59,462153,4195708,
+Willis Creek,2005,,,,,,,,,,462153,4195708,no survey
+Willis Creek,2006,47,1,93,0,2,0,6,0,149,462153,4195708,
+Willis Creek,2007,25,20,100,0,0,0,0,0,145,462153,4195708,
+Willis Creek,2008,32,10,22,0,0,0,21,0,85,462153,4195708,
+Willis Creek,2009,0,0,0,0,0,0,0,0,0,462153,4195708,
+Willis Creek,2010,0,0,0,0,0,0,0,0,0,,,
+Willis Creek,2011,0,0,0,0,0,0,0,0,0,,,
+,,,,,,,,,,,,,
+CausewayN,1992,32,23,233,172,165,111,136,0,872,465068,4199419,
+CausewayN,1993,37,123,636,555,224,128,329,0,2032,465068,4199419,
+CausewayN,1994,59,79,546,740,269,291,198,0,2182,465068,4199419,
+CausewayN,1995,59,124,925,848,181,251,545,0,2933,465068,4199419,
+CausewayN,1996,46,127,513,203,258,295,777,0,2219,465068,4199419,
+CausewayN,1997,24,160,302,325,250,107,933,0,2101,465068,4199419,
+CausewayN,1998,66,175,665,440,226,150,612,0,2335,465068,4199419,
+CausewayN,1999,37,92,385,277,235,210,107,0,1343,465068,4199419,
+CausewayN,2000,no survey,,,,,,,,,465068,4199419,no survey
+CausewayN,2001,16,88,217,103,150,176,247,0,997,465068,4199419,
+CausewayN,2002,32,84,189,29,156,161,150,0,801,465068,4199419,
+CausewayN,2003,66,59,142,62,131,139,290,0,889,465068,4199419,
+CausewayN,2004,47,145,450,118,193,197,249,0,1399,465068,4199419,
+CausewayN,2005,no survey,,,,,,,,,465068,4199419,no survey
+CausewayN,2006,82,146,159,29,167,132,160,0,875,465068,4199419,
+CausewayN,2007,61,108,347,69,147,183,241,0,1156,465068,4199419,
+CausewayN,2008,79,197,300,70,110,93,390,0,1239,465068,4199419,
+CausewayN,2009,84,97,394,129,63,128,707,0,1605,465068,4199419,
+CausewayN,2010,86,134,412,42,209,83,172,7,1145,465068,4199419,
+CausewayN,2011,76,186,487,42,198,138,245,34,1406,465068,4199419,
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+QueenSound,1998,,,,,,,,,,,,Discovered-but no surveys
+QueenSound,1999,86,18,112,48,18,10,15,,307,461799,4197936,
+QueenSound,2000,,,,,,,,,,461799,4197936,No surveys
+QueenSound,2001,75,28,65,30,10,9,70,,287,461799,4197936,
+QueenSound,2002,45,28,74,111,29,8,67,,362,461799,4197936,
+QueenSound,2003,59,39,61,74,30,49,62,,374,461799,4197936,
+QueenSound,2004,50,7,1,0,0,0,0,,58,461799,4197936,
+QueenSound,2005,,,,,,,,,,461799,4197936,No surveys
+QueenSound,2006,8,,,,,,,,8,461799,4197936,
+QueenSound,2007,9,4,3,,,,,,16,461799,4197936,
+QueenSound,2008,16,32,65,17,6,7,11,,154,461799,4197936,
+QueenSound,2009,12,42,45,0,4,4,30,,137,461799,4197936,
+QueenSound,2010,0,0,0,0,0,0,0,,0,,,
+QueenSound,2011,0,0,0,0,0,0,0,,0,,,
+,,,,,,,,,,,,,
+CoardsMarshes,1995,4,35,30,5,0,1,7,,82,471566,4205254,
+CoardsMarshes,1996,,,,,,,,,,471566,4205254,No survey
+CoardsMarshes,1997,0,12,5,,,,,,17,471566,4205254,
+CoardsMarshes,1998,,,,,,,,,,471566,4205254,No survey
+CoardsMarshes,1999,13,15,26,,,,,,54,471566,4205254,
+CoardsMarshes,2000,,,,,,,,,,471566,4205254,No survey
+CoardsMarshes,2001,12,33,17,,,,1,,63,471566,4205254,
+CoardsMarshes,2002,12,25,,,,,,,37,471566,4205254,
+CoardsMarshes,2003,11,39,55,,,,63,,168,471566,4205254,
+CoardsMarshes,2004,,,,,,,,,,471566,4205254,
+CoardsMarshes,2005,,,,,,,,,,471566,4205254,no survey
+CoardsMarshes,2006,12,34,94,0,10,12,23,,185,471566,4205254,
+CoardsMarshes,2007,3,45,80,5,0,2,4,,139,471566,4205254,
+CoardsMarshes,2008,12,51,20,0,0,0,0,,83,471566,4205254,
+CoardsMarshes,2009,6,22,20,0,0,0,1,,49,471566,4205254,
+CoardsMarshes,2010,no survey,,,,,,,,,,,
+CoardsMarshes,2011,no survey,,,,,,,,,,,

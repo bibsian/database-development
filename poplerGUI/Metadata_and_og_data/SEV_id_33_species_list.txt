@@ -1,0 +1,8 @@
+Taxa_sppcode, Taxa_kingdom, Taxa_phylum, Taxa_class, Taxa_order, Taxa_family, Taxa_genus, Taxa_species
+CNNE, Animalia, Chordata, Reptilia, Squamata, Teiidae, Cnemidophorus, neomexicana
+CNUN, Animalia, Chordata, Reptilia, Squamata, Teiidae, Cnemidophorus, uniparens
+CRCO, Animalia, Chordata, Reptilia, Squamata, Crotaphytidae, Crotophytus, collaris
+HOMA, Animalia, Chordata, Reptilia, Squamata, Phrynosomatidae, Holbrookia, maculata
+PHDO, Animalia, Chordata, Reptilia, Squamata, Phrynosomatidae, Phrynosoma, douglasii
+PHMO, Animalia, Chordata, Reptilia, Squamata, Phrynosomatidae, Phrynosoma, modestum
+CNSP, Animalia, Chordata, Reptilia, Squamata, Teiidae, Cnemidophorus, inornatus;neomexicanus
