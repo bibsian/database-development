@@ -51,14 +51,14 @@ def FileHandler(FileMemento):
             else:
                 self.sheet = None
             if inputclsinstance.lnedentry['tskip'] is not '':
-                self.topskiplines = inputclsinstance.lnedentry[
-                    'tskip']
+                self.topskiplines = int(inputclsinstance.lnedentry[
+                    'tskip'])
             else:
                 self.topskiplines = None
 
             if inputclsinstance.lnedentry['bskip'] is not '':
-                self.bottomskiplines = inputclsinstance.lnedentry[
-                    'bskip']
+                self.bottomskiplines = int(inputclsinstance.lnedentry[
+                    'bskip'])
             else:
                 self.bottomskiplines = 0
 
