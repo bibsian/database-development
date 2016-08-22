@@ -1,9 +1,0 @@
-species_code, Taxa_genus, Taxa_species
-APCO, Aphenogaster, cockerelli
-POAP, Pogonomyrmex, apache
-PODE, Pogonomyrmex, desertorum
-POIM, Pogonomyrmex, imberbiculus
-POMA, Pogonomyrmex, maricopa
-PORU, Pogonomyrmex, rugosus
-MYDE, Myrmecocystus, depilis
-NONE, NA, NA
