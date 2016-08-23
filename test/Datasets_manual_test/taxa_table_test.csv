@@ -1,0 +1,36 @@
+taxa_table_key,site_in_project_taxa_key,sppcode,kingdom,phylum,clss,ordr,family,genus,species,common_name,authority
+,main_area_1,NA,NA,NA,NA,NA,NA,Acantherus,piperatus,NA,NA
+,main_area_1,NA,NA,NA,NA,NA,NA,Hippopedon,capito,NA,NA
+,main_area_1,NA,NA,NA,NA,NA,NA,Trimerotropis,piperatus,NA,NA
+,main_area_2,NA,NA,NA,NA,NA,NA,Acantherus,piperatus,NA,NA
+,main_area_2,NA,NA,NA,NA,NA,NA,Hippopedon,capito,NA,NA
+,main_area_2,NA,NA,NA,NA,NA,NA,Trimerotropis,piperatus,NA,NA
+,main_area_3,NA,NA,NA,NA,NA,NA,Acantherus,piperatus,NA,NA
+,main_area_3,NA,NA,NA,NA,NA,NA,Hippopedon,capito,NA,NA
+,main_area_3,NA,NA,NA,NA,NA,NA,Trimerotropis,piperatus,NA,NA
+,AQUE,NA,NA,NA,NA,NA,NA,-99999,-99999,NA,NA
+,AQUE,NA,Animalia,Chordata,Actinopterygii,Perciformes,Embiotocidae,Brachyistius,frenatus,NA,NA
+,AQUE,NA,Animalia,Chordata,Actinopterygii,Perciformes,Embiotocidae,Embiotoca,jacksoni,NA,NA
+,AQUE,NA,Animalia,Chordata,Actinopterygii,Perciformes,Clinidae,Gibbonsia,spp.,NA,NA
+,AQUE,NA,Animalia,Chordata,Actinopterygii,Perciformes,Labridae,Oxyjulis,californica,NA,NA
+,AQUE,NA,Animalia,Chordata,Actinopterygii,Perciformes,Gobiidae,Rhinogobiops,nicholsii,NA,NA
+,SCDI,NA,NA,NA,NA,NA,NA,-99999,-99999,NA,NA
+,SCDI,NA,Animalia,Chordata,Actinopterygii,Perciformes,Embiotocidae,Brachyistius,frenatus,NA,NA
+,SCDI,NA,Animalia,Chordata,Actinopterygii,Perciformes,Embiotocidae,Embiotoca,jacksoni,NA,NA
+,SCDI,NA,Animalia,Chordata,Actinopterygii,Perciformes,Clinidae,Gibbonsia,spp.,NA,NA
+,SCDI,NA,Animalia,Chordata,Actinopterygii,Perciformes,Labridae,Oxyjulis,californica,NA,NA
+,SCDI,NA,Animalia,Chordata,Actinopterygii,Perciformes,Gobiidae,Rhinogobiops,nicholsii,NA,NA
+,BioSiteA,NA,NA,Heterokontophyta,Phaeophyceae,Laminariales,Laminariaceae,Macrocystis,pyrifera,NA,NA
+,BioSiteB,NA,NA,Heterokontophyta,Phaeophyceae,Laminariales,Laminariaceae,Macrocystis,pyrifera,NA,NA
+,BioSiteC,NA,NA,Heterokontophyta,Phaeophyceae,Laminariales,Laminariaceae,Macrocystis,pyrifera,NA,NA
+,main_area_1,Bare,NA,NA,NA,NA,NA,NA,NA,NA,NA
+,main_area_1,Opfr,NA,NA,NA,NA,NA,NA,NA,NA,NA
+,main_area_1,Plpa,NA,NA,NA,NA,NA,NA,NA,NA,NA
+,main_area_2,Opfr,NA,NA,NA,NA,NA,NA,NA,NA,NA
+,main_area_2,Pesp,NA,NA,NA,NA,NA,NA,NA,NA,NA
+,main_area_2,Plpa,NA,NA,NA,NA,NA,NA,NA,NA,NA
+,main_area_3,Litter,NA,NA,NA,NA,NA,NA,NA,NA,NA
+,main_area_3,Pesp,NA,NA,NA,NA,NA,NA,NA,NA,NA
+,main_area_3,Plpa,NA,NA,NA,NA,NA,NA,NA,NA,NA
+,SiteA,NA,NA,NA,NA,NA,NA,Lepomis,macrochrus,Bluegill Sunfish,NA
+,SiteA,NA,NA,NA,NA,NA,NA,Micropterus,salmoides,Largemouth Bass,NA

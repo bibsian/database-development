@@ -13,7 +13,18 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import *
 from sqlalchemy.dialects.postgresql import *
 import pandas as pd
+import sys, os
+if sys.platform == "darwin":
+    rootpath = (
+        "/Users/bibsian/Desktop/git/database-development/" +
+        "test/")
+    end = "/"
 
+elif sys.platform == "win32":
+    rootpath = (
+        "C:\\Users\MillerLab\\Desktop\\database-development" +
+        "\\db\\")
+    end = "\\"
 
 lterex = pd.read_csv(('lter_table_test.csv'))
 ltertablename = 'lter_table'
@@ -25,9 +36,19 @@ ltertablename = 'lter_table'
 # and the user name we will be working under.
 # Note, postgres is the super user and can do
 # everything possible (CREATE,INSERT, MANIPULATE, etc.)
+#create_engine = create_engine(
+#    'postgresql+psycopg2://postgres:demography@localhost/postgres',
+#    echo=True)
+#conn = create_engine.connect()
+#conn.execute("commit")
+#conn.execute("CREATE DATABASE popler_3")
+#conn.close()
+#create_engine.dispose()
+
 engine = create_engine(
     'postgresql+psycopg2:///',
     echo=True)
+
 
 # Note that the relationships in the database (i.e. entity-relation
 #-ship diagram or  ED diagram) can be visualized after all the tables
@@ -139,9 +160,11 @@ lter_table = Table(
     'lter_table', metadata,
     Column('lterid', VARCHAR(10), primary_key=True),
     Column('lter_name', TEXT),
+    Column('lat', FLOAT),
+    Column('lng', FLOAT),
     Column('currently_funded', VARCHAR(50)),
-    Column('pi', VARCHAR(200)),
-    Column('pi_contact_email', VARCHAR(200)),
+    Column('current_principle_investigator', VARCHAR(200)),
+    Column('current_contact_email', VARCHAR(200)),
     Column('alt_contact_email', VARCHAR(200)),
     Column('homepage', VARCHAR(200)))
 
@@ -151,67 +174,54 @@ lter_table = Table(
 # the 'foreign key'= lterid/'lterid'
 # (i.e. no entries are allowed in this table unless the site
 # information originates at a given lter_id)
-site_table = Table(
-    'site_table', metadata,
-    Column('siteid', VARCHAR(200), primary_key=True),
-    Column('lterid', VARCHAR(10),
+study_site_table = Table(
+    'study_site_table', metadata,
+    Column('study_site_key', VARCHAR(200), primary_key=True),
+    Column('lter_table_fkey', VARCHAR(10),
            ForeignKey('lter_table.lterid')),
     Column('lat', NUMERIC),
     Column('lng', NUMERIC),
     Column('descript', TEXT))
 
 
-# main: Table describing the raw data that was collected
-# for each individual project
-# 'foreign key' ='siteid'
-# This is in case there is a project that does not give a specific
-# 'siteid' that can be used in the schema and to ensure that
-# any site data entered comes from
-main_table = Table(
-    'main_table', metadata,
-    Column('lter_proj_site', Integer, primary_key=True),
-    Column('metarecordid', INTEGER),
+
+project_table = Table(
+    'project_table', metadata,
+    # This column is the unique index that we created
+    # in order to keep track of all the datasets that
+    # will be uploaded
+    Column('proj_metadata_key', INTEGER, primary_key=True),
     Column('title', TEXT),
+
     # META: This column specifies the type of information
     # about the sampling organisms life stage
     # ie. adult, juvenile, size, etc
     Column('samplingunits', VARCHAR(50)),
+
     # META: This column specifies the type of data that was
     # collected (i.e. count, biomass, percent cover, etc.)
-    Column('samplingprotocol', VARCHAR(50)),
+    Column('datatype', VARCHAR(50)),
+
     # META: This column specifies the type of information
     # about the sampling organisms life stage
     # ie. size, age, life-stage 
     Column('structured',  VARCHAR(50)),
     Column('studystartyr', NUMERIC),
     Column('studyendyr', NUMERIC),
-    Column('siteid', VARCHAR(200),
-           ForeignKey('site_table.siteid')),
-    # DERIVED: start year of data collection for
-    # a particular site
-    Column('sitestartyr', NUMERIC),
-    # DERIVED: end year of data collection for
-    # a particular site
-    Column('siteendyr', NUMERIC),
+
     # META: This column relates to the frequency of sampling
     # i.e. seasonal, monthly, month:yr, season:yr, daily, etc.
     Column('samplefreq', TEXT),
-    # DERIVED: This will be the total observation
-    # related to this project. THis includes
-    # all temporal and spatial levels and
-    # all taxa units
-    Column('totalobs', NUMERIC),
+
     # META: This column list whether the study was observational
     # or experimental (which includes historic experiemental
     # events)
     Column('studytype', VARCHAR(50)),
+
     # META: This column indicates whether the study contained
     # community level data (i.e. data over multiple
     # taxonomic groups
     Column('community', VARCHAR(50)),
-    # DERIVED: calculates the number of unique
-    # taxonomic units from raw data
-    Column('uniquetaxaunits', NUMERIC),
 
     # Spatial replicate informatoin
     # META:
@@ -231,35 +241,72 @@ main_table = Table(
     # levels within that replicate level for a given site;
     # encompassed all time and taxa units.
     
-    Column('sp_rep1_ext', NUMERIC),
-    Column('sp_rep1_ext_units', VARCHAR(200)),
-    Column('sp_rep1_label', VARCHAR(200)),
-    Column('sp_rep1_uniquelevels', NUMERIC),
+    Column('spatial_replication_level_1_extent', NUMERIC),
+    Column('spatial_replication_level_1_extent_units', VARCHAR(200)),
+    Column('spatial_replication_level_1_label', VARCHAR(200)),
+    Column('spatial_replication_level_1_number_of_unique_reps', NUMERIC),
     
-    Column('sp_rep2_ext', NUMERIC),
-    Column('sp_rep2_ext_units', VARCHAR(200)),
-    Column('sp_rep2_label', VARCHAR(200)),
-    Column('sp_rep2_uniquelevels', NUMERIC),
+    Column('spatial_replication_level_2_extent', NUMERIC),
+    Column('spatial_replication_level_2_extent_units', VARCHAR(200)),
+    Column('spatial_replication_level_2_label', VARCHAR(200)),
+    Column('spatial_replication_level_2_number_of_unique_reps', NUMERIC),
     
-    Column('sp_rep3_ext', NUMERIC),
-    Column('sp_rep3_ext_units', VARCHAR(200)),
-    Column('sp_rep3_label', VARCHAR(200)),
-    Column('sp_rep3_uniquelevels', NUMERIC),
+    Column('spatial_replication_level_3_extent', NUMERIC),
+    Column('spatial_replication_level_3_extent_units', VARCHAR(200)),
+    Column('spatial_replication_level_3_label', VARCHAR(200)),
+    Column('spatial_replication_level_3_number_of_unique_reps', NUMERIC),
     
-    Column('sp_rep4_ext', NUMERIC),
-    Column('sp_rep4_ext_units', VARCHAR(200)),
-    Column('sp_rep4_label', VARCHAR(200)),
-    Column('sp_rep4_uniquelevels', NUMERIC),
+    Column('spatial_replication_level_4_extent', NUMERIC),
+    Column('spatial_replication_level_4_extent_units', VARCHAR(200)),
+    Column('spatial_replication_level_4_label', VARCHAR(200)),
+    Column('spatial_replication_level_4_number_of_unique_reps', NUMERIC),
+
+    # Columns regarding treatments
+    Column('treatment_type', VARCHAR(200)),
+    Column('derived', VARCHAR(200)),
     
-    #Columns relating to author, metadata, other sources
+    # Columns relating to author, metadata, other sources
     Column('authors', TEXT),
     Column('authors_contact', VARCHAR(200)),
     Column('metalink', VARCHAR(200)),
-    Column('knbid', VARCHAR(200)),
-    Column('treatment_type', VARCHAR(200)),
-    Column('num_treatments', VARCHAR(200)),
-    Column('exp_maintainence', VARCHAR(200)),
-    Column('trt_label', VARCHAR(200)))
+    Column('knbid', VARCHAR(200)))
+
+
+
+# main: Table describing the raw data that was collected
+# for each individual project
+# 'foreign key' ='siteid'
+# This is in case there is a project that does not give a specific
+# 'siteid' that can be used in the schema and to ensure that
+# any site data entered comes from
+site_in_project_table = Table(
+    'site_in_project_table', metadata,
+    Column(
+        'site_in_project_key',
+        Integer, primary_key=True),
+    Column('study_site_table_fkey', None,
+           ForeignKey('study_site_table.study_site_key')),
+
+    Column('project_table_fkey', None,
+           ForeignKey('project_table.proj_metadata_key')),
+
+    # DERIVED: start year of data collection for
+    # a particular site
+    Column('sitestartyr', NUMERIC),
+
+    # DERIVED: end year of data collection for
+    # a particular site
+    Column('siteendyr', NUMERIC),
+
+    # DERIVED: This will be the total observation
+    # related to this project. THis includes
+    # all temporal and spatial levels and
+    # all taxa units
+    Column('totalobs', NUMERIC),
+
+    # DERIVED: calculates the number of unique
+    # taxonomic units from raw data
+    Column('uniquetaxaunits', NUMERIC))
 
 # taxa: Table regarding taxanomic information. Change from
 # last time involves the forgein key and the addition of
@@ -268,9 +315,9 @@ main_table = Table(
 # 'foreign key' = site_info/'siteid'
 taxa_table = Table(
     'taxa_table', metadata,
-    Column('taxaid', Integer, primary_key=True),
-    Column('lter_proj_site', Integer, ForeignKey(
-        'main_table.lter_proj_site', ondelete="CASCADE")),
+    Column('taxa_table_key', Integer, primary_key=True),
+    Column('site_in_project_taxa_key', None, ForeignKey(
+        'site_in_project_table.site_in_project_key', ondelete="CASCADE")),
     Column('sppcode', VARCHAR(100)),
     Column('kingdom', VARCHAR(100)),
     Column('phylum', VARCHAR(100)),
@@ -279,29 +326,108 @@ taxa_table = Table(
     Column('family', VARCHAR(100)),
     Column('genus', VARCHAR(100)),
     Column('species', VARCHAR(100)),
+    Column('common_name', VARCHAR(100)),
     Column('authority', VARCHAR(100)))
 
 
-# count: Table containing the raw count data that is populating
-# the database.
-# 'foreign key' = 'siteid', 'lter_proj_site', 'taxaid'
-raw_table = Table(
-    'raw_table', metadata,
-    Column('sampleid', Integer, primary_key=True),
-    Column('taxaid', None, ForeignKey(
-        'taxa_table.taxaid', ondelete="CASCADE")),
-    Column('lter_proj_site', None, ForeignKey(
-        'main_table.lter_proj_site', ondelete="CASCADE")),
+# Count table
+count_table = Table(
+    'count_table', metadata,
+    Column('count_table_key', Integer, primary_key=True),
+    Column('taxa_count_fkey', None, ForeignKey(
+        'taxa_table.taxa_table_key', ondelete="CASCADE")),
+    Column('site_in_project_count_fkey', None, ForeignKey(
+        'site_in_project_table.site_in_project_key', ondelete="CASCADE")),
     Column('year', NUMERIC),
     Column('month', NUMERIC),
     Column('day', NUMERIC),
-    Column('spt_rep1', VARCHAR(50)),
-    Column('spt_rep2', VARCHAR(50)),
-    Column('spt_rep3', VARCHAR(50)),
-    Column('spt_rep4', VARCHAR(50)),
+    Column('spatial_replication_level_1', VARCHAR(50)),
+    Column('spatial_replication_level_2', VARCHAR(50)),
+    Column('spatial_replication_level_3', VARCHAR(50)),
+    Column('spatial_replication_level_4', VARCHAR(50)),
     Column('structure', VARCHAR(50)),
-    Column('individ', VARCHAR(50)),
-    Column('unitobs', NUMERIC),
+    Column('count_observation', INTEGER),
+    Column('covariates', TEXT),
+    Column('trt_label', VARCHAR(200)))
+
+# Biomass Table
+biomass_table = Table(
+    'biomass_table', metadata,
+    Column('biomass_table_key', Integer, primary_key=True),
+    Column('taxa_biomass_fkey', None, ForeignKey(
+        'taxa_table.taxa_table_key', ondelete="CASCADE")),
+    Column('site_in_project_biomass_fkey', None, ForeignKey(
+        'site_in_project_table.site_in_project_key', ondelete="CASCADE")),
+    Column('year', NUMERIC),
+    Column('month', NUMERIC),
+    Column('day', NUMERIC),
+    Column('spatial_replication_level_1', VARCHAR(50)),
+    Column('spatial_replication_level_2', VARCHAR(50)),
+    Column('spatial_replication_level_3', VARCHAR(50)),
+    Column('spatial_replication_level_4', VARCHAR(50)),
+    Column('structure', VARCHAR(50)),
+    Column('biomass_observation', FLOAT),
+    Column('covariates', TEXT),
+    Column('trt_label', VARCHAR(200)))
+
+# Density Table
+density_table = Table(
+    'density_table', metadata,
+    Column('density_table_key', Integer, primary_key=True),
+    Column('taxa_density_fkey', None, ForeignKey(
+        'taxa_table.taxa_table_key', ondelete="CASCADE")),
+    Column('site_in_project_density_fkey', None, ForeignKey(
+        'site_in_project_table.site_in_project_key', ondelete="CASCADE")),
+    Column('year', NUMERIC),
+    Column('month', NUMERIC),
+    Column('day', NUMERIC),
+    Column('spatial_replication_level_1', VARCHAR(50)),
+    Column('spatial_replication_level_2', VARCHAR(50)),
+    Column('spatial_replication_level_3', VARCHAR(50)),
+    Column('spatial_replication_level_4', VARCHAR(50)),
+    Column('structure', VARCHAR(50)),
+    Column('density_observation', FLOAT),
+    Column('covariates', TEXT),
+    Column('trt_label', VARCHAR(200)))
+
+# Percent Cover Table
+percent_cover_table = Table(
+    'percent_cover_table', metadata,
+    Column('percent_cover_table_key', Integer, primary_key=True),
+    Column('taxa_percent_cover_fkey', None, ForeignKey(
+        'taxa_table.taxa_table_key', ondelete="CASCADE")),
+    Column('site_in_project_percent_cover_fkey', None, ForeignKey(
+        'site_in_project_table.site_in_project_key', ondelete="CASCADE")),
+    Column('year', NUMERIC),
+    Column('month', NUMERIC),
+    Column('day', NUMERIC),
+    Column('spatial_replication_level_1', VARCHAR(50)),
+    Column('spatial_replication_level_2', VARCHAR(50)),
+    Column('spatial_replication_level_3', VARCHAR(50)),
+    Column('spatial_replication_level_4', VARCHAR(50)),
+    Column('structure', VARCHAR(200)),
+    Column('percent_cover_observation', FLOAT),
+    Column('covariates', TEXT),
+    Column('trt_label', VARCHAR(200)))
+
+
+# Percent Cover Table
+individual_table = Table(
+    'individual_table', metadata,
+    Column('individual_table_key', Integer, primary_key=True),
+    Column('taxa_individual_fkey', None, ForeignKey(
+        'taxa_table.taxa_table_key', ondelete="CASCADE")),
+    Column('site_in_project_individual_fkey', None, ForeignKey(
+        'site_in_project_table.site_in_project_key', ondelete="CASCADE")),
+    Column('year', NUMERIC),
+    Column('month', NUMERIC),
+    Column('day', NUMERIC),
+    Column('spatial_replication_level_1', VARCHAR(50)),
+    Column('spatial_replication_level_2', VARCHAR(50)),
+    Column('spatial_replication_level_3', VARCHAR(50)),
+    Column('spatial_replication_level_4', VARCHAR(50)),
+    Column('structure', VARCHAR(200)),
+    Column('individual_observation', BOOLEAN),
     Column('covariates', TEXT),
     Column('trt_label', VARCHAR(200)))
 

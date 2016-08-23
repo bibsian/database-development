@@ -1,1 +1,13 @@
-YEAR,SITE,SP_CODE,COUNT,COMMENTS,Common_Name,GROUP,SURVEY,TAXON_PHYLUM,TAXON_CLASS,TAXON_ORDER,TAXON_FAMILY,TAXON_GENUS,TAXON_SPECIES,TEMP1999,Site4,SPP1,132,NULL,poe bear,dog,Survey3,Chordata,Mammalia,Carnivora,Canidae,Canis,lupis,231999,Site4,SPP2,23,NULL,thor,cat,Survey3,Chordata,Mammalia,Carnivora,Felidae,felis,catus,231987,Site5,SPP1,32,NULL,poe bear,dog,Survey1,Chordata,Mammalia,Carnivora,Canidae,Canis,lupis,221987,Site5,SPP1,532,NULL,poe bear,dog,Survey1,Chordata,Mammalia,Carnivora,Canidae,Canis,lupis,151992,Site6,SPP3,42,NULL,junior,dog,Survey2,Chordata,Mammalia,Carnivora,Canidae,Canis,lupis angel1,251992,Site6,SPP4,45,NULL,hank,dog,Survey2,Chordata,Mammalia,Carnivora,Canidae,Canis,lupid angel2,25
+YEAR,SITE,SP_CODE,COMMENTS,Common_Name,TRANSECT,TAG,TAXON_GENUS,TAXON_SPECIES,TEMP,,
+1999,SiteA,BGSF,NULL,Bluegill Sunfish,transect_1,1a,Lepomis,macrochrus,23,,
+1999,SiteA,LMBA,blah blah,Largemouth Bass,transect_2,2a,Micropterus,salmoides,23,,
+1987,SiteB,LMB,NULL,Largemouth Bass,transect_2,3a,Micropterus,salmoides,22,,
+1987,SiteB,YLGB,NULL,Yellowfin Goby,transect_1,5a,Acanthogobius,flavimanus,15,,
+1992,SiteB,SASU,NULL,Sacramento Sucker,transect_1,1a,Catostomus,occidentalis,25,,
+1992,SiteC,SASU,NULL,Sacramento Sucker,transect_3,4b,Catostomus,occidentalis,25,,
+2000,SiteA,BGSF,NULL,Bluegill Sunfish,transect_1,1a,Lepomis,macrochrus,23,,
+2000,SiteA,LMBA,NULL,Largemouth Bass,transect_2,2a,Micropterus,salmoides,23,,
+1988,SiteB,LMB,NULL,Largemouth Bass,transect_2,3a,Micropterus,salmoides,22,,
+1988,SiteB,YLGB,NULL,Yellowfin Goby,transect_1,5a,Acanthogobius,flavimanus,15,, 
+1993,SiteB,SASU,NULL,Sacramento Sucker,transect_1,1a,Catostomus,occidentalis,25,,
+1993,SiteC,SASU,NULL,Sacramento Sucker,transect_3,4b,Catostomus,occidentalis,25,,

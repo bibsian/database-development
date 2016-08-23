@@ -1,0 +1,15 @@
+site_in_project_key,study_site_table_fkey,project_table_fkey,sitestartyr,siteendyr,totalobs,uniquetaxaunits
+,main_area_1,1,1987,1999,4,3
+,main_area_2,1,1992,1999,4,3
+,main_area_3,1,1987,1992,4,3
+,AQUE,2,2008,2010,10,6
+,SCDI,2,2008,2010,10,6
+,BioSiteA,3,1999,2002,8,1
+,BioSiteB,3,1987,1988,8,1
+,BioSiteC,3,1992,1993,8,1
+,main_area_1,4,1999,2002,8,3
+,main_area_2,4,1987,2002,8,3
+,main_area_3,4,1992,2002,8,3
+,SiteA,5,1999,2000,4,2
+,SiteB,5,1987,1983,6,3
+,SiteC,5,1992,1993,2,1
