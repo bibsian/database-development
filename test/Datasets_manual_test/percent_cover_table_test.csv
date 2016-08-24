@@ -1,0 +1,25 @@
+percent_cover_table_key,taxa_count_fkey,site_in_project_count_fkey,year,month,day,spatial_replication_level_1,spatial_replication_level_2,spatial_replication_level_3,spatial_replication_level_4,structure,percent_cover_observation,covariates,trt_label
+,,,1999,2,31,main_area_1,A,1,NA,NA,54.3,{'Precip': '12'},water
+,,,1999,2,31,main_area_1,A,2,NA,NA,45.1,{'Precip': '2'},control
+,,,1999,2,27,main_area_1,B,1,NA,NA,13.5,{'Precip': '10'},water
+,,,1999,2,27,main_area_1,B,2,NA,NA,16.4,{'Precip': '2'},control
+,,,1987,8,2,main_area_2,A,1,NA,NA,75.8,{'Precip': '9'},water
+,,,1987,8,2,main_area_2,A,2,NA,NA,21.7,{'Precip': '2'},control
+,,,1987,8,2,main_area_2,B,1,NA,NA,42.8,{'Precip': '5'},water
+,,,1987,8,2,main_area_2,B,2,NA,NA,13.5,{'Precip': '2'},control
+,,,1992,10,11,main_area_3,A,1,NA,NA,16.4,{'Precip': '.05'},water
+,,,1992,10,11,main_area_3,A,2,NA,NA,75.8,{'Precip': '2'},control
+,,,1992,10,11,main_area_3,B,1,NA,NA,21.7,{'Precip': '.01'},water
+,,,1992,10,11,main_area_3,B,2,NA,NA,4.52,{'Precip': '2'},control
+,,,2002,2,31,main_area_1,A,1,NA,NA,43.4,{'Precip': '12'},water
+,,,2002,2,31,main_area_1,A,2,NA,NA,42.45,{'Precip': '2'},control
+,,,2002,2,27,main_area_1,B,1,NA,NA,12.4,{'Precip': '10'},water
+,,,2002,2,27,main_area_1,B,2,NA,NA,42.8,{'Precip': '2'},control
+,,,2002,8,2,main_area_2,A,1,NA,NA,16.4,{'Precip': '9'},water
+,,,2002,8,2,main_area_2,A,2,NA,NA,75.8,{'Precip': '2'},control
+,,,2002,8,2,main_area_2,B,1,NA,NA,16.4,{'Precip': '5'},water
+,,,2002,8,2,main_area_2,B,2,NA,NA,75.8,{'Precip': '2'},control
+,,,2002,10,11,main_area_3,A,1,NA,NA,21.7,{'Precip': '0.5'},water
+,,,2002,10,11,main_area_3,A,2,NA,NA,75.8,{'Precip': '2'},control
+,,,2002,10,11,main_area_3,B,1,NA,NA,21.7,{'Precip': '0.1'},water
+,,,2002,10,11,main_area_3,B,2,NA,NA,22.5,{'Precip': '2'},control

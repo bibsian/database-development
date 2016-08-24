@@ -1,0 +1,13 @@
+count_table_key,taxa_count_fkey,site_in_project_count_fkey,year,month,day,spatial_replication_level_1,spatial_replication_level_2,spatial_replication_level_3,spatial_replication_level_4,structure,count_observation,covariates,trt_label
+,,,1999,2,1,main_area_1,1,NA,NA,NA,25,{'temp': '10'},NA
+,,,1999,2,28,main_area_1,2,NA,NA,NA,10,{'temp': '11'},NA
+,,,1987,8,3,main_area_1,3,NA,NA,NA,54,{'temp': '10'},NA
+,,,1987,8,3,main_area_1,4,NA,NA,NA,82,{'temp': '14'},NA
+,,,1992,10,12,main_area_2,1,NA,NA,NA,15,{'temp': '13'},NA
+,,,1992,10,12,main_area_2,2,NA,NA,NA,31,{'temp': '12'},NA
+,,,1999,2,1,main_area_2,3,NA,NA,NA,15,{'temp': '11'},NA
+,,,1999,2,28,main_area_2,4,NA,NA,NA,156,{'temp': '10'},NA
+,,,1987,8,3,main_area_3,1,NA,NA,NA,13,{'temp': '10'},NA
+,,,1987,8,3,main_area_3,2,NA,NA,NA,15,{'temp': '12'},NA
+,,,1992,10,12,main_area_3,3,NA,NA,NA,315,{'temp': '11'},NA
+,,,1992,10,12,main_area_3,4,NA,NA,NA,13,{'temp': '18'},NA
