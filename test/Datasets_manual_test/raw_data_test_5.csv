@@ -1,6 +1,6 @@
 YEAR,SITE,SP_CODE,COMMENTS,Common_Name,TRANSECT,TAG,TAXON_GENUS,TAXON_SPECIES,TEMP,,
 1999,SiteA,BGSF,NULL,Bluegill Sunfish,transect_1,1a,Lepomis,macrochrus,23,,
-1999,SiteA,LMBA,blah blah,Largemouth Bass,transect_2,2a,Micropterus,salmoides,23,,
+1999,SiteA,LMBA,NULL,Largemouth Bass,transect_2,2a,Micropterus,salmoides,23,,
 1987,SiteB,LMB,NULL,Largemouth Bass,transect_2,3a,Micropterus,salmoides,22,,
 1987,SiteB,YLGB,NULL,Yellowfin Goby,transect_1,5a,Acanthogobius,flavimanus,15,,
 1992,SiteB,SASU,NULL,Sacramento Sucker,transect_1,1a,Catostomus,occidentalis,25,,
