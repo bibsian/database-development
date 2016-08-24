@@ -115,39 +115,43 @@ tbl_taxa_with_site_in_proj_key= pd.merge(
     right_on=['study_site_table_fkey', 'project_table_fkey'],
     how='inner')
 
-
-tbl_taxa_merge.drop([
+tbl_taxa_merged = tbl_taxa_with_site_in_proj_key.copy()
+tbl_taxa_merged.drop([
     'metadata_key', 'study_site', 'study_site_table_fkey',
     'project_table_fkey'], inplace=True, axis=1)
-
-tbl_taxa_merge.rename(
+tbl_taxa_merged.rename(
     columns= {
         'site_in_project_key': 'site_in_project_taxa_key'}, inplace=True)
 
 tbl_taxa_merge.to_sql(
     'taxa_table', conn, if_exists='append', index=False)
 
-
+# ------------- Merge 2 ---------------- #
+# ------------ taxa_table ------ # taxa_table_key
+# --------------- to ----------------- #
+# ------------ count_table --------- # taxa_count_fkey
+# --------- site_in_project_table ---- # site_in_project_count_fkey
 
 # Reading in test observation tables to upload to database
 tbl_count = pd.read_csv(
     rootpath + 'test' + end + 'Datasets_manual_test' +
     end + 'count_table_test.csv')
-stm_count_fkey = select([taxa_table])
-stm_count_result = session.execute(stm_count_fkey)
-stm_count_df = pd.DataFrame(stm_count_result.fetchall())
-stm_count_df.columns = stm_count_result.keys()
-stm_count_df.replace({None: 'NA'}, inplace=True)
+taxa_key_query = select([taxa_table])
+taxa_key_statement = session.execute(taxa_key_query)
+taxa_key_df = pd.DataFrame(taxa_key_statement.fetchall())
+taxa_key_df.columns = taxa_key_statement.keys()
+taxa_key_df.replace({None: 'NA'}, inplace=True)
 
-count_taxa = stm_count_df[
-    stm_count_df['site_in_project_taxa_key'].isin([1,2,3])]
+count_subset_taxa_key_df = taxa_key_df[
+    taxa_key_df['site_in_project_taxa_key'].isin([1,2,3])]
 
-count_taxa = pd.merge(
-    count_taxa, taxa_fk_df,
+# Merging taxa_table to site_in_project_key
+count_merged_taxakey_siteinprojectkey = pd.merge(
+    count_subset_taxa_key_df, site_in_proj_key_df,
     left_on='site_in_project_taxa_key',
     right_on='site_in_project_key', how='inner')
 
-
+########### STOPPED HERE ##################
 count_site_key = taxa_fk_df[
     taxa_fk_df['project_table_fkey'] ==  1]
 count_site_key.columns
