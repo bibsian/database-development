@@ -37,7 +37,7 @@ ltertablename = 'lter_table'
 # Note, postgres is the super user and can do
 # everything possible (CREATE,INSERT, MANIPULATE, etc.)
 #create_engine = create_engine(
-#    'postgresql+psycopg2://postgres:demography@localhost/postgres',
+#    'postgresql+psycopg2:///',
 #    echo=True)
 #conn = create_engine.connect()
 #conn.execute("commit")
