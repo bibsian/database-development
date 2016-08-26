@@ -1,20 +1,20 @@
 sppcode,kingdom,phylum,clss,ordr,family,genus,species,common_name,authority,study_site,metadata_key
 NA,NA,NA,NA,NA,NA,Acantherus,piperatus,NA,NA,main_area_1,1
 NA,NA,NA,NA,NA,NA,Hippopedon,capito,NA,NA,main_area_1,1
-NA,NA,NA,NA,NA,NA,Trimerotropis,piperatus,NA,NA,main_area_1,1
+NA,NA,NA,NA,NA,NA,Trimerotropis,californicus,NA,NA,main_area_1,1
 NA,NA,NA,NA,NA,NA,Acantherus,piperatus,NA,NA,main_area_2,1
 NA,NA,NA,NA,NA,NA,Hippopedon,capito,NA,NA,main_area_2,1
-NA,NA,NA,NA,NA,NA,Trimerotropis,piperatus,NA,NA,main_area_2,1
+NA,NA,NA,NA,NA,NA,Trimerotropis,californicus,NA,NA,main_area_2,1
 NA,NA,NA,NA,NA,NA,Acantherus,piperatus,NA,NA,main_area_3,1
 NA,NA,NA,NA,NA,NA,Hippopedon,capito,NA,NA,main_area_3,1
-NA,NA,NA,NA,NA,NA,Trimerotropis,piperatus,NA,NA,main_area_3,1
-NA,NA,NA,NA,NA,NA,-99999,-99999,NA,NA,AQUE,2
+NA,NA,NA,NA,NA,NA,Trimerotropis,californicus,NA,NA,main_area_3,1
+NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,AQUE,2
 NA,Animalia,Chordata,Actinopterygii,Perciformes,Embiotocidae,Brachyistius,frenatus,Kelp Surfperch,NA,AQUE,2
 NA,Animalia,Chordata,Actinopterygii,Perciformes,Embiotocidae,Embiotoca,jacksoni,Black Surfperch,NA,AQUE,2
 NA,Animalia,Chordata,Actinopterygii,Perciformes,Clinidae,Gibbonsia,spp.,Crevice Kelpfish,NA,AQUE,2
 NA,Animalia,Chordata,Actinopterygii,Perciformes,Labridae,Oxyjulis,californica,NA,NA,AQUE,2
 NA,Animalia,Chordata,Actinopterygii,Perciformes,Gobiidae,Rhinogobiops,nicholsii,Blackeye Goby,NA,AQUE,2
-NA,NA,NA,NA,NA,NA,-99999,-99999,NA,NA,SCDI,2
+NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,SCDI,2
 NA,Animalia,Chordata,Actinopterygii,Perciformes,Embiotocidae,Brachyistius,frenatus,Kelp Surfperch,NA,SCDI,2
 NA,Animalia,Chordata,Actinopterygii,Perciformes,Embiotocidae,Embiotoca,jacksoni,Black Surfperch,NA,SCDI,2
 NA,Animalia,Chordata,Actinopterygii,Perciformes,Clinidae,Gibbonsia,spp.,Crevice Kelpfish,NA,SCDI,2

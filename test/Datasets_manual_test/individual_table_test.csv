@@ -1,13 +1,13 @@
 individual_table_key,taxa_count_fkey,site_in_project_count_fkey,year,month,day,spatial_replication_level_1,spatial_replication_level_2,spatial_replication_level_3,spatial_replication_level_4,structure,individual_observation,covariates,trt_label
-,,,1999,NA,NA,SiteA,transect_1,NA,NA,NA,1,"{'TAG': '1a', 'TEMP': '23', 'COMMENTS': 'NULL'}",NA
-,,,1999,NA,NA,SiteA,transect_2,NA,NA,NA,1,"{'TAG': '2a', 'TEMP': '23', 'COMMENTS': 'NULL'}",NA
-,,,1987,NA,NA,SiteB,transect_2,NA,NA,NA,1,"{'TAG': '3a', 'TEMP': '22', 'COMMENTS': 'NULL'}",NA
-,,,1987,NA,NA,SiteB,transect_1,NA,NA,NA,1,"{'TAG': '5a', 'TEMP': '15', 'COMMENTS': 'NULL'}",NA
-,,,1992,NA,NA,SiteB,transect_1,NA,NA,NA,1,"{'TAG': '1a', 'TEMP': '25', 'COMMENTS': 'NULL'}",NA
-,,,1992,NA,NA,SiteC,transect_3,NA,NA,NA,1,"{'TAG': '4b', 'TEMP': '25', 'COMMENTS': 'NULL'}",NA
-,,,2000,NA,NA,SiteA,transect_1,NA,NA,NA,1,"{'TAG': '1a', 'TEMP': '23', 'COMMENTS': 'NULL'}",NA
-,,,2000,NA,NA,SiteA,transect_2,NA,NA,NA,1,"{'TAG': '2a', 'TEMP': '23', 'COMMENTS': 'NULL'}",NA
-,,,1988,NA,NA,SiteB,transect_2,NA,NA,NA,1,"{'TAG': '3a', 'TEMP': '22', 'COMMENTS': 'NULL'}",NA
-,,,1988,NA,NA,SiteB,transect_1,NA,NA,NA,1,"{'TAG': '5a', 'TEMP': '15', 'COMMENTS': 'NULL'}",NA
-,,,1993,NA,NA,SiteB,transect_1,NA,NA,NA,1,"{'TAG': '1a', 'TEMP': '25', 'COMMENTS': 'NULL'}",NA
-,,,1993,NA,NA,SiteC,transect_3,NA,NA,NA,1,"{'TAG': '4b', 'TEMP': '25', 'COMMENTS': 'NULL'}",NA
+,,,1999,NA,NA,SiteA,transect_1,NA,NA,NA,true,"{'TAG': '1a', 'TEMP': '23', 'COMMENTS': 'NULL'}",NA
+,,,1999,NA,NA,SiteA,transect_2,NA,NA,NA,true,"{'TAG': '2a', 'TEMP': '23', 'COMMENTS': 'NULL'}",NA
+,,,1987,NA,NA,SiteB,transect_2,NA,NA,NA,true,"{'TAG': '3a', 'TEMP': '22', 'COMMENTS': 'NULL'}",NA
+,,,1987,NA,NA,SiteB,transect_1,NA,NA,NA,true,"{'TAG': '5a', 'TEMP': '15', 'COMMENTS': 'NULL'}",NA
+,,,1992,NA,NA,SiteB,transect_1,NA,NA,NA,true,"{'TAG': '1a', 'TEMP': '25', 'COMMENTS': 'NULL'}",NA
+,,,1992,NA,NA,SiteC,transect_3,NA,NA,NA,true,"{'TAG': '4b', 'TEMP': '25', 'COMMENTS': 'NULL'}",NA
+,,,2000,NA,NA,SiteA,transect_1,NA,NA,NA,true,"{'TAG': '1a', 'TEMP': '23', 'COMMENTS': 'NULL'}",NA
+,,,2000,NA,NA,SiteA,transect_2,NA,NA,NA,true,"{'TAG': '2a', 'TEMP': '23', 'COMMENTS': 'NULL'}",NA
+,,,1988,NA,NA,SiteB,transect_2,NA,NA,NA,true,"{'TAG': '3a', 'TEMP': '22', 'COMMENTS': 'NULL'}",NA
+,,,1988,NA,NA,SiteB,transect_1,NA,NA,NA,true,"{'TAG': '5a', 'TEMP': '15', 'COMMENTS': 'NULL'}",NA
+,,,1993,NA,NA,SiteB,transect_1,NA,NA,NA,true,"{'TAG': '1a', 'TEMP': '25', 'COMMENTS': 'NULL'}",NA
+,,,1993,NA,NA,SiteC,transect_3,NA,NA,NA,true,"{'TAG': '4b', 'TEMP': '25', 'COMMENTS': 'NULL'}",NA
