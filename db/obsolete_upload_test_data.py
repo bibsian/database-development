@@ -45,13 +45,26 @@ class individual_table(base):
     __table__ = Table('individual_table', metadata, autoload=True)
 
 statement = (
-    select([count_table])
+    select([count_table]).
+    select_from(
+        count_table.__table__.join(taxa_table).
+        join(
+            alias(
+                select([site_in_project_table]).
+
+                select_from(
+                    site_in_project_table.__table__.
+                    join(project_table)
+                )
+            ))
+    )
 )
+
 select_results = conn.execute(statement)
 select_df = pd.DataFrame(select_results.fetchall())
 select_df.columns = select_results.keys()
 print(select_df)
-
+print(select_df.columns)
     
 # Helper Functions to coerce datatypes as necessary
 # And replace likely values that indicate null (i.e. -99999)
