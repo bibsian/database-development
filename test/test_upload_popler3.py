@@ -339,6 +339,7 @@ def MergedataToUpload(
         convert_types):
 
     taxa_table_types = find_types(taxa_table, 'taxa')
+    count_table_types = find_types(count_table, 'count')
     density_table_types = find_types(density_table, 'density')
     biomass_table_types = find_types(biomass_table, 'biomass')
     individual_table_types = find_types(individual_table, 'individual')
@@ -400,7 +401,7 @@ def MergedataToUpload(
                 right_on=['study_site_table_fkey', 'project_table_fkey'],
                 how='inner')
 
-            # Step 3) Making a copy of the merged table 
+            # Step 3) Making a copy of the merged table
             tbl_taxa_merged = tbl_taxa_with_site_in_proj_key.copy()
 
             # Step 4) Dropping the unneccessary columns from the copy
@@ -530,9 +531,10 @@ def tbl_taxa():
 #
 def test_merge_taxa_data_and_push(
         MergedataToUpload, engine, tbl_taxa, taxa_table):
-    ta.fillna('NA', inplace=True)
+    tbl_taxa.fillna('NA', inplace=True)
 
-    uploading = MergedataToUpload(sessionmaker(bind=engine, autoflush=False))
+    uploading = MergedataToUpload(
+        sessionmaker(bind=engine, autoflush=False))
     print('made uploading object')
     uploading.merge_for_taxa_table_upload(tbl_taxa)
     Session = sessionmaker(bind=engine, autoflush=False)
@@ -551,4 +553,219 @@ def test_merge_taxa_data_and_push(
     assert (
         tbl_taxa['phylum'].values.tolist() ==
         taxa_query_df['phylum'].values.tolist()) is True
+
+@pytest.fixture
+def tbl_count():
+    tbl_count = pd.read_csv(
+        rootpath + 'test' + end + 'Datasets_manual_test' +
+        end + 'count_table_test.csv')
+    tbl_count.fillna('NA', inplace=True)
+    return tbl_count
+
+
+#
+# ------- Test 5: Merge taxa keys to count table and push
+#
+def test_taxa_to_count_and_push(
+        MergedataToUpload, engine, tbl_taxa, count, tbl_count,
+        count_table):
+    count.fillna('NA', inplace=True)
+    
+    uploading = MergedataToUpload(
+        sessionmaker(bind=engine, autoflush=False))
+    uploading.merge_for_datatype_table_upload(
+        raw_dataframe=count, formated_dataframe=tbl_count,
+        formated_dataframe_name='count',
+        raw_data_taxa_columns=['site', 'genus', 'species'],
+        uploaded_taxa_columns=['study_site_table_fkey', 'genus', 'species']
+    )
+
+    Session = sessionmaker(bind=engine, autoflush=False)
+    session = Session()
+    tbl_count_query = select([count_table])
+    count_query_stm = session.execute(tbl_count_query)
+    count_query_df = pd.DataFrame(count_query_stm.fetchall())
+    count_query_df.columns = count_query_stm.keys()
+    session.close()
+    engine.dispose()
+
+    print(count_query_df)
+    assert (
+        tbl_count['count_observation'].values.tolist() ==
+        count_query_df['count_observation'].values.tolist()) is True
+    assert (
+        [str(x) for x in tbl_count['spatial_replication_level_2'].values.tolist()] ==
+        [str(x) for x in count_query_df['spatial_replication_level_2'].values.tolist()]) is True
+
+@pytest.fixture
+def tbl_density():
+    tbl_density = pd.read_csv(
+        rootpath + 'test' + end + 'Datasets_manual_test' +
+        end + 'density_table_test.csv')
+    tbl_density.fillna('NA', inplace=True)
+    return tbl_density
+
+#
+# ------- Test 6: Merge taxa keys to density table and push
+#
+def test_taxa_to_density_and_push(
+        MergedataToUpload, engine, tbl_taxa, density, tbl_density,
+        density_table):
+    uploading = MergedataToUpload(sessionmaker(bind=engine, autoflush=False))
+    density.fillna('NA', inplace=True)
+
+    uploading.merge_for_datatype_table_upload(
+        raw_dataframe=density, formated_dataframe=tbl_density,
+        formated_dataframe_name='density',
+        raw_data_taxa_columns=[
+            'SITE', 'TAXON_KINGDOM', 'TAXON_PHYLUM', 'TAXON_CLASS',
+            'TAXON_ORDER', 'TAXON_FAMILY', 'TAXON_GENUS', 'TAXON_SPECIES'],
+        uploaded_taxa_columns= [
+            'study_site_table_fkey', 'kingdom', 'phylum', 'clss',
+            'ordr', 'family', 'genus', 'species']
+    )
+
+    Session = sessionmaker(bind=engine, autoflush=False)
+    session = Session()
+    tbl_density_query = select([density_table])
+    density_query_stm = session.execute(tbl_density_query)
+    density_query_df = pd.DataFrame(density_query_stm.fetchall())
+    density_query_df.columns = density_query_stm.keys()
+    session.close()
+    
+    assert (
+        tbl_density['density_observation'].values.tolist() ==
+        density_query_df['density_observation'].values.tolist()) is True
+
+    assert (
+        [str(x) for x in tbl_density['spatial_replication_level_2'].values.tolist()] ==
+        [str(x) for x in density_query_df['spatial_replication_level_2'].values.tolist()]) is True
+
+@pytest.fixture
+def tbl_biomass():
+    tbl_biomass = pd.read_csv(
+        rootpath + 'test' + end + 'Datasets_manual_test' +
+        end + 'biomass_table_test.csv')
+    tbl_biomass.fillna('NA', inplace=True)
+    return tbl_biomass
+#
+# ------- Test 7: Merge taxa keys to biomass table and push
+#
+def test_taxa_to_biomass_and_push(
+        MergedataToUpload, engine, tbl_taxa, biomass, tbl_biomass,
+        biomass_table):
+    biomass.fillna('NA', inplace=True)
+    uploading = MergedataToUpload(sessionmaker(bind=engine, autoflush=False))
+    uploading.merge_for_datatype_table_upload(
+        raw_dataframe=biomass, formated_dataframe=tbl_biomass,
+        formated_dataframe_name='biomass',
+        raw_data_taxa_columns=[
+            'site', 'phylum', 'clss',
+            'ordr', 'family', 'genus', 'species'],
+        uploaded_taxa_columns= [
+            'study_site_table_fkey', 'phylum', 'clss',
+            'ordr', 'family', 'genus', 'species']
+    )
+    Session = sessionmaker(bind=engine, autoflush=False)
+    session = Session()
+    tbl_biomass_query = select([biomass_table])
+    biomass_query_stm = session.execute(tbl_biomass_query)
+    biomass_query_df = pd.DataFrame(biomass_query_stm.fetchall())
+    biomass_query_df.columns = biomass_query_stm.keys()
+    session.close()
+    engine.dispose()
+    
+    assert (
+        tbl_biomass['biomass_observation'].values.tolist() ==
+        biomass_query_df['biomass_observation'].values.tolist()) is True
+
+    assert (
+        [str(x) for x in tbl_biomass['spatial_replication_level_2'].values.tolist()] ==
+        [str(x) for x in biomass_query_df['spatial_replication_level_2'].values.tolist()]) is True
+
+@pytest.fixture
+def tbl_percent():
+    tbl_percent = pd.read_csv(
+        rootpath + 'test' + end + 'Datasets_manual_test' +
+        end + 'percent_cover_table_test.csv')
+    tbl_percent.fillna('NA', inplace=True)
+    return tbl_percent
+#
+# ------- Test 8: Merge taxa keys to count table and push
+#
+def test_taxa_to_percent_and_push(
+        MergedataToUpload, engine, tbl_taxa, percent, tbl_percent,
+        percent_cover_table):
+    percent.fillna('NA', inplace=True)
+    uploading = MergedataToUpload(sessionmaker(bind=engine, autoflush=False))
+    uploading.merge_for_datatype_table_upload(
+        raw_dataframe=percent, formated_dataframe=tbl_percent,
+        formated_dataframe_name='percent_cover',
+        raw_data_taxa_columns=[
+            'site', 'code'],
+        uploaded_taxa_columns= [
+            'study_site_table_fkey', 'sppcode']
+    )
+
+    Session = sessionmaker(bind=engine, autoflush=False)
+    session = Session()
+    tbl_percent_cover_query = select([percent_cover_table])
+    percent_cover_query_stm = session.execute(tbl_percent_cover_query)
+    percent_cover_query_df = pd.DataFrame(percent_cover_query_stm.fetchall())
+    percent_cover_query_df.columns = percent_cover_query_stm.keys()
+    session.close()
+    engine.dispose()
+    
+    assert (
+        tbl_percent['percent_cover_observation'].values.tolist() ==
+        percent_cover_query_df['percent_cover_observation'].values.tolist()) is True
+
+    assert (
+        [str(x) for x in tbl_percent['spatial_replication_level_2'].values.tolist()] ==
+        [str(x) for x in percent_cover_query_df['spatial_replication_level_2'].values.tolist()]) is True
+
+@pytest.fixture
+def tbl_individual():
+    tbl_individual = pd.read_csv(
+        rootpath + 'test' + end + 'Datasets_manual_test' +
+        end + 'individual_table_test.csv')
+    tbl_individual.fillna('NA', inplace=True)
+    return tbl_individual
+
+#
+# ------- Test 9: Merge taxa keys to individual table and push
+#
+def test_taxa_to_individual_and_push(
+        MergedataToUpload, engine, tbl_taxa, individual, tbl_individual,
+        individual_table):
+    individual.fillna('NA', inplace=True)
+    uploading = MergedataToUpload(sessionmaker(bind=engine, autoflush=False))
+    uploading.merge_for_datatype_table_upload(
+        raw_dataframe=individual, formated_dataframe=tbl_individual,
+        formated_dataframe_name='individual',
+        raw_data_taxa_columns=[
+            'SITE', 'TAXON_GENUS', 'TAXON_SPECIES'],
+        uploaded_taxa_columns= [
+            'study_site_table_fkey', 'genus', 'species']
+    )
+    
+    Session = sessionmaker(bind=engine, autoflush=False)
+    session = Session()
+    tbl_individual_query = select([individual_table])
+    individual_query_stm = session.execute(tbl_individual_query)
+    individual_query_df = pd.DataFrame(individual_query_stm.fetchall())
+    individual_query_df.columns = individual_query_stm.keys()
+    session.close()
+    engine.dispose()
+
+    print(tbl_individual['individual_observation'].values.tolist())
+    print(individual_query_df['individual_observation'].values.tolist())
+    
+    assert (
+        tbl_individual['individual_observation'].values.tolist() ==
+        individual_query_df['individual_observation'].values.tolist()) is True
+
+    assert (
+        [str(x) for x in tbl_individual['spatial_replication_level_2'].values.tolist()] ==
+        [str(x) for x in individual_query_df['spatial_replication_level_2'].values.tolist()]) is True
 
