@@ -98,6 +98,29 @@ def percent_cover_table(base, metadata):
     return percent_cover_table
 
 @pytest.fixture
+def replace_numeric_null_with_string():
+    def replace_numeric_null_with_string(dataframe):
+        ''' Function to take values such as -99999 and convert them
+        to NA's '''
+        for i in dataframe.columns:
+            try:
+                dataframe[i].replace(
+                    {
+                        '-999999': 'NA',
+                        '-99999': 'NA',
+                        '-9999': 'NA',
+                        '-999': 'NA',
+                        '-888': 'NA',
+                        '-8888': 'NA',
+                        '-88888': 'NA',
+                        '-888888': 'NA'
+                    }, inplace=True)
+            except:
+                print(i + ' did not convert')
+    return replace_numeric_null_with_string
+
+
+@pytest.fixture
 def individual_table(base, metadata):
     class individual_table(base):
         __table__ = Table('individual_table', metadata, autoload=True)
@@ -152,4 +175,4 @@ def test_recover_count_data(count, count_table, conn):
             count_table
         )
     )
-    
+    assert 0

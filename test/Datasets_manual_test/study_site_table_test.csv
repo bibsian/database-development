@@ -1,4 +1,4 @@
-study_site_key,lter_table_fkey,lat,lng,descript
+study_site_key,lter_table_fkey,lat_study_site,lng_study_site,descript
 main_area_1,SEV,33.45,112.45,mixed grass
 main_area_2,SEV,33.51,113.1,woodlands
 main_area_3,SEV,33.5,112.61,previously burned

@@ -1,4 +1,4 @@
-lterid,lter_name,lat,lng,currently_funded,current_principle_investigator,current_contact_email,alt_contact_email,homepage
+lterid,lter_name,lat_lter,lng_lter,currently_funded,current_principle_investigator,current_contact_email,alt_contact_email,homepage
 AND,Andrew Forest LTER,44.21,-122.26,1,Michael Nelson,mpnelson@oregonstate.edu,hjafacilities@fsl.orst.edu,http://andrewsforest.oregonstate.edu/
 ARC,Arctic LTER,66.63,-149.6,1,Gaius Shaver,gshaver@mbl.edu,dscanlon@mbl.edu,http://ecosystems.mbl.edu/ARC/
 BES,Baltimore Ecosystem Study,39.1,-76.3,1,Steward Pickett,PickettS@ecostudies.org,BeyarH@caryinstitute.org,http://www.beslter.org/

@@ -46,7 +46,7 @@ ltertablename = 'lter_table'
 #create_engine.dispose()
 
 engine = create_engine(
-    'postgresql+psycopg2:///',
+    'postgresql+psycopg2://postgres:demography@localhost/popler_3',
     echo=True)
 
 
@@ -150,8 +150,8 @@ climate_station_table = Table(
     Column('stationid', VARCHAR(200), primary_key=True),
     Column('lterid', None,
            ForeignKey('lter_table.lterid')),
-    Column('lat', NUMERIC),
-    Column('lng', NUMERIC),
+    Column('lat_climate', NUMERIC),
+    Column('lng_climate', NUMERIC),
     Column('descript', TEXT))
 
 
@@ -160,8 +160,8 @@ lter_table = Table(
     'lter_table', metadata,
     Column('lterid', VARCHAR(10), primary_key=True),
     Column('lter_name', TEXT),
-    Column('lat', FLOAT),
-    Column('lng', FLOAT),
+    Column('lat_lter', FLOAT),
+    Column('lng_lter', FLOAT),
     Column('currently_funded', VARCHAR(50)),
     Column('current_principle_investigator', VARCHAR(200)),
     Column('current_contact_email', VARCHAR(200)),
@@ -179,8 +179,8 @@ study_site_table = Table(
     Column('study_site_key', VARCHAR(200), primary_key=True),
     Column('lter_table_fkey', VARCHAR(10),
            ForeignKey('lter_table.lterid')),
-    Column('lat', NUMERIC),
-    Column('lng', NUMERIC),
+    Column('lat_study_site', NUMERIC),
+    Column('lng_study_site', NUMERIC),
     Column('descript', TEXT))
 
 
@@ -427,7 +427,7 @@ individual_table = Table(
     Column('spatial_replication_level_3', VARCHAR(50)),
     Column('spatial_replication_level_4', VARCHAR(50)),
     Column('structure', VARCHAR(200)),
-    Column('individual_observation', BOOLEAN),
+    Column('individual_observation', Integer),
     Column('covariates', TEXT),
     Column('trt_label', VARCHAR(200)))
 
