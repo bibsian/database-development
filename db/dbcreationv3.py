@@ -46,7 +46,7 @@ ltertablename = 'lter_table'
 #create_engine.dispose()
 
 engine = create_engine(
-    'postgresql+psycopg2://postgres:demography@localhost/popler_3',
+    'postgresql+psycopg2:///',
     echo=True)
 
 

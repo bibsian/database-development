@@ -168,11 +168,91 @@ def individual(replace_numeric_null_with_string):
     replace_numeric_null_with_string(individual)
     return individual
 
-def test_recover_count_data(count, count_table, conn):
-    statement = (
-        select([count_table]).
+@pytest.fixture
+def site_in_proj_subq_stmt(
+        engine, site_in_project_table, study_site_table,
+        project_table, lter_table):
+    '''
+    Subquery 1 (used to perform union on all tables)
+    This subquery perform the necessary joins to bring together
+    four tables:
+    1) site_in_project_table
+    2) study_site_table
+    3) lter_table
+    4) project_table
+    '''
+    stmt = (
+        select(
+            [
+                site_in_project_table,
+                study_site_table,
+                lter_table.lat_lter,
+                lter_table.lng_lter,
+                lter_table.lterid,
+                project_table
+            ]).
         select_from(
-            count_table
-        )
+            site_in_project_table.__table__.
+            join(study_site_table.__table__).
+            join(lter_table.__table__).join(project_table)).alias()
     )
-    assert 0
+    Session = sessionmaker(bind=engine)
+    session = Session()
+    stmt_result = session.execute(stmt)
+    return stmt_result
+
+@pytest.fixture
+def taxa_tbl_subq_stmt(
+        site_in_proj_subq_stmt, engine,
+        taxa_table):
+    '''
+    Subquery 2 (used to perform union on all tables)
+    This subquery performs the join to bring together
+    the four tables from subquery 1 and the taxa table.
+
+    '''
+    stmt = (
+        select([site_in_proj_subq_stmt, taxa_table]).
+        select_from(
+            site_in_proj_subq_stmt.
+            join(taxa_table)).alias()
+    )
+    Session = sessionmaker(bind=engine)
+    session = Session()
+    stmt_result = session.execute(stmt)
+    return stmt_result
+
+def test_recover_count_data(
+        taxa_tbl_subq_stmt, engine, count_table, count):
+    print('what')
+    count_tbl_subq_stmt = (
+        select([
+            taxa_tbl_subq_stmt,
+            count_table]).
+        select_from(
+            taxa_tbl_subq_stmt.
+            join(
+                count_table,
+                onclause=and_(
+                    taxa_tbl_subq_stmt.c.taxa_table_key ==
+                    count_table.taxa_count_fkey,
+                    taxa_tbl_subq_stmt.c.site_in_project_key ==
+                    count_table.site_in_project_count_fkey
+                )
+            )
+        ).alias('count join')
+    )
+
+    # pretty.pprint(count_tbl_subq_stmt.compile().string)
+    Session = sessionmaker(bind=engine)
+    session = Session()
+    count_tbl_subq_result = session.execute(count_tbl_subq_stmt)
+    count_tbl_subq_df = pd.DataFrame(count_tbl_subq_result.fetchall())
+    count_tbl_subq_df.columns = count_tbl_subq_result.keys()
+    session.close()
+    print(count['site'].values.tolist())
+    print(count_tbl_subq_df['spatial_replication_level_1'].values.tolist())
+    assert (
+        count['site'].values.tolist() ==
+        count_tbl_subq_df['spatial_replication_level_1'].values.tolist()
+    ) == True
