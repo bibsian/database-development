@@ -243,6 +243,7 @@ def test_recover_count_data(
     count_tbl_subq_result = session.execute(count_tbl_subq_stmt)
     count_tbl_subq_df = pd.DataFrame(count_tbl_subq_result.fetchall())
     count_tbl_subq_df.columns = count_tbl_subq_result.keys()
+    count_tbl_subq_df.sort_values('count_table_key', inplace=True)
     session.close()
     print(count['site'].values.tolist())
     print(count_tbl_subq_df['spatial_replication_level_1'].values.tolist())
@@ -252,6 +253,8 @@ def test_recover_count_data(
         count_tbl_subq_df['spatial_replication_level_1'].values.tolist()
     ) == True
 
+
+    count_tbl_subq_df.to_csv('count_test_recover.csv')
     assert (
         count['count'].values.tolist() ==
         count_tbl_subq_df['count_observation'].values.tolist()
@@ -281,4 +284,129 @@ def test_recover_count_data(
     assert (
         count['month'].values.tolist() ==
         count_tbl_subq_df['month'].values.tolist()
+    ) == True
+
+def test_recover_biomass_data(
+        taxa_tbl_subq_stmt, engine, biomass_table, biomass):
+    print('what')
+    biomass_tbl_subq_stmt = (
+        select([
+            taxa_tbl_subq_stmt,
+            biomass_table]).
+        select_from(
+            taxa_tbl_subq_stmt.
+            join(
+                biomass_table,
+                onclause=and_(
+                    taxa_tbl_subq_stmt.c.taxa_table_key ==
+                    biomass_table.taxa_biomass_fkey,
+                    taxa_tbl_subq_stmt.c.site_in_project_key ==
+                    biomass_table.site_in_project_biomass_fkey
+                )
+            )
+        ).alias('biomass join')
+    )
+
+    # pretty.pprint(biomass_tbl_subq_stmt.compile().string)
+    Session = sessionmaker(bind=engine)
+    session = Session()
+    biomass_tbl_subq_result = session.execute(biomass_tbl_subq_stmt)
+    biomass_tbl_subq_df = pd.DataFrame(biomass_tbl_subq_result.fetchall())
+    biomass_tbl_subq_df.columns = biomass_tbl_subq_result.keys()
+    biomass_tbl_subq_df.sort_values('biomass_table_key', inplace=True)
+    session.close()
+    print(biomass['site'].values.tolist())
+    print(biomass_tbl_subq_df['spatial_replication_level_1'].values.tolist())
+
+    assert (
+        biomass['site'].values.tolist() ==
+        biomass_tbl_subq_df['spatial_replication_level_1'].values.tolist()
+    ) == True
+
+
+    biomass_tbl_subq_df.to_csv('biomass_test_recover.csv')
+    assert (
+        biomass['biomass'].values.tolist() ==
+        biomass_tbl_subq_df['biomass_observation'].values.tolist()
+    ) == True
+
+    assert (
+        biomass['genus'].values.tolist() ==
+        biomass_tbl_subq_df['genus'].values.tolist()
+    ) == True
+
+    assert (
+        biomass['species'].values.tolist() ==
+        biomass_tbl_subq_df['species'].values.tolist()
+    ) == True
+
+    assert (
+        biomass['plot'].values.tolist() ==
+        biomass_tbl_subq_df['spatial_replication_level_2'].values.tolist()
+    ) == True
+    
+    assert (
+        biomass['month'].values.tolist() ==
+        biomass_tbl_subq_df['month'].values.tolist()
+    ) == True
+
+def test_recover_density_data(
+        taxa_tbl_subq_stmt, engine, density_table, density):
+    print('what')
+    density_tbl_subq_stmt = (
+        select([
+            taxa_tbl_subq_stmt,
+            density_table]).
+        select_from(
+            taxa_tbl_subq_stmt.
+            join(
+                density_table,
+                onclause=and_(
+                    taxa_tbl_subq_stmt.c.taxa_table_key ==
+                    density_table.taxa_density_fkey,
+                    taxa_tbl_subq_stmt.c.site_in_project_key ==
+                    density_table.site_in_project_density_fkey
+                )
+            )
+        ).alias('density join')
+    )
+
+    # pretty.pprint(density_tbl_subq_stmt.compile().string)
+    Session = sessionmaker(bind=engine)
+    session = Session()
+    density_tbl_subq_result = session.execute(density_tbl_subq_stmt)
+    density_tbl_subq_df = pd.DataFrame(density_tbl_subq_result.fetchall())
+    density_tbl_subq_df.columns = density_tbl_subq_result.keys()
+    density_tbl_subq_df.sort_values('density_table_key', inplace=True)
+    session.close()
+
+    assert (
+        density['SITE'].values.tolist() ==
+        density_tbl_subq_df['spatial_replication_level_1'].values.tolist()
+    ) == True
+
+    density_tbl_subq_df.to_csv('density_test_recover.csv')
+    assert (
+        density['DENSITY'].values.tolist() ==
+        density_tbl_subq_df['density_observation'].values.tolist()
+    ) == True
+
+    assert (
+        density['TAXON_GENUS'].values.tolist() ==
+        density_tbl_subq_df['genus'].values.tolist()
+    ) == True
+
+    assert (
+        density['TAXON_SPECIES'].values.tolist() ==
+        density_tbl_subq_df['species'].values.tolist()
+    ) == True
+
+    assert (
+        density['TRANSECT'].values.tolist() ==
+        density_tbl_subq_df['spatial_replication_level_2'].values.tolist()
+    ) == True
+    
+    assert (
+        density['MONTH'].values.tolist() ==
+        density_tbl_subq_df['month'].values.tolist()
     ) == True
