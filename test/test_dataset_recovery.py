@@ -196,10 +196,7 @@ def site_in_proj_subq_stmt(
             join(study_site_table.__table__).
             join(lter_table.__table__).join(project_table)).alias()
     )
-    Session = sessionmaker(bind=engine)
-    session = Session()
-    stmt_result = session.execute(stmt)
-    return stmt_result
+    return stmt
 
 @pytest.fixture
 def taxa_tbl_subq_stmt(
@@ -217,10 +214,7 @@ def taxa_tbl_subq_stmt(
             site_in_proj_subq_stmt.
             join(taxa_table)).alias()
     )
-    Session = sessionmaker(bind=engine)
-    session = Session()
-    stmt_result = session.execute(stmt)
-    return stmt_result
+    return stmt
 
 def test_recover_count_data(
         taxa_tbl_subq_stmt, engine, count_table, count):
@@ -252,7 +246,39 @@ def test_recover_count_data(
     session.close()
     print(count['site'].values.tolist())
     print(count_tbl_subq_df['spatial_replication_level_1'].values.tolist())
+
     assert (
         count['site'].values.tolist() ==
         count_tbl_subq_df['spatial_replication_level_1'].values.tolist()
+    ) == True
+
+    assert (
+        count['count'].values.tolist() ==
+        count_tbl_subq_df['count_observation'].values.tolist()
+    ) == True
+
+    assert (
+        count['genus'].values.tolist() ==
+        count_tbl_subq_df['genus'].values.tolist()
+    ) == True
+
+    assert (
+        count['species'].values.tolist() ==
+        count_tbl_subq_df['species'].values.tolist()
+    ) == True
+
+
+    count_tbl_subq_df['spatial_replication_level_2'] = pd.to_numeric(
+        count_tbl_subq_df['spatial_replication_level_2'])
+    
+    assert (
+        count['transect'].values.tolist() ==
+        count_tbl_subq_df['spatial_replication_level_2'].values.tolist()
+    ) == True
+
+    count_tbl_subq_df['month'] = count_tbl_subq_df['month'].astype(int)
+    
+    assert (
+        count['month'].values.tolist() ==
+        count_tbl_subq_df['month'].values.tolist()
     ) == True
