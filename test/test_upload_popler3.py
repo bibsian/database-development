@@ -632,10 +632,14 @@ def test_taxa_to_density_and_push(
     density_query_df = pd.DataFrame(density_query_stm.fetchall())
     density_query_df.columns = density_query_stm.keys()
     session.close()
-    
-    assert (
-        tbl_density['density_observation'].values.tolist() ==
-        density_query_df['density_observation'].values.tolist()) is True
+
+    density_true_list = tbl_density['density_observation'].values.tolist()
+    density_test_list = density_query_df['density_observation'].values.tolist()
+
+    density_true_list = [float(x) for x in density_true_list]
+    density_test_list = [float(x) for x in density_test_list]
+
+    assert (density_true_list == density_test_list) is True
 
     assert (
         [str(x) for x in tbl_density['spatial_replication_level_2'].values.tolist()] ==
@@ -674,10 +678,14 @@ def test_taxa_to_biomass_and_push(
     biomass_query_df.columns = biomass_query_stm.keys()
     session.close()
     engine.dispose()
-    
-    assert (
-        tbl_biomass['biomass_observation'].values.tolist() ==
-        biomass_query_df['biomass_observation'].values.tolist()) is True
+
+    biomass_true_list = tbl_biomass['biomass_observation'].values.tolist()
+    biomass_test_list = biomass_query_df['biomass_observation'].values.tolist()
+
+    biomass_true_list = [float(x) for x in biomass_true_list]
+    biomass_test_list = [float(x) for x in biomass_test_list]
+
+    assert (biomass_true_list == biomass_test_list) is True
 
     assert (
         [str(x) for x in tbl_biomass['spatial_replication_level_2'].values.tolist()] ==
@@ -695,15 +703,16 @@ def tbl_percent():
 #
 def test_taxa_to_percent_and_push(
         MergedataToUpload, engine, tbl_taxa, percent, tbl_percent,
-        percent_cover_table):
+        percent_cover_table, convert_types, find_types):
     percent.fillna('NA', inplace=True)
+
     uploading = MergedataToUpload(sessionmaker(bind=engine, autoflush=False))
     uploading.merge_for_datatype_table_upload(
         raw_dataframe=percent, formated_dataframe=tbl_percent,
         formated_dataframe_name='percent_cover',
         raw_data_taxa_columns=[
             'site', 'code'],
-        uploaded_taxa_columns= [
+        uploaded_taxa_columns = [
             'study_site_table_fkey', 'sppcode']
     )
 
@@ -715,14 +724,23 @@ def test_taxa_to_percent_and_push(
     percent_cover_query_df.columns = percent_cover_query_stm.keys()
     session.close()
     engine.dispose()
-    
-    assert (
-        tbl_percent['percent_cover_observation'].values.tolist() ==
-        percent_cover_query_df['percent_cover_observation'].values.tolist()) is True
+
+    percent_cover_true_list = tbl_percent[
+        'percent_cover_observation'].values.tolist()
+    percent_cover_test_list = percent_cover_query_df[
+        'percent_cover_observation'].values.tolist()
+
+    percent_cover_true_list = [float(x) for x in percent_cover_true_list]
+    percent_cover_test_list = [float(x) for x in percent_cover_test_list]
+
+    assert (percent_cover_true_list == percent_cover_test_list) is True
 
     assert (
-        [str(x) for x in tbl_percent['spatial_replication_level_2'].values.tolist()] ==
-        [str(x) for x in percent_cover_query_df['spatial_replication_level_2'].values.tolist()]) is True
+        [str(x) for x in tbl_percent[
+            'spatial_replication_level_2'].values.tolist()] ==
+        [str(x) for x in percent_cover_query_df[
+            'spatial_replication_level_2'].values.tolist()]) is True
+
 
 @pytest.fixture
 def tbl_individual():
