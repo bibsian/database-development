@@ -24,14 +24,18 @@ from poplerGUI import class_inputhandler as ini
 
 
 
-
 @pytest.fixture
 def AbstractTableBuilder():
     class AbstractTableBuilder(object):
         '''
         Abstrac class that will be used to implement
         a builder design pattern with all the tables that
-        must be concatenated
+        must be concatenated.
+
+        The concrete class created from this abstract class 
+        need to be initiated by an input handler instance...
+        from the facade class that would be a facade._inputs
+
         '''
         __meta__ = abc.ABCMeta
 
@@ -80,84 +84,329 @@ def AbstractTableBuilder():
             'depend': False
         }
         stationtable = {
-            'columns': ['lterid', 'lat', 'lng', 'descript'],
-            'time': False,
-            'cov': False,
-            'depend': False
-        }
-        sitetable = {
-            'columns': ['lterid','siteid', 'lat', 'lng', 'descript'],
-            'time': False,
-            'cov': False,
-            'depend': False
-        }
-        
-        maintable = {
             'columns': [
-                'lter_proj_site',
-                'metarecordid', 'title', 'samplingunits',
-                'samplingprotocol', 'structured', 'studystartyr',
-                'studyendyr', 'siteid',
-                'sitestartyr', 'siteendyr', 'samplefreq', 'totalobs',
-                'studytype', 'community', 'uniquetaxaunits',
-                # Spatial repliaction attributes
-                'sp_rep1_ext', 'sp_rep1_ext_units', 'sp_rep1_label',
-                'sp_rep1_uniquelevels',
-                'sp_rep2_ext', 'sp_rep2_ext_units', 'sp_rep2_label',
-                'sp_rep2_uniquelevels',
-                'sp_rep3_ext', 'sp_rep3_ext_units', 'sp_rep3_label',
-                'sp_rep3_uniquelevels',
-                'sp_rep4_ext', 'sp_rep4_ext_units', 'sp_rep4_label',
-                'sp_rep4_uniquelevels',
-                'authors', 'authors_contact', 'metalink', 'knbid',
-                'treatment_type', 'num_treatments',
-                'exp_maintainence', 'trt_label', 'derived'],
-            'time': False,
-            'cov': False,
-            'depend': False
-        }
-        taxatable = {
-            'columns': [
-                'lter_proj_site', 'sppcode', 'kingdom', 'phylum', 'clss',
-                'ordr','family', 'genus', 'species', 'authority'],
-            'time': False,
-            'cov': False,
-            'depend': True
-        }
-        rawtable = {
-            'columns': [
-                'taxaid', 'lter_proj_site', 'year', 'month', 'day',
-                'spt_rep1', 'spt_rep2', 'spt_rep3', 'spt_rep4',
-                'structure', 'individ', 'trt_label',
-                'unitobs', 'covariates'],
-            'time': True,
-            'cov': True ,
-            'depend': True
-        }
+                'lterid',
+                'lat_climate',
+                'lng_climate',
+                'descript'
 
-        updatetable = {
-            'columns': [
-                'studystartyr', 'studyendyr', 'sitestartyr',
-                'siteendyr', 'totalobs', 'uniquetaxaunits',
-                'sp_rep1_label', 'sp_rep1_uniquelevels',
-                'sp_rep2_label', 'sp_rep2_uniquelevels',
-                'sp_rep3_label', 'sp_rep3_uniquelevels',
-                'sp_rep4_label', 'sp_rep4_uniquelevels',
-                'num_treatments'
             ],
             'time': False,
             'cov': False,
-            'depend':False
+            'depend': False
+        }
+        study_site_table = {
+            'columns': [
+                'study_site_key',
+                'lter_table_fkey',
+                'lat_study_site',
+                'lng_study_site',
+                'descript'],
+            'time': False,
+            'cov': False,
+            'depend': False,
+            'table_keys': [
+                'study_site_key',
+                'lter_table_fkey'
+            ]
+        }
+
+        project_table = {
+            'columns': [
+                'proj_metadata_key', 'title', 'samplingunits',
+                'datatype', 'structured', 'studystartyr',
+                'studyendyr',
+                'samplefreq',
+                'studytype',
+                'community',
+                # Spatial repliaction attributes
+                'spatial_replication_level_1_extent',
+                'spatial_replication_level_1_extent_units',
+                'spatial_replication_level_1_label',
+                'spatial_replication_level_1_number_of_unique_reps',
+                'spatial_replication_level_2_extent',
+                'spatial_replication_level_2_extent_units',
+                'spatial_replication_level_2_label',
+                'spatial_replication_level_2_number_of_unique_reps',
+                'spatial_replication_level_3_extent',
+                'spatial_replication_level_3_extent_units',
+                'spatial_replication_level_3_label',
+                'spatial_replication_level_3_number_of_unique_reps',
+                'spatial_replication_level_4_extent',
+                'spatial_replication_level_4_extent_units',
+                'spatial_replication_level_4_label',
+                'spatial_replication_level_4_number_of_unique_reps',
+                'treatment_type', 'derived'
+                'authors', 'authors_contact', 'metalink', 'knbid',
+            ],
+            'time': False,
+            'cov': False,
+            'depend': False,
+            'table_keys': ['proj_metadata_key']
+        }
+
+        site_in_project_table = {
+            'columns': [
+                'site_in_project_key',
+                'study_site_table',
+                'project_table_fkey',
+                'sitestartyr',
+                'siteendyr',
+                'totalobs',
+                'uniquetaxaunits'
+            ],
+            'time': False,
+            'cov': False,
+            'depend': True,
+            'table_keys': [
+                'site_in_project_key',
+                'study_site_table_fkey',
+                'project_table_fkey'
+            ]
+        }
+
+        taxa_table = {
+            'columns': [
+                'taxa_table_key',
+                'site_in_project_taxa_key',
+                'sppcode',
+                'kingdom',
+                'subkingdom',
+                'infrakingdom',
+                'superdivision',
+                'division',
+                'subdivision',
+                'superphylum',
+                'phylum',
+                'subphylum',
+                'clss',
+                'subclass',
+                'ordr',
+                'family',
+                'genus',
+                'species',
+                'common_name',
+                'authority'],
+
+            'time': False,
+            'cov': False,
+            'depend': True,
+            'table_keys': [
+                'taxa_table_key', 'site_in_project_taxa_key'
+            ]
+        }
+
+        taxa_accepted_table = {
+            'columns': [
+                'taxa_accepted_table_key',
+                'taxa_original_fkey',
+                'site_in_project_taxa_key',
+                'sppcode',
+                'kingdom_accepted',
+                'subkingdom_accepted',
+                'infrakingdom_accepted',
+                'superdivision_accepted',
+                'division_accepted',
+                'subdivision_accepted',
+                'superphylum_accepted',
+                'phylum_accepted',
+                'subphylum_accepted',
+                'clss_accepted',
+                'subclass_accepted',
+                'ordr_accepted',
+                'family_accepted',
+                'genus_accepted',
+                'species_accepted',
+                'common_name_accepted',
+                'authority'],
+
+            'time': False,
+            'cov': False,
+            'depend': True,
+            'table_keys': [
+                'taxa_table_key', 'site_in_project_taxa_key'
+            ]
+        }
+
+        count_table = {
+            'columns': [
+                'count_table_key',
+                'taxa_count_fkey',
+                'site_in_project_count_fkey',
+                'year', 'month', 'day',
+                'spatial_replication_level_1',
+                'spatial_replication_level_2',
+                'spatial_replication_level_3',
+                'spatial_replication_level_4',
+                'structure',
+                'count_observation',
+                'covariates',
+                'trt_label'
+            ],
+
+            'time': True,
+            'cov': True,
+            'depend': True,
+            'table_keys': [
+                'count_table_key',
+                'taxa_count_fkey',
+                'site_in_project_count_fkey'
+            ]
+        }
+
+        biomass_table = {
+            'columns': [
+                'biomass_table_key',
+                'taxa_biomass_fkey',
+                'site_in_project_biomass_fkey',
+                'year', 'month', 'day',
+                'spatial_replication_level_1',
+                'spatial_replication_level_2',
+                'spatial_replication_level_3',
+                'spatial_replication_level_4',
+                'structure',
+                'biomass_observation',
+                'covariates',
+                'trt_label'
+            ],
+
+            'time': True,
+            'cov': True,
+            'depend': True,
+            'table_keys': [
+                'biomass_table_key',
+                'taxa_biomass_fkey',
+                'site_in_project_biomass_fkey'
+            ]
+        }
+
+        density_table = {
+            'columns': [
+                'density_table_key',
+                'taxa_density_fkey',
+                'site_in_project_density_fkey',
+                'year', 'month', 'day',
+                'spatial_replication_level_1',
+                'spatial_replication_level_2',
+                'spatial_replication_level_3',
+                'spatial_replication_level_4',
+                'structure',
+                'density_observation',
+                'covariates',
+                'trt_label'
+            ],
+
+            'time': True,
+            'cov': True,
+            'depend': True,
+            'table_keys': [
+                'density_table_key',
+                'taxa_density_fkey',
+                'site_in_project_density_fkey'
+            ]
+        }
+
+        percent_cover_table = {
+            'columns': [
+                'percent_cover_table_key',
+                'taxa_percent_cover_fkey',
+                'site_in_project_percent_cover_fkey',
+                'year', 'month', 'day',
+                'spatial_replication_level_1',
+                'spatial_replication_level_2',
+                'spatial_replication_level_3',
+                'spatial_replication_level_4',
+                'structure',
+                'percent_cover_observation',
+                'covariates',
+                'trt_label'
+            ],
+            
+            'time': True,
+            'cov': True,
+            'depend': True,
+            'table_keys': [
+                'percent_cover_table_key',
+                'taxa_percent_cover_fkey',
+                'site_in_project_percent_cover_fkey'
+            ]
+        }
+
+        individual_table = {
+            'columns': [
+                'individual_table_key',
+                'taxa_individual_fkey',
+                'site_in_project_individual_fkey',
+                'year', 'month', 'day',
+                'spatial_replication_level_1',
+                'spatial_replication_level_2',
+                'spatial_replication_level_3',
+                'spatial_replication_level_4',
+                'structure',
+                'individual_observation',
+                'covariates',
+                'trt_label'
+            ],
+            'time': True,
+            'cov': True,
+            'depend': True,
+            'table_keys': [
+                'individual_table_key',
+                'taxa_individual_fkey',
+                'site_in_project_individual_fkey'
+            ]
+        }
+
+        update_project_table = {
+            'columns': [
+                'proj_metadata_key',
+                'studystartyr', 'studyendyr',
+                'spatial_replication_level_1_label',
+                'spatial_replication_level_1_number_of_unique_reps',
+                'spatial_replication_level_2_label',
+                'spatial_replication_level_2_number_of_unique_reps',
+                'spatial_replication_level_3_label',
+                'spatial_replication_level_3_number_of_unique_reps',
+                'spatial_replication_level_4_label',
+                'spatial_replication_level_4_number_of_unique_reps'
+            ],
+            'time': False,
+            'cov': False,
+            'depend': False,
+            'table_keys': ['proj_metadata_key']
+        }
+
+        site_in_project_table = {
+            'columns': [
+                'site_in_project_key',
+                'study_site_table_fkey',
+                'sitestartyr',
+                'siteendyr',
+                'totalobs',
+                'uniquetaxaunits'
+            ],
+            'time': False,
+            'cov': False,
+            'depend': False,
+            'table_keys': [
+                'site_in_project_key',
+                'study_site_table_fkey'
+            ]
         }
 
         tabledict = {
             'climaterawtable': climaterawtable,
             'stationtable': stationtable,
-            'sitetable': sitetable,
-            'maintable': maintable,
-            'taxatable': taxatable,
-            'rawtable': rawtable,
-            'updatetable': updatetable
+            'study_site_table': study_site_table,
+            'project_table': project_table,
+            'taxa_table': taxa_table,
+            'taxa_accepted_table': taxa_accepted_table,
+            'count_table': count_table,
+            'biomass_table': biomass_table,
+            'density_table': density_table,
+            'percent_cover_table': percent_cover_table,
+            'update_project_table': update_project_table,
+            'site_in_project_table': site_in_project_table
         }
 
         def get_table_name(self):
@@ -169,6 +418,10 @@ def AbstractTableBuilder():
 
         def get_available_columns(self):
             return list(self._inputs.lnedentry.values())
+
+        def get_key_columns(self):
+            return self.tabledict[
+                self._inputs.tablename]['table_keys']
         
         def get_null_columns(self):
             availcol = list(self._inputs.lnedentry.keys())
@@ -183,8 +436,8 @@ def AbstractTableBuilder():
     return AbstractTableBuilder
 
 @pytest.fixture
-def SiteTableBuilder(AbstractTableBuilder):
-    class SiteTableBuilder(AbstractTableBuilder):
+def Study_Site_TableBuilder(AbstractTableBuilder):
+    class Study_Site_TableBuilder(AbstractTableBuilder):
         '''
         Concrete table builder implementation: Site
         Note, no get methods because there is no
@@ -192,8 +445,16 @@ def SiteTableBuilder(AbstractTableBuilder):
         '''
 
         def get_dataframe(
-                self, dataframe, acols, nullcols, dbcol,
+                self, dataframe, acols, nullcols, keycols, dbcol,
                 globalid, siteid, sitelevels):
+            '''
+            Method to concatenate a study_site_table
+            based on informatoin supplied by the user (acols),
+            expected columns in table (dbcol), 
+            Columns to be filled with NA (nullcols),
+            and the globalid, siteid, and unique site levels
+            
+            '''
 
             try:
                 acols = [x.rstrip() for x in acols]
@@ -202,43 +463,26 @@ def SiteTableBuilder(AbstractTableBuilder):
                 uniquesubset = dataframe[acols]
                 print(str(e))
 
-            if 'lterid' in dbcol:
-                dbcol.remove('lterid')
-            else:
-                pass
-            if 'lterid' in nullcols:
-                nullcols.remove('lterid')
-            else:
-                pass
-            nullcols.remove('descript')
-
-
             uniquesubset = dataframe[acols]
             nullsubset = hlp.produce_null_df(
                 ncols=len(nullcols),
                 colnames=nullcols,
                 dflength=len(uniquesubset),
-                nullvalue='NaN')
-            nullsubset2 = hlp.produce_null_df(
-                ncols=1,
-                colnames=['descript'],
-                dflength=len(uniquesubset),
                 nullvalue='NA')
 
             _concat =  concat(
-                [uniquesubset, nullsubset, nullsubset2],
+                [uniquesubset, nullsubset],
                 axis=1).reset_index(drop=True)
             final = _concat.drop_duplicates().reset_index(drop=True) 
-
             final.columns =dbcol
+
             return final
-                
-        
-    return SiteTableBuilder
+
+    return Study_Site_TableBuilder
 
 @pytest.fixture
-def MainTableBuilder(AbstractTableBuilder):
-    class MainTableBuilder(AbstractTableBuilder):
+def Project_TableBuilder(AbstractTableBuilder):
+    class Project_TableBuilder(AbstractTableBuilder):
         '''
         Concrete table builder implementation: Site
         Note, no get methods because there is no
@@ -273,77 +517,78 @@ def MainTableBuilder(AbstractTableBuilder):
             autoupdated = [
                 'studystartyr', 'studyendyr', 'sitestartyr',
                 'siteendyr', 'totalobs', 'uniquetaxaunits',
-                 'sp_rep1_label', 'sp_rep1_uniquelevels',
-                 'sp_rep2_label', 'sp_rep2_uniquelevels',
-                 'sp_rep3_label', 'sp_rep3_uniquelevels',
-                 'sp_rep4_label', 'sp_rep4_uniquelevels',
+                 'spatial_replication_level_1_label',
+                'spatial_replication_level_1_number_of_unique_reps',
+                 'spatial_replication_level_2_label', 'spatial_replication_level_2_number_of_unique_reps',
+                 'spatial_replication_level_3_label', 'spatial_replication_level_3_number_of_unique_reps',
+                 'spatial_replication_level_4_label', 'spatial_replication_level_4_number_of_unique_reps',
                 'num_treatments'
             ]
 
             # Creating main data table
             maindata = DataFrame(
                 {
-                    'metarecordid':dataframe['global_id'], 
+                    'proj_metadata_key':dataframe['global_id'], 
                     'title': dataframe['title'],
                     'samplingunits': 'NA',
-                    'samplingprotocol': dataframe['data_type'],
+                    'datatype': dataframe['data_type'],
                     'structured': 'NA',
                     'studystartyr': 'NA',
                     'studyendyr': 'NA',
-                    'siteid': 'NA',
-                    'sitestartyr': 'NA',
-                    'siteendyr': 'NA',
                     'samplefreq': dataframe['temp_int'],
-                    'totalobs': 'NA',
                     'studytype': dataframe['study_type'],
                     'community': dataframe['comm_data'],
-                    'uniquetaxaunits': 'NA',
                     # Spatial repliaction attributes
-                    'sp_rep1_ext': -99999,
-                    'sp_rep1_ext_units': 'NA',
-                    'sp_rep1_label': 'NA',
-                    'sp_rep1_uniquelevels': 'NA',
-                    'sp_rep2_ext': -99999,
-                    'sp_rep2_ext_units': 'NA',
-                    'sp_rep2_label': 'NA',
-                    'sp_rep2_uniquelevels': 'NA',
-                    'sp_rep3_ext': -99999,
-                    'sp_rep3_ext_units': 'NA',
-                    'sp_rep3_label': 'NA',
-                    'sp_rep3_uniquelevels': 'NA',
-                    'sp_rep4_ext': -99999,
-                    'sp_rep4_ext_units': 'NA',
-                    'sp_rep4_label': 'NA',
-                    'sp_rep4_uniquelevels': 'NA',
+                    'spatial_replication_level_1_extent': -99999,
+                    'spatial_replication_level_1_extent_units': 'NA',
+                    'spatial_replication_level_1_label': 'NA',
+                    'spatial_replication_level_1_number_of_unique_reps': 'NA',
+                    'spatial_replication_level_2_extent': -99999,
+                    'spatial_replication_level_2_extent_units': 'NA',
+                    'spatial_replication_level_2_label': 'NA',
+                    'spatial_replication_level_2_number_of_unique_reps': 'NA',
+                    'spatial_replication_level_3_extent': -99999,
+                    'spatial_replication_level_3_extent_units': 'NA',
+                    'spatial_replication_level_3_label': 'NA',
+                    'spatial_replication_level_3_number_of_unique_reps': 'NA',
+                    'spatial_replication_level_4_extent': -99999,
+                    'spatial_replication_level_4_extent_units': 'NA',
+                    'spatial_replication_level_4_label': 'NA',
+                    'spatial_replication_level_4_number_of_unique_reps': 'NA',
+                    'treatment_type': dataframe['treatment_type'],
+                    'derived': 'NA',
                     'authors': 'NA',
                     'authors_contact': 'NA',
                     'metalink': dataframe['site_metadata'],
-                    'knbid': dataframe['portal_id'],
-                    'treatment_type': dataframe['treatment_type'],
-                    'num_treatments': 'NA',
-                    'exp_maintainence': dataframe['exp_maintainence'],
-                    'trt_label': 'NA',
-                    'derived': 'NA'
-
+                    'knbid': dataframe['portal_id']
                 },
                 columns = [
-                'metarecordid', 'title', 'samplingunits',
-                'samplingprotocol', 'structured', 'studystartyr',
-                'studyendyr', 'siteid',
-                'sitestartyr', 'siteendyr', 'samplefreq', 'totalobs',
-                'studytype', 'community', 'uniquetaxaunits',
-                # Spatial repliaction attributes
-                'sp_rep1_ext', 'sp_rep1_ext_units', 'sp_rep1_label',
-                'sp_rep1_uniquelevels',
-                'sp_rep2_ext', 'sp_rep2_ext_units', 'sp_rep2_label',
-                'sp_rep2_uniquelevels',
-                'sp_rep3_ext', 'sp_rep3_ext_units', 'sp_rep3_label',
-                'sp_rep3_uniquelevels',
-                'sp_rep4_ext', 'sp_rep4_ext_units', 'sp_rep4_label',
-                'sp_rep4_uniquelevels',
-                'authors', 'authors_contact', 'metalink', 'knbid',
-                'treatment_type', 'num_treatments',
-                'exp_maintainence', 'trt_label', 'derived'], index=[0])
+                    
+                    'proj_metadata_key', 'title', 'samplingunits',
+                    'datatype', 'structured', 'studystartyr',
+                    'studyendyr',
+                    'samplefreq',
+                    'studytype', 'community',
+                    # Spatial repliaction attributes
+                    'spatial_replication_level_1_extent',
+                    'spatial_replication_level_1_extent_units',
+                    'spatial_replication_level_1_label',
+                    'spatial_replication_level_1_number_of_unique_reps',
+                    'spatial_replication_level_2_extent',
+                    'spatial_replication_level_2_extent_units',
+                    'spatial_replication_level_2_label',
+                    'spatial_replication_level_2_number_of_unique_reps',
+                    'spatial_replication_level_3_extent',
+                    'spatial_replication_level_3_extent_units',
+                    'spatial_replication_level_3_label',
+                    'spatial_replication_level_3_number_of_unique_reps',
+                    'spatial_replication_level_4_extent',
+                    'spatial_replication_level_4_extent_units',
+                    'spatial_replication_level_4_label',
+                    'spatial_replication_level_4_number_of_unique_reps',
+                    'treatment_type', 'derived',
+                    'authors', 'authors_contact', 'metalink', 'knbid',
+                ], index=[0])
 
             _concat =  concat(
                 [maindata]*len(sitelevels))
@@ -351,7 +596,7 @@ def MainTableBuilder(AbstractTableBuilder):
             back = [x for x in _concat.columns if x not in autoupdated]
             return _concat[back]
         
-    return MainTableBuilder
+    return Project_TableBuilder
 
 @pytest.fixture
 def TaxaTableBuilder(AbstractTableBuilder):
@@ -552,6 +797,7 @@ def DatabaseTable():
             self._null = None
             self._availcols = None
             self._availdf = None
+            self._keycols = None
 
         def set_table_name(self, tablename):
             self._name = tablename
@@ -564,6 +810,9 @@ def DatabaseTable():
         
         def set_null_columns(self, nullcol):
             self._null = nullcol
+
+        def set_key_columns(self, keycols):
+            self._keycols = keycols
 
         def set_dataframe(self, availdf):
             self._availdf = availdf
@@ -637,7 +886,7 @@ def TableDirector(DatabaseTable):
             except Exception as e:
                 print(str(e))
                 raise AttributeError('Builder type not set')
-            
+
             # ---Starts build process--- #
             # Table name
             table = self._builder.get_table_name()
@@ -648,10 +897,13 @@ def TableDirector(DatabaseTable):
 
             acolumns = self._builder.get_available_columns()
             dbtable.set_available_columns(acolumns)
-            
+
             nullcol = self._builder.get_null_columns()
             dbtable.set_null_columns(nullcol)
 
+            keycols = self._builder.get_key_columns()
+            dbtable.set_key_columns(keycols)
+            
             adata = self._builder.get_dataframe(
                 self._rawdata, acolumns, nullcol, columns,
                 self._globalid, self._siteid, self._sitelevels)
@@ -664,893 +916,40 @@ def TableDirector(DatabaseTable):
 
 @pytest.fixture
 def user_input():
-    lned = {'siteid': 'SITE'}
+    lned = {'siteid': 'site'}
     user_input = ini.InputHandler(
-        name='siteinfo', tablename='sitetable', lnedentry=lned)
+        name='siteinfo', tablename='study_site_table', lnedentry=lned)
     return user_input
 
 @pytest.fixture
 def df():
-    return read_csv('Datasets_manual_test/raw_data_test_2.csv')
+    return read_csv(
+        rootpath + end +
+        'Datasets_manual_test/raw_data_test_1.csv')
 
-def test_sitetable_build(
-        SiteTableBuilder, TableDirector, user_input, df):
+def test_study_site_table_build(
+        Study_Site_TableBuilder, TableDirector, user_input, df):
     '''
-    Testing builder classes
+    Testing builder class for site table
     '''
     facade = face.Facade()
     facade.input_register(user_input)
     face_input = facade._inputs[user_input.name]
     assert (isinstance(face_input, ini.InputHandler)) is True
 
-    sitetable = SiteTableBuilder()
-    assert (isinstance(sitetable, SiteTableBuilder)) is True
+    study_site_table_build = Study_Site_TableBuilder()
+    assert (isinstance(
+        study_site_table_build, Study_Site_TableBuilder)) is True
 
     director = TableDirector()
     assert (isinstance(director, TableDirector)) is True
     director.set_user_input(face_input)
-    director.set_builder(sitetable)
+    director.set_builder(study_site_table_build)
     director.set_data(df)
 
     sitetab = director.get_database_table()
     showsite = sitetab._availdf
     assert (isinstance(showsite, DataFrame)) is True
-    
-def test_error_builds(SiteTableBuilder, TableDirector, user_input):
-    pass
+    assert 0
 
 
-@pytest.fixture
-def main_user_input():
-    ui = ini.InputHandler(name='maininfo', tablename='maintable')
-    return ui
-
-@pytest.fixture
-def metadf():
-    if sys.platform == "darwin":
-        metapath = (
-            "/Users/bibsian/Desktop/git/database-development/test/Datasets_manual_test/" +
-            "meta_file_test.csv")
-            
-    elif sys.platform == "win32":
-        #=======================#
-        # Paths to data and conversion of files to dataframe
-        #=======================#
-        metapath = (
-            "C:\\Users\MillerLab\\Desktop\\database-development" +
-            "\\test\\Datasets_manual_test\\meta_file_test.csv")
-
-    metadf = read_csv(metapath, encoding="iso-8859-11")
-    return metadf
-    
-def test_maintable_build(
-        MainTableBuilder, TableDirector, main_user_input, metadf, df):
-
-    sitelevels = df['SITE'].values.tolist()
-    sitelevels.sort()
-    facade = face.Facade()
-    facade.input_register(main_user_input)
-    face_input = facade._inputs[main_user_input.name]
-
-    assert (isinstance(face_input, ini.InputHandler)) is True
-    maintable = MainTableBuilder()
-    assert (isinstance(maintable, MainTableBuilder)) is True
-
-    director = TableDirector()
-    assert (isinstance(director, TableDirector)) is True
-    director.set_user_input(face_input)
-    director.set_builder(maintable)
-    director.set_data(metadf)    
-    director.set_sitelevels(sitelevels)
-
-    maintab = director.get_database_table()
-    showmain = maintab._availdf
-    print('maintable: ', showmain)
-    print('maintable col: ', showmain.columns)
-    assert (isinstance(showmain, DataFrame)) is True
-
-@pytest.fixture
-def taxa_user_input():
-    taxalned = OrderedDict((
-        ('sppcode', ''),
-        ('kingdom', 'TAXON_KINGDOM'),
-        ('phylum', 'TAXON_PHYLUM'),
-        ('clss', 'TAXON_CLASS'),
-        ('ordr', 'TAXON_ORDER'),
-        ('family', 'TAXON_FAMILY'),
-        ('genus', 'TAXON_GENUS'),
-        ('species', 'TAXON_SPECIES') 
-    ))
-
-    taxackbox = OrderedDict((
-        ('sppcode', False),
-        ('kingdom', True),
-        ('phylum', True),
-        ('clss', True),
-        ('ordr', True),
-        ('family', True),
-        ('genus', True),
-        ('species', True) 
-    ))
-
-    taxacreate = {
-        'taxacreate': False
-    }
-    
-    available = [
-        x for x,y in zip(
-            list(taxalned.keys()), list(
-                taxackbox.values()))
-        if y is True
-    ]
-    
-    taxaini = ini.InputHandler(
-        name='taxainput',
-        tablename='taxatable',
-        lnedentry= hlp.extract(taxalned, available),
-        checks=taxacreate)
-    return taxaini
-
-@pytest.fixture
-def taxadfexpected():
-    return read_csv('DatabaseConfig/taxa_table_test.csv')
-
-def test_taxatable_build(
-        TaxaTableBuilder, TableDirector, taxa_user_input, df,
-        taxadfexpected):
-    sitelevels = df['SITE'].drop_duplicates().values.tolist()
-    sitelevels.sort()
-    facade = face.Facade()
-    facade.input_register(taxa_user_input)
-    face_input = facade._inputs[taxa_user_input.name]
-    taxabuilder = TaxaTableBuilder()
-    assert (isinstance(taxabuilder, TaxaTableBuilder)) is True
-
-    director = TableDirector()
-    assert (isinstance(director, TableDirector)) is True
-    director.set_user_input(face_input)
-    director.set_builder(taxabuilder)
-    director.set_data(df)
-    director.set_globalid(2)
-    director.set_siteid('SITE')
-    director.set_sitelevels(sitelevels)
-    
-    taxatable = director.get_database_table()
-    showtaxa = taxatable._availdf
-    assert isinstance(showtaxa,DataFrame)    
-
-    testphylum = list(set(showtaxa['phylum'].values.tolist()))
-    testphylum.sort()
-    testorder = list(set(showtaxa['ordr'].values.tolist()))
-    testorder.sort()
-    testspecies = list(set(showtaxa['species'].values.tolist()))
-    testspecies.sort()
-    
-    truephylum = list(set(taxadfexpected['phylum'].values.tolist()))
-    truephylum.sort()
-    trueorder = list(set(taxadfexpected['order'].values.tolist()))
-    trueorder.sort()
-    truespecies = list(set(taxadfexpected['species'].values.tolist()))
-    truespecies.sort()
-
-    assert (testphylum == truephylum) is True
-    assert (testorder == trueorder) is True    
-    assert (testspecies == truespecies) is True
-
-@pytest.fixture
-def taxa_user_input_create():
-    taxalned = OrderedDict((
-        ('sppcode', ''),
-        ('kingdom', 'TAXON_KINGDOM'),
-        ('phylum', 'TAXON_PHYLUM'),
-        ('clss', 'TAXON_CLASS'),
-        ('ordr', 'TAXON_ORDER'),
-        ('family', 'TAXON_FAMILY'),
-        ('genus', 'TAXON_GENUS'),
-        ('species', 'TAXON_SPECIES') 
-    ))
-
-    taxackbox = OrderedDict((
-        ('sppcode', 'Animalia'),
-        ('kingdom', True),
-        ('phylum', True),
-        ('clss', True),
-        ('ordr', True),
-        ('family', True),
-        ('genus', True),
-        ('species', True) 
-    ))
-
-    taxacreate = {
-        'taxacreate': True
-    }
-    
-    available = [
-        x for x,y in zip(
-            list(taxalned.keys()), list(
-                taxackbox.values()))
-        if y is True
-    ]
-    
-    taxaini = ini.InputHandler(
-        name='taxainput',
-        tablename='taxatable',
-        lnedentry= hlp.extract(taxalned, available),
-        checks=taxacreate)
-    return taxaini
-
-def test_taxatable_build_create(
-        TaxaTableBuilder, TableDirector, taxa_user_input_create, df,
-        taxadfexpected):
-    sitelevels = df['SITE'].drop_duplicates().values.tolist()
-    sitelevels.sort()
-    facade = face.Facade()
-    facade.input_register(taxa_user_input_create)
-    face_input = facade._inputs[taxa_user_input_create.name]
-    taxabuilder = TaxaTableBuilder()
-    assert (isinstance(taxabuilder, TaxaTableBuilder)) is True
-
-    director = TableDirector()
-    assert (isinstance(director, TableDirector)) is True
-    director.set_user_input(face_input)
-    director.set_builder(taxabuilder)
-    director.set_data(df)
-    director.set_globalid(2)
-    director.set_siteid('SITE')
-    director.set_sitelevels(sitelevels)
-    
-    taxatable = director.get_database_table()
-    showtaxa = taxatable._availdf
-    assert isinstance(showtaxa,DataFrame)    
-    print(showtaxa)
-
-    testphylum = list(set(showtaxa['phylum'].values.tolist()))
-    testphylum.sort()
-    testorder = list(set(showtaxa['ordr'].values.tolist()))
-    testorder.sort()
-    testspecies = list(set(showtaxa['species'].values.tolist()))
-    testspecies.sort()
-    
-    truephylum = list(set(taxadfexpected['phylum'].values.tolist()))
-    truephylum.sort()
-    trueorder = list(set(taxadfexpected['order'].values.tolist()))
-    trueorder.sort()
-    truespecies = list(set(taxadfexpected['species'].values.tolist()))
-    truespecies.sort()
-
-    assert (testphylum == truephylum) is True
-    assert (testorder == trueorder) is True    
-    assert (testspecies == truespecies) is True
-
-@pytest.fixture
-def taxa_user_input_raw():
-    taxalned = OrderedDict((
-        ('sppcode', 'SP_CODE'),
-        ('kingdom', 'TAXON_KINGDOM'),
-        ('phylum', 'TAXON_PHYLUM'),
-        ('clss', 'TAXON_CLASS'),
-        ('ordr', 'TAXON_ORDER'),
-        ('family', 'TAXON_FAMILY'),
-        ('genus', 'TAXON_GENUS'),
-        ('species', 'TAXON_SPECIES') 
-    ))
-
-    taxackbox = OrderedDict((
-        ('sppcode', True),
-        ('kingdom', True),
-        ('phylum', True),
-        ('clss', True),
-        ('ordr', True),
-        ('family', True),
-        ('genus', True),
-        ('species', True) 
-    ))
-
-    taxacreate = {
-        'taxacreate': False
-    }
-    
-    available = [
-        x for x,y in zip(
-            list(taxalned.keys()), list(
-                taxackbox.values()))
-        if y is True
-    ]
-    
-    taxaini = ini.InputHandler(
-        name='taxainfo',
-        tablename='taxatable',
-        lnedentry= hlp.extract(taxalned, available),
-        checks=taxacreate)
-    return taxaini
-
-
-@pytest.fixture
-def metahandle_raw():
-    lentry = {
-        'globalid': 4,
-        'metaurl': ('http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.15'),
-        'lter': 'SBC'}
-    ckentry = {}
-    metainput = ini.InputHandler(
-        name='metacheck', tablename=None, lnedentry=lentry,
-        checks=ckentry)
-    return metainput
-
-@pytest.fixture
-def filehandle_raw():
-    ckentry = {}
-    rbtn = {'.csv': True, '.txt': False,
-            '.xlsx': False}
-    lned = {'sheet': '', 'delim': '', 'tskip': '', 'bskip': ''}
-    fileinput = ini.InputHandler(
-        name='fileoptions',tablename=None, lnedentry=lned,
-        rbtns=rbtn, checks=ckentry, session=True,
-        filename=(
-            '/Users/bibsian/Desktop/git/database-development/' +
-            'poplerGUI/Metadata_and_og_data/' +
-            'cover_all_years_20140902.csv' ))
-    return fileinput
-
-@pytest.fixture
-def sitehandle_raw():
-    lned = {'siteid': 'SITE'}
-    sitehandle = ini.InputHandler(
-        name='siteinfo', lnedentry=lned, tablename='sitetable')
-    return sitehandle
-
-def test_taxatable_build_raw_data(
-        TaxaTableBuilder, TableDirector, taxa_user_input_raw,
-        filehandle_raw, metahandle_raw, sitehandle_raw):
-    facade = face.Facade()
-    facade.input_register(metahandle_raw)
-    facade.input_register(filehandle_raw)
-    dfraw = facade.load_data()
-    
-    sitelevels = dfraw['SITE'].drop_duplicates().values.tolist()
-    sitelevels.sort()
-    facade.register_site_levels(sitelevels)
-    facade.input_register(sitehandle_raw)
-    facade.input_register(taxa_user_input_raw)
-    
-    face_input = facade._inputs[taxa_user_input_raw.name]
-    taxabuilder = TaxaTableBuilder()
-    assert (isinstance(taxabuilder, TaxaTableBuilder)) is True
-
-    director = TableDirector()
-    assert (isinstance(director, TableDirector)) is True
-    director.set_user_input(face_input)
-    director.set_builder(taxabuilder)
-    director.set_data(dfraw)
-    director.set_globalid(2)
-    director.set_siteid('SITE')
-    director.set_sitelevels(sitelevels)
-    
-    taxatable = director.get_database_table()
-    showtaxa = taxatable._availdf
-    assert isinstance(showtaxa,DataFrame)    
-    print(showtaxa)
-
-    testphylum = list(set(showtaxa['phylum'].values.tolist()))
-    testphylum.sort()
-#    print('test phylum:', testphylum)
-    testorder = list(set(showtaxa['ordr'].values.tolist()))
-    testorder.sort()
-    testspecies = list(set(showtaxa['species'].values.tolist()))
-    testspecies.sort()
-    print('test species: ', testspecies)
-
-    truephylum = list(set(dfraw['TAXON_PHYLUM'].values.tolist()))
-    truephylum.sort()
-#    print('true phylum: ', truephylum)
-    trueorder = list(set(dfraw['TAXON_ORDER'].values.tolist()))
-    trueorder.sort()
-    truespecies = list(set(dfraw['TAXON_SPECIES'].values.tolist()))
-    truespecies.sort()
-    print('true species: ', truespecies)
-
-    assert (testphylum == truephylum) is True
-    assert (testorder == trueorder) is True    
-    assert (testspecies == truespecies) is True
-
-    taxamade = facade.make_table('taxainfo')
-    taxamade = taxamade._availdf
-    testmadespecies = list(set(taxamade['species'].values.tolist()))
-    testmadespecies.sort()
-    print(testmadespecies)
-    assert (testmadespecies == truespecies) is True
-    
-@pytest.fixture
-def raw_userinput():
-    obslned = OrderedDict((
-        ('spt_rep2', 'PLOT'),
-        ('spt_rep3', ''),
-        ('spt_rep4', ''),
-        ('structure', ''),
-        ('individ', ''),
-        ('trt_label', ''),
-        ('unitobs', 'COUNT')
-    ))
-    
-    obsckbox = OrderedDict((
-        ('spt_rep2', False),
-        ('spt_rep3', True),
-        ('spt_rep4', True),
-        ('structure', True),
-        ('individ', True),
-        ('trt_label', True),
-        ('unitobs', False)
-    ))
-    available = [
-        x for x,y in zip(
-            list(obslned.keys()), list(
-                obsckbox.values()))
-        if y is False
-    ]
-
-    rawini = ini.InputHandler(
-        name='rawinfo',
-        tablename='rawtable',
-        lnedentry= hlp.extract(obslned, available),
-        checks=obsckbox)
-
-    return rawini
-    
-def test_rawtable_build(
-        TableDirector, raw_userinput, df, RawTableBuilder):
-    sitelevels = df['SITE'].drop_duplicates().values.tolist()
-    sitelevels.sort()
-    facade = face.Facade()
-    facade.input_register(raw_userinput)
-    face_input = facade._inputs[raw_userinput.name]
-    rawbuilder = RawTableBuilder()
-    assert (isinstance(rawbuilder, RawTableBuilder)) is True
-
-    director = TableDirector()
-    assert (isinstance(director, TableDirector)) is True
-    director.set_user_input(face_input)
-    director.set_builder(rawbuilder)
-    director.set_data(df)
-    director.set_globalid(2)
-    director.set_siteid('SITE')
-    director.set_sitelevels(sitelevels)
-    rawtable = director.get_database_table()
-    showraw = rawtable._availdf
-    print('finished: ', showraw)
-
-    counttest = showraw['unitobs'].values.tolist()
-    counttrue = df['COUNT'].values.tolist()
-
-    sitetest = showraw['spt_rep1'].values.tolist()
-    sitetrue = df['SITE'].values.tolist()
-
-    assert (counttest == counttrue) is True
-    assert (sitetest == sitetrue) is True
-
-def test_update_table(
-        TableDirector, raw_userinput, df, UpdaterTableBuilder):
-    sitelevels = df['SITE'].drop_duplicates().values.tolist()
-    sitelevels.sort()
-    facade = face.Facade()
-    facade.input_register(raw_userinput)
-    face_input = facade._inputs[raw_userinput.name]
-    updatebuilder = UpdaterTableBuilder()
-    assert (isinstance(updatebuilder, UpdaterTableBuilder)) is True
-
-    director = TableDirector()
-    assert (isinstance(director, TableDirector)) is True
-    director.set_user_input(face_input)
-    director.set_builder(updatebuilder)
-    director.set_data(df)
-    director.set_globalid(2)
-    director.set_siteid('SITE')
-    director.set_sitelevels(sitelevels)
-    updatedf = director.get_database_table()
-    showupdate = updatedf._availdf
-    print('finished update: ', showupdate)
-    assert isinstance(showupdate, DataFrame) is True
-    assert (len(showupdate) == len(sitelevels)) is True
-
-@pytest.fixture
-def climate_user_input():
-    lned = OrderedDict((
-        ('avetempobs', ''),
-        ('aveprecipobs', '2'),
-        ('avewindobs', ''),
-        ('avewindobs', ''),
-        ('avelightobs', ''),
-        ('avewatertempobs', ''),
-        ('avephobs', ''),
-        ('avecondobs', ''),
-        ('aveturbidityobs', ''),
-        ('maxtempobs', ''),
-        ('maxprecipobs', ''),
-        ('maxwindobs', ''),
-        ('maxwindobs', ''),
-        ('maxlightobs', ''),
-        ('maxwatertempobs', ''),
-        ('maxphobs', ''),
-        ('maxcondobs', ''),
-        ('maxturbidityobs', ''),
-        ('mintempobs', ''),
-        ('minprecipobs', ''),
-        ('minwindobs', ''),
-        ('minwindobs', ''),
-        ('minlightobs', ''),
-        ('minwatertempobs', ''),
-        ('minphobs', ''),
-        ('mincondobs', ''),
-        ('minturbidityobs', '')
-    ))
-
-    cks = OrderedDict((
-        ('avetempobs', True),
-        ('aveprecipobs', False),
-        ('avewindobs', True),
-        ('avewindobs', True),
-        ('avelightobs', True),
-        ('avewatertempobs', True),
-        ('avephobs', True),
-        ('avecondobs', True),
-        ('aveturbidityobs', True),
-        ('maxtempobs', True),
-        ('maxprecipobs', True),
-        ('maxwindobs', True),
-        ('maxwindobs', True),
-        ('maxlightobs', True),
-        ('maxwatertempobs', True),
-        ('maxphobs', True),
-        ('maxcondobs', True),
-        ('maxturbidityobs', True),
-        ('mintempobs', True),
-        ('minprecipobs', True),
-        ('minwindobs', True),
-        ('minwindobs', True),
-        ('minlightobs', True),
-        ('minwatertempobs', True),
-        ('minphobs', True),
-        ('mincondobs', True),
-        ('minturbidityobs', True)
-    ))
-
-    user_input = ini.InputHandler(
-        name='siteinfo', tablename='climaterawtable', lnedentry=lned,
-        checks=cks
-    )
-    return user_input
-
-@pytest.fixture
-def all_units():
-    lnedunits = OrderedDict((
-        ('avetempobsmeasure', ''),
-        ('aveprecipobsmeasure', 'cm'),
-        ('avewindobsmeasure', ''),
-        ('avewindobsmeasure', ''),
-        ('avelightobsmeasure', ''),
-        ('avewatertempobsmeasure', ''),
-        ('avephobsmeasure', ''),
-        ('avecondobsmeasure', ''),
-        ('aveturbidityobsmeasure', ''),
-        ('maxtempobsmeasure', ''),
-        ('maxprecipobsmeasure', ''),
-        ('maxwindobsmeasure', ''),
-        ('maxwindobsmeasure', ''),
-        ('maxlightobsmeasure', ''),
-        ('maxwatertempobsmeasure', ''),
-        ('maxphobsmeasure', ''),
-        ('maxcondobsmeasure', ''),
-        ('maxturbidityobsmeasure', ''),
-        ('mintempobsmeasure', ''),
-        ('minprecipobsmeasure', ''),
-        ('minwindobsmeasure', ''),
-        ('minwindobsmeasure', ''),
-        ('minlightobsmeasure', ''),
-        ('minwatertempobsmeasure', ''),
-        ('minphobsmeasure', ''),
-        ('mincondobsmeasuremeasure', ''),
-        ('minturbidityobsmeasure', '')
-    ))
-    return lnedunits
-
-@pytest.fixture
-def cov_lned():
-    lnedcovs = OrderedDict((
-        ('covavg', ''),
-        ('covmin', ''),
-        ('covmax', '')
-    ))
-    return lnedcovs
-
-@pytest.fixture
-def cov_ck():
-    ckcovs = OrderedDict((
-        ('covavg', True),
-        ('covmin', True),
-        ('covmax', True)
-    ))
-    return ckcovs
-
-@pytest.fixture
-def cov_units():
-    lnedunitscov = OrderedDict((
-        ('covavgmeasure', ''),
-        ('covminmeasure', ''),
-        ('covmaxmeasure', '')
-    ))
-    return lnedunitscov
-
-@pytest.fixture
-def climatedf():
-    return read_table((
-        rootpath + 
-        'Datasets_manual_test/climate_precip.txt'
-    ), header=-1, engine='c')
-
-@pytest.fixture
-def ClimateTableBuilder(AbstractTableBuilder):
-    class ClimateTableBuilder(AbstractTableBuilder):
-        '''
-        Concrete table builder for climate data.
-        '''
-        def get_dataframe(
-                self, dataframe, acols, nullcols, dbcol,
-                globalid, siteid, sitelevels):
-
-            col_booleans = list(self._inputs.checks.values())
-            col_names = list(self._inputs.checks.keys())
-            acols = [
-                x.rstrip() for x,y in zip(acols, col_booleans)
-                if y is False]
-            acols_rename = [
-                x.rstrip() for x,y in zip(col_names, col_booleans)
-                if y is False]
-            nullcols = [
-                x.rstrip() for x,y in zip(col_names, col_booleans)
-                if y is True]
-            dbcol.remove('stationid')
-
-            for i in dbcol:
-                if i not in nullcols:
-                    nullcols.append(i)
-                else:
-                    pass
-            
-            
-            print('siteid: ', siteid)
-            print('col bools: ', col_booleans)
-            print('avaialable cols: ', acols)
-            print('null cols: ', nullcols)
-            print('db cols: ', dbcol)
-            
-            print('dataframe climate build: ', dataframe)
-            
-            try:
-                dataframe[acols]
-            except:
-                print('could not find column, trying numeric index')
-                acols = [int(x) for x in acols]
-
-            finally:
-                acols.append(siteid)
-                
-            uniquesubset = dataframe[acols]
-            nullsubset = hlp.produce_null_df(
-                ncols=len(nullcols),
-                colnames=nullcols,
-                dflength=len(uniquesubset),
-                nullvalue='NA')
-            print('uq subset build: ', uniquesubset)
-            _concat =  concat(
-                [uniquesubset, nullsubset], axis=1).reset_index(
-                    )
-            final = _concat.reset_index() 
-
-            try:
-                print('build siteid: ', siteid)
-                acols_rename.append('stationid')
-                for i,item in enumerate(acols_rename):
-                    final.rename(
-                        columns={acols[i]:item}, inplace=True)
-
-                print('final build class: ', final.columns)
-                return final
-            
-            except Exception as e:
-                print(str(e))
-                raise AttributeError('Column renaming error')
-
-    return ClimateTableBuilder
-
-
-def test_climate_obs(
-        TableDirector, climatedf, climate_user_input,
-        ClimateTableBuilder, all_units, cov_lned, cov_ck, cov_units):    
-
-    climatedf['site_a'] = 'site_a'
-    print(climatedf)
-    sitelevels = climatedf[
-        'site_a'].drop_duplicates().values.tolist()
-    sitelevels.sort()
-    facade = face.Facade()
-    facade.input_register(climate_user_input)
-    face_input = facade._inputs[climate_user_input.name]
-    climatebuilder = ClimateTableBuilder()
-
-    director = TableDirector()
-    assert (isinstance(director, TableDirector)) is True
-    director.set_user_input(face_input)
-    director.set_builder(climatebuilder)
-    director.set_data(climatedf)
-    director.set_globalid(1)
-    director.set_siteid('site_a')
-    director.set_sitelevels(sitelevels)
-    updatedf = director.get_database_table()
-    showupdate = updatedf._availdf
-    print(showupdate['stationid'])
-    assert isinstance(showupdate, DataFrame) is True
-    assert (len(showupdate) == len(climatedf)) is True
-
-@pytest.fixture
-def climate_user_input2():
-    lned = OrderedDict((
-        ('avetempobs', 'Temperature'),
-        ('aveprecipobs', ''),
-        ('avewindobs', ''),
-        ('avewindobs', ''),
-        ('avelightobs', ''),
-        ('avewatertempobs', ''),
-        ('avephobs', ''),
-        ('avecondobs', ''),
-        ('aveturbidityobs', ''),
-        ('maxtempobs', ''),
-        ('maxprecipobs', ''),
-        ('maxwindobs', ''),
-        ('maxwindobs', ''),
-        ('maxlightobs', ''),
-        ('maxwatertempobs', ''),
-        ('maxphobs', ''),
-        ('maxcondobs', ''),
-        ('maxturbidityobs', ''),
-        ('mintempobs', ''),
-        ('minprecipobs', ''),
-        ('minwindobs', ''),
-        ('minwindobs', ''),
-        ('minlightobs', ''),
-        ('minwatertempobs', ''),
-        ('minphobs', ''),
-        ('mincondobs', ''),
-        ('minturbidityobs', '')
-    ))
-
-    cks = OrderedDict((
-        ('avetempobs', False),
-        ('aveprecipobs', True),
-        ('avewindobs', True),
-        ('avewindobs', True),
-        ('avelightobs', True),
-        ('avewatertempobs', True),
-        ('avephobs', True),
-        ('avecondobs', True),
-        ('aveturbidityobs', True),
-        ('maxtempobs', True),
-        ('maxprecipobs', True),
-        ('maxwindobs', True),
-        ('maxwindobs', True),
-        ('maxlightobs', True),
-        ('maxwatertempobs', True),
-        ('maxphobs', True),
-        ('maxcondobs', True),
-        ('maxturbidityobs', True),
-        ('mintempobs', True),
-        ('minprecipobs', True),
-        ('minwindobs', True),
-        ('minwindobs', True),
-        ('minlightobs', True),
-        ('minwatertempobs', True),
-        ('minphobs', True),
-        ('mincondobs', True),
-        ('minturbidityobs', True)
-    ))
-
-    user_input = ini.InputHandler(
-        name='siteinfo', tablename='climaterawtable', lnedentry=lned,
-        checks=cks
-    )
-    return user_input
-
-@pytest.fixture
-def all_units2():
-    lnedunits = OrderedDict((
-        ('avetempobsmeasure', 'F'),
-        ('aveprecipobsmeasure', ''),
-        ('avewindobsmeasure', ''),
-        ('avewindobsmeasure', ''),
-        ('avelightobsmeasure', ''),
-        ('avewatertempobsmeasure', ''),
-        ('avephobsmeasure', ''),
-        ('avecondobsmeasure', ''),
-        ('aveturbidityobsmeasure', ''),
-        ('maxtempobsmeasure', ''),
-        ('maxprecipobsmeasure', ''),
-        ('maxwindobsmeasure', ''),
-        ('maxwindobsmeasure', ''),
-        ('maxlightobsmeasure', ''),
-        ('maxwatertempobsmeasure', ''),
-        ('maxphobsmeasure', ''),
-        ('maxcondobsmeasure', ''),
-        ('maxturbidityobsmeasure', ''),
-        ('mintempobsmeasure', ''),
-        ('minprecipobsmeasure', ''),
-        ('minwindobsmeasure', ''),
-        ('minwindobsmeasure', ''),
-        ('minlightobsmeasure', ''),
-        ('minwatertempobsmeasure', ''),
-        ('minphobsmeasure', ''),
-        ('mincondobsmeasuremeasure', ''),
-        ('minturbidityobsmeasure', '')
-    ))
-    return lnedunits
-
-@pytest.fixture
-def cov_lned2():
-    lnedcovs = OrderedDict((
-        ('covavg', ''),
-        ('covmin', ''),
-        ('covmax', '')
-    ))
-    return lnedcovs
-
-@pytest.fixture
-def cov_ck2():
-    ckcovs = OrderedDict((
-        ('covavg', True),
-        ('covmin', True),
-        ('covmax', True)
-    ))
-    return ckcovs
-
-@pytest.fixture
-def cov_units2():
-    lnedunitscov = OrderedDict((
-        ('covavgmeasure', ''),
-        ('covminmeasure', ''),
-        ('covmaxmeasure', '')
-    ))
-    return lnedunitscov
-
-@pytest.fixture
-def climatedf2():
-    return read_table((
-        rootpath + 
-        'Datasets_manual_test/climate_temp_test.txt'
-    ), header='infer', engine='c', delimiter=',')
-
-def test_climate_2_obs(
-        TableDirector, climatedf2, climate_user_input2,
-        ClimateTableBuilder, all_units2, cov_lned2,
-        cov_ck2, cov_units2):    
-
-    climatedf2['site_a'] = 'site_a'
-    print(climatedf2)
-    sitelevels = climatedf2[
-        'site_a'].drop_duplicates().values.tolist()
-    sitelevels.sort()
-    facade = face.Facade()
-    facade.input_register(climate_user_input2)
-    face_input = facade._inputs[climate_user_input2.name]
-    climatebuilder = ClimateTableBuilder()
-
-    director = TableDirector()
-    assert (isinstance(director, TableDirector)) is True
-    director.set_user_input(face_input)
-    director.set_builder(climatebuilder)
-    director.set_data(climatedf2)
-    director.set_globalid(1)
-    director.set_siteid('site_a')
-    director.set_sitelevels(sitelevels)
-    updatedf = director.get_database_table()
-    showupdate = updatedf._availdf
-    print(showupdate.columns)
-    print(showupdate)
-    assert isinstance(showupdate, DataFrame) is True
-    assert (len(showupdate) == len(climatedf2)) is True
