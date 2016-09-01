@@ -256,7 +256,7 @@ def test_recover_count_data(
     ) == True
 
 
-    count_tbl_subq_df.to_csv('count_test_recover.csv')
+
     assert (
         count['count'].values.tolist() ==
         count_tbl_subq_df['count_observation'].values.tolist()
@@ -380,7 +380,7 @@ def test_recover_density_data(
     density_tbl_subq_df = pd.DataFrame(density_tbl_subq_result.fetchall())
     density_tbl_subq_df.columns = density_tbl_subq_result.keys()
     density_tbl_subq_df.sort_values('density_table_key', inplace=True)
-    density_tbl_subq_df.to_csv('density_test_queried_result.csv')
+
     session.close()
 
     assert (
@@ -454,8 +454,6 @@ def test_recover_cover_data(
     percent_cover_tbl_subq_df.columns = percent_cover_tbl_subq_result.keys()
     percent_cover_tbl_subq_df.sort_values(
         'percent_cover_table_key', inplace=True)
-    percent_cover_tbl_subq_df.to_csv(
-        'percent_cover_test_queried_result.csv')
     session.close()
 
     assert (
@@ -527,8 +525,6 @@ def test_recover_individual_data(
     individual_tbl_subq_df.columns = individual_tbl_subq_result.keys()
     individual_tbl_subq_df.sort_values(
         'individual_table_key', inplace=True)
-    individual_tbl_subq_df.to_csv(
-        'individual_test_queried_result.csv')
     session.close()
 
     assert (
@@ -663,7 +659,7 @@ def test_union_all_recovery(
     union_all_select_df.columns
     union_all_select_df.sort_values([
         'proj_metadata_key', 'count_table_key'], inplace=True)
-    union_all_select_df.to_csv('union_all_select_queried_result.csv')
+
     
     assert (
         union_all['spatial_replication_level_1'].values.tolist() ==
