@@ -1,40 +1,40 @@
-sppcode,kingdom,phylum,clss,ordr,family,genus,species,common_name,authority,study_site,metadata_key
-NA,NA,NA,NA,NA,NA,Acantherus,piperatus,NA,NA,main_area_1,1
-NA,NA,NA,NA,NA,NA,Hippopedon,capito,NA,NA,main_area_1,1
-NA,NA,NA,NA,NA,NA,Trimerotropis,californicus,NA,NA,main_area_1,1
-NA,NA,NA,NA,NA,NA,Acantherus,piperatus,NA,NA,main_area_2,1
-NA,NA,NA,NA,NA,NA,Hippopedon,capito,NA,NA,main_area_2,1
-NA,NA,NA,NA,NA,NA,Trimerotropis,californicus,NA,NA,main_area_2,1
-NA,NA,NA,NA,NA,NA,Acantherus,piperatus,NA,NA,main_area_3,1
-NA,NA,NA,NA,NA,NA,Hippopedon,capito,NA,NA,main_area_3,1
-NA,NA,NA,NA,NA,NA,Trimerotropis,californicus,NA,NA,main_area_3,1
-NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,AQUE,2
-NA,Animalia,Chordata,Actinopterygii,Perciformes,Embiotocidae,Brachyistius,frenatus,Kelp Surfperch,NA,AQUE,2
-NA,Animalia,Chordata,Actinopterygii,Perciformes,Embiotocidae,Embiotoca,jacksoni,Black Surfperch,NA,AQUE,2
-NA,Animalia,Chordata,Actinopterygii,Perciformes,Clinidae,Gibbonsia,spp.,Crevice Kelpfish,NA,AQUE,2
-NA,Animalia,Chordata,Actinopterygii,Perciformes,Labridae,Oxyjulis,californica,NA,NA,AQUE,2
-NA,Animalia,Chordata,Actinopterygii,Perciformes,Gobiidae,Rhinogobiops,nicholsii,Blackeye Goby,NA,AQUE,2
-NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,SCDI,2
-NA,Animalia,Chordata,Actinopterygii,Perciformes,Embiotocidae,Brachyistius,frenatus,Kelp Surfperch,NA,SCDI,2
-NA,Animalia,Chordata,Actinopterygii,Perciformes,Embiotocidae,Embiotoca,jacksoni,Black Surfperch,NA,SCDI,2
-NA,Animalia,Chordata,Actinopterygii,Perciformes,Clinidae,Gibbonsia,spp.,Crevice Kelpfish,NA,SCDI,2
-NA,Animalia,Chordata,Actinopterygii,Perciformes,Labridae,Oxyjulis,californica,NA,NA,SCDI,2
-NA,Animalia,Chordata,Actinopterygii,Perciformes,Gobiidae,Rhinogobiops,nicholsii,Blackeye Goby,NA,SCDI,2
-NA,NA,Heterokontophyta,Phaeophyceae,Laminariales,Laminariaceae,Macrocystis,pyrifera,NA,NA,BioSiteA,3
-NA,NA,Heterokontophyta,Phaeophyceae,Laminariales,Laminariaceae,Macrocystis,pyrifera,NA,NA,BioSiteB,3
-NA,NA,Heterokontophyta,Phaeophyceae,Laminariales,Laminariaceae,Macrocystis,pyrifera,NA,NA,BioSiteC,3
-Bare,NA,NA,NA,NA,NA,NA,NA,NA,NA,main_area_1,4
-Opfr,NA,NA,NA,NA,NA,NA,NA,NA,NA,main_area_1,4
-Plpa,NA,NA,NA,NA,NA,NA,NA,NA,NA,main_area_1,4
-Opfr,NA,NA,NA,NA,NA,NA,NA,NA,NA,main_area_2,4
-Pesp,NA,NA,NA,NA,NA,NA,NA,NA,NA,main_area_2,4
-Plpa,NA,NA,NA,NA,NA,NA,NA,NA,NA,main_area_2,4
-Litter,NA,NA,NA,NA,NA,NA,NA,NA,NA,main_area_3,4
-Pesp,NA,NA,NA,NA,NA,NA,NA,NA,NA,main_area_3,4
-Plpa,NA,NA,NA,NA,NA,NA,NA,NA,NA,main_area_3,4
-BGSF,NA,NA,NA,NA,NA,Lepomis,macrochrus,Bluegill Sunfish,NA,SiteA,5
-LMBA,NA,NA,NA,NA,NA,Micropterus,salmoides,Largemouth Bass,NA,SiteA,5
-YLGB,NA,NA,NA,NA,NA,Acanthogobius,flavimanus,Yellowfin Goby,NA,SiteB,5
-SASU,NA,NA,NA,NA,NA,Catostomus,occidentalis,Sacramento Sucker,NA,SiteB,5
-LMB,NA,NA,NA,NA,NA,Micropterus,salmoides,Largemouth Bass,NA,SiteB,5
-SASU,NA,NA,NA,NA,NA,Catostomus,occidentalis,Sacramento Sucker,NA,SiteC,5
+sppcode,kingdom,subkingdom,infrakingdom,superdivision,division,subdivision,superphylum,phylum,subphylum,clss,subclass,ordr,family,genus,species,common_name,authority,study_site,metadata_key
+NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Acantherus,piperatus,NA,NA,main_area_1,1
+NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Hippopedon,capito,NA,NA,main_area_1,1
+NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Trimerotropis,californicus,NA,NA,main_area_1,1
+NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Acantherus,piperatus,NA,NA,main_area_2,1
+NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Hippopedon,capito,NA,NA,main_area_2,1
+NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Trimerotropis,californicus,NA,NA,main_area_2,1
+NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Acantherus,piperatus,NA,NA,main_area_3,1
+NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Hippopedon,capito,NA,NA,main_area_3,1
+NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Trimerotropis,californicus,NA,NA,main_area_3,1
+NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,AQUE,2
+NA,Animalia,NA,NA,NA,NA,NA,NA,Chordata,NA,Actinopterygii,NA,Perciformes,Embiotocidae,Brachyistius,frenatus,Kelp Surfperch,NA,AQUE,2
+NA,Animalia,NA,NA,NA,NA,NA,NA,Chordata,NA,Actinopterygii,NA,Perciformes,Embiotocidae,Embiotoca,jacksoni,Black Surfperch,NA,AQUE,2
+NA,Animalia,NA,NA,NA,NA,NA,NA,Chordata,NA,Actinopterygii,NA,Perciformes,Clinidae,Gibbonsia,spp.,Crevice Kelpfish,NA,AQUE,2
+NA,Animalia,NA,NA,NA,NA,NA,NA,Chordata,NA,Actinopterygii,NA,Perciformes,Labridae,Oxyjulis,californica,NA,NA,AQUE,2
+NA,Animalia,NA,NA,NA,NA,NA,NA,Chordata,NA,Actinopterygii,NA,Perciformes,Gobiidae,Rhinogobiops,nicholsii,Blackeye Goby,NA,AQUE,2
+NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,SCDI,2
+NA,Animalia,NA,NA,NA,NA,NA,NA,Chordata,NA,Actinopterygii,NA,Perciformes,Embiotocidae,Brachyistius,frenatus,Kelp Surfperch,NA,SCDI,2
+NA,Animalia,NA,NA,NA,NA,NA,NA,Chordata,NA,Actinopterygii,NA,Perciformes,Embiotocidae,Embiotoca,jacksoni,Black Surfperch,NA,SCDI,2
+NA,Animalia,NA,NA,NA,NA,NA,NA,Chordata,NA,Actinopterygii,NA,Perciformes,Clinidae,Gibbonsia,spp.,Crevice Kelpfish,NA,SCDI,2
+NA,Animalia,NA,NA,NA,NA,NA,NA,Chordata,NA,Actinopterygii,NA,Perciformes,Labridae,Oxyjulis,californica,NA,NA,SCDI,2
+NA,Animalia,NA,NA,NA,NA,NA,NA,Chordata,NA,Actinopterygii,NA,Perciformes,Gobiidae,Rhinogobiops,nicholsii,Blackeye Goby,NA,SCDI,2
+NA,NA,NA,NA,NA,NA,NA,NA,Heterokontophyta,NA,Phaeophyceae,NA,Laminariales,Laminariaceae,Macrocystis,pyrifera,NA,NA,BioSiteA,3
+NA,NA,NA,NA,NA,NA,NA,NA,Heterokontophyta,NA,Phaeophyceae,NA,Laminariales,Laminariaceae,Macrocystis,pyrifera,NA,NA,BioSiteB,3
+NA,NA,NA,NA,NA,NA,NA,NA,Heterokontophyta,NA,Phaeophyceae,NA,Laminariales,Laminariaceae,Macrocystis,pyrifera,NA,NA,BioSiteC,3
+Bare,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,main_area_1,4
+Opfr,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,main_area_1,4
+Plpa,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,main_area_1,4
+Opfr,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,main_area_2,4
+Pesp,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,main_area_2,4
+Plpa,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,main_area_2,4
+Litter,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,main_area_3,4
+Pesp,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,main_area_3,4
+Plpa,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,main_area_3,4
+BGSF,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Lepomis,macrochrus,Bluegill Sunfish,NA,SiteA,5
+LMBA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Micropterus,salmoides,Largemouth Bass,NA,SiteA,5
+YLGB,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Acanthogobius,flavimanus,Yellowfin Goby,NA,SiteB,5
+SASU,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Catostomus,occidentalis,Sacramento Sucker,NA,SiteB,5
+LMB,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Micropterus,salmoides,Largemouth Bass,NA,SiteB,5
+SASU,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Catostomus,occidentalis,Sacramento Sucker,NA,SiteC,5
