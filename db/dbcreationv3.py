@@ -346,7 +346,7 @@ count_table = Table(
     Column('spatial_replication_level_3', VARCHAR(50)),
     Column('spatial_replication_level_4', VARCHAR(50)),
     Column('structure', VARCHAR(50)),
-    Column('count_observation', INTEGER),
+    Column('count_observation', NUMERIC),
     Column('covariates', TEXT),
     Column('trt_label', VARCHAR(200)))
 
@@ -366,7 +366,7 @@ biomass_table = Table(
     Column('spatial_replication_level_3', VARCHAR(50)),
     Column('spatial_replication_level_4', VARCHAR(50)),
     Column('structure', VARCHAR(50)),
-    Column('biomass_observation', FLOAT),
+    Column('biomass_observation', NUMERIC),
     Column('covariates', TEXT),
     Column('trt_label', VARCHAR(200)))
 
@@ -386,7 +386,7 @@ density_table = Table(
     Column('spatial_replication_level_3', VARCHAR(50)),
     Column('spatial_replication_level_4', VARCHAR(50)),
     Column('structure', VARCHAR(50)),
-    Column('density_observation', FLOAT),
+    Column('density_observation', NUMERIC),
     Column('covariates', TEXT),
     Column('trt_label', VARCHAR(200)))
 
@@ -406,7 +406,7 @@ percent_cover_table = Table(
     Column('spatial_replication_level_3', VARCHAR(50)),
     Column('spatial_replication_level_4', VARCHAR(50)),
     Column('structure', VARCHAR(200)),
-    Column('percent_cover_observation', FLOAT),
+    Column('percent_cover_observation', NUMERIC),
     Column('covariates', TEXT),
     Column('trt_label', VARCHAR(200)))
 
@@ -427,7 +427,7 @@ individual_table = Table(
     Column('spatial_replication_level_3', VARCHAR(50)),
     Column('spatial_replication_level_4', VARCHAR(50)),
     Column('structure', VARCHAR(200)),
-    Column('individual_observation', Integer),
+    Column('individual_observation', NUMERIC),
     Column('covariates', TEXT),
     Column('trt_label', VARCHAR(200)))
 
