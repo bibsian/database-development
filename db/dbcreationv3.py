@@ -320,14 +320,49 @@ taxa_table = Table(
         'site_in_project_table.site_in_project_key', ondelete="CASCADE")),
     Column('sppcode', VARCHAR(100)),
     Column('kingdom', VARCHAR(100)),
+    Column('subkingdom', VARCHAR(100)),
+    Column('infrakingdom', VARCHAR(100)),
+    Column('superdivision', VARCHAR(100)),
+    Column('division', VARCHAR(100)),
+    Column('subdivision', VARCHAR(100)),
+    Column('superphylum', VARCHAR(100)),
     Column('phylum', VARCHAR(100)),
+    Column('subphylum', VARCHAR(100)),
     Column('clss', VARCHAR(100)),
+    Column('subclass', VARCHAR(100)),
     Column('ordr', VARCHAR(100)),
     Column('family', VARCHAR(100)),
     Column('genus', VARCHAR(100)),
     Column('species', VARCHAR(100)),
     Column('common_name', VARCHAR(100)),
     Column('authority', VARCHAR(100)))
+
+taxa_accepted_table = Table(
+    'taxa_accepted_table', metadata,
+    Column('taxa_accepted_table_key', Integer, primary_key=True),
+    Column('taxa_original_fkey', None, ForeignKey(
+        'taxa_table.taxa_table_key', ondelete="CASCADE")),
+    Column('site_in_project_taxa_accepted_key', None, ForeignKey(
+        'site_in_project_table.site_in_project_key', ondelete="CASCADE")),
+    Column('sppcode', VARCHAR(100)),
+    Column('kingdom_accepted', VARCHAR(100)),
+    Column('subkingdom_accepted', VARCHAR(100)),
+    Column('infrakingdom_accepted', VARCHAR(100)),
+    Column('superdivision_accepted', VARCHAR(100)),
+    Column('division_accepted', VARCHAR(100)),
+    Column('superphylum_accepted', VARCHAR(100)),
+    Column('phylum_accepted', VARCHAR(100)),
+    Column('subphylum_accepted', VARCHAR(100)),
+    Column('subdivision_accepted', VARCHAR(100)),
+    Column('clss_accepted', VARCHAR(100)),
+    Column('subclass_accepted', VARCHAR(100)),
+    Column('ordr_accepted', VARCHAR(100)),
+    Column('family_accepted', VARCHAR(100)),
+    Column('genus_accepted', VARCHAR(100)),
+    Column('species_accepted', VARCHAR(100)),
+    Column('common_name_accepted', VARCHAR(100)),
+    Column('authority', VARCHAR(100)))
+
 
 
 # Count table
