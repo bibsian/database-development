@@ -789,7 +789,124 @@ class Observation_Table_Builder(AbstractTableBuilder):
             print(str(e))
             raise AttributeError('Column renaming error')
 
+class Database_Table_Setter:
+    def __init__(self):
+        self._name = None
+        self._cols = None
+        self._null = None
+        self._availcols = None
+        self._availdf = None
+        self._keycols = None
 
+    def set_table_name(self, tablename):
+        self._name = tablename
+
+    def set_columns(self, colnames):
+        self._cols = colnames
+
+    def set_available_columns(self, acols):
+        self._availcols = acols
+
+    def set_null_columns(self, nullcol):
+        self._null = nullcol
+
+    def set_key_columns(self, keycols):
+        self._keycols = keycols
+
+    def set_dataframe(self, availdf):
+        self._availdf = availdf
+
+
+class Table_Builder_Director:
+    '''Constructs database tables'''
+    _inputs = None
+    _name = None
+    _builder = None
+    _rawdata = None
+    _globalid = None
+    _sitelevels = None
+    _siteid = None
+
+    def set_user_input(self, userinputcls):
+        try:
+            self._inputs = userinputcls
+        except Exception as e:
+            print(str(e))
+            raise AttributeError('Incorrect user input class')
+
+    def set_builder(self, builder):
+        self._builder = builder
+        try:
+            assert self._inputs is not None
+        except Exception as e:
+            print(str(e))
+            raise AssertionError('User input not set')
+
+        self._builder._inputs = self._inputs
+
+    def set_data(self, dataframe):
+        self._rawdata = dataframe
+        try:
+            assert self._rawdata is not None
+        except Exception as e:
+            print(str(e))
+            raise AssertionError('Data frame not set')
+
+    def set_globalid(self, globalid):
+        try:
+            assert globalid is not None
+        except Exception as e:
+            print(str(e))
+            raise AttributeError('Global Id not registered')
+        self._globalid = globalid
+
+    def set_siteid(self, siteid):
+        try:
+            assert siteid is not None
+        except Exception as e:
+            print(str(e))
+            raise AttributeError('SiteId is not registered')
+        self._siteid = siteid
+
+    def set_sitelevels(self, sitelevels):
+        self._sitelevels = sitelevels
+
+
+    def get_database_table(self):
+        ''' Initiates a concrete table class'''
+        dbtable = Database_Table_Setter()
+        try:
+            assert self._builder is not None
+        except Exception as e:
+            print(str(e))
+            raise AttributeError('Builder type not set')
+
+        # ---Starts build process--- #
+        # Table name
+        table = self._builder.get_table_name()
+        dbtable.set_table_name(table)
+
+        dbcols = self._builder.get_columns()
+        dbtable.set_columns(dbcols)
+
+        acolumns = self._builder.get_available_columns()
+        dbtable.set_available_columns(acolumns)
+
+        nullcol = self._builder.get_null_columns()
+        dbtable.set_null_columns(nullcol)
+
+        keycols = self._builder.get_key_columns()
+        dbtable.set_key_columns(keycols)
+
+        adata = self._builder.get_dataframe(
+            self._rawdata, acolumns, nullcol, keycols, dbcols,
+            self._globalid, self._siteid, self._sitelevels)
+
+        dbtable.set_dataframe(adata)
+
+        return dbtable
+
+    
 class UpdaterTableBuilder(AbstractTableBuilder):
     '''
     Concrete table builder implementation: Site
