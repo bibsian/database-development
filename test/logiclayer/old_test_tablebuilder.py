@@ -1,224 +1,28 @@
-@pytest.fixture
-def main_user_input():
-    ui = ini.InputHandler(name='maininfo', tablename='project_table')
-    return ui
 
-@pytest.fixture
-def metadf():
-    if sys.platform == "darwin":
-        metapath = (
-            "/Users/bibsian/Desktop/git/database-development/test/Datasets_manual_test/" +
-            "meta_file_test.csv")
-            
-    elif sys.platform == "win32":
-        #=======================#
-        # Paths to data and conversion of files to dataframe
-        #=======================#
-        metapath = (
-            "C:\\Users\MillerLab\\Desktop\\database-development" +
-            "\\test\\Datasets_manual_test\\meta_file_test.csv")
-
-    metadf = read_csv(metapath, encoding="iso-8859-11")
-    return metadf
-    
-def test_project_table_build(
-        Project_TableBuilder, TableDirector, main_user_input, metadf, df):
-
-    sitelevels = df['SITE'].values.tolist()
+def test_site_in_study_table(
+        Table_Builder_Director, site_in_project_userinput,
+        dataset_test_1, Site_In_Project_Table_Builder):
+    sitelevels = dataset_test_1['site'].drop_duplicates().values.tolist()
     sitelevels.sort()
     facade = face.Facade()
-    facade.input_register(main_user_input)
-    face_input = facade._inputs[main_user_input.name]
+    facade.input_register(raw_userinput)
+    face_input = facade._inputs[raw_userinput.name]
+    site_in_studybuilder = Site_In_Project_Table_Builder()
+    assert (isinstance(site_in_studybuilder, Site_In_Project_Table_Builder)) is True
 
-    assert (isinstance(face_input, ini.InputHandler)) is True
-    project_table = Project_TableBuilder()
-    assert (isinstance(project_table, Project_TableBuilder)) is True
-
-    director = TableDirector()
-    assert (isinstance(director, TableDirector)) is True
+    director = Table_Builder_Director()
+    assert (isinstance(director, Table_Builder_Director)) is True
     director.set_user_input(face_input)
-    director.set_builder(project_table)
-    director.set_data(metadf)    
-    director.set_sitelevels(sitelevels)
-
-    maintab = director.get_database_table()
-    showmain = maintab._availdf
-    print('project_table: ', showmain)
-    print('project_table col: ', showmain.columns)
-    assert (isinstance(showmain, DataFrame)) is True
-
-@pytest.fixture
-def taxa_user_input():
-    taxalned = OrderedDict((
-        ('sppcode', ''),
-        ('kingdom', 'TAXON_KINGDOM'),
-        ('phylum', 'TAXON_PHYLUM'),
-        ('clss', 'TAXON_CLASS'),
-        ('ordr', 'TAXON_ORDER'),
-        ('family', 'TAXON_FAMILY'),
-        ('genus', 'TAXON_GENUS'),
-        ('species', 'TAXON_SPECIES') 
-    ))
-
-    taxackbox = OrderedDict((
-        ('sppcode', False),
-        ('kingdom', True),
-        ('phylum', True),
-        ('clss', True),
-        ('ordr', True),
-        ('family', True),
-        ('genus', True),
-        ('species', True) 
-    ))
-
-    taxacreate = {
-        'taxacreate': False
-    }
-    
-    available = [
-        x for x,y in zip(
-            list(taxalned.keys()), list(
-                taxackbox.values()))
-        if y is True
-    ]
-    
-    taxaini = ini.InputHandler(
-        name='taxainput',
-        tablename='taxatable',
-        lnedentry= hlp.extract(taxalned, available),
-        checks=taxacreate)
-    return taxaini
-
-@pytest.fixture
-def taxadfexpected():
-    return read_csv('DatabaseConfig/taxa_table_test.csv')
-
-def test_taxatable_build(
-        TaxaTableBuilder, TableDirector, taxa_user_input, df,
-        taxadfexpected):
-    sitelevels = df['SITE'].drop_duplicates().values.tolist()
-    sitelevels.sort()
-    facade = face.Facade()
-    facade.input_register(taxa_user_input)
-    face_input = facade._inputs[taxa_user_input.name]
-    taxabuilder = TaxaTableBuilder()
-    assert (isinstance(taxabuilder, TaxaTableBuilder)) is True
-
-    director = TableDirector()
-    assert (isinstance(director, TableDirector)) is True
-    director.set_user_input(face_input)
-    director.set_builder(taxabuilder)
-    director.set_data(df)
+    director.set_builder(site_in_studybuilder)
+    director.set_data(dataset_test_1)
     director.set_globalid(2)
-    director.set_siteid('SITE')
+    director.set_siteid('site')
     director.set_sitelevels(sitelevels)
-    
-    taxatable = director.get_database_table()
-    showtaxa = taxatable._availdf
-    assert isinstance(showtaxa,DataFrame)    
-
-    testphylum = list(set(showtaxa['phylum'].values.tolist()))
-    testphylum.sort()
-    testorder = list(set(showtaxa['ordr'].values.tolist()))
-    testorder.sort()
-    testspecies = list(set(showtaxa['species'].values.tolist()))
-    testspecies.sort()
-    
-    truephylum = list(set(taxadfexpected['phylum'].values.tolist()))
-    truephylum.sort()
-    trueorder = list(set(taxadfexpected['order'].values.tolist()))
-    trueorder.sort()
-    truespecies = list(set(taxadfexpected['species'].values.tolist()))
-    truespecies.sort()
-
-    assert (testphylum == truephylum) is True
-    assert (testorder == trueorder) is True    
-    assert (testspecies == truespecies) is True
-
-@pytest.fixture
-def taxa_user_input_create():
-    taxalned = OrderedDict((
-        ('sppcode', ''),
-        ('kingdom', 'TAXON_KINGDOM'),
-        ('phylum', 'TAXON_PHYLUM'),
-        ('clss', 'TAXON_CLASS'),
-        ('ordr', 'TAXON_ORDER'),
-        ('family', 'TAXON_FAMILY'),
-        ('genus', 'TAXON_GENUS'),
-        ('species', 'TAXON_SPECIES') 
-    ))
-
-    taxackbox = OrderedDict((
-        ('sppcode', 'Animalia'),
-        ('kingdom', True),
-        ('phylum', True),
-        ('clss', True),
-        ('ordr', True),
-        ('family', True),
-        ('genus', True),
-        ('species', True) 
-    ))
-
-    taxacreate = {
-        'taxacreate': True
-    }
-    
-    available = [
-        x for x,y in zip(
-            list(taxalned.keys()), list(
-                taxackbox.values()))
-        if y is True
-    ]
-    
-    taxaini = ini.InputHandler(
-        name='taxainput',
-        tablename='taxatable',
-        lnedentry= hlp.extract(taxalned, available),
-        checks=taxacreate)
-    return taxaini
-
-def test_taxatable_build_create(
-        TaxaTableBuilder, TableDirector, taxa_user_input_create, df,
-        taxadfexpected):
-    sitelevels = df['SITE'].drop_duplicates().values.tolist()
-    sitelevels.sort()
-    facade = face.Facade()
-    facade.input_register(taxa_user_input_create)
-    face_input = facade._inputs[taxa_user_input_create.name]
-    taxabuilder = TaxaTableBuilder()
-    assert (isinstance(taxabuilder, TaxaTableBuilder)) is True
-
-    director = TableDirector()
-    assert (isinstance(director, TableDirector)) is True
-    director.set_user_input(face_input)
-    director.set_builder(taxabuilder)
-    director.set_data(df)
-    director.set_globalid(2)
-    director.set_siteid('SITE')
-    director.set_sitelevels(sitelevels)
-    
-    taxatable = director.get_database_table()
-    showtaxa = taxatable._availdf
-    assert isinstance(showtaxa,DataFrame)    
-    print(showtaxa)
-
-    testphylum = list(set(showtaxa['phylum'].values.tolist()))
-    testphylum.sort()
-    testorder = list(set(showtaxa['ordr'].values.tolist()))
-    testorder.sort()
-    testspecies = list(set(showtaxa['species'].values.tolist()))
-    testspecies.sort()
-    
-    truephylum = list(set(taxadfexpected['phylum'].values.tolist()))
-    truephylum.sort()
-    trueorder = list(set(taxadfexpected['order'].values.tolist()))
-    trueorder.sort()
-    truespecies = list(set(taxadfexpected['species'].values.tolist()))
-    truespecies.sort()
-
-    assert (testphylum == truephylum) is True
-    assert (testorder == trueorder) is True    
-    assert (testspecies == truespecies) is True
+    site_in_studydf = director.get_database_table()
+    showsite_in_study = site_in_studydf._availdf
+    print('finished site_in_study: ', showsite_in_study)
+    assert isinstance(showsite_in_study, DataFrame) is True
+    assert (len(showsite_in_study) == len(sitelevels)) is True
 
 @pytest.fixture
 def taxa_user_input_raw():
@@ -358,96 +162,7 @@ def test_taxatable_build_raw_data(
     print(testmadespecies)
     assert (testmadespecies == truespecies) is True
     
-@pytest.fixture
-def raw_userinput():
-    obslned = OrderedDict((
-        ('spt_rep2', 'PLOT'),
-        ('spt_rep3', ''),
-        ('spt_rep4', ''),
-        ('structure', ''),
-        ('individ', ''),
-        ('trt_label', ''),
-        ('unitobs', 'COUNT')
-    ))
-    
-    obsckbox = OrderedDict((
-        ('spt_rep2', False),
-        ('spt_rep3', True),
-        ('spt_rep4', True),
-        ('structure', True),
-        ('individ', True),
-        ('trt_label', True),
-        ('unitobs', False)
-    ))
-    available = [
-        x for x,y in zip(
-            list(obslned.keys()), list(
-                obsckbox.values()))
-        if y is False
-    ]
 
-    rawini = ini.InputHandler(
-        name='rawinfo',
-        tablename='rawtable',
-        lnedentry= hlp.extract(obslned, available),
-        checks=obsckbox)
-
-    return rawini
-    
-def test_rawtable_build(
-        TableDirector, raw_userinput, df, RawTableBuilder):
-    sitelevels = df['SITE'].drop_duplicates().values.tolist()
-    sitelevels.sort()
-    facade = face.Facade()
-    facade.input_register(raw_userinput)
-    face_input = facade._inputs[raw_userinput.name]
-    rawbuilder = RawTableBuilder()
-    assert (isinstance(rawbuilder, RawTableBuilder)) is True
-
-    director = TableDirector()
-    assert (isinstance(director, TableDirector)) is True
-    director.set_user_input(face_input)
-    director.set_builder(rawbuilder)
-    director.set_data(df)
-    director.set_globalid(2)
-    director.set_siteid('SITE')
-    director.set_sitelevels(sitelevels)
-    rawtable = director.get_database_table()
-    showraw = rawtable._availdf
-    print('finished: ', showraw)
-
-    counttest = showraw['unitobs'].values.tolist()
-    counttrue = df['COUNT'].values.tolist()
-
-    sitetest = showraw['spt_rep1'].values.tolist()
-    sitetrue = df['SITE'].values.tolist()
-
-    assert (counttest == counttrue) is True
-    assert (sitetest == sitetrue) is True
-
-def test_update_table(
-        TableDirector, raw_userinput, df, UpdaterTableBuilder):
-    sitelevels = df['SITE'].drop_duplicates().values.tolist()
-    sitelevels.sort()
-    facade = face.Facade()
-    facade.input_register(raw_userinput)
-    face_input = facade._inputs[raw_userinput.name]
-    updatebuilder = UpdaterTableBuilder()
-    assert (isinstance(updatebuilder, UpdaterTableBuilder)) is True
-
-    director = TableDirector()
-    assert (isinstance(director, TableDirector)) is True
-    director.set_user_input(face_input)
-    director.set_builder(updatebuilder)
-    director.set_data(df)
-    director.set_globalid(2)
-    director.set_siteid('SITE')
-    director.set_sitelevels(sitelevels)
-    updatedf = director.get_database_table()
-    showupdate = updatedf._availdf
-    print('finished update: ', showupdate)
-    assert isinstance(showupdate, DataFrame) is True
-    assert (len(showupdate) == len(sitelevels)) is True
 
 @pytest.fixture
 def climate_user_input():
