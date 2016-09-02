@@ -511,6 +511,7 @@ def Study_Site_Table_Builder(AbstractTableBuilder):
             _concat = concat(
                 [uniquesubset, nullcols_non_numeric, nullcols_numeric],
                 axis=1).reset_index(drop=True)
+            
             final = _concat.drop_duplicates().reset_index(drop=True)
             
             return final
