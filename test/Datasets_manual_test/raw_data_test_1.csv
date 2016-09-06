@@ -1,1 +1,13 @@
-YEAR,MONTH,DATE,SITE,DEPTH,SP_CODE,COUNT,COMMENTS,Common_Name,GROUP,SURVEY,TAXON_PHYLUM,TAXON_CLASS,TAXON_ORDER,TAXON_FAMILY,TAXON_GENUS,TAXON_SPECIES,TEMP1999,2,2/1/99,Site1,50,SPP1,25,NULL,poe bear,dog,Survey3,Chordata,Mammalia,Carnivora,Canidae,Canis,lupis,71999,2,2/28/99,Site1,100,SPP2,10,NULL,thor,cat,Survey3,Chordata,Mammalia,Carnivora,Felidae,felis,catus,41987,8,8/3/87,Site2,20,SPP1,54,NULL,poe bear,dog,Survey1,Chordata,Mammalia,Carnivora,Canidae,Canis,lupis,101987,8,8/3/87,Site2,20,SPP1,82,NULL,poe bear,dog,Survey1,Chordata,Mammalia,Carnivora,Canidae,Canis,lupis,101992,10,10/12/92,Site3,10,SPP3,1,NULL,junior,dog,Survey2,Chordata,Mammalia,Carnivora,Canidae,Canis,lupis angel1,131992,10,10/12/92,Site3,10,SPP4,1,NULL,hank,dog,Survey2,Chordata,Mammalia,Carnivora,Canidae,Canis,lupid angel2,13
+year,month,date,site,transect,genus,species,count,temp
+1999,2,2/1/1999,main_area_1,1,Acantherus,piperatus,25,10
+1999,2,2/28/1999,main_area_1,2,Trimerotropis,californicus,10,11
+1987,8,8/3/1987,main_area_1,3,Hippopedon,capito,54,10
+1987,8,8/3/1987,main_area_1,4,Acantherus,piperatus,82,14
+1992,10,10/12/1992,main_area_2,1,Trimerotropis,californicus,15,13
+1992,10,10/12/1992,main_area_2,2,Hippopedon,capito,31,12
+1999,2,2/1/1999,main_area_2,3,Acantherus,piperatus,15,11
+1999,2,2/28/1999,main_area_2,4,Trimerotropis,californicus,156,10
+1987,8,8/3/1987,main_area_3,1,Hippopedon,capito,13,10
+1987,8,8/3/1987,main_area_3,2,Hippopedon,capito,15,12
+1992,10,10/12/1992,main_area_3,3,Trimerotropis,californicus,315,11
+1992,10,10/12/1992,main_area_3,4,Acantherus,piperatus,13,18

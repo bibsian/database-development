@@ -39,149 +39,108 @@ conn = engine.connect()
 metadata = MetaData(bind=engine)
 
 # Creating base
-Base = declarative_base()
+base = declarative_base()
+
+# creating classes for tables to query things
+class lter_table(base):
+    __table__ = Table('lter_table', metadata, autoload=True)
 
 
-# Instantiating the classes which represent our database
-# tables and making their names available at the level
-# of the whole UserInterface main window
-class Climatetable(Base):
-    __table__ = Table('climate_raw_table', metadata, autoload=True)
+class study_site_table(base):
+    __table__ = Table('study_site_table', metadata, autoload=True)
 
 
-class Climatesite(Base):
-    __table__ = Table('climate_station_table', metadata, autoload=True)
-
-
-class Ltertable(Base):
-    __tablename__ = 'lter_table'
-
-    lterid = Column(VARCHAR, primary_key=True)
-    lter_name = Column(TEXT)
-    currently_funded = Column(VARCHAR)
-    pi = Column(VARCHAR)
-    pi_contact_email = Column(VARCHAR)
-    alt_contact_email = Column(VARCHAR)
-    homepage = Column(VARCHAR)
-
-
-class Sitetable(Base):
-    __tablename__ = 'site_table'
-
-    siteid = Column(VARCHAR, primary_key=True)
-    lterid = Column(VARCHAR, ForeignKey('lter_table.lterid'))
-    lat = Column(NUMERIC)
-    lng = Column(NUMERIC)
-    descript = Column(TEXT)
-
-
-class Maintable(Base):
-    __tablename__ = 'main_table'
-
-    lter_proj_site = Column(Integer, primary_key=True)
-    metarecordid = Column(INTEGER)
-    title = Column(TEXT)
-    samplingunits = Column(VARCHAR)
-    samplingprotocol = Column(VARCHAR)
-    structured = Column(VARCHAR)
-    studystartyr = Column(NUMERIC)
-    studyendyr = Column(NUMERIC)
-    siteid = Column(VARCHAR, ForeignKey('site_table.siteid'))
-    sitestartyr = Column(NUMERIC)
-    siteendyr = Column(NUMERIC)
-    samplefreq = Column(TEXT)
-    totalobs = Column(NUMERIC)
-    studytype = Column(VARCHAR)
-    community = Column(BOOLEAN)
-    uniquetaxaunits = Column(NUMERIC)
-    sp_rep1_ext = Column(NUMERIC)
-    sp_rep1_ext_units = Column(VARCHAR)
-    sp_rep1_label = Column(VARCHAR)
-    sp_rep1_uniquelevels = Column(NUMERIC)
-    sp_rep2_ext = Column(NUMERIC)
-    sp_rep2_ext_units = Column(VARCHAR)
-    sp_rep2_label = Column(VARCHAR)
-    sp_rep2_uniquelevels = Column(NUMERIC)
-    sp_rep3_ext = Column(NUMERIC)
-    sp_rep3_ext_units = Column(VARCHAR)
-    sp_rep3_label = Column(VARCHAR)
-    sp_rep3_uniquelevels = Column(NUMERIC)
-    sp_rep4_ext = Column(NUMERIC)
-    sp_rep4_ext_units = Column(VARCHAR)
-    sp_rep4_label = Column(VARCHAR)
-    sp_rep4_uniquelevels = Column(NUMERIC)
-    authors = Column(TEXT)
-    authors_contact = Column(VARCHAR)
-    metalink = Column(VARCHAR)
-    knbid = Column(VARCHAR)
-    treatment_type = Column(VARCHAR)
-    num_treatments = Column(VARCHAR)
-    exp_maintainence = Column(VARCHAR)
-    trt_label = Column(VARCHAR)
-    derived = Column(VARCHAR)
-
+class project_table(base):
+    __table__ = Table('project_table', metadata, autoload=True)
     taxa = relationship(
-        'Taxatable', cascade="delete, delete-orphan")
+        'taxa_table', cascade="delete, delete-orphan")
 
-    raw = relationship('Rawtable', cascade="delete, delete-orphan")
-    
-class Taxatable(Base):
-    __tablename__ = 'taxa_table'
-    taxaid = Column(Integer, primary_key=True)
-    lter_proj_site = Column(Integer, ForeignKey('main_table.lter_proj_site'))
-    sppcode = Column(VARCHAR)
-    kingdom = Column(VARCHAR)
-    phylum = Column(VARCHAR)
-    clss = Column(VARCHAR)
-    ordr = Column(VARCHAR)
-    family = Column(VARCHAR)
-    genus = Column(VARCHAR)
-    species = Column(VARCHAR)
-    authority = Column(VARCHAR)
+    count = relationship(
+        'count_table', cascade="delete, delete-orphan")
+    density = relationship(
+        'density_table', cascade="delete, delete-orphan")
+    biomass = relationship(
+        'biomass_table', cascade="delete, delete-orphan")
+    percent_cover = relationship(
+        'percent_cover_table', cascade="delete, delete-orphan")
+    individual = relationship(
+        'individual_table', cascade="delete, delete-orphan")
 
-class Rawtable(Base):
-    __tablename__ = 'raw_table'
 
-    sampleid = Column(Integer, primary_key=True)
-    taxaid = Column(Integer, ForeignKey('taxa_table.taxaid'))
-    lter_proj_site = Column(Integer, ForeignKey('main_table.lter_proj_site'))
-    year = Column(NUMERIC)
-    month = Column(NUMERIC)
-    day = Column(NUMERIC)
-    spt_rep1 = Column(VARCHAR)
-    spt_rep2 = Column(VARCHAR)
-    spt_rep3 = Column(VARCHAR)
-    spt_rep4 = Column(VARCHAR)
-    structure = Column(VARCHAR)
-    individ = Column(VARCHAR)
-    unitobs = Column(NUMERIC)
-    covariates = Column(TEXT)
-    trt_label = Column(TEXT)
+class site_in_project_table(base):
+    __table__ = Table('site_in_project_table', metadata, autoload=True)
+
+
+class taxa_table(base):
+    __table__ = Table('taxa_table', metadata, autoload=True)
+
+
+class taxa_accepted_table(base):
+    __table__ = Table('taxa_accepted_table', metadata, autoload=True)
+
+
+class count_table(base):
+    __table__ = Table('count_table', metadata, autoload=True)
+
+
+class biomass_table(base):
+    __table__ = Table('biomass_table', metadata, autoload=True)
+
+
+class density_table(base):
+    __table__ = Table('density_table', metadata, autoload=True)
+
+
+class percent_cover_table(base):
+    __table__ = Table('percent_cover_table', metadata, autoload=True)
+
+
+class individual_table(base):
+    __table__ = Table('individual_table', metadata, autoload=True)
+
 
 Session = sessionmaker(bind=engine, autoflush=False)
 
 
 # Helper Functions
-def find_types(orm):
-    ''' Method to get data types from Orms'''
-    dictname = (orm.__tablename__.split("_")[0] + "types")
+def find_types(tbl, name):
+    ''' Method to get data types from Tbls'''
     dictname = {}
-    for i,item in enumerate(orm.__table__.c):
+    for i, item in enumerate(tbl.__table__.c):
         name = (str(item).split('.')[1])
+        print('col name in table: find_types ', name)
         dictname[name] = str(
-            orm.__table__.c[name].type)
+            tbl.__table__.c[name].type)
     return dictname
 
-sitetypes = find_types(Sitetable)
-maintypes = find_types(Maintable)
-taxatypes = find_types(Taxatable)
-rawtypes = find_types(Rawtable)
+study_site_types = find_types(study_site_table, 'study_site')
+project_types = find_types(project_table, 'project')
+taxa_types = find_types(taxa_table, 'taxa')
+taxa_accepted_types = find_types(taxa_accepted_table, 'taxa_accepted')
+count_types = find_types(count_table, 'count')
+biomass_types = find_types(biomass_table, 'biomass')
+density_types = find_types(density_table, 'density')
+percent_cover_types = find_types(percent_cover_table, 'percent_cover')
+individual_types = find_types(individual_table, 'individual')
 
 
 def convert_types(dataframe, types):
-    ''' Method to convert data types in dataframe to match Orm'''
+    '''
+    Method to convert data types in dataframe to match
+    column types in database
+    '''
     for i in dataframe.columns:
-        if types[i] in ['NUMERIC', 'INTEGER']:
-            dataframe[i] = pd.to_numeric(dataframe[i], errors='coerce')
-        elif types[i] in ['VARCHAR', 'TEXT']:
-            dataframe[i] = dataframe[i].astype(object)
+        if types[i] in ['FLOAT', 'Float']:
+            dataframe.loc[:, i] = pd.to_numeric(dataframe[i], errors='coerce')
+        if types[i] in ['INTEGER', 'Integer']:
+            dataframe.loc[:, i] = dataframe[i].astype(int)
+        if types[i] in ['VARCHAR', 'TEXT']:
+            try:
+                dataframe.loc[:, i] = dataframe[i].astype(str)
+            except:
+                print('string conversion did not work')
+            finally:
+                dataframe.loc[:, i] = dataframe[i].astype(object)
+        if i in ['year', 'month', 'day']:
+            dataframe.loc[:, i] = pd.to_numeric(dataframe[i], errors='coerce')
+            dataframe[i].fillna('NaN', inplace=True)

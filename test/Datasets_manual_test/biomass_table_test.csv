@@ -1,0 +1,25 @@
+biomass_table_key,taxa_count_fkey,site_in_project_count_fkey,year,month,day,spatial_replication_level_1,spatial_replication_level_2,spatial_replication_level_3,spatial_replication_level_4,structure,biomass_observation,covariates,trt_label
+,,,1999,2,NA,BioSiteA,A,1,,NA,123.234,{'temp': '7'},NA
+,,,1999,2,NA,BioSiteA,A,2,,NA,123.514,{'temp': '7'},NA
+,,,1999,2,NA,BioSiteA,B,1,,NA,81.46,{'temp': '4'},NA
+,,,1999,2,NA,BioSiteA,B,2,,NA,92.41,{'temp': '4'},NA
+,,,1987,8,NA,BioSiteB,A,1,,NA,43.5,{'temp': '10'},NA
+,,,1987,8,NA,BioSiteB,A,2,,NA,54.36,{'temp': '10'},NA
+,,,1987,8,NA,BioSiteB,B,1,,NA,64.45,{'temp': '10'},NA
+,,,1987,8,NA,BioSiteB,B,2,,NA,46.47,{'temp': '10'},NA
+,,,1992,10,NA,BioSiteC,A,1,,NA,75.54,{'temp': '13'},NA
+,,,1992,10,NA,BioSiteC,A,2,,NA,189.4,{'temp': '13'},NA
+,,,1992,10,NA,BioSiteC,B,1,,NA,125.4,{'temp': '13'},NA
+,,,1992,10,NA,BioSiteC,B,2,,NA,124.9,{'temp': '13'},NA
+,,,2002,2,NA,BioSiteA,A,1,,NA,43.5,{'temp': '7'},NA
+,,,2002,2,NA,BioSiteA,A,2,,NA,54.36,{'temp': '7'},NA
+,,,2002,2,NA,BioSiteA,B,1,,NA,64.45,{'temp': '4'},NA
+,,,2002,2,NA,BioSiteA,B,2,,NA,92.41,{'temp': '4'},NA
+,,,1988,8,NA,BioSiteB,A,1,,NA,64.45,{'temp': '10'},NA
+,,,1988,8,NA,BioSiteB,A,2,,NA,46.47,{'temp': '10'},NA
+,,,1988,8,NA,BioSiteB,B,1,,NA,75.54,{'temp': '10'},NA
+,,,1988,8,NA,BioSiteB,B,2,,NA,46.47,{'temp': '10'},NA
+,,,1993,10,NA,BioSiteC,A,1,,NA,75.54,{'temp': '13'},NA
+,,,1993,10,NA,BioSiteC,A,2,,NA,46.47,{'temp': '13'},NA
+,,,1993,10,NA,BioSiteC,B,1,,NA,75.54,{'temp': '13'},NA
+,,,1993,10,NA,BioSiteC,B,2,,NA,189.4,{'temp': '13'},NA

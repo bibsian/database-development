@@ -11,6 +11,12 @@ data/.Rhistory
 */*/*/__pycache__
 */*/*/*/__pychache__
 
+
+*/*$*.xlsx
+*/*/*$*.xlsx
+*/*/*/*$*.xlsx
+*/*/*/*/*$*.xlsx
+
 */scratch*
 */*/scratch*
 */*scratch*

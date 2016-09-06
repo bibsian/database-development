@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 import abc
+import re
 from pandas import concat, DataFrame
 from poplerGUI.logiclayer import class_helpers as hlp 
 
@@ -12,7 +13,12 @@ class AbstractTableBuilder(object):
     '''
     Abstrac class that will be used to implement
     a builder design pattern with all the tables that
-    must be concatenated
+    must be concatenated.
+
+    The concrete class created from this abstract class 
+    need to be initiated by an input handler instance...
+    from the facade class that would be a facade._inputs
+
     '''
     __meta__ = abc.ABCMeta
 
@@ -61,84 +67,330 @@ class AbstractTableBuilder(object):
         'depend': False
     }
     stationtable = {
-        'columns': ['lterid', 'lat', 'lng', 'descript'],
-        'time': False,
-        'cov': False,
-        'depend': False
-    }
-    sitetable = {
-        'columns': ['lterid','siteid', 'lat', 'lng', 'descript'],
-        'time': False,
-        'cov': False,
-        'depend': False
-    }
+        'columns': [
+            'lterid',
+            'lat_climate',
+            'lng_climate',
+            'descript'
 
-    maintable = {
-        'columns': [
-            'lter_proj_site',
-            'metarecordid', 'title', 'samplingunits',
-            'samplingprotocol', 'structured', 'studystartyr',
-            'studyendyr', 'siteid',
-            'sitestartyr', 'siteendyr', 'samplefreq', 'totalobs',
-            'studytype', 'community', 'uniquetaxaunits',
-            # Spatial repliaction attributes
-            'sp_rep1_ext', 'sp_rep1_ext_units', 'sp_rep1_label',
-            'sp_rep1_uniquelevels',
-            'sp_rep2_ext', 'sp_rep2_ext_units', 'sp_rep2_label',
-            'sp_rep2_uniquelevels',
-            'sp_rep3_ext', 'sp_rep3_ext_units', 'sp_rep3_label',
-            'sp_rep3_uniquelevels',
-            'sp_rep4_ext', 'sp_rep4_ext_units', 'sp_rep4_label',
-            'sp_rep4_uniquelevels',
-            'authors', 'authors_contact', 'metalink', 'knbid',
-            'treatment_type', 'num_treatments',
-            'exp_maintainence', 'trt_label', 'derived'],
-        'time': False,
-        'cov': False,
-        'depend': False
-    }
-    taxatable = {
-        'columns': [
-            'lter_proj_site', 'sppcode', 'kingdom', 'phylum', 'clss',
-            'ordr','family', 'genus', 'species', 'authority'],
-        'time': False,
-        'cov': False,
-        'depend': True
-    }
-    rawtable = {
-        'columns': [
-            'taxaid', 'lter_proj_site', 'year', 'month', 'day',
-            'spt_rep1', 'spt_rep2', 'spt_rep3', 'spt_rep4',
-            'structure', 'individ', 'trt_label',
-            'unitobs', 'covariates'],
-        'time': True,
-        'cov': True ,
-        'depend': True
-    }
-
-    updatetable = {
-        'columns': [
-            'studystartyr', 'studyendyr', 'sitestartyr',
-            'siteendyr', 'totalobs', 'uniquetaxaunits',
-            'sp_rep1_label', 'sp_rep1_uniquelevels',
-            'sp_rep2_label', 'sp_rep2_uniquelevels',
-            'sp_rep3_label', 'sp_rep3_uniquelevels',
-            'sp_rep4_label', 'sp_rep4_uniquelevels',
-            'num_treatments'
         ],
         'time': False,
         'cov': False,
-        'depend':False
+        'depend': False
+    }
+    study_site_table = {
+        'columns': [
+            'study_site_key',
+            'lter_table_fkey',
+            'lat_study_site',
+            'lng_study_site',
+            'descript'],
+        'time': False,
+        'cov': False,
+        'depend': False,
+        'table_keys': [
+            'study_site_key',
+            'lter_table_fkey'
+        ]
+    }
+
+    project_table = {
+        'columns': [
+            'proj_metadata_key', 'title', 'samplingunits',
+            'datatype', 'structured', 'studystartyr',
+            'studyendyr',
+            'samplefreq',
+            'studytype',
+            'community',
+            # Spatial repliaction attributes
+            'spatial_replication_level_1_extent',
+            'spatial_replication_level_1_extent_units',
+            'spatial_replication_level_1_label',
+            'spatial_replication_level_1_number_of_unique_reps',
+            'spatial_replication_level_2_extent',
+            'spatial_replication_level_2_extent_units',
+            'spatial_replication_level_2_label',
+            'spatial_replication_level_2_number_of_unique_reps',
+            'spatial_replication_level_3_extent',
+            'spatial_replication_level_3_extent_units',
+            'spatial_replication_level_3_label',
+            'spatial_replication_level_3_number_of_unique_reps',
+            'spatial_replication_level_4_extent',
+            'spatial_replication_level_4_extent_units',
+            'spatial_replication_level_4_label',
+            'spatial_replication_level_4_number_of_unique_reps',
+            'treatment_type', 'derived'
+            'authors', 'authors_contact', 'metalink', 'knbid',
+        ],
+        'time': False,
+        'cov': False,
+        'depend': False,
+        'table_keys': ['proj_metadata_key']
+    }
+
+    site_in_project_table = {
+        'columns': [
+            'site_in_project_key',
+            'study_site_table',
+            'project_table_fkey',
+            'sitestartyr',
+            'siteendyr',
+            'totalobs',
+            'uniquetaxaunits'
+        ],
+        'time': False,
+        'cov': False,
+        'depend': True,
+        'table_keys': [
+            'site_in_project_key',
+            'study_site_table_fkey',
+            'project_table_fkey'
+        ]
+    }
+
+    taxa_table = {
+        'columns': [
+            'taxa_table_key',
+            'site_in_project_taxa_key',
+            'sppcode',
+            'kingdom',
+            'subkingdom',
+            'infrakingdom',
+            'superdivision',
+            'division',
+            'subdivision',
+            'superphylum',
+            'phylum',
+            'subphylum',
+            'clss',
+            'subclass',
+            'ordr',
+            'family',
+            'genus',
+            'species',
+            'common_name',
+            'authority'],
+
+        'time': False,
+        'cov': False,
+        'depend': True,
+        'table_keys': [
+            'taxa_table_key', 'site_in_project_taxa_key'
+        ]
+    }
+
+    taxa_accepted_table = {
+        'columns': [
+            'taxa_accepted_table_key',
+            'taxa_original_fkey',
+            'site_in_project_taxa_key',
+            'sppcode',
+            'kingdom_accepted',
+            'subkingdom_accepted',
+            'infrakingdom_accepted',
+            'superdivision_accepted',
+            'division_accepted',
+            'subdivision_accepted',
+            'superphylum_accepted',
+            'phylum_accepted',
+            'subphylum_accepted',
+            'clss_accepted',
+            'subclass_accepted',
+            'ordr_accepted',
+            'family_accepted',
+            'genus_accepted',
+            'species_accepted',
+            'common_name_accepted',
+            'authority'],
+
+        'time': False,
+        'cov': False,
+        'depend': True,
+        'table_keys': [
+            'taxa_table_key', 'site_in_project_taxa_key'
+        ]
+    }
+
+    count_table = {
+        'columns': [
+            'count_table_key',
+            'taxa_count_fkey',
+            'site_in_project_count_fkey',
+            'year', 'month', 'day',
+            'spatial_replication_level_1',
+            'spatial_replication_level_2',
+            'spatial_replication_level_3',
+            'spatial_replication_level_4',
+            'structure',
+            'count_observation',
+            'covariates',
+            'trt_label'
+        ],
+
+        'time': True,
+        'cov': True,
+        'depend': True,
+        'table_keys': [
+            'count_table_key',
+            'taxa_count_fkey',
+            'site_in_project_count_fkey'
+        ]
+    }
+
+    biomass_table = {
+        'columns': [
+            'biomass_table_key',
+            'taxa_biomass_fkey',
+            'site_in_project_biomass_fkey',
+            'year', 'month', 'day',
+            'spatial_replication_level_1',
+            'spatial_replication_level_2',
+            'spatial_replication_level_3',
+            'spatial_replication_level_4',
+            'structure',
+            'biomass_observation',
+            'covariates',
+            'trt_label'
+        ],
+
+        'time': True,
+        'cov': True,
+        'depend': True,
+        'table_keys': [
+            'biomass_table_key',
+            'taxa_biomass_fkey',
+            'site_in_project_biomass_fkey'
+        ]
+    }
+
+    density_table = {
+        'columns': [
+            'density_table_key',
+            'taxa_density_fkey',
+            'site_in_project_density_fkey',
+            'year', 'month', 'day',
+            'spatial_replication_level_1',
+            'spatial_replication_level_2',
+            'spatial_replication_level_3',
+            'spatial_replication_level_4',
+            'structure',
+            'density_observation',
+            'covariates',
+            'trt_label'
+        ],
+
+        'time': True,
+        'cov': True,
+        'depend': True,
+        'table_keys': [
+            'density_table_key',
+            'taxa_density_fkey',
+            'site_in_project_density_fkey'
+        ]
+    }
+
+    percent_cover_table = {
+        'columns': [
+            'percent_cover_table_key',
+            'taxa_percent_cover_fkey',
+            'site_in_project_percent_cover_fkey',
+            'year', 'month', 'day',
+            'spatial_replication_level_1',
+            'spatial_replication_level_2',
+            'spatial_replication_level_3',
+            'spatial_replication_level_4',
+            'structure',
+            'percent_cover_observation',
+            'covariates',
+            'trt_label'
+        ],
+
+        'time': True,
+        'cov': True,
+        'depend': True,
+        'table_keys': [
+            'percent_cover_table_key',
+            'taxa_percent_cover_fkey',
+            'site_in_project_percent_cover_fkey'
+        ]
+    }
+
+    individual_table = {
+        'columns': [
+            'individual_table_key',
+            'taxa_individual_fkey',
+            'site_in_project_individual_fkey',
+            'year', 'month', 'day',
+            'spatial_replication_level_1',
+            'spatial_replication_level_2',
+            'spatial_replication_level_3',
+            'spatial_replication_level_4',
+            'structure',
+            'individual_observation',
+            'covariates',
+            'trt_label'
+        ],
+        'time': True,
+        'cov': True,
+        'depend': True,
+        'table_keys': [
+            'individual_table_key',
+            'taxa_individual_fkey',
+            'site_in_project_individual_fkey'
+        ]
+    }
+
+    update_project_table = {
+        'columns': [
+            'proj_metadata_key',
+            'studystartyr', 'studyendyr',
+            'spatial_replication_level_1_label',
+            'spatial_replication_level_1_number_of_unique_reps',
+            'spatial_replication_level_2_label',
+            'spatial_replication_level_2_number_of_unique_reps',
+            'spatial_replication_level_3_label',
+            'spatial_replication_level_3_number_of_unique_reps',
+            'spatial_replication_level_4_label',
+            'spatial_replication_level_4_number_of_unique_reps'
+        ],
+        'time': False,
+        'cov': False,
+        'depend': False,
+        'table_keys': ['proj_metadata_key']
+    }
+
+    site_in_project_table = {
+        'columns': [
+            'site_in_project_key',
+            'study_site_table_fkey',
+            'sitestartyr',
+            'siteendyr',
+            'totalobs',
+            'uniquetaxaunits'
+        ],
+        'time': False,
+        'cov': False,
+        'depend': False,
+        'table_keys': [
+            'site_in_project_key',
+            'study_site_table_fkey'
+        ]
     }
 
     tabledict = {
         'climaterawtable': climaterawtable,
         'stationtable': stationtable,
-        'sitetable': sitetable,
-        'maintable': maintable,
-        'taxatable': taxatable,
-        'rawtable': rawtable,
-        'updatetable': updatetable
+        'study_site_table': study_site_table,
+        'project_table': project_table,
+        'taxa_table': taxa_table,
+        'taxa_accepted_table': taxa_accepted_table,
+        'count_table': count_table,
+        'biomass_table': biomass_table,
+        'density_table': density_table,
+        'percent_cover_table': percent_cover_table,
+        'individual_table': individual_table,
+        'update_project_table': update_project_table,
+        'site_in_project_table': site_in_project_table
     }
 
     def get_table_name(self):
@@ -151,6 +403,10 @@ class AbstractTableBuilder(object):
     def get_available_columns(self):
         return list(self._inputs.lnedentry.values())
 
+    def get_key_columns(self):
+        return self.tabledict[
+            self._inputs.tablename]['table_keys']
+
     def get_null_columns(self):
         availcol = list(self._inputs.lnedentry.keys())
         allcol = self.tabledict[
@@ -161,8 +417,7 @@ class AbstractTableBuilder(object):
     def get_dataframe(self):
         pass
 
-
-class SiteTableBuilder(AbstractTableBuilder):
+class Study_Site_Table_Builder(AbstractTableBuilder):
     '''
     Concrete table builder implementation: Site
     Note, no get methods because there is no
@@ -170,50 +425,69 @@ class SiteTableBuilder(AbstractTableBuilder):
     '''
 
     def get_dataframe(
-            self, dataframe, acols, nullcols, dbcol,
+            self, dataframe, acols, nullcols, keycols, dbcol,
             globalid, siteid, sitelevels):
+        '''
+        Method to concatenate a study_site_table
+        based on informatoin supplied by the user (acols),
+        expected columns in table (dbcol), 
+        Columns to be filled with NA (nullcols),
+        and the globalid, siteid, and unique site levels
 
-        acols = [x.rstrip() for x in acols]
-        nullcols = [x.rstrip() for x in nullcols]
-        dbcol = [x.rstrip() for x in dbcol]
+        acols: columns returned from the GUI (i.e. line edit entries)
 
-        if 'lterid' in dbcol:
-            dbcol.remove('lterid')
-        else:
-            pass
-        if 'lterid' in nullcols:
-            nullcols.remove('lterid')
-        else:
-            pass
-        nullcols.remove('descript')
-        print('tbuild (acol): ', acols)
+        dbcol: all columns within the table
+
+        nullcols: all columns within the table that HAVE to have
+        NA's generated by the table builder
+
+        keycols: primary and foreign keys in the table 
+        (Typically what are removed from the nullcol list)
+        '''
+
+        print('acols before: ', acols)
+        print('nullcols before: ', nullcols)
+        print('dbcol before: ', dbcol)
 
         try:
-            uniquesubset = dataframe[acols]
+            acols = [x.rstrip() for x in acols]
         except Exception as e:
             acols = [int(x) for x in acols]
             uniquesubset = dataframe[acols]
             print(str(e))
 
-        nullsubset = hlp.produce_null_df(
+        remove_from_null = ['lter_table_fkey']
+        [nullcols.remove(x) for x in remove_from_null]
+        remove_known_fkey = ['lter_table_fkey']
+        [dbcol.remove(x) for x in remove_known_fkey]
+        lat_lng_null_list = ['lat_study_site', 'lng_study_site']
+        [nullcols.remove(x) for x in lat_lng_null_list]
+
+        print('acols after: ', acols)
+        print('nullcols after: ', nullcols)
+        print('dbcol after: ', dbcol)
+
+        uniquesubset = dataframe[acols]
+        nullcols_non_numeric = hlp.produce_null_df(
             ncols=len(nullcols),
             colnames=nullcols,
             dflength=len(uniquesubset),
-            nullvalue='NaN')
-        nullsubset2 = hlp.produce_null_df(
-            ncols=1,
-            colnames=['descript'],
-            dflength=len(uniquesubset),
             nullvalue='NA')
 
-        _concat =  concat(
-            [uniquesubset, nullsubset, nullsubset2],
+        nullcols_numeric = hlp.produce_null_df(
+            ncols=len(lat_lng_null_list),
+            colnames=lat_lng_null_list,
+            dflength=len(uniquesubset),
+            nullvalue='-99999')
+
+        _concat = concat(
+            [uniquesubset, nullcols_non_numeric, nullcols_numeric],
             axis=1).reset_index(drop=True)
-        final = _concat.drop_duplicates().reset_index(drop=True) 
-        final.columns =dbcol
+        final = _concat.drop_duplicates().reset_index(drop=True)
+
         return final
 
-class MainTableBuilder(AbstractTableBuilder):
+class Project_Table_Builder(AbstractTableBuilder):
     '''
     Concrete table builder implementation: Site
     Note, no get methods because there is no
@@ -221,14 +495,13 @@ class MainTableBuilder(AbstractTableBuilder):
     '''
 
     def get_dataframe(
-            self, dataframe, acols, nullcols, dbcol,
+            self, dataframe, acols, nullcols, keycols, dbcol,
             globalid, siteid, sitelevels):
-
 
         acols = [x.rstrip() for x in acols]
         nullcols = [x.rstrip() for x in nullcols]
         dbcol = [x.rstrip() for x in dbcol]
-        
+
         if 'lter_proj_site' in dbcol:
             dbcol.remove('lter_proj_site')
         else:
@@ -249,85 +522,85 @@ class MainTableBuilder(AbstractTableBuilder):
         autoupdated = [
             'studystartyr', 'studyendyr', 'sitestartyr',
             'siteendyr', 'totalobs', 'uniquetaxaunits',
-             'sp_rep1_label', 'sp_rep1_uniquelevels',
-             'sp_rep2_label', 'sp_rep2_uniquelevels',
-             'sp_rep3_label', 'sp_rep3_uniquelevels',
-             'sp_rep4_label', 'sp_rep4_uniquelevels',
+            'spatial_replication_level_1_label',
+            'spatial_replication_level_1_number_of_unique_reps',
+            'spatial_replication_level_2_label',
+            'spatial_replication_level_2_number_of_unique_reps',
+            'spatial_replication_level_3_label',
+            'spatial_replication_level_3_number_of_unique_reps',
+            'spatial_replication_level_4_label',
+            'spatial_replication_level_4_number_of_unique_reps',
             'num_treatments'
         ]
 
         # Creating main data table
         maindata = DataFrame(
             {
-                'metarecordid':dataframe['global_id'], 
+                'proj_metadata_key': dataframe['global_id'], 
                 'title': dataframe['title'],
                 'samplingunits': 'NA',
-                'samplingprotocol': dataframe['data_type'],
+                'datatype': dataframe['data_type'],
                 'structured': 'NA',
                 'studystartyr': 'NA',
                 'studyendyr': 'NA',
-                'siteid': 'NA',
-                'sitestartyr': 'NA',
-                'siteendyr': 'NA',
                 'samplefreq': dataframe['temp_int'],
-                'totalobs': 'NA',
                 'studytype': dataframe['study_type'],
                 'community': dataframe['comm_data'],
-                'uniquetaxaunits': 'NA',
                 # Spatial repliaction attributes
-                'sp_rep1_ext': -99999,
-                'sp_rep1_ext_units': 'NA',
-                'sp_rep1_label': 'NA',
-                'sp_rep1_uniquelevels': 'NA',
-                'sp_rep2_ext': -99999,
-                'sp_rep2_ext_units': 'NA',
-                'sp_rep2_label': 'NA',
-                'sp_rep2_uniquelevels': 'NA',
-                'sp_rep3_ext': -99999,
-                'sp_rep3_ext_units': 'NA',
-                'sp_rep3_label': 'NA',
-                'sp_rep3_uniquelevels': 'NA',
-                'sp_rep4_ext': -99999,
-                'sp_rep4_ext_units': 'NA',
-                'sp_rep4_label': 'NA',
-                'sp_rep4_uniquelevels': 'NA',
+                'spatial_replication_level_1_extent': -99999,
+                'spatial_replication_level_1_extent_units': 'NA',
+                'spatial_replication_level_1_label': 'NA',
+                'spatial_replication_level_1_number_of_unique_reps': 'NA',
+                'spatial_replication_level_2_extent': -99999,
+                'spatial_replication_level_2_extent_units': 'NA',
+                'spatial_replication_level_2_label': 'NA',
+                'spatial_replication_level_2_number_of_unique_reps': 'NA',
+                'spatial_replication_level_3_extent': -99999,
+                'spatial_replication_level_3_extent_units': 'NA',
+                'spatial_replication_level_3_label': 'NA',
+                'spatial_replication_level_3_number_of_unique_reps': 'NA',
+                'spatial_replication_level_4_extent': -99999,
+                'spatial_replication_level_4_extent_units': 'NA',
+                'spatial_replication_level_4_label': 'NA',
+                'spatial_replication_level_4_number_of_unique_reps': 'NA',
+                'treatment_type': dataframe['treatment_type'],
+                'derived': 'NA',
                 'authors': 'NA',
                 'authors_contact': 'NA',
                 'metalink': dataframe['site_metadata'],
-                'knbid': dataframe['portal_id'],
-                'treatment_type': dataframe['treatment_type'],
-                'num_treatments': 'NA',
-                'exp_maintainence': dataframe['exp_maintainence'],
-                'trt_label': 'NA',
-                'derived': 'NA'
-
+                'knbid': dataframe['portal_id']
             },
             columns = [
-            'metarecordid', 'title', 'samplingunits',
-            'samplingprotocol', 'structured', 'studystartyr',
-            'studyendyr', 'siteid',
-            'sitestartyr', 'siteendyr', 'samplefreq', 'totalobs',
-            'studytype', 'community', 'uniquetaxaunits',
-            # Spatial repliaction attributes
-            'sp_rep1_ext', 'sp_rep1_ext_units', 'sp_rep1_label',
-            'sp_rep1_uniquelevels',
-            'sp_rep2_ext', 'sp_rep2_ext_units', 'sp_rep2_label',
-            'sp_rep2_uniquelevels',
-            'sp_rep3_ext', 'sp_rep3_ext_units', 'sp_rep3_label',
-            'sp_rep3_uniquelevels',
-            'sp_rep4_ext', 'sp_rep4_ext_units', 'sp_rep4_label',
-            'sp_rep4_uniquelevels',
-            'authors', 'authors_contact', 'metalink', 'knbid',
-            'treatment_type', 'num_treatments',
-            'exp_maintainence', 'trt_label', 'derived'], index=[0])
 
-        _concat =  concat(
-            [maindata]*len(sitelevels))
-        _concat['siteid'] = sitelevels
-        back = [x for x in _concat.columns if x not in autoupdated]
-        return _concat[back]
+                'proj_metadata_key', 'title', 'samplingunits',
+                'datatype', 'structured', 'studystartyr',
+                'studyendyr',
+                'samplefreq',
+                'studytype', 'community',
+                # Spatial repliaction attributes
+                'spatial_replication_level_1_extent',
+                'spatial_replication_level_1_extent_units',
+                'spatial_replication_level_1_label',
+                'spatial_replication_level_1_number_of_unique_reps',
+                'spatial_replication_level_2_extent',
+                'spatial_replication_level_2_extent_units',
+                'spatial_replication_level_2_label',
+                'spatial_replication_level_2_number_of_unique_reps',
+                'spatial_replication_level_3_extent',
+                'spatial_replication_level_3_extent_units',
+                'spatial_replication_level_3_label',
+                'spatial_replication_level_3_number_of_unique_reps',
+                'spatial_replication_level_4_extent',
+                'spatial_replication_level_4_extent_units',
+                'spatial_replication_level_4_label',
+                'spatial_replication_level_4_number_of_unique_reps',
+                'treatment_type', 'derived',
+                'authors', 'authors_contact', 'metalink', 'knbid',
+            ], index=[0])
 
-class TaxaTableBuilder(AbstractTableBuilder):
+        return maindata
+
+class Taxa_Table_Builder(AbstractTableBuilder):
     '''
     Concrete table builder implementation: Site
     Note, no get methods because there is no
@@ -335,28 +608,24 @@ class TaxaTableBuilder(AbstractTableBuilder):
     '''
     dependentdf = None
     def get_dataframe(
-            self, dataframe, acols, nullcols, dbcol,
+            self, dataframe, acols, nullcols, keycols, dbcol,
             globalid, siteid, sitelevels):
 
+        try:
+            acols = [x.rstrip() for x in acols]
+        except Exception as e:
+            acols = [int(x) for x in acols]
+            uniquesubset = dataframe[acols]
+            print(str(e))
 
-        acols = [x.rstrip() for x in acols]
-        nullcols = [x.rstrip() for x in nullcols]
-        dbcol = [x.rstrip() for x in dbcol]
-
-        if 'lter_proj_site' in dbcol:
-            dbcol.remove('lter_proj_site')
-        else:
-            pass
-        if 'lter_proj_site' in nullcols:
-            nullcols.remove('lter_proj_site')
-        else:
-            pass
-
+        remove_unknown_pkey = ['taxa_table_key']
+        [dbcol.remove(x) for x in remove_unknown_pkey]
+        [nullcols.remove(x) for x in remove_unknown_pkey]
         print('SELF INPUTS: ', self._inputs.checks)
-        print('ALL COLUMNS: ', acols)
+        print('AVAILABLE COLUMNS: ', acols)
         print('DB COLUMNS: ', dbcol)
-        print('DF COLUMNS: ', dataframe.columns.values.tolist())
         print('NULL COLUMNS: ', nullcols)
+        print('DF COLUMNS: ', dataframe.columns.values.tolist())
 
         if self._inputs.checks['taxacreate'] is True:
             dfcol = dataframe.columns.values.tolist()
@@ -370,20 +639,13 @@ class TaxaTableBuilder(AbstractTableBuilder):
             pass
 
         dbcolrevised = [x for x in dbcol if x not in nullcols]
+        print('DB COLUMN REVISED: ', dbcolrevised)
         uniquesubset_site_list = []
         for i,item in enumerate(sitelevels):                
-            try:
-                unqdf = dataframe[dataframe[siteid]==item]
-            except Exception as e:
-                siteid = int(siteid)
-                unqdf = dataframe[dataframe[siteid]==item]
-                print(str(e))
-
+            unqdf = dataframe[dataframe[siteid]==item]
             try:
                 uniquesubset = unqdf[acols]
             except Exception as e:
-                acols = [int(x) for x in acols]
-                uniquesubset = unqdf[acols]
                 print(str(e))
 
             unique = uniquesubset.drop_duplicates()
@@ -400,100 +662,136 @@ class TaxaTableBuilder(AbstractTableBuilder):
                 nullvalue='NA')
 
             unique = concat(
-                [unique,nullsubset,sitelevel], axis=1)
+                [unique, nullsubset, sitelevel], axis=1)
             uniquesubset_site_list.append(unique)
+        print(uniquesubset_site_list)
 
         final = uniquesubset_site_list[0]
-        for i,item in enumerate(uniquesubset_site_list):
+        for i, item in enumerate(uniquesubset_site_list):
             if i > 0:
-                final = concat([final,item], ignore_index=True)
+                final = concat([final, item], ignore_index=True)
             else:
                 pass
+        print('past subsetting sites')
 
-        for i,item in enumerate(dbcolrevised):
+        for i, item in enumerate(dbcolrevised):
             final.rename(
-                columns={acols[i]:item},
+                columns={acols[i]: item},
                 inplace=True)
         dbcol.append(siteid)
         return final[dbcol]
 
-class RawTableBuilder(AbstractTableBuilder):
+
+class Observation_Table_Builder(AbstractTableBuilder):
     '''
     Concrete table builder implementation: Site
     Note, no get methods because there is no
     alternate informatoin needed
     '''
     def get_dataframe(
-            self, dataframe, acols, nullcols, dbcol,
+            self, dataframe, acols, nullcols, keycols, dbcol,
             globalid, siteid, sitelevels):
 
+        [
+            '{}_observation'.format(
+                re.sub('_table', '', self._inputs.tablename))
+            for x in acols if x == 'unitobs']
 
-        acols = [x.rstrip() for x in acols]
-        nullcols = [x.rstrip() for x in nullcols]
-        dbcol = [x.rstrip() for x in dbcol]
+        [
+            '{}_observation'.format(
+                re.sub('_table', '', self._inputs.tablename))
+            for x in nullcols if x == 'unitobs']
 
-
-        acols.insert(0,siteid)
-        nullcols.remove('spt_rep1')
-        nullcols.remove('year')
-        nullcols.remove('month')
-        nullcols.remove('day')
-        nullcols.remove('covariates')
-        nullcols.remove('taxaid')
-        nullcols.remove('lter_proj_site')
-
-        if self._inputs.foreignmergeddata is None:
-            pass
-        else:
-            acols.append('taxaid')
-            acols.append('lter_proj_site')
+        print('obs acols: ', acols)
+        print('obs nullcols: ', nullcols)
 
         try:
-            uniquesubset = dataframe[acols]
+            acols = [x.rstrip() for x in acols]
         except Exception as e:
             acols = [int(x) for x in acols]
             uniquesubset = dataframe[acols]
             print(str(e))
 
+        # Insert siteid column and remove
+        # spatial rep 1 from null columns (already have data
+        # in siteid column of raw data)
+
+
+        acols.insert(0, siteid)
+        nullcols.remove('spatial_replication_level_1')
+        nullcols.remove(
+            '{}_observation'.format(
+                re.sub('_table', '', self._inputs.tablename)
+            ))
+
+        columns_to_be_added_later = [
+            'year', 'month', 'day', 'covariates']
+        [nullcols.remove(x) for x in columns_to_be_added_later]
+        [nullcols.remove(x) for x in keycols]
+
+        if self._inputs.foreignmergeddata is None:
+            pass
+        else:
+            columns_where_data_is_from_query = [
+                'taxa_{}_fkey'.format(
+                    re.sub('_table', '', self._inputs.tablename)),
+                'site_in_project_{}_fkey'.format(
+                    re.sub('_table', '', self._inputs.tablename)
+                )
+            ]
+            [acols.append(x) for x in columns_where_data_is_from_query]
+
+
+        uniquesubset = dataframe[acols]
+        print('uniquesub: ', uniquesubset)
         nullsubset = hlp.produce_null_df(
             ncols=len(nullcols),
             colnames=nullcols,
             dflength=len(uniquesubset),
             nullvalue='NA')
-        print('build class (null): ', nullsubset)
-        print('build class: ',dataframe)
-        print('uq subset build: ', uniquesubset)
-        _concat =  concat(
+        print('null subset: ', nullsubset)
+        _concat = concat(
             [uniquesubset, nullsubset], axis=1).reset_index(
                 )
-        final = _concat.reset_index() 
-        print('final build class: ', final)
+        final = _concat.reset_index()
 
-        try:
-            print('build siteid: ', siteid)
-            col_to = list(self._inputs.lnedentry.keys())
-            col_to.append('spt_rep1')
-            col_from = list(self._inputs.lnedentry.values())
-            col_from.append(siteid)
+        if self._inputs.tablename == 'individual_table':
+            final['individual_observation'] = 1
+            print('should have added individual observation')
+        else:
+            pass
+        print('final build class columns: ', final.columns)
+        try: 
+            fomated_column_to_change = list(self._inputs.lnedentry.keys())
+            fomated_column_to_change.append('spatial_replication_level_1')
+            for index, item in enumerate(fomated_column_to_change):
+                if item == 'unitobs':
+                    fomated_column_to_change[index] = '{}_observation'.format(
+                        re.sub(
+                            '_table', '', self._inputs.tablename))
 
-            for i,item in enumerate(col_to):
+            original_column_names_to_change = list(
+                self._inputs.lnedentry.values())
+            original_column_names_to_change.append(siteid)
+            for i, item in enumerate(fomated_column_to_change):
                 final.rename(
-                    columns={col_from[i]:item}, inplace=True)
+                    columns={
+                        original_column_names_to_change[i]: item},
+                    inplace=True)
             return final
-
 
         except Exception as e:
             print(str(e))
             raise AttributeError('Column renaming error')
 
-
-class DatabaseTable:
+class Database_Table_Setter:
     def __init__(self):
         self._name = None
         self._cols = None
         self._null = None
         self._availcols = None
         self._availdf = None
+        self._keycols = None
 
     def set_table_name(self, tablename):
         self._name = tablename
@@ -507,10 +805,14 @@ class DatabaseTable:
     def set_null_columns(self, nullcol):
         self._null = nullcol
 
+    def set_key_columns(self, keycols):
+        self._keycols = keycols
+
     def set_dataframe(self, availdf):
         self._availdf = availdf
 
-class TableDirector:
+
+class Table_Builder_Director:
     '''Constructs database tables'''
     _inputs = None
     _name = None
@@ -564,9 +866,10 @@ class TableDirector:
     def set_sitelevels(self, sitelevels):
         self._sitelevels = sitelevels
 
+
     def get_database_table(self):
         ''' Initiates a concrete table class'''
-        dbtable = DatabaseTable()
+        dbtable = Database_Table_Setter()
         try:
             assert self._builder is not None
         except Exception as e:
@@ -578,8 +881,8 @@ class TableDirector:
         table = self._builder.get_table_name()
         dbtable.set_table_name(table)
 
-        columns = self._builder.get_columns()
-        dbtable.set_columns(columns)
+        dbcols = self._builder.get_columns()
+        dbtable.set_columns(dbcols)
 
         acolumns = self._builder.get_available_columns()
         dbtable.set_available_columns(acolumns)
@@ -587,14 +890,18 @@ class TableDirector:
         nullcol = self._builder.get_null_columns()
         dbtable.set_null_columns(nullcol)
 
+        keycols = self._builder.get_key_columns()
+        dbtable.set_key_columns(keycols)
+
         adata = self._builder.get_dataframe(
-            self._rawdata, acolumns, nullcol, columns,
+            self._rawdata, acolumns, nullcol, keycols, dbcols,
             self._globalid, self._siteid, self._sitelevels)
 
         dbtable.set_dataframe(adata)
 
         return dbtable
 
+    
 class UpdaterTableBuilder(AbstractTableBuilder):
     '''
     Concrete table builder implementation: Site
