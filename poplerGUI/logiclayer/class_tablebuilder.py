@@ -598,12 +598,7 @@ class Project_Table_Builder(AbstractTableBuilder):
                 'authors', 'authors_contact', 'metalink', 'knbid',
             ], index=[0])
 
-        _concat =  concat(
-            [maindata]*len(sitelevels))
-        _concat['siteid'] = sitelevels
-        back = [x for x in _concat.columns if x not in autoupdated]
-        return _concat[back]
-
+        return maindata
 
 class Taxa_Table_Builder(AbstractTableBuilder):
     '''
