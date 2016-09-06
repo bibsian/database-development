@@ -1386,7 +1386,7 @@ def test_count_table_build(
     counttable = director.get_database_table()
     showcount = counttable._availdf
     print('finished: ', showcount)
-
+    assert 0
     counttest = showcount['count_observation'].values.tolist()
     counttrue = dataset_test_1['count'].values.tolist()
 
@@ -1419,6 +1419,7 @@ def percent_cover_userinput():
         ('unitobs', False),
         ('trt_label', False)
     ))
+
     available = [
         x for x,y in zip(
             list(obslned.keys()), list(
