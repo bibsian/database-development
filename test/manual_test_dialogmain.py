@@ -5,15 +5,15 @@ from PyQt4 import QtGui, QtCore
 from pandas import read_sql
 import sys, os
 sys.path.append(os.path.realpath(os.path.dirname(__file__)))
-from test import ui_mainrefactor as mw
-from test import ui_logic_session as logicsess
-from test import ui_logic_site as logicsite
-from test import ui_dialog_main as dmainw
-from test import class_inputhandler as ini
-from test import class_modelviewpandas as view
-from test.logiclayer.datalayer import config as orm
-from test.logiclayer import class_userfacade as face
-from test.logiclayer import class_helpers as hlp
+from Views import ui_mainrefactor as mw
+from Views import ui_dialog_main as dmainw
+from poplerGUI import ui_logic_session as logicsess
+from poplerGUI import ui_logic_site as logicsite
+from poplerGUI import class_inputhandler as ini
+from poplerGUI import class_modelviewpandas as view
+from poplerGUI.logiclayer.datalayer import config as orm
+from poplerGUI.logiclayer import class_userfacade as face
+from poplerGUI.logiclayer import class_helpers as hlp
 
 @pytest.fixture
 def MainWindow():
@@ -25,15 +25,15 @@ def MainWindow():
             self.facade = None
             
             self.mainini = ini.InputHandler(
-                name='maininfo', tablename='maintable')
+                name='maininfo', tablename='project_table')
 
             # Place holder: Data Model/ Data model view
             self.mainmodel = None
             self.viewEdit = view.PandasTableModelEdit
 
             # Placeholders: Data tables
-            self.maintable = None
-            self.maintablemod = None
+            self.project_table = None
+            self.project_tablemod = None
 
             # Placeholder: Director (table builder), log
             self.maindirector = None
@@ -56,40 +56,40 @@ def MainWindow():
             set the data model,
             set the data model viewer
             '''
-            if self.maintablemod is None:
+            if self.project_tablemod is None:
                 self.facade.input_register(self.mainini)
                 self.maindirector = self.facade.make_table('maininfo')
-                self.facade.create_log_record('maintable')
-                self._log = self.facade._tablelog['maintable']
-                self.maintable = self.maindirector._availdf.copy()
-                self.maintable = self.maintable.reset_index(
+                self.facade.create_log_record('project_table')
+                self._log = self.facade._tablelog['project_table']
+                self.project_table = self.maindirector._availdf.copy()
+                self.project_table = self.project_table.reset_index(
                     drop=True)
             else:
-                self.maintable = self.mainmodel.data(
+                self.project_table = self.mainmodel.data(
                     None, QtCore.Qt.UserRole).reset_index(drop=True)
 
-            self.mainmodel = self.viewEdit(self.maintable)
+            self.mainmodel = self.viewEdit(self.project_table)
             self.tabviewMetadata.setModel(self.mainmodel)
 
         def submit_change(self):
-            self.maintablemod = self.mainmodel.data(
+            self.project_tablemod = self.mainmodel.data(
                 None, QtCore.Qt.UserRole).reset_index(drop=True)
-            self.facade.push_tables['maintable'] = self.maintablemod
+            self.facade.push_tables['project_table'] = self.project_tablemod
             print('retrieved edited data')
-            print('main mod: ', self.maintablemod)
+            print('main mod: ', self.project_tablemod)
             self._log.debug(
-                'maintable mod: ' +
-                ' '.join(self.maintablemod.columns.values.tolist()))
+                'project_table mod: ' +
+                ' '.join(self.project_tablemod.columns.values.tolist()))
 
             try:
                 session = orm.Session()
                 maincheck = session.query(
-                    orm.Maintable.metarecordid).order_by(
-                        orm.Maintable.metarecordid)
+                    orm.project_table.proj_metadata_key).order_by(
+                        orm.project_table.proj_metadata_key)
                 maincheckdf = read_sql(
                     maincheck.statement, maincheck.session.bind)
                 metaid_entered = maincheckdf[
-                    'metarecordid'].values.tolist()
+                    'proj_metadata_key'].values.tolist()
                 print(metaid_entered)
                 print(self.facade._valueregister['globalid'])
                 if self.facade._valueregister[
@@ -101,18 +101,18 @@ def MainWindow():
                 else:
                     pass
 
-                orm.convert_types(self.maintable, orm.maintypes)
-                orm.convert_types(self.maintablemod, orm.maintypes)
+                orm.convert_types(self.project_table, orm.project_types)
+                orm.convert_types(self.project_tablemod, orm.project_types)
 
                 hlp.updated_df_values(
-                    self.maintable, self.maintablemod,
-                    self._log, 'maintable')
+                    self.project_table, self.project_tablemod,
+                    self._log, 'project_table')
                 self.close()
 
             except Exception as e:
                 print(str(e))
                 self.error.showMessage(
-                    'Global Id already present in database')
+                    'Global Id already present in database: ' + str(e))
                 raise AttributeError(
                     'Global Id already present in database')
             
@@ -146,8 +146,7 @@ def MainWindow():
             # Custom signals
             self.dsession.raw_data_model.connect(
                 self.update_data_model)
-            self.dsession.webview_url.connect(
-                self.update_webview)
+
             # actions
             self.actionStart_Session.triggered.connect(
                 self.session_display)
@@ -166,12 +165,6 @@ def MainWindow():
         def update_data_model(self):
             newdatamodel = view.PandasTableModel(self.facade._data)
             self.tblViewRaw.setModel(newdatamodel)
-            
-
-        # ----------- START SESSION DIALOG CODE ----- #
-        @QtCore.pyqtSlot(object)
-        def update_webview(self, url):
-            self.webView.load(QtCore.QUrl(url))
 
         def session_display(self):
             ''' Displays the Site Dialog box'''
@@ -203,6 +196,7 @@ def MainWindow():
 
     return UiMainWindow()
 
+        # ----------- START SESSION DIALOG CODE ----- #
 def test_dialog_site(qtbot, MainWindow):
     MainWindow.show()
     qtbot.addWidget(MainWindow)

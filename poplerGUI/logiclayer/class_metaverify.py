@@ -19,13 +19,13 @@ class MetaVerifier(object):
 
     if sys.platform == "darwin":
         metapath = (
-        "/Users/bibsian/Desktop/git/database-development/test/" +
-        "Datasets_manual_test/meta_file_test.csv")
+        "/Users/bibsian/Desktop/git/database-development/data/" +
+        "Identified_to_upload.csv")
 
     elif sys.platform == "win32":
         metapath = (
         "C:\\Users\MillerLab\\Desktop\\database-development" +
-        "\\test\\Datasets_manual_test\\meta_file_test.csv")
+        "\\data\\Identified_to_upload.csv")
 
     _meta = read_csv(metapath, encoding='iso-8859-11')
 

@@ -6,25 +6,23 @@ from PyQt4 import QtGui, QtCore
 import sys,os
 if sys.platform == "darwin":
     rootpath = (
-        "/Users/bibsian/Desktop/git/database-development/" +
-        "test/")
+        "/Users/bibsian/Desktop/git/database-development/")
 elif sys.platform == "win32":
     rootpath = (
-        "C:\\Users\MillerLab\\Desktop\\database-development" +
-        "\\test\\")
+        "C:\\Users\MillerLab\\Desktop\\database-development\\")
 sys.path.append(os.path.realpath(os.path.dirname(
     rootpath)))
 os.chdir(rootpath)
-from test import ui_logic_sitechange as chg
-from test import ui_logic_session as logicsess
-from test import ui_dialog_site as dsite
-from test import ui_mainrefactor as mw
-from test import class_inputhandler as ini
-from test import class_modelviewpandas as view
+from poplerGUI import ui_logic_sitechange as chg
+from poplerGUI import ui_logic_session as logicsess
+from Views import ui_dialog_site as dsite
+from Views import ui_mainrefactor as mw
+from poplerGUI import class_inputhandler as ini
+from poplerGUI import class_modelviewpandas as view
 
-from test.logiclayer import class_helpers as hlp
-from test.logiclayer import class_userfacade as face
-from test.logiclayer.datalayer import config as orm
+from poplerGUI.logiclayer import class_helpers as hlp
+from poplerGUI.logiclayer import class_userfacade as face
+from poplerGUI.logiclayer.datalayer import config as orm
 
 
 @pytest.fixture
@@ -74,7 +72,7 @@ def MainWindow():
             # Table Director to build site table from
             # Builder classes
             self.sitedirector = None
-            self.siteloc = {'siteid': None}
+            self.siteloc = {'study_site_key': None}
             self.saved = []
             # Status Message
             self.error = QtGui.QErrorMessage()
@@ -97,44 +95,44 @@ def MainWindow():
             self.lter = self.facade._valueregister['lterid']
 
             # Registering information to facade class
-            self.sitelned = {'siteid': self.lnedSiteID.text().strip()}
-            self.siteloc['siteid'] = self.lnedSiteID.text().strip()
-            self.facade.create_log_record('sitetable')        
-            self._log = self.facade._tablelog['sitetable']
+            self.sitelned = {'study_site_key': self.lnedSiteID.text().strip()}
+            self.siteloc['study_site_key'] = self.lnedSiteID.text().strip()
+            self.facade.create_log_record('study_site_table')        
+            self._log = self.facade._tablelog['study_site_table']
 
             try:
                 self.facade._data[
-                    self.siteloc['siteid']] = self.facade._data[
-                    self.siteloc['siteid']].astype(str)
+                    self.siteloc['study_site_key']] = self.facade._data[
+                    self.siteloc['study_site_key']].astype(str)
 
             except Exception as e:
                 print(str(e))
                 self._log.debug(str(e))
                 self.error.showMessage(
-                    self.siteloc['siteid'] +
+                    self.siteloc['study_site_key'] +
                     ' not in dataframe')
                 raise KeyError(
-                    self.siteloc['siteid'] +
+                    self.siteloc['study_site_key'] +
                     ' not in dataframe')
 
             self.siteini = ini.InputHandler(
-                name='siteinfo', tablename='sitetable',
+                name='siteinfo', tablename='study_site_table',
                 lnedentry=self.sitelned)
             self.facade.input_register(self.siteini)
-            self.facade._valueregister['siteid'] = self.siteloc[
-                'siteid']
+            self.facade._valueregister['study_site_key'] = self.siteloc[
+                'study_site_key']
             self.message.about(self, 'Status', 'Information recorded')
 
             if not self.saved:
                 self.sitedirector = self.facade.make_table('siteinfo')
                 self.rawdata = (
-                    self.sitedirector._availdf.sort_values(by='siteid'))
+                    self.sitedirector._availdf.sort_values(by='study_site_key'))
             else:
                 self.update()
 
             # Make table and Register site levels with facade 
             self.facade.register_site_levels(
-                self.rawdata['siteid'].drop_duplicates().
+                self.rawdata['study_site_key'].drop_duplicates().
                 values.tolist())
 
             # Performing query
@@ -149,15 +147,15 @@ def MainWindow():
             else:
                 session = orm.Session()
                 sitecheck = session.query(
-                    orm.Sitetable.siteid).order_by(
-                        orm.Sitetable.siteid)
+                    orm.study_site_table.study_site_key).order_by(
+                        orm.study_site_table.study_site_key)
                 session.close()
                 sitecheckdf = read_sql(
                     sitecheck.statement, sitecheck.session.bind)
-                site_in_db = sitecheckdf['siteid'].values.tolist()
-                site_in_db['siteid'].drop_duplicates(inplace=True)
+                site_in_db = sitecheckdf['study_site_key'].values.tolist()
+                site_in_db['study_site_key'].drop_duplicates(inplace=True)
                 displayed_data = self.rawdata[
-                    ~self.siteloc['siteid'].isin(
+                    ~self.siteloc['study_site_key'].isin(
                         site_in_db)].copy()
                 displayed_data.drop_duplicates(inplace=True)
                 self.sitetablemodel = self.viewEdit(displayed_data)
@@ -167,7 +165,7 @@ def MainWindow():
             changed_df = self.sitetablemodel.data(
                 None, QtCore.Qt.UserRole)
             changed_site_list = changed_df[
-                'siteid'].drop_duplicates().values.tolist()
+                'study_site_key'].drop_duplicates().values.tolist()
 
             self._log.debug(
                 'changed_site_list: ' + ' '.join(changed_site_list))
@@ -187,10 +185,10 @@ def MainWindow():
 
             session = orm.Session()
             sitecheck = session.query(
-                orm.Sitetable).order_by(
-                    orm.Sitetable.siteid).filter(
-                        orm.Sitetable.lterid ==
-                        self.facade._valueregister['lterid'])
+                orm.study_site_table).order_by(
+                    orm.study_site_table.study_site_key).filter(
+                        orm.study_site_table.lterid ==
+                        self.facade._valueregister['lterd'])
             session.close()
             sitecheckdf = read_sql(
                 sitecheck.statement, sitecheck.session.bind)
@@ -202,7 +200,7 @@ def MainWindow():
                    checker = True
                 else:
                     records_entered = sitecheckdf[
-                        'siteid'].values.tolist()
+                        'study_site_key'].values.tolist()
 
                     check = [
                         x for x in
@@ -225,7 +223,7 @@ def MainWindow():
                 self.listviewSiteLabels.setModel(self.sitetablemodel)
             else:
                 check_view = view.PandasTableModel(
-                    sitecheckdf[sitecheckdf['siteid'].isin(check)])
+                    sitecheckdf[sitecheckdf['study_site_key'].isin(check)])
                 self.preview_validate.tabviewPreview.setModel(
                     check_view)
                 self.sitequerymodel = check_view
@@ -240,11 +238,11 @@ def MainWindow():
             changed_df = self.sitetablemodel.data(
                 None, QtCore.Qt.UserRole)
             changed_site_list = changed_df[
-                'siteid'].drop_duplicates().values.tolist()
+                'study_site_key'].drop_duplicates().values.tolist()
 
             query_match = self.sitequerymodel.data(
                     None, QtCore.Qt.UserRole)
-            site_q_list = query_match['siteid'].values.tolist()
+            site_q_list = query_match['study_site_key'].values.tolist()
 
             s_not_in_databaase = [
                 x for x in changed_site_list if x not in site_q_list
@@ -253,7 +251,7 @@ def MainWindow():
                 's_not_in_databaase: ' + ' '.join(s_not_in_databaase))
 
             site_display_df = changed_df[
-                changed_df['siteid'].isin(
+                changed_df['study_site_key'].isin(
                     s_not_in_databaase)].drop_duplicates()
             print('site df (val): ', site_display_df)
 
@@ -265,7 +263,7 @@ def MainWindow():
                     self.sitelevels))
 
             self.sitelevels = self.sitetablemodel.data(
-                None, QtCore.Qt.UserRole)['siteid'].values.tolist()
+                None, QtCore.Qt.UserRole)['study_site_key'].values.tolist()
             self._log.debug(
                 'sitelevels (updated)' + ' '.join(self.sitelevels))
             self.querycheck = 'Checked'
@@ -287,13 +285,13 @@ def MainWindow():
             self.facade.register_site_levels(
                 self.facade._data[
                     self.siteloc[
-                        'siteid']].drop_duplicates().values.tolist())
+                        'study_site_key']].drop_duplicates().values.tolist())
 
             if len(self.save_data) == 0:
                 self.save_data= self.save_data.append(
                     DataFrame(
                         {
-                            'siteid':'NULL',
+                            'study_site_key':'NULL',
                             'lat': 'nan',
                             'lng': 'nan',
                             'descript': 'NULL'
@@ -310,10 +308,10 @@ def MainWindow():
                 [self.save_data, lterid_df]
                 , axis=1).reset_index(drop=True)
             print('Pushed dataset: ', self.save_data)
-            self.facade.push_tables['sitetable'] = self.save_data
+            self.facade.push_tables['study_site_table'] = self.save_data
 
             hlp.write_column_to_log(
-                self.sitelned, self._log, 'sitetable_c')
+                self.sitelned, self._log, 'study_site_table_c')
 
             oldsitetable = hlp.produce_null_df(
                 len(self.save_data.columns),
@@ -322,13 +320,13 @@ def MainWindow():
                 'nan'
             )
             hlp.updated_df_values(
-                oldsitetable, self.save_data, self._log, 'sitetable'
+                oldsitetable, self.save_data, self._log, 'study_site_table'
             )
 
             self.site_unlocks.emit(self.facade._data)
             site_unsorted = self.facade._data[
                 self.siteloc[
-                    'siteid']].drop_duplicates().values.tolist()
+                    'study_site_key']].drop_duplicates().values.tolist()
             site_unsorted.sort()
             self.sitelevels = site_unsorted
 

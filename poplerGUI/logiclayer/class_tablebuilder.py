@@ -468,6 +468,7 @@ class Study_Site_Table_Builder(AbstractTableBuilder):
         print('dbcol after: ', dbcol)
 
         uniquesubset = dataframe[acols]
+        uniquesubset.columns = ['study_site_key']
         nullcols_non_numeric = hlp.produce_null_df(
             ncols=len(nullcols),
             colnames=nullcols,
@@ -619,8 +620,13 @@ class Taxa_Table_Builder(AbstractTableBuilder):
             print(str(e))
 
         remove_unknown_pkey = ['taxa_table_key']
-        [dbcol.remove(x) for x in remove_unknown_pkey]
-        [nullcols.remove(x) for x in remove_unknown_pkey]
+
+        try:
+            [dbcol.remove(x) for x in remove_unknown_pkey]
+            [nullcols.remove(x) for x in remove_unknown_pkey]
+        except Exception as e:
+            print(str(e))
+
         print('SELF INPUTS: ', self._inputs.checks)
         print('AVAILABLE COLUMNS: ', acols)
         print('DB COLUMNS: ', dbcol)

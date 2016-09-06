@@ -1,4 +1,4 @@
-#!usr/bin/env python
+#! /usr/bin/env python
 # 'http://stackoverflow.com/questions/31588584/
 # pyqt-qtableview-prohibitibily-slow-when-scrolling-with-large-data-sets
 # /31591015#31591015'

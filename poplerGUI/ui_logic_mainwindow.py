@@ -9,13 +9,13 @@ if sys.platform == 'darwin':
         '/Users/bibsian/Desktop/git/database-development/poplerGUI/')
     metapath = (
     	str(os.getcwd()) + 
-    	'/Metadata_and_og_data/Cataloged_Data_Current_sorted.csv')
+    	'/Users/bibsian/Desktop/git/database-development/data/Identified_to_upload.csv')
 elif sys.platform == 'win32':
     os.chdir( 
         'C:\\Users\\MillerLab\\Desktop\\database-development\\poplerGUI\\')
     metapath = (
     	str(os.getcwd()) + 
-    	'\\Metadata_and_og_data/Cataloged_Data_Current_sorted.csv')
+    	'C:\\Users\\MillerLab\\Desktop\\database-development\\data\\Identified_to_upload.csv')
     
 from poplerGUI import ui_mainrefactor as mw
 from poplerGUI import ui_logic_session as sesslogic

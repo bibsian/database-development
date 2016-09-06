@@ -13,11 +13,11 @@ elif sys.platform == "win32":
         "\\test\\")
 os.chdir(rootpath)
 
-from test import ui_mainrefactor as mw
-from test import ui_dialog_session as dsess
-from test import class_inputhandler as ini
-from test.logiclayer import class_userfacade as face
-from test import class_modelviewpandas as view
+from Views import ui_mainrefactor as mw
+from Views import ui_dialog_session as dsess
+from poplerGUI import class_inputhandler as ini
+from poplerGUI.logiclayer import class_userfacade as face
+from poplerGUI import class_modelviewpandas as view
 
 
 @pytest.fixture
@@ -30,7 +30,6 @@ def MainWindow():
         rawdata viewer
         '''
         raw_data_model = QtCore.pyqtSignal(object)
-        webview_url = QtCore.pyqtSignal(object)
 
         def __init__(self, parent=None):
             super().__init__(parent)
@@ -73,13 +72,12 @@ def MainWindow():
             try:
                 print(self.metaini.lnedentry['metaurl'])
                 self.facade.meta_verify()
-                self.webview_url.emit(
-                    self.metaini.lnedentry['metaurl'])
                 self.message.about(self, 'Status', 'Entries recorded')
 
             except Exception as e:
                 print(str(e))
-                self.error.showMessage('Invalid entries')
+                self.error.showMessage(
+                    'Invalid entries: ' + str(e))
                 raise LookupError('Invalid metadata entries')
             
         def file_handler(self):
@@ -145,8 +143,6 @@ def MainWindow():
             # Custom signals
             self.dsession.raw_data_model.connect(
                 self.update_data_model)
-            self.dsession.webview_url.connect(
-                self.update_webview)
             
             # actions
             self.actionStart_Session.triggered.connect(

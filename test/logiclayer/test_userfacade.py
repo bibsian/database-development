@@ -6,14 +6,12 @@ from pandas import merge, concat, DataFrame, read_csv, read_sql, to_numeric
 import sys, os
 if sys.platform == "darwin":
     rootpath = (
-        "/Users/bibsian/Desktop/git/database-development/" +
-        "test/")
+        "/Users/bibsian/Desktop/git/database-development/")
     end = "/"
 
 elif sys.platform == "win32":
     rootpath = (
-        "C:\\Users\MillerLab\\Desktop\\database-development" +
-        "\\test\\")
+        "C:\\Users\MillerLab\\Desktop\\database-development")
     end = "\\"
 
 from poplerGUI.logiclayer.class_commanders import (
@@ -191,8 +189,8 @@ def Facade():
                 pass
             else:
                 verifier._meta = read_csv((
-                    rootpath + end + 'Datasets_manual_test' + end +
-                    'meta_file_test.csv'),
+                    rootpath + end + 'data' + end +
+                    'Identified_to_upload.csv'),
                     encoding='iso-8859-11')
 
             try:
@@ -282,7 +280,7 @@ def Facade():
 
             self._tablelog[tablename] =(
                 log.configure_logger('tableformat',(
-                    'Logs_UI/{}_{}_{}_{}.log'.format(
+                    'logs/{}_{}_{}_{}.log'.format(
                         globalid, tablename,filename,dt))))
         
         def make_table(self, inputname):
@@ -353,8 +351,8 @@ def test_incorrect_userinput(badmetahandle, Facade):
 def metahandle():
     lentry = {
         'globalid': 1,
-        'metaurl': ('http://sev.1.test.rice.com'),
-        'lter': 'SEV'}
+        'metaurl': ('http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.18'),
+        'lter': 'SBC'}
     ckentry = {}
     metainput = InputHandler(
         name='metacheck', tablename=None, lnedentry=lentry,
@@ -394,7 +392,7 @@ def filehandle():
         name='fileoptions',tablename=None, lnedentry=lned,
         rbtns=rbtn, checks=ckentry, session=True,
         filename=(
-            rootpath + end + 'Datasets_manual_test' + end +
+            rootpath + end + 'test' + end + 'Datasets_manual_test' + end +
             'raw_data_test_1.csv'))
 
     return fileinput
@@ -561,6 +559,8 @@ def test_build_taxa(
     df = taxadirector._availdf
     print(df)
     assert (isinstance(df, DataFrame)) is True
+
+    
 
 @pytest.fixture
 def count_userinput():

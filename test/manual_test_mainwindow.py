@@ -8,32 +8,24 @@ import sys,os
 import unicodedata
 if sys.platform == "darwin":
     rootpath = (
-        "/Users/bibsian/Desktop/git/database-development/" +
-        "test/")
+        "/Users/bibsian/Desktop/git/database-development")
 elif sys.platform == "win32":
     rootpath = (
-        "C:\\Users\MillerLab\\Desktop\\database-development" +
-        "\\test\\")
+        "C:\\Users\MillerLab\\Desktop\\database-development" )
 
-from test import ui_mainrefactor as mw
-from test import ui_logic_session as sesslogic
-from test import ui_logic_site as sitelogic
-from test import ui_logic_main as mainlogic
-from test import ui_logic_taxa as taxalogic
-from test import ui_logic_time as timelogic
-from test import ui_logic_obs as rawlogic
-from test import ui_logic_covar as covarlogic
-from test import ui_logic_climatesite as climsitelogic
-from test.logiclayer import class_userfacade as face
-from test import class_modelviewpandas as view
-from test import class_inputhandler as ini
+from Views import ui_mainrefactor as mw
+from poplerGUI import ui_logic_session as sesslogic
+from poplerGUI import ui_logic_site as sitelogic
+from poplerGUI import ui_logic_main as mainlogic
+from poplerGUI import ui_logic_taxa as taxalogic
+from poplerGUI import ui_logic_time as timelogic
+from poplerGUI import ui_logic_obs as rawlogic
+from poplerGUI import ui_logic_covar as covarlogic
+from poplerGUI import ui_logic_climatesite as climsitelogic
+from poplerGUI.logiclayer import class_userfacade as face
+from poplerGUI import class_modelviewpandas as view
+from poplerGUI import class_inputhandler as ini
 
-if sys.platform == 'darwin':
-    os.chdir(
-        '/Users/bibsian/Desktop/git/database-development/test/')
-elif sys.platform == 'win32':
-    os.chdir(
-        'C:\\Users\\MillerLab\\Desktop\\database-development\\test\\')
 
 @pytest.fixture
 def MainWindow():
@@ -93,7 +85,7 @@ def MainWindow():
             self.error = QtGui.QErrorMessage()
             self.message = QtGui.QMessageBox
 
-            metadf = read_csv('Datasets_manual_test/meta_file_test.csv')
+            metadf = read_csv('/data/Identified_to_upload.csv')
             metamodel = view.PandasTableModel(metadf)
             self.tblViewMeta.setModel(metamodel)
 
@@ -192,14 +184,14 @@ def MainWindow():
             self.actionClimateSiteTable.setEnabled(True)
             metapath = (
     	        str(os.getcwd()) + 
-    	        '/Datasets_manual_test/meta_climate_test.csv')
+    	        '/data/Identified_to_upload.csv')
             metadf = read_csv(metapath, encoding='iso-8859-11')
             metamodel = view.PandasTableModel(metadf)
             self.tblViewMeta.setModel(metamodel)
 
         def end_session(self):
             subprocess.call(
-                "python" + " ../poplerGUI_run_main.py", shell=True)
+                "python" + " ../test_runmain.py", shell=True)
             self.close()
 
     return UiMainWindow()

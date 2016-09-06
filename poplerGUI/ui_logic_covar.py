@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 from PyQt4 import QtGui
-from poplerGUI import class_modelviewpandas as views
-from poplerGUI import ui_dialog_covariate as covar
-from poplerGUI import ui_logic_preview as tprev
 from poplerGUI import class_inputhandler as ini
+from poplerGUI import class_modelviewpandas as views
+from poplerGUI import ui_logic_preview as tprev
+from poplerGUI.logiclayer import class_userfacade as face
 from poplerGUI.logiclayer import class_helpers as hlp
 from poplerGUI.logiclayer import class_dictionarydataframe as ddf
+from Views import ui_dialog_covariate as covar
 
 class CovarDialog(QtGui.QDialog, covar.Ui_Dialog):
     '''
@@ -52,13 +53,11 @@ class CovarDialog(QtGui.QDialog, covar.Ui_Dialog):
 
         try:
             self.facade._data[self.covarlned['columns']]
-
         except Exception as e:
             print(str(e))
             self._log.debug(str(e))
             self.error.showMessage(
-                'Column names not valid: '+ str(e) +
-                '. Check spacing ' +
+                'Column names not valid: Check spacing ' +
                 'and headers.')
             raise ValueError('Column names are incorrect')
 

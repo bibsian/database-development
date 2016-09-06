@@ -3,7 +3,7 @@ from PyQt4 import QtGui
 from collections import OrderedDict
 from poplerGUI import class_inputhandler as ini
 from poplerGUI import class_modelviewpandas as view
-from poplerGUI import ui_dialog_obs as obs
+from Views import ui_dialog_obs as obs
 from poplerGUI import ui_logic_preview as prev
 from poplerGUI.logiclayer import class_helpers as hlp
 

@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+\#! /usr/bin/env python
 import pytest
 from poplerGUI.logiclayer import class_userfacade as face
 
@@ -8,7 +8,7 @@ def Facade_push():
         def __init__(self):
             face.Facade.__init__(self)
 
-<<<<<<< HEAD
+
     def merge_push_data(self):
         '''
         Method in facade class to check if all data tables
@@ -30,10 +30,7 @@ def Facade_push():
                     'Not all data tables have been completed. ' +
                     str(e))
 
-        
-
-=======
->>>>>>> 279f0f9c2ffecc2a45dcd065ca447c967f126a27
+        # User created database tables
     return Facade_push
 
 def test(Facade_push):

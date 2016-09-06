@@ -7,14 +7,12 @@ import re
 import sys, os
 if sys.platform == "darwin":
     rootpath = (
-        "/Users/bibsian/Desktop/git/database-development/" +
-        "test/")
+        "/Users/bibsian/Desktop/git/database-development/")
     end = "/"
 
 elif sys.platform == "win32":
     rootpath = (
-        "C:\\Users\MillerLab\\Desktop\\database-development" +
-        "\\test\\")
+        "C:\\Users\MillerLab\\Desktop\\database-development")
     end = "\\"
 sys.path.append(os.path.realpath(os.path.dirname(
     rootpath + 'logiclayer' + end)))
@@ -496,6 +494,7 @@ def Study_Site_Table_Builder(AbstractTableBuilder):
             print('dbcol after: ', dbcol)
 
             uniquesubset = dataframe[acols]
+            uniquesubset.columns = ['study_site_key']
             nullcols_non_numeric = hlp.produce_null_df(
                 ncols=len(nullcols),
                 colnames=nullcols,
@@ -656,8 +655,13 @@ def Taxa_Table_Builder(AbstractTableBuilder):
                 print(str(e))
 
             remove_unknown_pkey = ['taxa_table_key']
-            [dbcol.remove(x) for x in remove_unknown_pkey]
-            [nullcols.remove(x) for x in remove_unknown_pkey]
+            try:
+                [dbcol.remove(x) for x in remove_unknown_pkey]
+                [nullcols.remove(x) for x in remove_unknown_pkey]
+            except Exception as e:
+                print(str(e))
+
+
             print('SELF INPUTS: ', self._inputs.checks)
             print('AVAILABLE COLUMNS: ', acols)
             print('DB COLUMNS: ', dbcol)
@@ -1011,7 +1015,7 @@ def user_input():
 @pytest.fixture
 def dataset_test_1():
     return read_csv(
-        rootpath + end +
+        rootpath + end + 'test' + end +
         'Datasets_manual_test/raw_data_test_1.csv')
 
 def test_study_site_table_build(
@@ -1038,6 +1042,7 @@ def test_study_site_table_build(
     sitetab = director.get_database_table()
     showsite = sitetab._availdf
     assert (isinstance(showsite, DataFrame)) is True
+    print(showsite)
 
 
 # ------------------------------------------------------ #
@@ -1051,7 +1056,7 @@ def project_user_input():
 @pytest.fixture
 def metadata_data():
     return read_csv(
-        rootpath + end +
+        rootpath + end + 'test' + end +
         'Datasets_manual_test/meta_file_test.csv')
 
 
@@ -1154,7 +1159,7 @@ def taxa_user_input():
 @pytest.fixture
 def taxadfexpected():
     taxadfexpected = read_csv(
-        rootpath + end +
+        rootpath + end + 'test' +  end +
         'Datasets_manual_test' + end + 'taxa_table_test.csv')
     taxadfexpected.fillna('NA', inplace=True)
     return taxadfexpected
@@ -1212,6 +1217,7 @@ def test_taxatable_build(
 @pytest.fixture
 def taxa_user_input_create():
     taxalned = OrderedDict((
+        ('commonname', ''),
         ('sppcode', ''),
         ('kingdom', 'Animalia'),
         ('subkingdom', ''),
@@ -1231,6 +1237,7 @@ def taxa_user_input_create():
     ))
 
     taxackbox = OrderedDict((
+        ('commonname', False),
         ('sppcode', False),
         ('kingdom', True),
         ('subkingdom', False),
@@ -1431,7 +1438,7 @@ def percent_cover_userinput():
 @pytest.fixture
 def dataset_test_4():
     return read_csv(
-        rootpath + end +
+        rootpath + end + 'test' + end +
         'Datasets_manual_test/raw_data_test_4.csv')
 
 def test_percent_cover_table_build(
@@ -1512,7 +1519,7 @@ def individual_userinput():
 @pytest.fixture
 def dataset_test_5():
     return read_csv(
-        rootpath + end +
+        rootpath + end + 'test' + end +
         'Datasets_manual_test/raw_data_test_5.csv')
 
 def test_individual_table_build(

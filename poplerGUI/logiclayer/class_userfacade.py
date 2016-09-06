@@ -19,6 +19,16 @@ from poplerGUI.logiclayer import class_flusher as flsh
 from poplerGUI.logiclayer import class_merger as mrg
 from poplerGUI.logiclayer.class_helpers import updated_df_values
 from poplerGUI.logiclayer.datalayer import config as orm
+import sys, os
+if sys.platform == "darwin":
+    rootpath = (
+        "/Users/bibsian/Desktop/git/database-development/")
+    end = "/"
+
+elif sys.platform == "win32":
+    rootpath = (
+        "C:\\Users\MillerLab\\Desktop\\database-development")
+    end = "\\"
 
 all = ['Facade']
 
@@ -164,8 +174,8 @@ class Facade:
             pass
         else:
             verifier._meta = read_csv((
-                rootpath + end + 'Datasets_manual_test' + end +
-                'meta_file_test.csv'),
+                rootpath + end + 'data' + end +
+                'Identified_to_upload.csv'),
                 encoding='iso-8859-11')
 
         try:
@@ -255,7 +265,7 @@ class Facade:
 
         self._tablelog[tablename] =(
             log.configure_logger('tableformat',(
-                'Logs_UI/{}_{}_{}_{}.log'.format(
+                'logs/{}_{}_{}_{}.log'.format(
                     globalid, tablename,filename,dt))))
 
     def make_table(self, inputname):

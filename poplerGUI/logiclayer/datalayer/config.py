@@ -20,7 +20,7 @@ __all__ = [
 # Setup logging for program
 date = (str(dt.datetime.now()).split()[0]).replace("-", "_")
 logging.basicConfig(
-    filename='Logs_DbTransactions/database_log_{}.log'.format(date))
+    filename='db_transactions/database_log_{}.log'.format(date))
 logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
 
 
@@ -31,7 +31,7 @@ def adapt_numpy_int64(numpy_int64):
 register_adapter(numpy.int64, adapt_numpy_int64)
 
 engine = create_engine(
-    'postgresql+psycopg2:///',
+    'postgresql+psycopg2://postgres:demography@localhost/popler_3',
     echo=True)
 conn = engine.connect()
 
