@@ -29,6 +29,7 @@ data/.Rhistory
 */.*
 */*/.*
 
+*/*.log
 
 LTER_connect*
 
