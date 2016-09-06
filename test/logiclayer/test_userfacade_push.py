@@ -8,6 +8,7 @@ def Facade_push():
         def __init__(self):
             face.Facade.__init__(self)
 
+<<<<<<< HEAD
     def merge_push_data(self):
         '''
         Method in facade class to check if all data tables
@@ -31,6 +32,8 @@ def Facade_push():
 
         
 
+=======
+>>>>>>> 279f0f9c2ffecc2a45dcd065ca447c967f126a27
     return Facade_push
 
 def test(Facade_push):
