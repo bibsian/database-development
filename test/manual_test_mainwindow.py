@@ -9,10 +9,12 @@ import unicodedata
 if sys.platform == "darwin":
     rootpath = (
         "/Users/bibsian/Desktop/git/database-development")
+    end ="/"
+    
 elif sys.platform == "win32":
     rootpath = (
         "C:\\Users\MillerLab\\Desktop\\database-development" )
-
+    end = "\\"
 from Views import ui_mainrefactor as mw
 from poplerGUI import ui_logic_session as sesslogic
 from poplerGUI import ui_logic_site as sitelogic
@@ -85,7 +87,9 @@ def MainWindow():
             self.error = QtGui.QErrorMessage()
             self.message = QtGui.QMessageBox
 
-            metadf = read_csv('/data/Identified_to_upload.csv')
+            metadf = read_csv(
+                rootpath + end + 'data' + end +
+                'Identified_to_upload.csv', encoding='iso-8859-11')
             metamodel = view.PandasTableModel(metadf)
             self.tblViewMeta.setModel(metamodel)
 
@@ -183,8 +187,8 @@ def MainWindow():
             self.actionSiteTable.setEnabled(False)
             self.actionClimateSiteTable.setEnabled(True)
             metapath = (
-    	        str(os.getcwd()) + 
-    	        '/data/Identified_to_upload.csv')
+                rootpath + end + 'data' + end +
+    	        'Identified_to_upload.csv')
             metadf = read_csv(metapath, encoding='iso-8859-11')
             metamodel = view.PandasTableModel(metadf)
             self.tblViewMeta.setModel(metamodel)

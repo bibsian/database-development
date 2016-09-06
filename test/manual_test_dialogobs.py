@@ -56,9 +56,9 @@ def filehandle():
 
 @pytest.fixture
 def sitehandle():
-    lned = {'siteid': 'SITE'}
+    lned = {'study_site_key': 'site'}
     sitehandle = ini.InputHandler(
-        name='siteinfo', lnedentry=lned, tablename='sitetable')
+        name='siteinfo', lnedentry=lned, tablename='study_site_table')
     return sitehandle
     
 @pytest.fixture
@@ -80,6 +80,7 @@ def ObsDialog(sitehandle, filehandle, metahandle):
             sitelevels = self.facade._data[
                 'site'].drop_duplicates().values.tolist()
             self.facade.register_site_levels(sitelevels)
+
 
             # Place holders for user inputs
             self.obslned = {}
@@ -142,8 +143,14 @@ def ObsDialog(sitehandle, filehandle, metahandle):
                 x for x,y in zip(
                     list(self.obslned.keys()), list(
                         self.obsckbox.values()))
-                if y is False
+                if y is True
             ]
+
+            self.tablename = [
+                x for x, y in
+                zip(list(self.table.keys()), list(self.table.values()))
+                if y is True
+            ][0]
 
             rawini = ini.InputHandler(
                 name='rawinfo',
@@ -151,19 +158,16 @@ def ObsDialog(sitehandle, filehandle, metahandle):
                 lnedentry= hlp.extract(self.obslned, available),
                 checks=self.obsckbox)
 
-            self.tablename = [
-                x for x, y in
-                zip(list(self.table.keys()), list(self.table.values()))
-                if y is True
-            ][0]
-            
+
 
             self.facade.input_register(rawini)
             self.facade.create_log_record(self.tablename)
             self._log = self.facade._tablelog[self.tablename]
+
             
             try:
                 self.rawdirector = self.facade.make_table('rawinfo')
+                print('obs table build: ', self.rawdirector)
                 assert self.rawdirector._availdf is not None
 
             except Exception as e:
@@ -171,7 +175,8 @@ def ObsDialog(sitehandle, filehandle, metahandle):
                 self._log.debug(str(e))
                 self.error.showMessage(
                     'Column(s) not identified')
-                raise AttributeError('Column(s) not identified')
+                raise AttributeError(
+                    'Column(s) not identified: ' + str(e))
 
 
             self.obstable = self.rawdirector._availdf.copy()
