@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>751</width>
-    <height>512</height>
+    <width>937</width>
+    <height>703</height>
    </rect>
   </property>
   <property name="focusPolicy">
@@ -127,7 +127,7 @@
               <layout class="QVBoxLayout" name="verticalLayout">
                <item>
                 <layout class="QGridLayout" name="gridLayout">
-                 <item row="7" column="2">
+                 <item row="9" column="2">
                   <widget class="QCheckBox" name="ckRaw">
                    <property name="focusPolicy">
                     <enum>Qt::TabFocus</enum>
@@ -137,7 +137,7 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="7" column="1">
+                 <item row="9" column="1">
                   <widget class="QLineEdit" name="lnedRaw">
                    <property name="enabled">
                     <bool>true</bool>
@@ -168,7 +168,7 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="4" column="1">
+                 <item row="6" column="1">
                   <widget class="QLineEdit" name="lnedRep4">
                    <property name="enabled">
                     <bool>true</bool>
@@ -199,14 +199,14 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="2" column="0">
+                 <item row="4" column="0">
                   <widget class="QLabel" name="label_3">
                    <property name="text">
                     <string>Replication Level 2</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="3" column="2">
+                 <item row="5" column="2">
                   <widget class="QCheckBox" name="ckRep3">
                    <property name="focusPolicy">
                     <enum>Qt::TabFocus</enum>
@@ -216,7 +216,7 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="3" column="1">
+                 <item row="5" column="1">
                   <widget class="QLineEdit" name="lnedRep3">
                    <property name="enabled">
                     <bool>true</bool>
@@ -247,21 +247,21 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="3" column="0">
+                 <item row="5" column="0">
                   <widget class="QLabel" name="label_4">
                    <property name="text">
                     <string>Replication Level 3</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="1" column="0">
+                 <item row="3" column="0">
                   <widget class="QLabel" name="label_2">
                    <property name="text">
                     <string>Replication Level 1</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="5" column="1">
+                 <item row="7" column="1">
                   <widget class="QLineEdit" name="lnedStructure">
                    <property name="enabled">
                     <bool>true</bool>
@@ -292,7 +292,7 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="5" column="2">
+                 <item row="7" column="2">
                   <widget class="QCheckBox" name="ckStructure">
                    <property name="focusPolicy">
                     <enum>Qt::TabFocus</enum>
@@ -302,14 +302,14 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="4" column="0">
+                 <item row="6" column="0">
                   <widget class="QLabel" name="label_5">
                    <property name="text">
                     <string>Replication Level 4</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="4" column="2">
+                 <item row="6" column="2">
                   <widget class="QCheckBox" name="ckRep4">
                    <property name="focusPolicy">
                     <enum>Qt::TabFocus</enum>
@@ -319,7 +319,7 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="2" column="1">
+                 <item row="4" column="1">
                   <widget class="QLineEdit" name="lnedRep2">
                    <property name="enabled">
                     <bool>true</bool>
@@ -350,7 +350,7 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="2" column="2">
+                 <item row="4" column="2">
                   <widget class="QCheckBox" name="ckRep2">
                    <property name="focusPolicy">
                     <enum>Qt::TabFocus</enum>
@@ -360,21 +360,21 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="5" column="0">
+                 <item row="7" column="0">
                   <widget class="QLabel" name="label_6">
                    <property name="text">
                     <string>Organisms Structure</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="7" column="0">
+                 <item row="9" column="0">
                   <widget class="QLabel" name="label_8">
                    <property name="text">
                     <string>Observations</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="1" column="1">
+                 <item row="3" column="1">
                   <widget class="QLineEdit" name="lnedRep1">
                    <property name="enabled">
                     <bool>false</bool>
@@ -405,7 +405,7 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="0" column="1">
+                 <item row="2" column="1">
                   <widget class="QLabel" name="label">
                    <property name="text">
                     <string>Columns</string>
@@ -415,20 +415,55 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="6" column="1">
+                 <item row="8" column="1">
                   <widget class="QLineEdit" name="lnedTreatment"/>
                  </item>
-                 <item row="6" column="2">
+                 <item row="8" column="2">
                   <widget class="QCheckBox" name="ckTreatment">
                    <property name="text">
                     <string>Not an experimental dataset</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="6" column="0">
+                 <item row="8" column="0">
                   <widget class="QLabel" name="label_9">
                    <property name="text">
                     <string>Treatment</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="0">
+                  <widget class="QCheckBox" name="ckCount">
+                   <property name="text">
+                    <string>Counts</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="2">
+                  <widget class="QCheckBox" name="ckDensity">
+                   <property name="text">
+                    <string>Density</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1">
+                  <widget class="QCheckBox" name="ckBiomass">
+                   <property name="text">
+                    <string>Biomass</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="0">
+                  <widget class="QCheckBox" name="ckPercentcover">
+                   <property name="text">
+                    <string>Percent cover</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="1">
+                  <widget class="QCheckBox" name="ckIndividual">
+                   <property name="text">
+                    <string>Individual</string>
                    </property>
                   </widget>
                  </item>

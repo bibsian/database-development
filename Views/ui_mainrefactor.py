@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/bibsian/Desktop/git/database-development/test/Views/ui_mainrefactor.ui'
+# Form implementation generated from reading ui file 'ui_mainrefactor.ui'
 #
 # Created by: PyQt4 UI code generator 4.11.4
 #
