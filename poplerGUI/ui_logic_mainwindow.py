@@ -17,7 +17,7 @@ elif sys.platform == 'win32':
     	str(os.getcwd()) + 
     	'C:\\Users\\MillerLab\\Desktop\\database-development\\data\\Identified_to_upload.csv')
     
-from poplerGUI import ui_mainrefactor as mw
+from Views import ui_mainrefactor as mw
 from poplerGUI import ui_logic_session as sesslogic
 from poplerGUI import ui_logic_site as sitelogic
 from poplerGUI import ui_logic_main as mainlogic

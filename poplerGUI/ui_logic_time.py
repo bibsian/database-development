@@ -1,9 +1,10 @@
 #! /usr/bin/env python
 from PyQt4 import QtGui
+from pandas import to_numeric
 from poplerGUI import class_inputhandler as ini
 from poplerGUI import class_modelviewpandas as view
 from Views import ui_dialog_time as uitime
-from Views import ui_logic_preview as tprev
+from poplerGUI import ui_logic_preview as tprev
 from poplerGUI.logiclayer import class_helpers as hlp
 from poplerGUI.logiclayer import class_timeparse as tmpa
 from poplerGUI.logiclayer.datalayer import config as orm

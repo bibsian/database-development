@@ -1,7 +1,7 @@
 from PyQt4 import QtGui, QtCore
 from pandas import read_sql, DataFrame, concat, read_csv
-from poplerGUI import ui_dialog_site as dsite
-from poplerGUI import ui_dialog_climatesite as climsite
+from Views import ui_dialog_site as dsite
+from Views import ui_dialog_climatesite as climsite
 from poplerGUI import ui_logic_sitechange as chg
 from poplerGUI import class_inputhandler as ini
 from poplerGUI import class_modelviewpandas as view

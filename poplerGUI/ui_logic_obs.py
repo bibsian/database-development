@@ -12,7 +12,6 @@ class ObsDialog(QtGui.QDialog, obs.Ui_Dialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
-        self.facade = None
 
         # Place holders for user inputs
         self.obslned = {}
@@ -34,6 +33,8 @@ class ObsDialog(QtGui.QDialog, obs.Ui_Dialog):
         self.btnPreview.clicked.connect(self.submit_change)
         self.btnSaveClose.clicked.connect(self.submit_change)
         self.btnCancel.clicked.connect(self.close)
+        self.tablename = None
+        self.table = None
 
         # Update boxes/preview box
         self.message = QtGui.QMessageBox
@@ -43,62 +44,78 @@ class ObsDialog(QtGui.QDialog, obs.Ui_Dialog):
     def submit_change(self):
         sender = self.sender()
         self.obslned = OrderedDict((
-            ('spt_rep2', self.lnedRep2.text()),
-            ('spt_rep3', self.lnedRep3.text()),
-            ('spt_rep4', self.lnedRep4.text()),
+            ('spatial_replication_level_2', self.lnedRep2.text()),
+            ('spatial_replication_level_3', self.lnedRep3.text()),
+            ('spatial_replication_level_4', self.lnedRep4.text()),
             ('structure', self.lnedStructure.text()),
-            ('individ', self.lnedIndividual.text()),
             ('trt_label', self.lnedTreatment.text()),
             ('unitobs', self.lnedRaw.text())
         ))
-        # Log input (put in after test)
-        self.facade._colinputlog['rawinfo'] = self.obslned
+
         self.obsckbox = OrderedDict((
-            ('sp_rep2_label', self.ckRep2.isChecked()),
-            ('sp_rep3_label', self.ckRep3.isChecked()),
-            ('sp_rep4_label', self.ckRep4.isChecked()),
+            ('spatial_replication_level_2', self.ckRep2.isChecked()),
+            ('spatial_replication_level_3', self.ckRep3.isChecked()),
+            ('spatial_replication_level_4', self.ckRep4.isChecked()),
             ('structure', self.ckStructure.isChecked()),
-            ('individ', self.ckIndividual.isChecked()),
             ('trt_label', self.ckTreatment.isChecked()),
-            ('unitobs', False)
+            ('unitobs', self.ckRaw.isChecked())
         ))
+
+
+        self.table = {
+            'count_table': self.ckCount.isChecked(),
+            'biomass_table': self.ckBiomass.isChecked(),
+            'density_table': self.ckDensity.isChecked(),
+            'percent_cover_table': self.ckPercentcover.isChecked(),
+            'individual_table': self.ckIndividual.isChecked() 
+        }
 
         available = [
             x for x,y in zip(
                 list(self.obslned.keys()), list(
                     self.obsckbox.values()))
-            if y is False
+            if y is True
         ]
+
+        self.tablename = [
+            x for x, y in
+            zip(list(self.table.keys()), list(self.table.values()))
+            if y is True
+        ][0]
 
         rawini = ini.InputHandler(
             name='rawinfo',
-            tablename='rawtable',
+            tablename= self.tablename,
             lnedentry= hlp.extract(self.obslned, available),
             checks=self.obsckbox)
 
+
+
         self.facade.input_register(rawini)
-        self.facade.create_log_record('rawtable')
-        self._log = self.facade._tablelog['rawtable']
+        self.facade.create_log_record(self.tablename)
+        self._log = self.facade._tablelog[self.tablename]
+
 
         try:
-            self.taxadirector = self.facade.make_table('rawinfo')
-            assert self.taxadirector._availdf is not None
-            
+            self.rawdirector = self.facade.make_table('rawinfo')
+            print('obs table build: ', self.rawdirector)
+            assert self.rawdirector._availdf is not None
+
         except Exception as e:
             print(str(e))
             self._log.debug(str(e))
             self.error.showMessage(
                 'Column(s) not identified')
-            raise AttributeError('Column(s) not identified')
+            raise AttributeError(
+                'Column(s) not identified: ' + str(e))
 
-        self.obstable = self.taxadirector._availdf.copy()
+
+        self.obstable = self.rawdirector._availdf.copy()
         self.obsmodel = self.viewEdit(self.obstable)
         if sender is self.btnPreview:
             self.preview.tabviewPreview.setModel(self.obsmodel)
             self.preview.show()
         elif sender is self.btnSaveClose:
-            # Log input (put in after test)
-            self.facade.push_tables['rawtable'] = self.obstable
             hlp.write_column_to_log(
-                self.obslned, self._log, 'rawtable')                
+                self.obslned, self._log, self.tablename)                
             self.close()

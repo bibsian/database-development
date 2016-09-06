@@ -11,19 +11,7 @@ class TaxaDialog(QtGui.QDialog, uitax.Ui_Dialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
-        # Facade set up for the taxa dialog
-        # box. These inputs will have been already
-        # logged in the computer in order to
-        # reach this phase
-        self.facade = face.Facade()
-        self.facade.input_register(metahandle)
-        self.facade.meta_verify()
-        self.facade.input_register(filehandle)
-        self.facade.load_data()
-        self.facade.input_register(sitehandle)
-        sitelevels = self.facade._data[
-            'site'].drop_duplicates().values.tolist()
-        self.facade.register_site_levels(sitelevels)
+
 
         # Place holders for user inputs
         self.taxalned = {}
@@ -49,7 +37,7 @@ class TaxaDialog(QtGui.QDialog, uitax.Ui_Dialog):
         # Update boxes/preview box
         self.message = QtGui.QMessageBox
         self.error = QtGui.QErrorMessage()
-        self.preview = TablePreview()
+        self.preview = tprev.TablePreview()
 
     def submit_change(self):
         '''

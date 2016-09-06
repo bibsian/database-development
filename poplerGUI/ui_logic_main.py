@@ -1,6 +1,7 @@
 from PyQt4 import QtGui, QtCore
 from pandas import read_sql
 from Views import ui_dialog_main as dmainw
+from Views import ui_mainrefactor as mw
 from poplerGUI import class_inputhandler as ini
 from poplerGUI import class_modelviewpandas as view
 from poplerGUI.logiclayer import class_helpers as hlp
