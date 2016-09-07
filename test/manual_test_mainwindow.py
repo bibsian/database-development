@@ -157,14 +157,13 @@ def MainWindow():
                 name='updateinfo', tablename='updatetable')
             self.facade.input_register(commithandle)
             try:
-                self.facade.merge_push_data()
-                self.facade.update_main()
+                self.facade.push_merged_data()
+                #self.facade.update_main()
                 self.actionCommit.setEnabled(False)
                 self.message.about(
                     self, 'Status', 'Database transaction complete')
             except Exception as e:
                 print(str(e))
-                self.facade._tablelog['maintable'].debug(str(e))
                 self.error.showMessage(
                     'Datbase transaction error: ' + str(e) +
                     '. May need to alter site abbreviations.')

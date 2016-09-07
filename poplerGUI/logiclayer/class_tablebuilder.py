@@ -456,12 +456,22 @@ class Study_Site_Table_Builder(AbstractTableBuilder):
             uniquesubset = dataframe[acols]
             print(str(e))
 
-        remove_from_null = ['lter_table_fkey']
-        [nullcols.remove(x) for x in remove_from_null]
-        remove_known_fkey = ['lter_table_fkey']
-        [dbcol.remove(x) for x in remove_known_fkey]
-        lat_lng_null_list = ['lat_study_site', 'lng_study_site']
-        [nullcols.remove(x) for x in lat_lng_null_list]
+        try:
+            remove_from_null = ['lter_table_fkey']
+            [nullcols.remove(x) for x in remove_from_null]
+        except Exception as e:
+            print(str(e))
+        try:
+            remove_known_fkey = ['lter_table_fkey']
+            [dbcol.remove(x) for x in remove_known_fkey]
+        except Exception as e:
+            print(str(e))
+        try:
+            lat_lng_null_list = ['lat_study_site', 'lng_study_site']
+            [nullcols.remove(x) for x in lat_lng_null_list]
+        except Exception as e:
+            print(str(e))
+
 
         print('acols after: ', acols)
         print('nullcols after: ', nullcols)
@@ -542,8 +552,8 @@ class Project_Table_Builder(AbstractTableBuilder):
                 'samplingunits': 'NA',
                 'datatype': dataframe['data_type'],
                 'structured': 'NA',
-                'studystartyr': 'NA',
-                'studyendyr': 'NA',
+                'studystartyr': -99999,
+                'studyendyr': -99999,
                 'samplefreq': dataframe['temp_int'],
                 'studytype': dataframe['study_type'],
                 'community': dataframe['comm_data'],
@@ -551,19 +561,19 @@ class Project_Table_Builder(AbstractTableBuilder):
                 'spatial_replication_level_1_extent': -99999,
                 'spatial_replication_level_1_extent_units': 'NA',
                 'spatial_replication_level_1_label': 'NA',
-                'spatial_replication_level_1_number_of_unique_reps': 'NA',
+                'spatial_replication_level_1_number_of_unique_reps': -99999,
                 'spatial_replication_level_2_extent': -99999,
                 'spatial_replication_level_2_extent_units': 'NA',
                 'spatial_replication_level_2_label': 'NA',
-                'spatial_replication_level_2_number_of_unique_reps': 'NA',
+                'spatial_replication_level_2_number_of_unique_reps': -99999,
                 'spatial_replication_level_3_extent': -99999,
                 'spatial_replication_level_3_extent_units': 'NA',
                 'spatial_replication_level_3_label': 'NA',
-                'spatial_replication_level_3_number_of_unique_reps': 'NA',
+                'spatial_replication_level_3_number_of_unique_reps': -99999,
                 'spatial_replication_level_4_extent': -99999,
                 'spatial_replication_level_4_extent_units': 'NA',
                 'spatial_replication_level_4_label': 'NA',
-                'spatial_replication_level_4_number_of_unique_reps': 'NA',
+                'spatial_replication_level_4_number_of_unique_reps': -99999,
                 'treatment_type': dataframe['treatment_type'],
                 'derived': 'NA',
                 'authors': 'NA',
@@ -622,8 +632,12 @@ class Taxa_Table_Builder(AbstractTableBuilder):
         remove_unknown_pkey = ['taxa_table_key']
 
         try:
-            [dbcol.remove(x) for x in remove_unknown_pkey]
-            [nullcols.remove(x) for x in remove_unknown_pkey]
+            [dbcol.remove(x) for x in keycols]
+        except Exception as e:
+            print(str(e))
+
+        try:
+            [nullcols.remove(x) for x in keycols]
         except Exception as e:
             print(str(e))
 

@@ -2,6 +2,7 @@
 from collections import namedtuple
 import os
 import datetime as tm
+import re
 from pandas import merge, concat, DataFrame, read_csv, to_numeric
 from poplerGUI.logiclayer.class_metaverify import MetaVerifier
 from poplerGUI.logiclayer.class_commanders import (
@@ -19,6 +20,8 @@ from poplerGUI.logiclayer import class_flusher as flsh
 from poplerGUI.logiclayer import class_merger as mrg
 from poplerGUI.logiclayer.class_helpers import updated_df_values
 from poplerGUI.logiclayer.datalayer import config as orm
+from poplerGUI.logiclayer import class_mergedtoupload as mrg
+
 import sys, os
 if sys.platform == "darwin":
     rootpath = (
@@ -91,6 +94,7 @@ class Facade:
         self._tablelog = {
             'study_site_table': None,
             'project_table': None,
+            'maintable': None,
             'maintable_update': None,
             'timetable': None,
             'taxa_table': None,
@@ -129,6 +133,7 @@ class Facade:
         self.pushtables = None
         self.sitepushed = None
         self.mainpushed = None
+        self.siteinproject = None
         self.taxapushed = None
         self.rawpushed = None
 
@@ -301,3 +306,111 @@ class Facade:
         director.set_sitelevels(uqsitelevels)
 
         return director.get_database_table()
+
+    def push_merged_data(self):
+        '''
+        Method in facade class to check if all data tables
+        have been completed by the user (although
+        site table can be empty if records are already in the 
+        database).
+        '''
+
+
+        # Tables created from use input
+        study_site_table_df = self.push_tables['study_site_table']
+        study_site_table_df.fillna('NA', inplace=True)
+        project_table_df = self.push_tables['project_table']
+        taxa_table_df = self.push_tables['taxa_table']
+        time_table_df = self.push_tables['timetable']
+        observation_table_df = self.push_tables[
+            self._inputs['rawinfo'].tablename]
+        observation_table_name = self._inputs['rawinfo'].tablename
+        covariate_table_df = self.push_tables['covariates']
+        site_levels = self._valueregister['sitelevels']
+        site_location = self._valueregister['siteid']
+        lter = self._valueregister['lterid']
+        # -------------------------------------- #
+        # --- Pushing study site table data --- #
+        # -------------------------------------- #
+        nulltest = study_site_table_df['study_site_key'].drop_duplicates().values.tolist()
+        if nulltest == ['NULL']:
+            if self.sitepushed is None:
+                try:
+                    study_site_table_df.to_sql(
+                        'study_site_table',
+                        orm.conn, if_exists='append', index=False)
+                    self.sitepushed = True
+                except Exception as e:
+                    print(str(e))
+                    self._tablelog['study_site_table'].debug(str(e))
+                    raise ValueError(
+                        'Could not push study site table data: ' + str(e)
+                    )
+        else:
+            pass       
+
+        # -------------------------------------- #
+        # --- Pushing project table data --- #
+        # -------------------------------------- #
+        
+        if self.mainpushed is None:
+            try:
+                project_table_df.to_sql(
+                    'project_table', orm.conn,
+                    if_exists='append', index=False
+                )
+                self.mainpushed = True
+            except Exception as e:
+                print(str(e))
+                self._tablelog['project_table'].debug(str(e))
+                raise ValueError(
+                    'Could not push project table data: ' + str(e)
+                )
+        else:
+            pass
+        # -------------------------------------- #
+        # --- Pushing site in project table data --- #
+        # -------------------------------------- #
+        if self.siteinproject is None:
+            pass
+        else:
+            pass
+
+        merge_object = mrg.MergeToUpload()
+        site_in_project_key_df = merge_object.site_in_proj_key_df(
+            studysitetabledf=study_site_table_df,
+            projecttabledf=project_table_df,
+            observationtabledf=time_table_df,
+            lterlocation=lter,
+            studysitelabel=site_location,
+            studysitelevels=site_levels
+        )
+
+
+        merge_object.merge_for_taxa_table_upload(
+            formated_taxa_table=taxa_table_df,
+            siteinprojkeydf=site_in_project_key_df,
+            sitelabel=site_location
+        )
+
+        taxa_column_in_data = [
+            x[0] for x in 
+            list(self._inputs['taxainfo'].lnedentry.items())
+        ]
+
+        taxa_column_in_push_table = [
+            x[1] for x in 
+            list(self._inputs['taxainfo'].lnedentry.items())
+        ]
+        print('past taxa')
+        merge_object.merge_for_datatype_table_upload(
+            raw_dataframe=time_table_df,
+            formated_dataframe=observation_table_df,
+            formated_dataframe_name=
+            '{}'.format(
+                        re.sub('_table', '', self._inputs['rawinfo'].tablename)),
+            covariate_dataframe = covariate_table_df,
+            siteinprojkeydf=site_in_project_key_df,
+            raw_data_taxa_columns=taxa_column_in_data,
+            uploaded_taxa_columns=taxa_column_in_push_table
+        )

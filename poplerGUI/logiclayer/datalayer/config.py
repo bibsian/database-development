@@ -144,3 +144,22 @@ def convert_types(dataframe, types):
         if i in ['year', 'month', 'day']:
             dataframe.loc[:, i] = pd.to_numeric(dataframe[i], errors='coerce')
             dataframe[i].fillna('NaN', inplace=True)
+
+def replace_numeric_null_with_string(dataframe):
+    ''' Function to take values such as -99999 and convert them
+    to NA's '''
+    for i in dataframe.columns:
+        try:
+            dataframe[i].replace(
+                {
+                    '-999999': 'NA',
+                    '-99999': 'NA',
+                    '-9999': 'NA',
+                    '-999': 'NA',
+                    '-888': 'NA',
+                    '-8888': 'NA',
+                    '-88888': 'NA',
+                    '-888888': 'NA'
+                }, inplace=True)
+        except:
+            print(i + ' did not convert')

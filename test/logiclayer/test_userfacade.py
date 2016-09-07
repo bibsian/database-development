@@ -106,6 +106,7 @@ def Facade():
             self._tablelog = {
                 'study_site_table': None,
                 'project_table': None,
+                'maintable': None,
                 'maintable_update': None,
                 'timetable': None,
                 'taxa_table': None,
@@ -138,12 +139,14 @@ def Facade():
                 'density_table': None,
                 'percent_cover_table': None,
                 'individual_table': None,
-                'covariates': None
+                'covariates': None,
+                'covartable': None
             }
 
             self.pushtables = None
             self.sitepushed = None
             self.mainpushed = None
+            self.siteinproject = None
             self.taxapushed = None
             self.rawpushed = None
             

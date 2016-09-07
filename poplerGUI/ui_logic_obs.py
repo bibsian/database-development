@@ -119,3 +119,4 @@ class ObsDialog(QtGui.QDialog, obs.Ui_Dialog):
             hlp.write_column_to_log(
                 self.obslned, self._log, self.tablename)                
             self.close()
+

@@ -127,10 +127,15 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
             self.listviewSiteLabels.setModel(self.sitetablemodel)
         else:
             session = orm.Session()
-            sitecheck = session.query(
-                orm.study_site_table.study_site_key).order_by(
-                    orm.study_site_table.study_site_key)
-            session.close()
+            sitecheck = (
+                session.query(
+                    orm.study_site_table.__table__).
+                order_by(
+                    orm.study_site_table.__table__.c.study_site_key).
+                filter(
+                    orm.study_site_table.__table__.c.lter_table_fkey ==
+                    self.facade._valueregister['lterid'])
+            )
             sitecheckdf = read_sql(
                 sitecheck.statement, sitecheck.session.bind)
             site_in_db = sitecheckdf['study_site_key'].values.tolist()
@@ -165,11 +170,15 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
                 'could not alter levels: ' + str(e))
 
         session = orm.Session()
-        sitecheck = session.query(
-            orm.study_site_table).order_by(
-                orm.study_site_table.study_site_key).filter(
-                    orm.study_site_table.lterid ==
-                    self.facade._valueregister['lterd'])
+        sitecheck = (
+            session.query(
+                orm.study_site_table.__table__).
+            order_by(
+                orm.study_site_table.__table__.c.study_site_key).
+            filter(
+                orm.study_site_table.__table__.c.lter_table_fkey ==
+                self.facade._valueregister['lterid'])
+        )
         session.close()
         sitecheckdf = read_sql(
             sitecheck.statement, sitecheck.session.bind)
@@ -273,8 +282,8 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
                 DataFrame(
                     {
                         'study_site_key':'NULL',
-                        'lat': 'nan',
-                        'lng': 'nan',
+                        'lat_study_site': -99999,
+                        'lng_study_site': -99999,
                         'descript': 'NULL'
                     }, index=[0])
             )
@@ -282,7 +291,7 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
             pass
 
         lterid_df = hlp.produce_null_df(
-            1, ['lterid'], len(self.save_data), self.lter)
+            1, ['lter_table_fkey'], len(self.save_data), self.lter)
         print(lterid_df)
 
         self.save_data = concat(

@@ -14,13 +14,25 @@ elif sys.platform == "win32":
     rootpath = (
         "C:\\Users\MillerLab\\Desktop\\database-development\\")
     end = "\\"
+os.chdir(rootpath)
+from poplerGUI.logiclayer.datalayer import config as orm
+
+session = orm.Session()
+sitecheck = session.query(
+    orm.study_site_table.__table__).order_by(
+        orm.study_site_table.__table__.c.study_site_key).filter(
+            orm.study_site_table.__table__.c.lter_table_fkey == 'SBC')
+
+sitecheckdf = pd.read_sql(
+    sitecheck.statement, sitecheck.session.bind)
 
 engine = create_engine(
-    'postgresql+psycopg2:///',
+    'postgresql+psycopg2://postgres:demography@localhost/popler_3',
     echo=True)
 metadata = MetaData(bind=engine)
 base = declarative_base()
 conn = engine.connect()
+
 
 # creating classes for tables to query things
 class lter_table(base):
@@ -43,6 +55,19 @@ class percent_cover_table(base):
     __table__ = Table('percent_cover_table', metadata, autoload=True)
 class individual_table(base):
     __table__ = Table('individual_table', metadata, autoload=True)
+
+
+
+Session = sessionmaker(bind=engine)
+session = Session()
+sitecheck = session.query(
+    study_site_table.study_site_key).order_by(
+        study_site_table.study_site_key).filter(
+            study_site_table.lter_table_fkey == 'SBC'
+            )
+session.close()
+sitecheckdf = pd.read_sql(
+    sitecheck.statement, sitecheck.session.bind)
 
 
 # First subquery links the site_in_project_table

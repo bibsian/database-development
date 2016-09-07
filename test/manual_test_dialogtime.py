@@ -3,7 +3,7 @@ import pytest
 import pytestqt
 from PyQt4 import QtGui, QtCore
 from collections import OrderedDict
-from pandas import to_numeric
+from pandas import to_numeric, concat
 import sys,os
 if sys.platform == "darwin":
     rootpath = (
@@ -48,14 +48,14 @@ def filehandle():
         rbtns=rbtn, checks=ckentry, session=True,
         filename=(
             rootpath + end + 'test' + end +
-            'Datasets_manual_test' + end + 'raw_data_test_2.csv')
+            'Datasets_manual_test' + end + 'raw_data_test_1.csv')
         )
 
     return fileinput
 
 @pytest.fixture
 def sitehandle():
-    lned = {'siteid': 'SITE'}
+    lned = {'siteid': 'site'}
     sitehandle = ini.InputHandler(
         name='siteinfo', lnedentry=lned, tablename='sitetable')
     return sitehandle
@@ -136,7 +136,7 @@ def TimeDialog(sitehandle, filehandle, metahandle, taxahandle):
             self.facade.load_data()
             self.facade.input_register(sitehandle)
             sitelevels = self.facade._data[
-                'SITE'].drop_duplicates().values.tolist()
+                'site'].drop_duplicates().values.tolist()
             self.facade.register_site_levels(sitelevels)
             self.facade.input_register(taxahandle)
 
@@ -193,7 +193,15 @@ def TimeDialog(sitehandle, filehandle, metahandle, taxahandle):
 
             try:
                 # Calling formater method
-                timeview =self.timetable.formater().copy()
+                timeview = self.timetable.formater().copy()
+                timeview_og_col = timeview.columns.values.tolist()
+                timeview.columns = [
+                    x+'_derived' for x in timeview_og_col
+                ]
+                timeview = concat(
+                    [timeview, self.facade._data], axis=1)
+
+
             except Exception as e:
                 print(str(e))
                 self._log.debug(str(e))
@@ -232,6 +240,8 @@ def TimeDialog(sitehandle, filehandle, metahandle, taxahandle):
                         timeview)
                 except Exception as e:
                     print(str(e))
+                print('save block: ', timeview.columns)
+                print('save block: ', timeview)
 
                 try:
                     assert timeview is not None

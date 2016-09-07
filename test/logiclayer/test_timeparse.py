@@ -6,18 +6,16 @@ from pandas import (
 import sys, os
 if sys.platform == "darwin":
     rootpath = (
-        "/Users/bibsian/Desktop/git/database-development/" +
-        "test/")
+        "/Users/bibsian/Desktop/git/database-development/")
     end = "/"
 
 elif sys.platform == "win32":
     rootpath = (
-        "C:\\Users\MillerLab\\Desktop\\database-development" +
-        "\\test\\")
+        "C:\\Users\MillerLab\\Desktop\\database-development")
     end = "\\"
 sys.path.append(os.path.realpath(os.path.dirname(
     rootpath + 'logiclayer' + end)))
-import class_helpers as hlp
+from poplerGUI.logiclayer import class_helpers as hlp
 os.chdir(rootpath)
 
 # -----------
@@ -25,19 +23,27 @@ os.chdir(rootpath)
 # -----------
 @pytest.fixture
 def df():
-    return read_csv('Datasets_manual_test/time_file_test.csv')
+    return read_csv(
+        rootpath + end + 'test' + end +
+        'Datasets_manual_test/time_file_test.csv')
 
 @pytest.fixture
 def df2():
-    return read_csv('Datasets_manual_test/raw_data_test_dialogsite.csv')
+    return read_csv(
+        rootpath + end + 'test' + end +
+        'Datasets_manual_test/raw_data_test_dialogsite.csv')
 
 @pytest.fixture
 def df_jd():
-    return read_csv('Datasets_manual_test/raw_data_test_2.csv')
+    return read_csv(
+        rootpath + end + 'test' + end +
+        'Datasets_manual_test/raw_data_test_2.csv')
 
 @pytest.fixture
 def df_test_5():
-    return read_csv('Datasets_manual_test/raw_data_test_5.csv')
+    return read_csv(
+        rootpath + end + 'test' + end +
+        'Datasets_manual_test/raw_data_test_5.csv')
 
 # -----------
 # 1 Column Input
@@ -714,7 +720,7 @@ def test_single_columns(df, yearonly, monthonly, dayonly, TimeParse):
     ytestlist = yeardf['year'].values.tolist()
     ytruelist = df['y'].values.tolist()
     assert (ytestlist == ytruelist) is True
-
+    assert 0 
     # month test block
     mtest = TimeParse(df, monthonly)
     monthdf = mtest.formater()
@@ -865,17 +871,21 @@ def test_year2(yearonly2, TimeParse, df_test_5):
     ytest = TimeParse(df_test_5, yearonly2)
     ytest = ytest.formater()
     print(ytest)
+    print('df5: ', df_test_5)
+
 
 
 @pytest.fixture
 def df_txt_hms():
     return read_table(
+        rootpath + end + 'test' + end +
         'Datasets_manual_test/climate_precip.txt',
         header=-1, engine='c')
 
 @pytest.fixture
 def df_no_header():
     return read_table(
+        rootpath + end + 'test' + end +
         'Datasets_manual_test/climate_temp_test_noheader.txt',
         header=-1, engine='c', delimiter=',')
 
