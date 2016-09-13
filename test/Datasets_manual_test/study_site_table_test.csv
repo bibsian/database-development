@@ -1,0 +1,12 @@
+study_site_key,lter_table_fkey,lat_study_site,lng_study_site,descript
+main_area_1,SEV,33.45,112.45,mixed grass
+main_area_2,SEV,33.51,113.1,woodlands
+main_area_3,SEV,33.5,112.61,previously burned
+AQUE,SBC,33.6,115.64,Anacapa reef
+SCDI,SBC,33.48,114.36,Diablo Island reef
+BioSiteA,SGS,-99999,-99999,upland
+BioSiteB,SGS,-99999,-99999,lowland
+BioSiteC,SGS,-99999,-99999,transition
+SiteA,NTL,25.15,135.21,backwater slough
+SiteB,NTL,25.34,135.27,channel
+SiteC,NTL,25.64,135.29,flooded island

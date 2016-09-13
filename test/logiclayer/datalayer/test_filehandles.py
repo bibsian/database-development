@@ -16,7 +16,7 @@ elif sys.platform == "win32":
     end = "\\"
 sys.path.append(os.path.realpath(os.path.dirname(
     rootpath + 'logiclayer' + end)))
-from test import class_inputhandler as ini
+from poplerGUI import class_inputhandler as ini
 os.chdir(rootpath)
 
 @pytest.fixture
@@ -166,13 +166,21 @@ def FileHandler(FileMemento):
                                     :,item].str.rstrip()
                                 na_vals = [
                                     9999, 99999, 999999,
-                                    -9999, -99999, -999999]
+                                    -9999, -99999, -999999,
+                                    -8888, -88888, -88888, -888
+                                ]
                                 na_vals_float = [
                                     9999.0, 99999.0, 999999.0,
-                                    -9999.0, -99999.0, -999999.0]
+                                    -9999.0, -99999.0, -999999.0
+                                    -8888.0, -88888.0, -888888.0,
+                                    -888.0
+                                ]
                                 na_text_vals = [
                                     '9999', '99999', '999999',
-                                    '-9999', '-99999', '-999999']
+                                    '-9999', '-99999', '-999999',
+                                    '-8888', '-88888', '-888888',
+                                    '-888'
+                                ]
                                 for j,text_val in enumerate(
                                         na_text_vals):
                                     if (
@@ -279,7 +287,8 @@ def DataProxy(FileHandler):
 def user_input():
     rbtn = {'csv': True, 'xlsx': False, 'txt': False}
     lned = {'sheet': '', 'delim': '', 'tskip': '', 'bskip': ''}
-    fname = 'Datasets_manual_test/DataRawTestFile.csv'
+    fname = (rootpath + end + 'Datasets_manual_test' + end +
+    'raw_data_test_1.csv')
 
     user_input = ini.InputHandler(
         name='fileoptions',
@@ -291,7 +300,7 @@ def user_input():
     return user_input
 
 
-def test_csv_reader(
+def test_file_proxy_maker(
         user_input, DataProxy, FileCaretaker,
         FileHandler, FileMemento):
     filecaretaker = FileCaretaker()
@@ -311,7 +320,9 @@ def test_csv_reader(
 def user_txt():
     rbtn = {'csv': False, 'xlsx': False, 'txt': True}
     lned = {'sheet': '', 'delim': '', 'tskip': '', 'bskip': ''}
-    fname = 'Datasets_manual_test/climate_precip.txt'
+    fname = (
+        rootpath + end + 'Datasets_manual_test' + end +
+        'climate_precip.txt')
 
     user_input = ini.InputHandler(
         name='fileoptions',
@@ -322,7 +333,7 @@ def user_txt():
 
     return user_input
 
-def test_txt_reader(
+def test_csv_reader_method(
         user_txt, DataProxy, FileCaretaker,
         FileHandler, FileMemento):
     filecaretaker = FileCaretaker()

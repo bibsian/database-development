@@ -127,7 +127,17 @@
               <layout class="QVBoxLayout" name="verticalLayout">
                <item>
                 <layout class="QGridLayout" name="gridLayout">
-                 <item row="8" column="1">
+                 <item row="7" column="2">
+                  <widget class="QCheckBox" name="ckRaw">
+                   <property name="focusPolicy">
+                    <enum>Qt::TabFocus</enum>
+                   </property>
+                   <property name="text">
+                    <string>Indivdual ID's Present</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="7" column="1">
                   <widget class="QLineEdit" name="lnedRaw">
                    <property name="enabled">
                     <bool>true</bool>
@@ -244,54 +254,6 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="6" column="0">
-                  <widget class="QLabel" name="label_7">
-                   <property name="text">
-                    <string>Indiviual ID</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="6" column="2">
-                  <widget class="QCheckBox" name="ckIndividual">
-                   <property name="focusPolicy">
-                    <enum>Qt::TabFocus</enum>
-                   </property>
-                   <property name="text">
-                    <string>Indivdual ID's Not Present</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="6" column="1">
-                  <widget class="QLineEdit" name="lnedIndividual">
-                   <property name="enabled">
-                    <bool>true</bool>
-                   </property>
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="focusPolicy">
-                    <enum>Qt::StrongFocus</enum>
-                   </property>
-                   <property name="inputMask">
-                    <string/>
-                   </property>
-                   <property name="text">
-                    <string/>
-                   </property>
-                   <property name="alignment">
-                    <set>Qt::AlignCenter</set>
-                   </property>
-                   <property name="readOnly">
-                    <bool>false</bool>
-                   </property>
-                   <property name="placeholderText">
-                    <string/>
-                   </property>
-                  </widget>
-                 </item>
                  <item row="1" column="0">
                   <widget class="QLabel" name="label_2">
                    <property name="text">
@@ -405,10 +367,10 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="8" column="0">
+                 <item row="7" column="0">
                   <widget class="QLabel" name="label_8">
                    <property name="text">
-                    <string>Raw Observations</string>
+                    <string>Observations</string>
                    </property>
                   </widget>
                  </item>
@@ -453,17 +415,17 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="7" column="1">
+                 <item row="6" column="1">
                   <widget class="QLineEdit" name="lnedTreatment"/>
                  </item>
-                 <item row="7" column="2">
+                 <item row="6" column="2">
                   <widget class="QCheckBox" name="ckTreatment">
                    <property name="text">
                     <string>Not an experimental dataset</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="7" column="0">
+                 <item row="6" column="0">
                   <widget class="QLabel" name="label_9">
                    <property name="text">
                     <string>Treatment</string>
@@ -559,8 +521,6 @@
   <tabstop>ckRep4</tabstop>
   <tabstop>lnedStructure</tabstop>
   <tabstop>ckStructure</tabstop>
-  <tabstop>lnedIndividual</tabstop>
-  <tabstop>ckIndividual</tabstop>
   <tabstop>lnedTreatment</tabstop>
   <tabstop>ckTreatment</tabstop>
   <tabstop>lnedRaw</tabstop>
