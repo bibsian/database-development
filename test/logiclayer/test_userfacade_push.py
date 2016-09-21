@@ -254,7 +254,7 @@ def Facade_push():
 
             # Tables created from use input
             study_site_table_df = self.push_tables['study_site_table']
-            study_site_table_df.fillna('NA', inplace=True)
+            #study_site_table_df[].fillna('NA', inplace=True)
             project_table_df = self.push_tables['project_table']
             taxa_table_df = self.push_tables['taxa_table']
             time_table_df = self.push_tables['timetable']
@@ -384,7 +384,6 @@ def test(
     facade.push_tables['project_table'] =  project_table
     print('project table: ', project_table)
 
-    
     facade.input_register(taxa_handle)
     taxadirector = facade.make_table('taxainfo')
     facade.push_tables['taxa_table'] = taxadirector._availdf

@@ -70,7 +70,6 @@ def Facade():
             user inputs (for logging and session management).
             Class instances will be registered with the 
             input dictionary. 
-
             In addtion a filecaretaker will be instantiated
             when a raw data file is loaded. This will help track
             changes to data
@@ -117,7 +116,8 @@ def Facade():
                 'individual_table': None,
                 'covartable': None,
                 'climatesite': None,
-                'climateobs': None
+                'climateobs': None,
+                'addsite': None
             }
 
             self._colinputlog = {
@@ -215,14 +215,11 @@ def Facade():
             self.input_manager attribute. This meas all
             commands are registered with the invoker and all
             loaded data is regeristered with the file caretaker
-
             1) Load Data via the LoadDataCommand (register with
             invoker and registed data loaded with file caretaker)
-
             2) Generate proxy data from MakeProxyCommander (
             register command with invoker and register proxy
             data with file caretaker)
-
             return a proxy of the original dataset loaded.
             
             '''
@@ -292,7 +289,6 @@ def Facade():
             that contain informatoin that will be pushed into 
             the database. The formating of the tables is handled by
             class_tablebuilder.py module.
-
             Additionally logging of table specific informatoin
             is initiated here.
             '''
@@ -329,7 +325,7 @@ def Facade():
 @pytest.fixture
 def badmetahandle():
     lentry = {
-        'globalid': 5,
+        'globalid': 1,
         'metaurl': ('http://sbc.lternet.edu/cgi-bin/showDataset' +
                     '.cgi?docid=knb-lter-sbc.17'),
         'lter': 'SBC'}
@@ -353,8 +349,9 @@ def test_incorrect_userinput(badmetahandle, Facade):
 @pytest.fixture
 def metahandle():
     lentry = {
-        'globalid': 1,
-        'metaurl': ('http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.18'),
+        'globalid': 3,
+        'metaurl': (
+            'http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.19'),
         'lter': 'SBC'}
     ckentry = {}
     metainput = InputHandler(
@@ -403,10 +400,8 @@ def filehandle():
 def test_file_loader(filehandle, Facade):
     '''
     Testing the file_load command of the facade class.
-
     NOTE ONLY TESTED FOR CSV FILES ****
     STILL NEED TO EXTEND BEHAVIOR FOR OTHER FILES***
-
     '''
     face = Facade()
     face.input_register(filehandle)
@@ -431,6 +426,7 @@ def test_register_sitelevels(Facade):
     face.register_site_levels(test)
     assert (
         isinstance(face._valueregister['sitelevels'], list)) is True
+    del face
 
 
 def test_build_site(sitehandle, Facade, filehandle, metahandle):
@@ -480,7 +476,7 @@ def test_build_project_table(
     assert (isinstance(df, DataFrame)) is True
     assert (
         df['proj_metadata_key'].drop_duplicates().values.tolist() ==
-        [1]) is True
+        [3]) is True
 
 # ------------------------------------------------------ #
 # ---------------- Taxa table build test --------------- #
@@ -561,6 +557,8 @@ def test_build_taxa(
     taxadirector = face.make_table('taxainfo')
     df = taxadirector._availdf
     print(df)
+    print('test taxa build, userfacade: ', df)
+    
     assert (isinstance(df, DataFrame)) is True
 
     
@@ -617,4 +615,3 @@ def test_build_count(
     df = countdirector._availdf
     print(df)
     assert (isinstance(df, DataFrame)) is True
-

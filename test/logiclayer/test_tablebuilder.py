@@ -1316,7 +1316,7 @@ def test_taxatable_build_create(
     assert isinstance(showtaxa, DataFrame)
     showtaxa['phylum'] = 'Animalia'
     print(showtaxa)
-
+    
     testphylum = list(set(showtaxa['phylum'].values.tolist()))
     testphylum.sort()
     testorder = list(set(showtaxa['genus'].values.tolist()))
