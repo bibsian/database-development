@@ -148,7 +148,7 @@ class AbstractTableBuilder(object):
         ]
     }
 
-    taxa_table = {
+    taxa_table_dict = {
         'columns': [
             'taxa_table_key',
             'site_in_project_taxa_key',
@@ -169,8 +169,8 @@ class AbstractTableBuilder(object):
             'genus',
             'species',
             'common_name',
-            'authority'],
-
+            'authority'
+        ],
         'time': False,
         'cov': False,
         'depend': True,
@@ -382,7 +382,7 @@ class AbstractTableBuilder(object):
         'stationtable': stationtable,
         'study_site_table': study_site_table,
         'project_table': project_table,
-        'taxa_table': taxa_table,
+        'taxa_table': taxa_table_dict,
         'taxa_accepted_table': taxa_accepted_table,
         'count_table': count_table,
         'biomass_table': biomass_table,
@@ -409,8 +409,12 @@ class AbstractTableBuilder(object):
 
     def get_null_columns(self):
         availcol = list(self._inputs.lnedentry.keys())
+        print('abstract builder availcol: ', availcol)
+        print(list(self._inputs.lnedentry.values()))
         allcol = self.tabledict[
             self._inputs.tablename]['columns']
+        print('abstract builder allcol: ', allcol)
+        print('abstract return: ', [x for x in allcol if x not in availcol])
         return [x for x in allcol if x not in availcol]
 
     @abc.abstractmethod
@@ -629,7 +633,6 @@ class Taxa_Table_Builder(AbstractTableBuilder):
             uniquesubset = dataframe[acols]
             print(str(e))
 
-        remove_unknown_pkey = ['taxa_table_key']
 
         try:
             [dbcol.remove(x) for x in keycols]
@@ -646,6 +649,7 @@ class Taxa_Table_Builder(AbstractTableBuilder):
         print('DB COLUMNS: ', dbcol)
         print('NULL COLUMNS: ', nullcols)
         print('DF COLUMNS: ', dataframe.columns.values.tolist())
+
 
         if self._inputs.checks['taxacreate'] is True:
             dfcol = dataframe.columns.values.tolist()
@@ -699,6 +703,7 @@ class Taxa_Table_Builder(AbstractTableBuilder):
                 columns={acols[i]: item},
                 inplace=True)
         dbcol.append(siteid)
+        print('database columns to subset from taxa build: ', dbcol)
         return final[dbcol]
 
 
