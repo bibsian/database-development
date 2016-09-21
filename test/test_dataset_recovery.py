@@ -7,6 +7,12 @@ from sqlalchemy.orm import sessionmaker, load_only
 import pandas as pd
 import sys, os
 
+# This is a unit test to check
+# that once data is pushed to the database
+# that we can recover it and perform all 
+# the correct joins/unions to return the dataset
+# as it was originally uploaded.
+
 
 if sys.platform == "darwin":
     rootpath = (
