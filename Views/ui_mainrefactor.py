@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'ui_mainrefactor.ui'
+# Form implementation generated from reading ui file 'C:\Users\MillerLab\Desktop\database-development\test\Views\ui_mainrefactor.ui'
 #
 # Created by: PyQt4 UI code generator 4.11.4
 #
@@ -140,18 +140,12 @@ class Ui_MainWindow(object):
         self.toolBar.setObjectName(_fromUtf8("toolBar"))
         MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 984, 22))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 984, 31))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
         self.menuFile.setObjectName(_fromUtf8("menuFile"))
         self.menuEdit = QtGui.QMenu(self.menubar)
         self.menuEdit.setObjectName(_fromUtf8("menuEdit"))
-        self.menuReplace = QtGui.QMenu(self.menuEdit)
-        self.menuReplace.setObjectName(_fromUtf8("menuReplace"))
-        self.menuModify_one_to_many_records = QtGui.QMenu(self.menuEdit)
-        self.menuModify_one_to_many_records.setObjectName(_fromUtf8("menuModify_one_to_many_records"))
-        self.menuDisplay_unique = QtGui.QMenu(self.menuEdit)
-        self.menuDisplay_unique.setObjectName(_fromUtf8("menuDisplay_unique"))
         self.menuSplit = QtGui.QMenu(self.menubar)
         self.menuSplit.setObjectName(_fromUtf8("menuSplit"))
         self.menuOne_to_many = QtGui.QMenu(self.menuSplit)
@@ -255,6 +249,8 @@ class Ui_MainWindow(object):
         self.actionNew_Climate.setObjectName(_fromUtf8("actionNew_Climate"))
         self.actionEnd_Climate = QtGui.QAction(MainWindow)
         self.actionEnd_Climate.setObjectName(_fromUtf8("actionEnd_Climate"))
+        self.actionAdd_Site_Column = QtGui.QAction(MainWindow)
+        self.actionAdd_Site_Column.setObjectName(_fromUtf8("actionAdd_Site_Column"))
         self.toolBar.addAction(self.actionSiteTable)
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionMainTable)
@@ -276,15 +272,8 @@ class Ui_MainWindow(object):
         self.menuFile.addAction(self.actionEnd_Climate)
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionLoad_File)
-        self.menuReplace.addAction(self.actionFactor_levels)
-        self.menuReplace.addSeparator()
-        self.menuReplace.addAction(self.actionValue)
-        self.menuModify_one_to_many_records.addAction(self.actionNot_implemented_5)
-        self.menuDisplay_unique.addAction(self.actionNot_implemented_4)
-        self.menuEdit.addAction(self.menuReplace.menuAction())
-        self.menuEdit.addAction(self.menuDisplay_unique.menuAction())
         self.menuEdit.addSeparator()
-        self.menuEdit.addAction(self.menuModify_one_to_many_records.menuAction())
+        self.menuEdit.addAction(self.actionAdd_Site_Column)
         self.menuOne_to_many.addAction(self.actionNot_implemented_3)
         self.menuMany_to_one.addAction(self.actionNot_implemented_2)
         self.menuString_split.addAction(self.actionNot_implemented)
@@ -309,9 +298,6 @@ class Ui_MainWindow(object):
         self.toolBar.setWindowTitle(_translate("MainWindow", "Data Cleaner", None))
         self.menuFile.setTitle(_translate("MainWindow", "File", None))
         self.menuEdit.setTitle(_translate("MainWindow", "Edit", None))
-        self.menuReplace.setTitle(_translate("MainWindow", "Replace..", None))
-        self.menuModify_one_to_many_records.setTitle(_translate("MainWindow", "Modify one to many records..", None))
-        self.menuDisplay_unique.setTitle(_translate("MainWindow", "Display unique", None))
         self.menuSplit.setTitle(_translate("MainWindow", "Split", None))
         self.menuOne_to_many.setTitle(_translate("MainWindow", "One to many", None))
         self.menuMany_to_one.setTitle(_translate("MainWindow", "Many to one", None))
@@ -342,4 +328,5 @@ class Ui_MainWindow(object):
         self.actionNot_implemented_5.setText(_translate("MainWindow", "not implemented", None))
         self.actionNew_Climate.setText(_translate("MainWindow", "New Climate...", None))
         self.actionEnd_Climate.setText(_translate("MainWindow", "End Climate...", None))
+        self.actionAdd_Site_Column.setText(_translate("MainWindow", "Add Site Column", None))
 

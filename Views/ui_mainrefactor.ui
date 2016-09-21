@@ -234,7 +234,7 @@ QTableView{
      <x>0</x>
      <y>0</y>
      <width>984</width>
-     <height>22</height>
+     <height>31</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -252,30 +252,8 @@ QTableView{
     <property name="title">
      <string>Edit</string>
     </property>
-    <widget class="QMenu" name="menuReplace">
-     <property name="title">
-      <string>Replace..</string>
-     </property>
-     <addaction name="actionFactor_levels"/>
-     <addaction name="separator"/>
-     <addaction name="actionValue"/>
-    </widget>
-    <widget class="QMenu" name="menuModify_one_to_many_records">
-     <property name="title">
-      <string>Modify one to many records..</string>
-     </property>
-     <addaction name="actionNot_implemented_5"/>
-    </widget>
-    <widget class="QMenu" name="menuDisplay_unique">
-     <property name="title">
-      <string>Display unique</string>
-     </property>
-     <addaction name="actionNot_implemented_4"/>
-    </widget>
-    <addaction name="menuReplace"/>
-    <addaction name="menuDisplay_unique"/>
     <addaction name="separator"/>
-    <addaction name="menuModify_one_to_many_records"/>
+    <addaction name="actionAdd_Site_Column"/>
    </widget>
    <widget class="QMenu" name="menuSplit">
     <property name="title">
@@ -519,6 +497,11 @@ QTableView{
   <action name="actionEnd_Climate">
    <property name="text">
     <string>End Climate...</string>
+   </property>
+  </action>
+  <action name="actionAdd_Site_Column">
+   <property name="text">
+    <string>Add Site Column</string>
    </property>
   </action>
  </widget>
