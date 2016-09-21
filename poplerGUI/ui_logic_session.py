@@ -16,6 +16,7 @@ class SessionDialog(QtGui.QDialog, dsess.Ui_Dialog):
     facade class.
     '''
     raw_data_model = QtCore.pyqtSignal(object)
+    webview_url = QtCore.pyqtSignal(object)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -60,12 +61,13 @@ class SessionDialog(QtGui.QDialog, dsess.Ui_Dialog):
         try:
             print(self.metaini.lnedentry['metaurl'])
             self.facade.meta_verify()
+            self.webview_url.emit(
+                self.metaini.lnedentry['metaurl'])
             self.message.about(self, 'Status', 'Entries recorded')
 
         except Exception as e:
             print(str(e))
-            self.error.showMessage(
-                'Invalid entries: ' + str(e))
+            self.error.showMessage('Invalid entries: '  + str(e))
             raise LookupError('Invalid metadata entries')
 
     def file_handler(self):

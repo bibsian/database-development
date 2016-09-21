@@ -9,15 +9,15 @@ if sys.platform == 'darwin':
         '/Users/bibsian/Desktop/git/database-development/poplerGUI/')
     metapath = (
     	str(os.getcwd()) + 
-    	'/Users/bibsian/Desktop/git/database-development/data/Identified_to_upload.csv')
+    	'/Metadata_and_og_data/Cataloged_Data_Current_sorted.csv')
 elif sys.platform == 'win32':
     os.chdir( 
         'C:\\Users\\MillerLab\\Desktop\\database-development\\poplerGUI\\')
     metapath = (
     	str(os.getcwd()) + 
-    	'C:\\Users\\MillerLab\\Desktop\\database-development\\data\\Identified_to_upload.csv')
+    	'\\Metadata_and_og_data/Cataloged_Data_Current_sorted.csv')
     
-from Views import ui_mainrefactor as mw
+from poplerGUI import ui_mainrefactor as mw
 from poplerGUI import ui_logic_session as sesslogic
 from poplerGUI import ui_logic_site as sitelogic
 from poplerGUI import ui_logic_main as mainlogic
@@ -25,6 +25,7 @@ from poplerGUI import ui_logic_taxa as taxalogic
 from poplerGUI import ui_logic_time as timelogic
 from poplerGUI import ui_logic_obs as rawlogic
 from poplerGUI import ui_logic_covar as covarlogic
+from poplerGUI import ui_logic_addsitecolumn as addcol
 from poplerGUI import class_inputhandler as ini
 from poplerGUI import class_modelviewpandas as view
 from poplerGUI.logiclayer import class_userfacade as face
@@ -49,6 +50,7 @@ class UiMainWindow(QtGui.QMainWindow, mw.Ui_MainWindow):
         self.dtime = timelogic.TimeDialog()
         self.draw = rawlogic.ObsDialog()
         self.dcovar = covarlogic.CovarDialog()
+        self.daddsite = addcol.AddSiteColumnDialog()
 
         # Actions
         self.actionSiteTable.triggered.connect(self.site_display)
@@ -62,6 +64,7 @@ class UiMainWindow(QtGui.QMainWindow, mw.Ui_MainWindow):
         self.actionRawTable.triggered.connect(self.obs_display)
         self.actionCovariates.triggered.connect(self.covar_display)
         self.actionCommit.triggered.connect(self.commit_data)
+        self.actionAdd_Site_Column.triggered.connect(self.addsite_display)
 
 
         self.mdiArea.addSubWindow(self.subwindow_2)
@@ -70,6 +73,10 @@ class UiMainWindow(QtGui.QMainWindow, mw.Ui_MainWindow):
         # Custom Signals
         self.dsite.site_unlocks.connect(self.site_complete_enable)
         self.dsession.raw_data_model.connect(
+            self.update_data_model)
+        self.dsession.raw_data_model.connect(
+            self.update_data_model)
+        self.daddsite.btnSaveClose.clicked.connect(
             self.update_data_model)
 
         # Dialog boxes for user feedback
@@ -106,6 +113,11 @@ class UiMainWindow(QtGui.QMainWindow, mw.Ui_MainWindow):
         ''' Displays the Site Dialog box'''
         self.dsite.show()
         self.dsite.facade = self.facade
+
+    def addsite_display(self):
+        ''' Display dialog box for adding site column'''
+        self.daddsite.show()
+        self.daddsite.facade = self.facade
 
     def session_display(self):
         ''' Displays the Site Dialog box'''
