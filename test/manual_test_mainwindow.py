@@ -93,6 +93,10 @@ def MainWindow():
             metamodel = view.PandasTableModel(metadf)
             self.tblViewMeta.setModel(metamodel)
 
+            metadf = read_csv(metapath, encoding='iso-8859-11')
+            metamodel = view.PandasTableModel(metadf)
+            self.tblViewMeta.setModel(metamodel)
+
         def update_data_model(self):
             newdatamodel = view.PandasTableModel(self.facade._data)
             self.tblViewRaw.setModel(newdatamodel)
@@ -121,6 +125,11 @@ def MainWindow():
             self.dsite.show()
             self.dsite.facade = self.facade
 
+        def addsite_display(self):
+            ''' Display dialog box for adding site column'''
+            self.daddsite.show()
+            self.daddsite.facade = self.facade
+            
         def session_display(self):
             ''' Displays the Site Dialog box'''
             self.dsession.show()
@@ -157,13 +166,14 @@ def MainWindow():
                 name='updateinfo', tablename='updatetable')
             self.facade.input_register(commithandle)
             try:
-                self.facade.push_merged_data()
-                #self.facade.update_main()
+                self.facade.merge_push_data()
+                self.facade.update_main()
                 self.actionCommit.setEnabled(False)
                 self.message.about(
                     self, 'Status', 'Database transaction complete')
             except Exception as e:
                 print(str(e))
+                self.facade._tablelog['maintable'].debug(str(e))
                 self.error.showMessage(
                     'Datbase transaction error: ' + str(e) +
                     '. May need to alter site abbreviations.')
@@ -186,15 +196,15 @@ def MainWindow():
             self.actionSiteTable.setEnabled(False)
             self.actionClimateSiteTable.setEnabled(True)
             metapath = (
-                rootpath + end + 'data' + end +
-    	        'Identified_to_upload.csv')
+    	        str(os.getcwd()) + 
+    	        '/Datasets_manual_test/meta_climate_test.csv')
             metadf = read_csv(metapath, encoding='iso-8859-11')
             metamodel = view.PandasTableModel(metadf)
             self.tblViewMeta.setModel(metamodel)
 
         def end_session(self):
             subprocess.call(
-                "python" + " ../test_runmain.py", shell=True)
+                "python" + " ../poplerGUI_run_main.py", shell=True)
             self.close()
 
     return UiMainWindow()

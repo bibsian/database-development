@@ -30,6 +30,7 @@ def MainWindow():
         rawdata viewer
         '''
         raw_data_model = QtCore.pyqtSignal(object)
+        webview_url = QtCore.pyqtSignal(object)
 
         def __init__(self, parent=None):
             super().__init__(parent)
@@ -72,12 +73,13 @@ def MainWindow():
             try:
                 print(self.metaini.lnedentry['metaurl'])
                 self.facade.meta_verify()
+                self.webview_url.emit(
+                    self.metaini.lnedentry['metaurl'])
                 self.message.about(self, 'Status', 'Entries recorded')
 
             except Exception as e:
                 print(str(e))
-                self.error.showMessage(
-                    'Invalid entries: ' + str(e))
+                self.error.showMessage('Invalid entries: '  + str(e))
                 raise LookupError('Invalid metadata entries')
             
         def file_handler(self):
@@ -143,6 +145,8 @@ def MainWindow():
             # Custom signals
             self.dsession.raw_data_model.connect(
                 self.update_data_model)
+            self.dsession.webview_url.connect(
+                self.update_webview)
             
             # actions
             self.actionStart_Session.triggered.connect(
@@ -168,4 +172,3 @@ def test_session_dialog(qtbot, MainWindow):
     qtbot.addWidget(MainWindow)
 
     qtbot.stopForInteraction()
-
