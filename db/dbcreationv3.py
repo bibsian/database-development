@@ -205,7 +205,13 @@ project_table = Table(
     # META: This column specifies the type of information
     # about the sampling organisms life stage
     # ie. size, age, life-stage 
-    Column('structured',  VARCHAR(50)),
+    Column('structured_type_1',  VARCHAR(50)),
+    Column('structured_type_1_units',  VARCHAR(50)),
+    Column('structured_type_2',  VARCHAR(50)),
+    Column('structured_type_2_units',  VARCHAR(50)),
+    Column('structured_type_3',  VARCHAR(50)),
+    Column('structured_type_3_units',  VARCHAR(50)),
+    
     Column('studystartyr', NUMERIC),
     Column('studyendyr', NUMERIC),
 
@@ -261,8 +267,16 @@ project_table = Table(
     Column('spatial_replication_level_4_label', VARCHAR(200)),
     Column('spatial_replication_level_4_number_of_unique_reps', NUMERIC),
 
+    Column('spatial_replication_level_5_extent', NUMERIC),
+    Column('spatial_replication_level_5_extent_units', VARCHAR(200)),
+    Column('spatial_replication_level_5_label', VARCHAR(200)),
+    Column('spatial_replication_level_5_number_of_unique_reps', NUMERIC),
+    
     # Columns regarding treatments
-    Column('treatment_type', VARCHAR(200)),
+    Column('treatment_type_1', VARCHAR(200)),
+    Column('treatment_type_2', VARCHAR(200)),
+    Column('treatment_type_3', VARCHAR(200)),
+
     Column('derived', VARCHAR(200)),
     
     # Columns relating to author, metadata, other sources
