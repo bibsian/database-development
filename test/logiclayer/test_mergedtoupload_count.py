@@ -50,6 +50,12 @@ def test_drop_records():
 def MergeToUpload():
 
     class MergeToUpload(object):
+        '''
+        Class that encapsulated the processes of
+        merging, pushing, and updating data for the database.
+        All tabels past study_site_table  and part of the project_table
+        are managed through this class.
+        '''
         print('trying to initiate')
         def __init__(self):
             self.session = orm.Session()
@@ -59,18 +65,21 @@ def MergeToUpload():
                 'density': orm.density_types,
                 'biomass': orm.biomass_types,
                 'individual': orm.individual_types,
-                'percent_cover': orm.percent_cover_types
+                'percent_cover': orm.percent_cover_types,
+                'project': orm.project_types
             }
 
         def site_in_proj_key_df(
                 self, studysitetabledf, projecttabledf, lterlocation,
                 observationtabledf, studysitelabel, studysitelevels):
             '''
- 
-            Method to take the data stored in the user facade class 
-            and the database 
-            (e.g. study_site_table, project_table, lter, 
-            observation_table, study_site_label, studysitelevels)
+
+            Method to take the data stored in the user facade class
+            and upload to the database
+
+            REQUIRES: study_site_table, project_table, lter,
+            observation_table, study_site_label, studysitelevels...
+
             to make the site_in_project_table (including the merge)
             as well as merge all other tables for keys and upload.
 
@@ -79,6 +88,24 @@ def MergeToUpload():
 
             1) Check to see if any of the original site levels
             are present in the database
+
+            2) test whether the dataset site levels are contained
+            within the raw data or database, or both, and
+            make the site_in_project_table site labels based
+            off of this test. (this is necessary because if sites are
+            already in the database when we pull in the study_site
+            table some will be missing since present ones aren't 
+            pushed).
+
+            3) Calculate all derived values for the 
+            site_in_project_table (sitestartyr, siteendyr, uniquetaxa,
+            totalobs).
+
+            4) Push all data
+
+            5) Query the pushed data to retrieve primary keys
+            then merged primary keys to sitelevel data and
+            return the dataframe (to be merged in another method)
             '''
 
             # Types of outcomes to govern push behavior
@@ -106,15 +133,12 @@ def MergeToUpload():
             study_site_table_query_list = study_site_table_query_df[
                 'study_site_key'].values.tolist()
 
-            
-            
             study_site_table_list_from_user = studysitetabledf[
                 'study_site_key'].drop_duplicates().values.tolist()
 
             # ------------------------------------ #
             # ------- study_site_table ------ #
             # ------------------------------------ #
-
             print('empty', study_site_table_query_df.empty)
             print('nulltest', study_site_table_list_from_user == ['NULL'])
             print('user table', study_site_table_list_from_user)
@@ -272,44 +296,61 @@ def MergeToUpload():
                 self, formated_taxa_table, siteinprojkeydf,
                 sitelabel
         ):
-            print('taxa site in proj key df: ', siteinprojkeydf)
-            print('taxa site formated taxa table: ', formated_taxa_table)
-            # Step 2) Merge the formatted taxa_table with the quieried
-            # site_in_project_key dataframe (to add foreign keys to
-            # the taxa_table)
+            '''
+            Method to take the data stored in the user facade class
+            and upload the database
+
+            REQUIRES: formated taxa table (with database names),
+            dataframe with site levels merged to site_in_project
+            (formated_taxa_table)
+            primary keys (created in method above...siteinprojkeydf)
+            , and the name of the column with the site (sitelabel)
+
+            to make the site_in_project_table (including the merge)
+            as well as merge all other tables for keys and upload.
+
+            To merge the site_in_project_table a series of steps
+            must be performed
+
+            1) Merged the formated taxa table with the site_in_project
+            data that contains primary keys for site_in_project table
+            and site levels (merge on site levels)
+
+            2) Dropping columns not neccessary for the taxa_table
+            push (metadata key: project_table_fkey,
+            site label:study_site_table_fkey)
+
+            3) Rename merged site_in_project_table primary key
+            to match taxa table name
+
+            4) Push taxa_table to database
+
+            '''
+
             print('starting taxa table upload')
             orm.replace_numeric_null_with_string(formated_taxa_table)
             print('past orm replace numeric')
-            tbl_taxa_with_site_in_proj_key= merge(
+            tbl_taxa_with_site_in_proj_key = merge(
                 formated_taxa_table, siteinprojkeydf,
                 left_on=sitelabel,
                 right_on='study_site_table_fkey',
                 how='inner')
             print('past tbl_taxa site in proj key')
-            # Step 3) Making a copy of the merged table
             tbl_taxa_merged = tbl_taxa_with_site_in_proj_key.copy()
 
-            # Step 4) Dropping the unneccessary columns from the copy
-            # of the merged taxa_table (that has foreign keys now)
             tbl_taxa_merged.drop([
                 'study_site_table_fkey', sitelabel,
                 'project_table_fkey'], inplace=True, axis=1)
             print('past tbl_taxa drop: ', tbl_taxa_merged)
-            
-            # Step 5) Renaming the foreign keys to match the column
-            # label in the database
+
             tbl_taxa_merged.rename(
-                columns= {
+                columns={
                     'site_in_project_key': 'site_in_project_taxa_key'}, inplace=True)
             print('merge class taxa merged: ', tbl_taxa_merged)
 
-            # Step 6) Filling Null values (blank or NaN) with 'NA' strings
-            # then converting each column into it's appropriate data type
-            # for the database
             tbl_taxa_merged.fillna('NA', inplace=True)
             orm.convert_types(tbl_taxa_merged, orm.taxa_types)
 
-            # Step 7) Upload table to datbase
             tbl_taxa_merged.to_sql(
                 'taxa_table', orm.conn, if_exists='append', index=False)
 
@@ -423,6 +464,12 @@ def MergeToUpload():
             tbl_dtype_to_upload.to_sql(
                 datatype_table,
                 orm.conn, if_exists='append', index=False)
+
+        def update_project_table(self):
+            ##
+            # ADD STUDYSTARTYR, STUDYENDYR, SPAT_LEV_UNQ_REPS(1-5),
+            ##
+            pass
 
     return MergeToUpload
 
