@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'ui_dialog_session.ui'
+# Form implementation generated from reading ui file 'C:\Users\MillerLab\Desktop\database-development\Views\ui_dialog_session.ui'
 #
 # Created by: PyQt4 UI code generator 4.11.4
 #
