@@ -21,8 +21,8 @@ elif sys.platform == "win32":
 def engine():
     ''' engine for creating connection and executing statements'''
     engine = create_engine(
-        'postgresql+psycopg2://postgres:demography@localhost/popler_3',
-        echo=True)
+        'postgresql+psycopg2:///',
+        echo=False)
     return engine
 
 @pytest.fixture
@@ -68,6 +68,13 @@ def site_in_project_table(base, metadata):
     return site_in_project_table
 
 @pytest.fixture
+def taxa_accepted_table(base, metadata):
+    class taxa_accepted_table(base):
+        __table__ = Table('taxa_accepted_table', metadata, autoload=True)
+
+    return taxa_accepted_table
+
+@pytest.fixture
 def taxa_table(base, metadata):
     class taxa_table(base):
         __table__ = Table('taxa_table', metadata, autoload=True)
@@ -111,6 +118,7 @@ def individual_table(base, metadata):
 def test_drop_records(
         conn, biomass_table, count_table, density_table,
         individual_table, percent_cover_table, taxa_table,
+        taxa_accepted_table,
         project_table, site_in_project_table, study_site_table):
 
     table_dict = OrderedDict([
@@ -119,6 +127,7 @@ def test_drop_records(
         ('density_table', density_table),
         ('individual_table', individual_table),
         ('percent_cover_table', percent_cover_table),
+        ('taxa_accepted_table', taxa_accepted_table),
         ('taxa_table', taxa_table),
         ('site_in_project_table', site_in_project_table),
         ('project_table', project_table),
@@ -126,8 +135,6 @@ def test_drop_records(
     )
 
     for i, item in enumerate(table_dict):
-        print(i)
-        print('item', item)
         delete_statement = table_dict[item].__table__.delete()
         conn.execute(delete_statement)
     conn.close()
