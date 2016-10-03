@@ -31,8 +31,9 @@ def test_drop_records():
         ('density_table', orm.density_table),
         ('individual_table', orm.individual_table),
         ('percent_cover_table', orm.percent_cover_table),
-        ('taxa_table', orm.taxa_table),
+        ('taxa_accepted_table', orm.taxa_accepted_table),
         ('site_in_project_table', orm.site_in_project_table),
+        ('taxa_table', orm.taxa_table),
         ('project_table', orm.project_table),
         ('study_site_table', orm.study_site_table)]
     )
@@ -74,7 +75,7 @@ def file_handle():
         rbtns=rbtn, checks=ckentry, session=True,
         filename=(
             rootpath + end + 'test' + end + 'Datasets_manual_test' + end +
-            'raw_data_test_4.csv'))
+            'raw_data_test_3.csv'))
 
     return fileinput
 
@@ -104,7 +105,7 @@ def project_handle():
 @pytest.fixture
 def taxa_handle():
     taxalned = OrderedDict((
-        ('sppcode', 'code'),
+        ('sppcode', ''),
         ('kingdom', ''),
         ('subkingdom', ''),
         ('infrakingdom', ''),
@@ -112,18 +113,18 @@ def taxa_handle():
         ('divsion', ''),
         ('subdivision', ''),
         ('superphylum', ''),
-        ('phylum', ''),
+        ('phylum', 'phylum'),
         ('subphylum', ''),
-        ('clss', ''),
+        ('clss', 'clss'),
         ('subclass', ''),
-        ('ordr', ''),
-        ('family', ''),
-        ('genus', ''),
-        ('species', '')
+        ('ordr', 'ordr'),
+        ('family', 'family'),
+        ('genus', 'genus'),
+        ('species', 'species')
     ))
 
     taxackbox = OrderedDict((
-        ('sppcode', True),
+        ('sppcode', False),
         ('kingdom', False),
         ('subkingdom', False),
         ('infrakingdom', False),
@@ -131,14 +132,14 @@ def taxa_handle():
         ('divsion', False),
         ('subdivision', False),
         ('superphylum', False),
-        ('phylum', False),
+        ('phylum', True),
         ('subphylum', False),
-        ('clss', False),
+        ('clss', True),
         ('subclass', False),
-        ('ordr', False),
-        ('family', False),
-        ('genus', False),
-        ('species', False)
+        ('ordr', True),
+        ('family', True),
+        ('genus', True),
+        ('species', True)
     ))
 
     taxacreate = {
@@ -187,7 +188,7 @@ def time_handle():
 def covar_handle():
     covarlned = {'columns': None}
     
-    covarlned['columns'] = string_to_list('Precip')
+    covarlned['columns'] = string_to_list('temp')
 
     covarini = ini.InputHandler(
         name='covarinfo', tablename='covartable',
@@ -201,10 +202,10 @@ def covar_handle():
 # ---------------- obs table handle --------------- #
 # ------------------------------------------------------ #
 @pytest.fixture
-def biomass_handle():
+def count_handle():
     obslned = OrderedDict((
-        ('spatial_replication_level_2', 'block'),
-        ('spatial_replication_level_3', 'plot'),
+        ('spatial_replication_level_2', 'plot'),
+        ('spatial_replication_level_3', 'quadrat'),
         ('spatial_replication_level_4', ''),
         ('spatial_replication_level_5', ''),
         ('structured_type_1', ''),
@@ -213,7 +214,7 @@ def biomass_handle():
         ('treatment_type_1', ''),
         ('treatment_type_2', ''),
         ('treatment_type_3', ''),
-        ('unitobs', 'cover')
+        ('unitobs', 'biomass')
     ))
     
     obsckbox = OrderedDict((
@@ -238,17 +239,38 @@ def biomass_handle():
 
     countini = ini.InputHandler(
         name='rawinfo',
-        tablename='percent_cover_table',
+        tablename='biomass_table',
         lnedentry=extract(obslned, available),
         checks=obsckbox)
 
     return countini
 
+def test_drop_records():
+
+    table_dict = OrderedDict([
+        ('biomass_table', orm.biomass_table),
+        ('count_table', orm.count_table),
+        ('density_table', orm.density_table),
+        ('individual_table', orm.individual_table),
+        ('percent_cover_table', orm.percent_cover_table),
+        ('taxa_table', orm.taxa_table),
+        ('site_in_project_table', orm.site_in_project_table),
+        ('project_table', orm.project_table),
+        ('study_site_table', orm.study_site_table)]
+    )
+
+    for i, item in enumerate(table_dict):
+        print(i)
+        print('item', item)
+        delete_statement = table_dict[item].__table__.delete()
+        
+        orm.conn.execute(delete_statement)
+
 
 def test_site_in_project_key(
         MergeToUpload, site_handle, file_handle,
         meta_handle, project_handle, taxa_handle,
-        time_handle, biomass_handle, covar_handle):
+        time_handle, count_handle, covar_handle):
     facade = face.Facade()
 
     facade.input_register(meta_handle)
@@ -297,12 +319,12 @@ def test_site_in_project_key(
     facade.push_tables['timetable'] = timetable
     facade.create_log_record('timetable')
 
-    facade.input_register(biomass_handle)
+    facade.input_register(count_handle)
     rawdirector = facade.make_table('rawinfo')
     rawtable = rawdirector._availdf
     print(rawtable)
-    facade.push_tables[biomass_handle.tablename] = rawtable
-    facade.create_log_record(biomass_handle.tablename)
+    facade.push_tables[count_handle.tablename] = rawtable
+    facade.create_log_record(count_handle.tablename)
 
     facade.input_register(covar_handle)
     covartable = ddf.DictionaryDataframe(
@@ -351,13 +373,13 @@ def test_site_in_project_key(
         sitelabel=siteid
     )
 
-    taxa_column_in_push_table = [
-        x[0] for x in 
+    taxa_column_in_data = [
+        x[1] for x in 
         list(facade._inputs['taxainfo'].lnedentry.items())
     ]
 
-    taxa_column_in_data = [
-        x[1] for x in 
+    taxa_column_in_push_table = [
+        x[0] for x in 
         list(facade._inputs['taxainfo'].lnedentry.items())
     ]
 
