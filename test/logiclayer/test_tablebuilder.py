@@ -115,7 +115,11 @@ def AbstractTableBuilder():
         project_table = {
             'columns': [
                 'proj_metadata_key', 'title', 'samplingunits',
-                'datatype', 'structured', 'studystartyr',
+                'datatype',
+                'structured_type_1', 'structured_type_1_units',
+                'structured_type_2', 'structured_type_2_units',
+                'structured_type_3', 'structured_type_3_units',
+                'studystartyr',
                 'studyendyr',
                 'samplefreq',
                 'studytype',
@@ -137,7 +141,13 @@ def AbstractTableBuilder():
                 'spatial_replication_level_4_extent_units',
                 'spatial_replication_level_4_label',
                 'spatial_replication_level_4_number_of_unique_reps',
-                'treatment_type', 'derived'
+                'spatial_replication_level_5_extent',
+                'spatial_replication_level_5_extent_units',
+                'spatial_replication_level_5_label',
+                'spatial_replication_level_5_number_of_unique_reps',
+                'treatment_type_1', 'treatment_type_2',
+                'treatment_type_3',
+                'derived'
                 'authors', 'authors_contact', 'metalink', 'knbid',
             ],
             'time': False,
@@ -239,10 +249,15 @@ def AbstractTableBuilder():
                 'spatial_replication_level_2',
                 'spatial_replication_level_3',
                 'spatial_replication_level_4',
-                'structure',
+                'spatial_replication_level_5',
+                'treatment_type_1',
+                'treatment_type_2',
+                'treatment_type_3',
+                'structure_type_1',
+                'structure_type_2',
+                'structure_type_3',
                 'count_observation',
-                'covariates',
-                'trt_label'
+                'covariates'
             ],
 
             'time': True,
@@ -265,10 +280,15 @@ def AbstractTableBuilder():
                 'spatial_replication_level_2',
                 'spatial_replication_level_3',
                 'spatial_replication_level_4',
-                'structure',
+                'spatial_replication_level_5',
+                'treatment_type_1',
+                'treatment_type_2',
+                'treatment_type_3',
+                'structure_type_1',
+                'structure_type_2',
+                'structure_type_3',
                 'biomass_observation',
-                'covariates',
-                'trt_label'
+                'covariates'
             ],
 
             'time': True,
@@ -291,10 +311,15 @@ def AbstractTableBuilder():
                 'spatial_replication_level_2',
                 'spatial_replication_level_3',
                 'spatial_replication_level_4',
-                'structure',
+                'spatial_replication_level_5',
+                'treatment_type_1',
+                'treatment_type_2',
+                'treatment_type_3',
+                'structure_type_1',
+                'structure_type_2',
+                'structure_type_3',
                 'density_observation',
-                'covariates',
-                'trt_label'
+                'covariates'
             ],
 
             'time': True,
@@ -317,10 +342,15 @@ def AbstractTableBuilder():
                 'spatial_replication_level_2',
                 'spatial_replication_level_3',
                 'spatial_replication_level_4',
-                'structure',
+                'spatial_replication_level_5',
+                'treatment_type_1',
+                'treatment_type_2',
+                'treatment_type_3',
+                'structure_type_1',
+                'structure_type_2',
+                'structure_type_3',
                 'percent_cover_observation',
-                'covariates',
-                'trt_label'
+                'covariates'
             ],
             
             'time': True,
@@ -343,10 +373,15 @@ def AbstractTableBuilder():
                 'spatial_replication_level_2',
                 'spatial_replication_level_3',
                 'spatial_replication_level_4',
-                'structure',
+                'spatial_replication_level_5',
+                'treatment_type_1',
+                'treatment_type_2',
+                'treatment_type_3',
+                'structure_type_1',
+                'structure_type_2',
+                'structure_type_3',
                 'individual_observation',
-                'covariates',
-                'trt_label'
+                'covariates'
             ],
             'time': True,
             'cov': True,
@@ -369,7 +404,11 @@ def AbstractTableBuilder():
                 'spatial_replication_level_3_label',
                 'spatial_replication_level_3_number_of_unique_reps',
                 'spatial_replication_level_4_label',
-                'spatial_replication_level_4_number_of_unique_reps'
+                'spatial_replication_level_4_number_of_unique_reps',
+                'spatial_replication_level_5_label',
+                'spatial_replication_level_5_number_of_unique_reps',
+                'treatment_type_1', 'treatment_type_2',
+                'treatment_type_3'
             ],
             'time': False,
             'cov': False,
@@ -569,7 +608,10 @@ def Project_Table_Builder(AbstractTableBuilder):
                 'spatial_replication_level_2_label', 'spatial_replication_level_2_number_of_unique_reps',
                 'spatial_replication_level_3_label', 'spatial_replication_level_3_number_of_unique_reps',
                 'spatial_replication_level_4_label', 'spatial_replication_level_4_number_of_unique_reps',
-                'num_treatments'
+                'spatial_replication_level_5_label', 'spatial_replication_level_5_number_of_unique_reps',
+                'treatment_type_1',
+                'treatment_type_2',
+                'treatment_type_3'
             ]
 
             # Creating main data table
@@ -579,7 +621,12 @@ def Project_Table_Builder(AbstractTableBuilder):
                     'title': dataframe['title'],
                     'samplingunits': 'NA',
                     'datatype': dataframe['data_type'],
-                    'structured': 'NA',
+                    'structured_type_1': 'NA',
+                    'structured_type_1_units': 'NA',
+                    'structured_type_2': 'NA',
+                    'structured_type_2_units': 'NA',
+                    'structured_type_3': 'NA',
+                    'structured_type_3_units': 'NA',
                     'studystartyr': -99999,
                     'studyendyr': -99999,
                     'samplefreq': dataframe['temp_int'],
@@ -602,7 +649,14 @@ def Project_Table_Builder(AbstractTableBuilder):
                     'spatial_replication_level_4_extent_units': 'NA',
                     'spatial_replication_level_4_label': 'NA',
                     'spatial_replication_level_4_number_of_unique_reps': -99999,
-                    'treatment_type': dataframe['treatment_type'],
+                    'spatial_replication_level_5_extent': -99999,
+                    'spatial_replication_level_5_extent_units': 'NA',
+                    'spatial_replication_level_5_label': 'NA',
+                    'spatial_replication_level_5_number_of_unique_reps': -99999,
+
+                    'treatment_type_1': 'NA',
+                    'treatment_type_2': 'NA',
+                    'treatment_type_3': 'NA',
                     'derived': 'NA',
                     'authors': 'NA',
                     'authors_contact': 'NA',
@@ -612,7 +666,14 @@ def Project_Table_Builder(AbstractTableBuilder):
                 columns = [
                     
                     'proj_metadata_key', 'title', 'samplingunits',
-                    'datatype', 'structured', 'studystartyr',
+                    'datatype',
+                    'structured_type_1',
+                    'structured_type_1_units',
+                    'structured_type_2',
+                    'structured_type_2_units',
+                    'structured_type_3',
+                    'structured_type_3_units',
+                    'studystartyr',
                     'studyendyr',
                     'samplefreq',
                     'studytype', 'community',
@@ -633,7 +694,14 @@ def Project_Table_Builder(AbstractTableBuilder):
                     'spatial_replication_level_4_extent_units',
                     'spatial_replication_level_4_label',
                     'spatial_replication_level_4_number_of_unique_reps',
-                    'treatment_type', 'derived',
+                    'spatial_replication_level_5_extent',
+                    'spatial_replication_level_5_extent_units',
+                    'spatial_replication_level_5_label',
+                    'spatial_replication_level_5_number_of_unique_reps',
+                    'treatment_type_1',
+                    'treatment_type_2',
+                    'treatment_type_3',
+                    'derived',
                     'authors', 'authors_contact', 'metalink', 'knbid',
                 ], index=[0])
 
@@ -769,6 +837,11 @@ def Observation_Table_Builder(AbstractTableBuilder):
             print('obs acols: ', acols)
             print('obs nullcols: ', nullcols)
 
+            if self._inputs.tablename == 'individual_table':
+                acols.remove('')
+            else:
+                pass
+            
             try:
                 acols = [x.rstrip() for x in acols]
             except Exception as e:
@@ -1079,7 +1152,6 @@ def metadata_data():
 def test_project_table_build(
         Project_Table_Builder, Table_Builder_Director,
         project_user_input, metadata_data, dataset_test_1):
-
     sitelevels = dataset_test_1[
         'site'].drop_duplicates().values.tolist()
 
@@ -1350,24 +1422,32 @@ def count_userinput():
         ('spatial_replication_level_2', 'transect'),
         ('spatial_replication_level_3', ''),
         ('spatial_replication_level_4', ''),
-        ('structure', ''),
-        ('unitobs', 'count'),
-        ('trt_label', '')
+        ('structured_type_1', ''),
+        ('structured_type_2', ''),
+        ('structured_type_3', ''),
+        ('treatment_type_1', ''),
+        ('treatment_type_2', ''),
+        ('treatment_type_3', ''),
+        ('unitobs', 'count')
     ))
     
     obsckbox = OrderedDict((
-        ('spatial_replication_level_2', False),
-        ('spatial_replication_level_3', True),
-        ('spatial_replication_level_4', True),
-        ('structure', True),
-        ('unitobs', False),
-        ('trt_label', True)
+        ('spatial_replication_level_2', True),
+        ('spatial_replication_level_3', False),
+        ('spatial_replication_level_4', False),
+        ('structured_type_1', False),
+        ('structured_type_2', False),
+        ('structured_type_3', False),
+        ('treatment_type_1', False),
+        ('treatment_type_2', False),
+        ('treatment_type_3', False),
+        ('unitobs', True)
     ))
     available = [
         x for x,y in zip(
             list(obslned.keys()), list(
                 obsckbox.values()))
-        if y is False
+        if y is True
     ]
 
     countini = ini.InputHandler(
@@ -1421,25 +1501,33 @@ def percent_cover_userinput():
         ('spatial_replication_level_2', 'block'),
         ('spatial_replication_level_3', 'plot'),
         ('spatial_replication_level_4', ''),
-        ('structure', ''),
-        ('unitobs', 'cover'),
-        ('trt_label', 'trt')
+        ('structured_type_1', ''),
+        ('structured_type_2', ''),
+        ('structured_type_3', ''),
+        ('treatment_type_1', 'trt'),
+        ('treatment_type_2', ''),
+        ('treatment_type_3', ''),
+        ('unitobs', 'cover')
     ))
     
     obsckbox = OrderedDict((
-        ('spatial_replication_level_2', False),
-        ('spatial_replication_level_3', False),
-        ('spatial_replication_level_4', True),
-        ('structure', True),
-        ('unitobs', False),
-        ('trt_label', False)
+        ('spatial_replication_level_2', True),
+        ('spatial_replication_level_3', True),
+        ('spatial_replication_level_4', False),
+        ('structured_type_1', False),
+        ('structured_type_2', False),
+        ('structured_type_3', False),
+        ('treatment_type_1', True),
+        ('treatment_type_2', False),
+        ('treatment_type_3', False),
+        ('unitobs', True)
     ))
 
     available = [
         x for x,y in zip(
             list(obslned.keys()), list(
                 obsckbox.values()))
-        if y is False
+        if y is True
     ]
 
     countini = ini.InputHandler(
@@ -1503,24 +1591,34 @@ def individual_userinput():
         ('spatial_replication_level_2', 'TRANSECT'),
         ('spatial_replication_level_3', ''),
         ('spatial_replication_level_4', ''),
-        ('structure', ''),
-        ('unitobs', ''),
-        ('trt_label', '')
+        ('spatial_replication_level_5', ''),
+        ('structured_type_1', ''),
+        ('structured_type_2', ''),
+        ('structured_type_3', ''),
+        ('treatment_type_1', ''),
+        ('treatment_type_2', ''),
+        ('treatment_type_3', ''),
+        ('unitobs', '')
     ))
     
     obsckbox = OrderedDict((
-        ('spatial_replication_level_2', False),
-        ('spatial_replication_level_3', True),
-        ('spatial_replication_level_4', True),
-        ('structure', True),
-        ('unitobs', True),
-        ('trt_label', True)
+        ('spatial_replication_level_2', True),
+        ('spatial_replication_level_3', False),
+        ('spatial_replication_level_4', False),
+        ('spatial_replication_level_5', False),
+        ('structured_type_1', False),
+        ('structured_type_2', False),
+        ('structured_type_3', False),
+        ('treatment_type_1', False),
+        ('treatment_type_2', False),
+        ('treatment_type_3', False),
+        ('unitobs', True)
     ))
     available = [
         x for x,y in zip(
             list(obslned.keys()), list(
                 obsckbox.values()))
-        if y is False
+        if y is True
     ]
 
     countini = ini.InputHandler(

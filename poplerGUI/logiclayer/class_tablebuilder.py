@@ -97,7 +97,11 @@ class AbstractTableBuilder(object):
     project_table = {
         'columns': [
             'proj_metadata_key', 'title', 'samplingunits',
-            'datatype', 'structured', 'studystartyr',
+            'datatype',
+            'structured_type_1', 'structured_type_1_units',
+            'structured_type_2', 'structured_type_2_units',
+            'structured_type_3', 'structured_type_3_units',
+            'studystartyr',
             'studyendyr',
             'samplefreq',
             'studytype',
@@ -119,7 +123,13 @@ class AbstractTableBuilder(object):
             'spatial_replication_level_4_extent_units',
             'spatial_replication_level_4_label',
             'spatial_replication_level_4_number_of_unique_reps',
-            'treatment_type', 'derived'
+            'spatial_replication_level_5_extent',
+            'spatial_replication_level_5_extent_units',
+            'spatial_replication_level_5_label',
+            'spatial_replication_level_5_number_of_unique_reps',
+            'treatment_type_1', 'treatment_type_2',
+            'treatment_type_3',
+            'derived'
             'authors', 'authors_contact', 'metalink', 'knbid',
         ],
         'time': False,
@@ -148,7 +158,7 @@ class AbstractTableBuilder(object):
         ]
     }
 
-    taxa_table_dict = {
+    taxa_table = {
         'columns': [
             'taxa_table_key',
             'site_in_project_taxa_key',
@@ -169,8 +179,8 @@ class AbstractTableBuilder(object):
             'genus',
             'species',
             'common_name',
-            'authority'
-        ],
+            'authority'],
+
         'time': False,
         'cov': False,
         'depend': True,
@@ -221,10 +231,15 @@ class AbstractTableBuilder(object):
             'spatial_replication_level_2',
             'spatial_replication_level_3',
             'spatial_replication_level_4',
-            'structure',
+            'spatial_replication_level_5',
+            'treatment_type_1',
+            'treatment_type_2',
+            'treatment_type_3',
+            'structure_type_1',
+            'structure_type_2',
+            'structure_type_3',
             'count_observation',
-            'covariates',
-            'trt_label'
+            'covariates'
         ],
 
         'time': True,
@@ -247,10 +262,15 @@ class AbstractTableBuilder(object):
             'spatial_replication_level_2',
             'spatial_replication_level_3',
             'spatial_replication_level_4',
-            'structure',
+            'spatial_replication_level_5',
+            'treatment_type_1',
+            'treatment_type_2',
+            'treatment_type_3',
+            'structure_type_1',
+            'structure_type_2',
+            'structure_type_3',
             'biomass_observation',
-            'covariates',
-            'trt_label'
+            'covariates'
         ],
 
         'time': True,
@@ -273,10 +293,15 @@ class AbstractTableBuilder(object):
             'spatial_replication_level_2',
             'spatial_replication_level_3',
             'spatial_replication_level_4',
-            'structure',
+            'spatial_replication_level_5',
+            'treatment_type_1',
+            'treatment_type_2',
+            'treatment_type_3',
+            'structure_type_1',
+            'structure_type_2',
+            'structure_type_3',
             'density_observation',
-            'covariates',
-            'trt_label'
+            'covariates'
         ],
 
         'time': True,
@@ -299,10 +324,15 @@ class AbstractTableBuilder(object):
             'spatial_replication_level_2',
             'spatial_replication_level_3',
             'spatial_replication_level_4',
-            'structure',
+            'spatial_replication_level_5',
+            'treatment_type_1',
+            'treatment_type_2',
+            'treatment_type_3',
+            'structure_type_1',
+            'structure_type_2',
+            'structure_type_3',
             'percent_cover_observation',
-            'covariates',
-            'trt_label'
+            'covariates'
         ],
 
         'time': True,
@@ -325,10 +355,15 @@ class AbstractTableBuilder(object):
             'spatial_replication_level_2',
             'spatial_replication_level_3',
             'spatial_replication_level_4',
-            'structure',
+            'spatial_replication_level_5',
+            'treatment_type_1',
+            'treatment_type_2',
+            'treatment_type_3',
+            'structure_type_1',
+            'structure_type_2',
+            'structure_type_3',
             'individual_observation',
-            'covariates',
-            'trt_label'
+            'covariates'
         ],
         'time': True,
         'cov': True,
@@ -351,7 +386,11 @@ class AbstractTableBuilder(object):
             'spatial_replication_level_3_label',
             'spatial_replication_level_3_number_of_unique_reps',
             'spatial_replication_level_4_label',
-            'spatial_replication_level_4_number_of_unique_reps'
+            'spatial_replication_level_4_number_of_unique_reps',
+            'spatial_replication_level_5_label',
+            'spatial_replication_level_5_number_of_unique_reps',
+            'treatment_type_1', 'treatment_type_2',
+            'treatment_type_3'
         ],
         'time': False,
         'cov': False,
@@ -382,7 +421,7 @@ class AbstractTableBuilder(object):
         'stationtable': stationtable,
         'study_site_table': study_site_table,
         'project_table': project_table,
-        'taxa_table': taxa_table_dict,
+        'taxa_table': taxa_table,
         'taxa_accepted_table': taxa_accepted_table,
         'count_table': count_table,
         'biomass_table': biomass_table,
@@ -409,12 +448,8 @@ class AbstractTableBuilder(object):
 
     def get_null_columns(self):
         availcol = list(self._inputs.lnedentry.keys())
-        print('abstract builder availcol: ', availcol)
-        print(list(self._inputs.lnedentry.values()))
         allcol = self.tabledict[
             self._inputs.tablename]['columns']
-        print('abstract builder allcol: ', allcol)
-        print('abstract return: ', [x for x in allcol if x not in availcol])
         return [x for x in allcol if x not in availcol]
 
     @abc.abstractmethod
@@ -539,23 +574,28 @@ class Project_Table_Builder(AbstractTableBuilder):
             'siteendyr', 'totalobs', 'uniquetaxaunits',
             'spatial_replication_level_1_label',
             'spatial_replication_level_1_number_of_unique_reps',
-            'spatial_replication_level_2_label',
-            'spatial_replication_level_2_number_of_unique_reps',
-            'spatial_replication_level_3_label',
-            'spatial_replication_level_3_number_of_unique_reps',
-            'spatial_replication_level_4_label',
-            'spatial_replication_level_4_number_of_unique_reps',
-            'num_treatments'
+            'spatial_replication_level_2_label', 'spatial_replication_level_2_number_of_unique_reps',
+            'spatial_replication_level_3_label', 'spatial_replication_level_3_number_of_unique_reps',
+            'spatial_replication_level_4_label', 'spatial_replication_level_4_number_of_unique_reps',
+            'spatial_replication_level_5_label', 'spatial_replication_level_5_number_of_unique_reps',
+            'treatment_type_1',
+            'treatment_type_2',
+            'treatment_type_3'
         ]
 
         # Creating main data table
         maindata = DataFrame(
             {
-                'proj_metadata_key': dataframe['global_id'], 
+                'proj_metadata_key':dataframe['global_id'], 
                 'title': dataframe['title'],
                 'samplingunits': 'NA',
                 'datatype': dataframe['data_type'],
-                'structured': 'NA',
+                'structured_type_1': 'NA',
+                'structured_type_1_units': 'NA',
+                'structured_type_2': 'NA',
+                'structured_type_2_units': 'NA',
+                'structured_type_3': 'NA',
+                'structured_type_3_units': 'NA',
                 'studystartyr': -99999,
                 'studyendyr': -99999,
                 'samplefreq': dataframe['temp_int'],
@@ -578,7 +618,14 @@ class Project_Table_Builder(AbstractTableBuilder):
                 'spatial_replication_level_4_extent_units': 'NA',
                 'spatial_replication_level_4_label': 'NA',
                 'spatial_replication_level_4_number_of_unique_reps': -99999,
-                'treatment_type': dataframe['treatment_type'],
+                'spatial_replication_level_5_extent': -99999,
+                'spatial_replication_level_5_extent_units': 'NA',
+                'spatial_replication_level_5_label': 'NA',
+                'spatial_replication_level_5_number_of_unique_reps': -99999,
+
+                'treatment_type_1': 'NA',
+                'treatment_type_2': 'NA',
+                'treatment_type_3': 'NA',
                 'derived': 'NA',
                 'authors': 'NA',
                 'authors_contact': 'NA',
@@ -588,7 +635,14 @@ class Project_Table_Builder(AbstractTableBuilder):
             columns = [
 
                 'proj_metadata_key', 'title', 'samplingunits',
-                'datatype', 'structured', 'studystartyr',
+                'datatype',
+                'structured_type_1',
+                'structured_type_1_units',
+                'structured_type_2',
+                'structured_type_2_units',
+                'structured_type_3',
+                'structured_type_3_units',
+                'studystartyr',
                 'studyendyr',
                 'samplefreq',
                 'studytype', 'community',
@@ -609,12 +663,20 @@ class Project_Table_Builder(AbstractTableBuilder):
                 'spatial_replication_level_4_extent_units',
                 'spatial_replication_level_4_label',
                 'spatial_replication_level_4_number_of_unique_reps',
-                'treatment_type', 'derived',
+                'spatial_replication_level_5_extent',
+                'spatial_replication_level_5_extent_units',
+                'spatial_replication_level_5_label',
+                'spatial_replication_level_5_number_of_unique_reps',
+                'treatment_type_1',
+                'treatment_type_2',
+                'treatment_type_3',
+                'derived',
                 'authors', 'authors_contact', 'metalink', 'knbid',
             ], index=[0])
 
         return maindata
 
+    
 class Taxa_Table_Builder(AbstractTableBuilder):
     '''
     Concrete table builder implementation: Site
@@ -730,6 +792,11 @@ class Observation_Table_Builder(AbstractTableBuilder):
         print('obs acols: ', acols)
         print('obs nullcols: ', nullcols)
 
+        if self._inputs.tablename == 'individual_table':
+            acols.remove('')
+        else:
+            pass
+
         try:
             acols = [x.rstrip() for x in acols]
         except Exception as e:
@@ -803,6 +870,8 @@ class Observation_Table_Builder(AbstractTableBuilder):
                     columns={
                         original_column_names_to_change[i]: item},
                     inplace=True)
+
+
             return final
 
         except Exception as e:
