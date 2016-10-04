@@ -1,10 +1,8 @@
-
 from collections import OrderedDict
-import re
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import *
-from sqlalchemy.dialects.postgresql import *
-from sqlalchemy.orm import sessionmaker, load_only
+from sqlalchemy import (
+    select, update, MetaData, create_engine, Table, column)
+from sqlalchemy.orm import sessionmaker
 import pandas as pd
 import pprint as pp
 import sys, os
@@ -20,6 +18,7 @@ elif sys.platform == "win32":
 os.chdir(rootpath)
 from poplerGUI.logiclayer.datalayer import config as orm
 from poplerGUI.logiclayer import class_helpers as hlp
+
 obslned = OrderedDict((
     ('spatial_replication_level_2', 'transect'),
     ('spatial_replication_level_3', 'plot'),
@@ -33,7 +32,6 @@ obslned = OrderedDict((
     ('treatment_type_3', ''),
     ('unitobs', 'count')
 ))
-
 obsckbox = OrderedDict((
     ('spatial_replication_level_2', True),
     ('spatial_replication_level_3', True),
@@ -55,27 +53,35 @@ available = [
 ]
 obslned_extracted = hlp.extract(obslned, available)
 study_site_label = 'site'
-
 obs_columns_in_data = [
     x[1] for x in 
     list(obslned_extracted.items())
 ]
-
 obs_columns_in_push_table = [
     x[0] for x in 
     list(obslned_extracted.items())
 ]
-
-
 spatial_index = [
     i for i, item in enumerate(obs_columns_in_push_table)
-    if 'spatial' in item
-]
+    if 'spatial' in item]
 spatial_label = [study_site_label]
 spatial_key = ['spatial_replication_level_1_label']
 for i in range(len(spatial_index)):
     spatial_key.append(obs_columns_in_push_table[i]+'_label')
     spatial_label.append(obs_columns_in_data[i])
+
+update_dict = {}
+for i, item in enumerate(spatial_key):
+    update_dict[item] = spatial_label[i]
+
+
+orm.conn.execute(
+    update(orm.project_table).
+    where(column('proj_metadata_key') == 1).
+    values(update_dict)
+)
+
+
 
 
 
@@ -84,9 +90,12 @@ sitecheck = session.query(
     orm.study_site_table.__table__).order_by(
         orm.study_site_table.__table__.c.study_site_key).filter(
             orm.study_site_table.__table__.c.lter_table_fkey == 'SBC')
-
 sitecheckdf = pd.read_sql(
     sitecheck.statement, sitecheck.session.bind)
+sitecheckdf['test'] = [i for i in range(len(sitecheckdf))]
+
+sitecheckdf.loc[:,'test'].idxmax()
+sitecheckdf.loc[:,'test'].idxmin()
 
 engine = create_engine(
     'postgresql+psycopg2://postgres:demography@localhost/popler_3',
@@ -94,7 +103,6 @@ engine = create_engine(
 metadata = MetaData(bind=engine)
 base = declarative_base()
 conn = engine.connect()
-
 
 # creating classes for tables to query things
 class lter_table(base):
