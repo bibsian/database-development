@@ -21,6 +21,28 @@ from poplerGUI import class_inputhandler as ini
 from poplerGUI import class_modelviewpandas as view
 from poplerGUI.logiclayer import class_helpers as hlp
 from poplerGUI.logiclayer import class_userfacade as face
+from poplerGUI.logiclayer.datalayer import config as orm
+
+
+def test_drop_records():
+
+    table_dict = OrderedDict([
+        ('biomass_table', orm.biomass_table),
+        ('count_table', orm.count_table),
+        ('density_table', orm.density_table),
+        ('individual_table', orm.individual_table),
+        ('percent_cover_table', orm.percent_cover_table),
+        ('taxa_accepted_table', orm.taxa_accepted_table),
+        ('taxa_table', orm.taxa_table),
+        ('site_in_project_table', orm.site_in_project_table),
+        ('project_table', orm.project_table),
+        ('study_site_table', orm.study_site_table)]
+    )
+
+    for i, item in enumerate(table_dict):
+        delete_statement = table_dict[item].__table__.delete()
+        orm.conn.execute(delete_statement)
+    orm.conn.close()
 
 @pytest.fixture
 def metahandle():
