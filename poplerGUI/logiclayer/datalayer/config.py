@@ -12,17 +12,11 @@ import datetime as dt
 import logging
 import pandas as pd
 
-__all__ = [
-    'Ltertable', 'Sitetable', 'Maintable', 'Taxatable', 'Rawtable',
-    'Session', 'convert_types', 'sitetypes', 'maintypes', 'taxatypes',
-    'rawtypes']
-
 # Setup logging for program
 date = (str(dt.datetime.now()).split()[0]).replace("-", "_")
 logging.basicConfig(
     filename='db_transactions/database_log_{}.log'.format(date))
 logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
-
 
 # Adapter for numpy datatypes
 def adapt_numpy_int64(numpy_int64):
@@ -31,30 +25,23 @@ def adapt_numpy_int64(numpy_int64):
 register_adapter(numpy.int64, adapt_numpy_int64)
 
 engine = create_engine(
-    'postgresql+psycopg2://postgres:demography@localhost/popler_3',
-    echo=True)
+    'postgresql+psycopg2:///',
+    echo=False)
 conn = engine.connect()
-
 # Mapping metadata
 metadata = MetaData(bind=engine)
-
 # Creating base
 base = declarative_base()
 
 # creating classes for tables to query things
 class lter_table(base):
     __table__ = Table('lter_table', metadata, autoload=True)
-
-
 class study_site_table(base):
     __table__ = Table('study_site_table', metadata, autoload=True)
-
-
 class project_table(base):
     __table__ = Table('project_table', metadata, autoload=True)
     taxa = relationship(
         'taxa_table', cascade="delete, delete-orphan")
-
     count = relationship(
         'count_table', cascade="delete, delete-orphan")
     density = relationship(
@@ -65,42 +52,25 @@ class project_table(base):
         'percent_cover_table', cascade="delete, delete-orphan")
     individual = relationship(
         'individual_table', cascade="delete, delete-orphan")
-
-
 class site_in_project_table(base):
     __table__ = Table('site_in_project_table', metadata, autoload=True)
-
-
 class taxa_table(base):
     __table__ = Table('taxa_table', metadata, autoload=True)
-
-
 class taxa_accepted_table(base):
     __table__ = Table('taxa_accepted_table', metadata, autoload=True)
-
-
 class count_table(base):
     __table__ = Table('count_table', metadata, autoload=True)
-
-
 class biomass_table(base):
     __table__ = Table('biomass_table', metadata, autoload=True)
-
-
 class density_table(base):
     __table__ = Table('density_table', metadata, autoload=True)
-
-
 class percent_cover_table(base):
     __table__ = Table('percent_cover_table', metadata, autoload=True)
-
-
 class individual_table(base):
     __table__ = Table('individual_table', metadata, autoload=True)
 
 
 Session = sessionmaker(bind=engine, autoflush=False)
-
 
 # Helper Functions
 def find_types(tbl, name):
@@ -108,7 +78,6 @@ def find_types(tbl, name):
     dictname = {}
     for i, item in enumerate(tbl.__table__.c):
         name = (str(item).split('.')[1])
-        print('col name in table: find_types ', name)
         dictname[name] = str(
             tbl.__table__.c[name].type)
     return dictname
