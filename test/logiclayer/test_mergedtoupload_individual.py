@@ -1,9 +1,6 @@
 #! /usr/bin/env python
-import pytest
-from pandas import merge, concat, DataFrame, read_sql
-from sqlalchemy import select
+from pandas import concat, DataFrame
 import re
-from collections import OrderedDict
 import sys, os
 if sys.platform == "darwin":
     rootpath = (
@@ -17,232 +14,10 @@ elif sys.platform == "win32":
 os.chdir(rootpath)
 from poplerGUI.logiclayer.datalayer import config as orm
 from poplerGUI.logiclayer import class_userfacade as face
-from poplerGUI import class_inputhandler as ini
 from poplerGUI.logiclayer import class_timeparse as tparse
-from poplerGUI.logiclayer.class_helpers import (
-    string_to_list, extract, produce_null_df
-    )
-from poplerGUI.logiclayer import class_dictionarydataframe as ddf
+from poplerGUI.logiclayer.class_helpers import produce_null_df
+from poplerGUI.logiclayer import class_dictionarydataframe as ddf    
 
-def test_drop_records():
-
-    table_dict = OrderedDict([
-        ('biomass_table', orm.biomass_table),
-        ('count_table', orm.count_table),
-        ('density_table', orm.density_table),
-        ('individual_table', orm.individual_table),
-        ('percent_cover_table', orm.percent_cover_table),
-        ('taxa_accepted_table', orm.taxa_accepted_table),
-        ('site_in_project_table', orm.site_in_project_table),
-        ('taxa_table', orm.taxa_table),
-        ('project_table', orm.project_table),
-        ('study_site_table', orm.study_site_table)]
-    )
-
-    for i, item in enumerate(table_dict):
-        print(i)
-        print('item', item)
-        delete_statement = table_dict[item].__table__.delete()
-        
-        orm.conn.execute(delete_statement)
-
-
-@pytest.fixture
-def meta_handle5():
-    lentry = {
-        'globalid': 2,
-        'metaurl': ('http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.17'),
-        'lter': 'SBC'}
-    ckentry = {}
-    metainput = ini.InputHandler(
-        name='metacheck', tablename=None, lnedentry=lentry,
-        checks=ckentry)
-    return metainput
-
-@pytest.fixture
-def file_handle5():
-    ckentry = {}
-    rbtn = {'.csv': True, '.txt': False,
-            '.xlsx': False}
-    lned = {'sheet': '', 'delim': '', 'tskip': '', 'bskip': ''}
-    fileinput = ini.InputHandler(
-        name='fileoptions',tablename=None, lnedentry=lned,
-        rbtns=rbtn, checks=ckentry, session=True,
-        filename=(
-            rootpath + end + 'test' + end + 'Datasets_manual_test' + end +
-            'raw_data_test_5.csv'))
-
-    return fileinput
-
-
-# ------------------------------------------------------ #
-# ---------------- Study site handle --------------- #
-# ----------------------------------------------------- #
-@pytest.fixture
-def site_handle5():
-    lned = {'study_site_key': 'SITE'}
-    sitehandle = ini.InputHandler(
-        name='siteinfo', lnedentry=lned, tablename='study_site_table')
-    return sitehandle
-
-# ------------------------------------------------------ #
-# ---------------- Project table handle --------------- #
-# ------------------------------------------------------ #
-@pytest.fixture
-def project_handle5():
-    main_input = ini.InputHandler(
-        name='maininfo', tablename='project_table')
-    return main_input
-
-# ------------------------------------------------------ #
-# ---------------- taxa table handle --------------- #
-# ------------------------------------------------------ #
-@pytest.fixture
-def taxa_handle5():
-    taxalned = OrderedDict((
-        ('sppcode', ''),
-        ('kingdom', ''),
-        ('subkingdom', ''),
-        ('infrakingdom', ''),
-        ('superdivision', ''),
-        ('divsion', ''),
-        ('subdivision', ''),
-        ('superphylum', ''),
-        ('phylum', ''),
-        ('subphylum', ''),
-        ('clss', ''),
-        ('subclass', ''),
-        ('ordr', ''),
-        ('family', ''),
-        ('genus', 'TAXON_GENUS'),
-        ('species', 'TAXON_SPECIES'),
-        ('common_name', 'Common_Name')
-    ))
-
-    taxackbox = OrderedDict((
-        ('sppcode', False),
-        ('kingdom', False),
-        ('subkingdom', False),
-        ('infrakingdom', False),
-        ('superdivision', False),
-        ('divsion', False),
-        ('subdivision', False),
-        ('superphylum', False),
-        ('phylum', False),
-        ('subphylum', False),
-        ('clss', False),
-        ('subclass', False),
-        ('ordr', False),
-        ('family', False),
-        ('genus', True),
-        ('species', True),
-        ('common_name', True)
-    ))
-
-    taxacreate = {
-        'taxacreate': False
-    }
-    
-    available = [
-        x for x,y in zip(
-            list(taxalned.keys()), list(
-                taxackbox.values()))
-        if y is True
-    ]
-    
-    taxaini = ini.InputHandler(
-        name='taxainfo',
-        tablename='taxa_table',
-        lnedentry= extract(taxalned, available),
-        checks=taxacreate)
-    return taxaini
-
-# ------------------------------------------------------ #
-# ---------------- time handle --------------- #
-# ------------------------------------------------------ #
-@pytest.fixture
-def time_handle5():
-    d = {
-        'dayname': '',
-        'dayform': 'NULL',
-        'monthname': '',
-        'monthform': 'NULL',
-        'yearname': 'YEAR',
-        'yearform': 'YYYY',
-        'jd': False,
-        'mspell': False
-    }
-
-    timeini = ini.InputHandler(
-        name='timeinfo', tablename='timetable',
-        lnedentry= d)
-    return timeini
-
-# ------------------------------------------------------ #
-# ---------------- covar handle --------------- #
-# ------------------------------------------------------ #
-@pytest.fixture
-def covar_handle5():
-    covarlned = {'columns': None}
-    
-    covarlned['columns'] = string_to_list('TEMP, TAG')
-
-    covarini = ini.InputHandler(
-        name='covarinfo', tablename='covartable',
-        lnedentry=covarlned)
-
-    return covarini
-
-
-
-# ------------------------------------------------------ #
-# ---------------- obs table handle --------------- #
-# ------------------------------------------------------ #
-@pytest.fixture
-def count_handle5():
-    obslned = OrderedDict((
-        ('spatial_replication_level_2', 'TRANSECT'),
-        ('spatial_replication_level_3', ''),
-        ('spatial_replication_level_4', ''),
-        ('spatial_replication_level_5', ''),
-        ('structured_type_1', ''),
-        ('structured_type_2', ''),
-        ('structured_type_3', ''),
-        ('treatment_type_1', ''),
-        ('treatment_type_2', ''),
-        ('treatment_type_3', ''),
-        ('unitobs', '')
-    ))
-    
-    obsckbox = OrderedDict((
-        ('spatial_replication_level_2', True),
-        ('spatial_replication_level_3', False),
-        ('spatial_replication_level_4', False),
-        ('spatial_replication_level_5', False),
-        ('structured_type_1', False),
-        ('structured_type_2', False),
-        ('structured_type_3', False),
-        ('treatment_type_1', False),
-        ('treatment_type_2', False),
-        ('treatment_type_3', False),
-        ('unitobs', True)
-    ))
-    available = [
-        x for x,y in zip(
-            list(obslned.keys()), list(
-                obsckbox.values()))
-        if y is True
-    ]
-
-    countini = ini.InputHandler(
-        name='rawinfo',
-        tablename='individual_table',
-        lnedentry=extract(obslned, available),
-        checks=obsckbox)
-
-    return countini
-
-    
 def test_site_in_project_key_number_two(
         MergeToUpload, site_handle5, file_handle5,
         meta_handle5, project_handle5, taxa_handle5,
@@ -342,10 +117,13 @@ def test_site_in_project_key_number_two(
     
     print('merge class obs_time columns: ', observation_time_df.columns)
     print('merge class project table: ', project_table)
-    
-    study_site_table.to_sql(
-        'study_site_table',
-        orm.conn, if_exists='append', index=False)
+
+    try:
+        study_site_table.to_sql(
+            'study_site_table',
+            orm.conn, if_exists='append', index=False)
+    except Exception as e:
+        print('Sites in db: ', str(e))
 
     project_table.to_sql(
         'project_table', orm.conn,
@@ -390,4 +168,16 @@ def test_site_in_project_key_number_two(
         raw_data_taxa_columns=taxa_column_in_data,
         uploaded_taxa_columns=taxa_column_in_push_table
     )
+
+    obs_columns_in_data = [
+        x[1] for x in 
+        list(facade._inputs['rawinfo'].lnedentry.items())
+    ]
+    obs_columns_in_push_table = [
+        x[0] for x in 
+        list(facade._inputs['rawinfo'].lnedentry.items())
+    ]
+    merge_object.update_project_table(
+        spatial_rep_columns_from_og_df=obs_columns_in_data,
+        spatial_rep_columns_from_formated_df=obs_columns_in_push_table)
 
