@@ -60,9 +60,9 @@
 
 </string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_7">
+  <layout class="QVBoxLayout" name="verticalLayout_8">
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout_6">
+    <layout class="QVBoxLayout" name="verticalLayout_7">
      <item>
       <widget class="QFrame" name="frame">
        <property name="sizePolicy">
@@ -77,21 +77,27 @@
        <property name="frameShadow">
         <enum>QFrame::Raised</enum>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout_5">
+       <layout class="QVBoxLayout" name="verticalLayout_6">
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_4">
+         <layout class="QVBoxLayout" name="verticalLayout">
+          <property name="spacing">
+           <number>15</number>
+          </property>
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout">
-            <item>
+           <layout class="QGridLayout" name="gridLayout">
+            <item row="0" column="0">
              <layout class="QHBoxLayout" name="horizontalLayout_4">
               <item>
                <spacer name="horizontalSpacer_11">
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>
+                <property name="sizeType">
+                 <enum>QSizePolicy::Fixed</enum>
+                </property>
                 <property name="sizeHint" stdset="0">
                  <size>
-                  <width>40</width>
+                  <width>18</width>
                   <height>20</height>
                  </size>
                 </property>
@@ -132,132 +138,145 @@
               </item>
              </layout>
             </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_6">
+            <item row="1" column="0">
+             <layout class="QHBoxLayout" name="horizontalLayout">
               <item>
-               <layout class="QFormLayout" name="formLayout">
-                <property name="fieldGrowthPolicy">
-                 <enum>QFormLayout::FieldsStayAtSizeHint</enum>
+               <spacer name="horizontalSpacer_10">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
                 </property>
-                <property name="labelAlignment">
-                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                <property name="sizeType">
+                 <enum>QSizePolicy::Fixed</enum>
                 </property>
-                <item row="0" column="0">
-                 <layout class="QHBoxLayout" name="horizontalLayout">
-                  <item>
-                   <spacer name="horizontalSpacer_10">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                     <enum>QSizePolicy::Fixed</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>18</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                  <item>
-                   <widget class="QLabel" name="label">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="font">
-                     <font>
-                      <pointsize>10</pointsize>
-                      <weight>75</weight>
-                      <bold>true</bold>
-                      <kerning>true</kerning>
-                     </font>
-                    </property>
-                    <property name="text">
-                     <string>Site Column</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <spacer name="horizontalSpacer">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                 </layout>
-                </item>
-                <item row="1" column="0">
-                 <layout class="QHBoxLayout" name="horizontalLayout_5">
-                  <item>
-                   <spacer name="horizontalSpacer_9">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                     <enum>QSizePolicy::Fixed</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>18</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                  <item>
-                   <widget class="QLineEdit" name="lnedSiteID">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="focusPolicy">
-                     <enum>Qt::StrongFocus</enum>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QPushButton" name="btnSiteID">
-                    <property name="font">
-                     <font>
-                      <pointsize>13</pointsize>
-                     </font>
-                    </property>
-                    <property name="text">
-                     <string>Submit</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <spacer name="horizontalSpacer_8">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                 </layout>
-                </item>
-               </layout>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>18</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
               </item>
               <item>
+               <widget class="QLabel" name="label">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>10</pointsize>
+                  <weight>75</weight>
+                  <bold>true</bold>
+                  <kerning>true</kerning>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Site Column</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item row="2" column="0">
+             <layout class="QHBoxLayout" name="horizontalLayout_5">
+              <item>
+               <spacer name="horizontalSpacer_9">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeType">
+                 <enum>QSizePolicy::Fixed</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>18</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="lnedSiteID">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="focusPolicy">
+                 <enum>Qt::StrongFocus</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="btnSiteID">
+                <property name="font">
+                 <font>
+                  <pointsize>8</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Submit</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_8">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item row="3" column="0">
+             <layout class="QHBoxLayout" name="horizontalLayout_6">
+              <item>
                <spacer name="horizontalSpacer_14">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeType">
+                 <enum>QSizePolicy::Fixed</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>21</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="ckCreate">
+                <property name="text">
+                 <string>Add Study Site Name</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_24">
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>

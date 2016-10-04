@@ -48,6 +48,7 @@ def MainWindow():
 
             self.message = QtGui.QMessageBox
             self.error = QtGui.QErrorMessage()
+
         def set_data(self):
             '''
             Method to register user input with facade,

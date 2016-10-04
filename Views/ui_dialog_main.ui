@@ -1376,42 +1376,7 @@ Units</string>
             </layout>
            </item>
           </layout>
-          <zorder>label</zorder>
-          <zorder>cboxDatatype</zorder>
-          <zorder>layoutWidget_2</zorder>
-          <zorder>verticalSpacer</zorder>
-          <zorder>label_3</zorder>
-          <zorder>verticalSpacer_2</zorder>
-          <zorder>lnedDatatypeunits</zorder>
-          <zorder>label_4</zorder>
-          <zorder>rbtnCommunityyes</zorder>
-          <zorder>rbtnCommunityno</zorder>
-          <zorder>groupBox_2</zorder>
-          <zorder>label_15</zorder>
-          <zorder>cboxStudy</zorder>
-          <zorder>layoutWidget_10</zorder>
-          <zorder>layoutWidget_11</zorder>
-          <zorder>layoutWidget_12</zorder>
-          <zorder>layoutWidget_13</zorder>
-          <zorder>layoutWidget_14</zorder>
-          <zorder>layoutWidget_14</zorder>
-          <zorder>layoutWidget_15</zorder>
-          <zorder>groupBox_3</zorder>
-          <zorder>groupBox_4</zorder>
-          <zorder>groupBox_5</zorder>
-          <zorder>horizontalSpacer_18</zorder>
           <zorder></zorder>
-          <zorder>label_27</zorder>
-          <zorder>groupBox_7</zorder>
-          <zorder>verticalSpacer</zorder>
-          <zorder>verticalSpacer_2</zorder>
-          <zorder>horizontalSpacer_19</zorder>
-          <zorder>horizontalSpacer_21</zorder>
-          <zorder>horizontalSpacer_22</zorder>
-          <zorder>horizontalSpacer_23</zorder>
-          <zorder>horizontalSpacer_24</zorder>
-          <zorder>verticalSpacer_3</zorder>
-          <zorder>verticalSpacer_4</zorder>
          </widget>
         </item>
        </layout>

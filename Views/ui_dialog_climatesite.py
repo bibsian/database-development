@@ -149,7 +149,7 @@ class Ui_Dialog(object):
         self.horizontalLayout_5.addWidget(self.lnedSiteID)
         self.btnSiteID = QtGui.QPushButton(self.frame)
         font = QtGui.QFont()
-        font.setPointSize(13)
+        font.setPointSize(8)
         self.btnSiteID.setFont(font)
         self.btnSiteID.setObjectName(_fromUtf8("btnSiteID"))
         self.horizontalLayout_5.addWidget(self.btnSiteID)

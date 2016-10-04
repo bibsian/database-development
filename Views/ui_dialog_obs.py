@@ -25,7 +25,7 @@ except AttributeError:
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName(_fromUtf8("Dialog"))
-        Dialog.resize(1101, 598)
+        Dialog.resize(1109, 598)
         Dialog.setFocusPolicy(QtCore.Qt.TabFocus)
         Dialog.setStyleSheet(_fromUtf8(".QLabel{\n"
 "    background: None;\n"

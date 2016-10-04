@@ -231,7 +231,7 @@
                    <widget class="QPushButton" name="btnSiteID">
                     <property name="font">
                      <font>
-                      <pointsize>13</pointsize>
+                      <pointsize>8</pointsize>
                      </font>
                     </property>
                     <property name="text">

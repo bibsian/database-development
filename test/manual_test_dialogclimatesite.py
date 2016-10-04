@@ -116,7 +116,7 @@ def MainWindow():
                 print('Site line entry: ', self.siteloc['siteid'])
                 print('facade data (before): ', self.facade._data)
                 self.facade._data[self.siteloc[
-                    'siteid']] = self.siteloc['siteid']
+                    'study_site_key']] = self.siteloc['study_site_key']
                 print('facade data (after): ', self.facade._data)
 
             else:
