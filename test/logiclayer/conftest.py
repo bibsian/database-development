@@ -1,6 +1,7 @@
 import pytest
 from pandas import merge, concat, DataFrame, read_sql
-from sqlalchemy import select
+from sqlalchemy import select, update, column, Table
+from collections import OrderedDict
 import os, sys
 if sys.platform == "darwin":
     rootpath = (
@@ -13,6 +14,847 @@ elif sys.platform == "win32":
     end = "\\"
 os.chdir(rootpath)
 from poplerGUI.logiclayer.datalayer import config as orm
+from poplerGUI import class_inputhandler as ini
+from poplerGUI.logiclayer.class_helpers import (
+    string_to_list, extract
+    )
+
+
+# --- Fixtures to use across all test in this folder --- #
+# ------------------------------------------------------ #
+# ---------------- meta data handle --------------- #
+# ------------------------------------------------------ #
+@pytest.fixture
+def meta_handle_1_count():
+    lentry = {
+        'globalid': 1,
+        'metaurl': ('http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.18'),
+        'lter': 'SBC'}
+    ckentry = {}
+    metainput = ini.InputHandler(
+        name='metacheck', tablename=None, lnedentry=lentry,
+        checks=ckentry)
+    return metainput
+
+@pytest.fixture
+def meta_handle_2_density():
+    lentry = {
+        'globalid': 2,
+        'metaurl': ('http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.17'),
+        'lter': 'SBC'}
+    ckentry = {}
+    metainput = ini.InputHandler(
+        name='metacheck', tablename=None, lnedentry=lentry,
+        checks=ckentry)
+    return metainput
+
+@pytest.fixture
+def meta_handle_3_biomass():
+    lentry = {
+        'globalid': 3,
+        'metaurl': ('http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.19'),
+        'lter': 'SBC'}
+    ckentry = {}
+    metainput = ini.InputHandler(
+        name='metacheck', tablename=None, lnedentry=lentry,
+        checks=ckentry)
+    return metainput
+
+@pytest.fixture
+def meta_handle_4_percent_cover():
+    lentry = {
+        'globalid': 4,
+        'metaurl': ('http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.15'),
+        'lter': 'SBC'}
+    ckentry = {}
+    metainput = ini.InputHandler(
+        name='metacheck', tablename=None, lnedentry=lentry,
+        checks=ckentry)
+    return metainput
+
+@pytest.fixture
+def meta_handle5():
+    lentry = {
+        'globalid': 6,
+        'metaurl': ('http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.29'),
+        'lter': 'SBC'}
+    ckentry = {}
+    metainput = ini.InputHandler(
+        name='metacheck', tablename=None, lnedentry=lentry,
+        checks=ckentry)
+    return metainput
+
+# ------------------------------------------------------ #
+# ---------------- File loader handle --------------- #
+# ------------------------------------------------------ #
+
+@pytest.fixture
+def file_handle_1_count():
+    ckentry = {}
+    rbtn = {'.csv': True, '.txt': False,
+            '.xlsx': False}
+    lned = {'sheet': '', 'delim': '', 'tskip': '', 'bskip': ''}
+    fileinput = ini.InputHandler(
+        name='fileoptions',tablename=None, lnedentry=lned,
+        rbtns=rbtn, checks=ckentry, session=True,
+        filename=(
+            rootpath + end + 'test' + end + 'Datasets_manual_test' + end +
+            'raw_data_test_1.csv'))
+    return fileinput
+
+@pytest.fixture
+def file_handle_2_density():
+    ckentry = {}
+    rbtn = {'.csv': True, '.txt': False,
+            '.xlsx': False}
+    lned = {'sheet': '', 'delim': '', 'tskip': '', 'bskip': ''}
+    fileinput = ini.InputHandler(
+        name='fileoptions',tablename=None, lnedentry=lned,
+        rbtns=rbtn, checks=ckentry, session=True,
+        filename=(
+            rootpath + end + 'test' + end + 'Datasets_manual_test' + end +
+            'raw_data_test_2.csv'))
+    return fileinput
+
+@pytest.fixture
+def file_handle_3_biomass():
+    ckentry = {}
+    rbtn = {'.csv': True, '.txt': False,
+            '.xlsx': False}
+    lned = {'sheet': '', 'delim': '', 'tskip': '', 'bskip': ''}
+    fileinput = ini.InputHandler(
+        name='fileoptions',tablename=None, lnedentry=lned,
+        rbtns=rbtn, checks=ckentry, session=True,
+        filename=(
+            rootpath + end + 'test' + end + 'Datasets_manual_test' + end +
+            'raw_data_test_3.csv'))
+    return fileinput
+
+@pytest.fixture
+def file_handle_4_percent_cover():
+    ckentry = {}
+    rbtn = {'.csv': True, '.txt': False,
+            '.xlsx': False}
+    lned = {'sheet': '', 'delim': '', 'tskip': '', 'bskip': ''}
+    fileinput = ini.InputHandler(
+        name='fileoptions',tablename=None, lnedentry=lned,
+        rbtns=rbtn, checks=ckentry, session=True,
+        filename=(
+            rootpath + end + 'test' + end + 'Datasets_manual_test' + end +
+            'raw_data_test_4.csv'))
+    return fileinput
+
+@pytest.fixture
+def file_handle5():
+    ckentry = {}
+    rbtn = {'.csv': True, '.txt': False,
+            '.xlsx': False}
+    lned = {'sheet': '', 'delim': '', 'tskip': '', 'bskip': ''}
+    fileinput = ini.InputHandler(
+        name='fileoptions',tablename=None, lnedentry=lned,
+        rbtns=rbtn, checks=ckentry, session=True,
+        filename=(
+            rootpath + end + 'test' + end + 'Datasets_manual_test' + end +
+            'raw_data_test_5.csv'))
+    return fileinput
+
+# ------------------------------------------------------ #
+# ---------------- Study site handle --------------- #
+# ----------------------------------------------------- #
+@pytest.fixture
+def site_handle_1_count():
+    lned = {'study_site_key': 'site'}
+    sitehandle = ini.InputHandler(
+        name='siteinfo', lnedentry=lned, tablename='study_site_table')
+    return sitehandle
+
+@pytest.fixture
+def site_handle_2_density():
+    lned = {'study_site_key': 'SITE'}
+    sitehandle = ini.InputHandler(
+        name='siteinfo', lnedentry=lned, tablename='study_site_table')
+    return sitehandle
+
+@pytest.fixture
+def site_handle_3_biomass():
+    lned = {'study_site_key': 'site'}
+    sitehandle = ini.InputHandler(
+        name='siteinfo', lnedentry=lned, tablename='study_site_table')
+    return sitehandle
+
+@pytest.fixture
+def site_handle_4_percent_cover():
+    lned = {'study_site_key': 'site'}
+    sitehandle = ini.InputHandler(
+        name='siteinfo', lnedentry=lned, tablename='study_site_table')
+    return sitehandle
+
+@pytest.fixture
+def site_handle5():
+    lned = {'study_site_key': 'SITE'}
+    sitehandle = ini.InputHandler(
+        name='siteinfo', lnedentry=lned, tablename='study_site_table')
+    return sitehandle
+
+# ------------------------------------------------------ #
+# ---------------- Project table handle --------------- #
+# ------------------------------------------------------ #
+@pytest.fixture
+def project_handle_1_count():
+    main_input = ini.InputHandler(
+        name='maininfo', tablename='project_table')
+    return main_input
+
+@pytest.fixture
+def project_handle_2_density():
+    main_input = ini.InputHandler(
+        name='maininfo', tablename='project_table')
+    return main_input
+
+@pytest.fixture
+def project_handle_3_biomass():
+    main_input = ini.InputHandler(
+        name='maininfo', tablename='project_table')
+    return main_input
+
+@pytest.fixture
+def project_handle_4_percent_cover():
+    main_input = ini.InputHandler(
+        name='maininfo', tablename='project_table')
+    return main_input
+
+@pytest.fixture
+def project_handle5():
+    main_input = ini.InputHandler(
+        name='maininfo', tablename='project_table')
+    return main_input
+
+# ------------------------------------------------------ #
+# ---------------- taxa table handle --------------- #
+# ------------------------------------------------------ #
+@pytest.fixture
+def taxa_handle_1_count():
+    taxalned = OrderedDict((
+        ('sppcode', ''),
+        ('kingdom', ''),
+        ('subkingdom', ''),
+        ('infrakingdom', ''),
+        ('superdivision', ''),
+        ('divsion', ''),
+        ('subdivision', ''),
+        ('superphylum', ''),
+        ('phylum', ''),
+        ('subphylum', ''),
+        ('clss', ''),
+        ('subclass', ''),
+        ('ordr', ''),
+        ('family', ''),
+        ('genus', 'genus'),
+        ('species', 'species')
+    ))
+    taxackbox = OrderedDict((
+        ('sppcode', False),
+        ('kingdom', False),
+        ('subkingdom', False),
+        ('infrakingdom', False),
+        ('superdivision', False),
+        ('divsion', False),
+        ('subdivision', False),
+        ('superphylum', False),
+        ('phylum', False),
+        ('subphylum', False),
+        ('clss', False),
+        ('subclass', False),
+        ('ordr', False),
+        ('family', False),
+        ('genus', True),
+        ('species', True)
+    ))
+    taxacreate = {
+        'taxacreate': False
+    }    
+    available = [
+        x for x,y in zip(
+            list(taxalned.keys()), list(
+                taxackbox.values()))
+        if y is True
+    ]    
+    taxaini = ini.InputHandler(
+        name='taxainfo',
+        tablename='taxa_table',
+        lnedentry= extract(taxalned, available),
+        checks=taxacreate)
+    return taxaini
+
+@pytest.fixture
+def taxa_handle_2_density():
+    taxalned = OrderedDict((
+        ('sppcode', ''),
+        ('kingdom', 'TAXON_KINGDOM'),
+        ('subkingdom', ''),
+        ('infrakingdom', ''),
+        ('superdivision', ''),
+        ('divsion', ''),
+        ('subdivision', ''),
+        ('superphylum', ''),
+        ('phylum', 'TAXON_PHYLUM'),
+        ('subphylum', ''),
+        ('clss', 'TAXON_CLASS'),
+        ('subclass', ''),
+        ('ordr', 'TAXON_ORDER'),
+        ('family', 'TAXON_FAMILY'),
+        ('genus', 'TAXON_GENUS'),
+        ('species', 'TAXON_SPECIES')
+    ))
+    taxackbox = OrderedDict((
+        ('sppcode', False),
+        ('kingdom', True),
+        ('subkingdom', False),
+        ('infrakingdom', False),
+        ('superdivision', False),
+        ('divsion', False),
+        ('subdivision', False),
+        ('superphylum', False),
+        ('phylum', True),
+        ('subphylum', False),
+        ('clss', True),
+        ('subclass', False),
+        ('ordr', True),
+        ('family', True),
+        ('genus', True),
+        ('species', True)
+    ))
+    taxacreate = {
+        'taxacreate': False
+    }
+    available = [
+        x for x,y in zip(
+            list(taxalned.keys()), list(
+                taxackbox.values()))
+        if y is True
+    ]    
+    taxaini = ini.InputHandler(
+        name='taxainfo',
+        tablename='taxa_table',
+        lnedentry= extract(taxalned, available),
+        checks=taxacreate)
+    return taxaini
+
+@pytest.fixture
+def taxa_handle_3_biomass():
+    taxalned = OrderedDict((
+        ('sppcode', ''),
+        ('kingdom', ''),
+        ('subkingdom', ''),
+        ('infrakingdom', ''),
+        ('superdivision', ''),
+        ('divsion', ''),
+        ('subdivision', ''),
+        ('superphylum', ''),
+        ('phylum', 'phylum'),
+        ('subphylum', ''),
+        ('clss', 'clss'),
+        ('subclass', ''),
+        ('ordr', 'ordr'),
+        ('family', 'family'),
+        ('genus', 'genus'),
+        ('species', 'species')
+    ))
+    taxackbox = OrderedDict((
+        ('sppcode', False),
+        ('kingdom', False),
+        ('subkingdom', False),
+        ('infrakingdom', False),
+        ('superdivision', False),
+        ('divsion', False),
+        ('subdivision', False),
+        ('superphylum', False),
+        ('phylum', True),
+        ('subphylum', False),
+        ('clss', True),
+        ('subclass', False),
+        ('ordr', True),
+        ('family', True),
+        ('genus', True),
+        ('species', True)
+    ))
+    taxacreate = {
+        'taxacreate': False
+    }    
+    available = [
+        x for x,y in zip(
+            list(taxalned.keys()), list(
+                taxackbox.values()))
+        if y is True
+    ]    
+    taxaini = ini.InputHandler(
+        name='taxainfo',
+        tablename='taxa_table',
+        lnedentry= extract(taxalned, available),
+        checks=taxacreate)
+    return taxaini
+
+@pytest.fixture
+def taxa_handle_4_percent_cover():
+    taxalned = OrderedDict((
+        ('sppcode', 'code'),
+        ('kingdom', ''),
+        ('subkingdom', ''),
+        ('infrakingdom', ''),
+        ('superdivision', ''),
+        ('divsion', ''),
+        ('subdivision', ''),
+        ('superphylum', ''),
+        ('phylum', ''),
+        ('subphylum', ''),
+        ('clss', ''),
+        ('subclass', ''),
+        ('ordr', ''),
+        ('family', ''),
+        ('genus', ''),
+        ('species', '')
+    ))
+    taxackbox = OrderedDict((
+        ('sppcode', True),
+        ('kingdom', False),
+        ('subkingdom', False),
+        ('infrakingdom', False),
+        ('superdivision', False),
+        ('divsion', False),
+        ('subdivision', False),
+        ('superphylum', False),
+        ('phylum', False),
+        ('subphylum', False),
+        ('clss', False),
+        ('subclass', False),
+        ('ordr', False),
+        ('family', False),
+        ('genus', False),
+        ('species', False)
+    ))
+    taxacreate = {
+        'taxacreate': False
+    }
+    available = [
+        x for x,y in zip(
+            list(taxalned.keys()), list(
+                taxackbox.values()))
+        if y is True
+    ]    
+    taxaini = ini.InputHandler(
+        name='taxainfo',
+        tablename='taxa_table',
+        lnedentry= extract(taxalned, available),
+        checks=taxacreate)
+    return taxaini
+
+
+@pytest.fixture
+def taxa_handle5():
+    taxalned = OrderedDict((
+        ('sppcode', ''),
+        ('kingdom', ''),
+        ('subkingdom', ''),
+        ('infrakingdom', ''),
+        ('superdivision', ''),
+        ('divsion', ''),
+        ('subdivision', ''),
+        ('superphylum', ''),
+        ('phylum', ''),
+        ('subphylum', ''),
+        ('clss', ''),
+        ('subclass', ''),
+        ('ordr', ''),
+        ('family', ''),
+        ('genus', 'TAXON_GENUS'),
+        ('species', 'TAXON_SPECIES'),
+        ('common_name', 'Common_Name')
+    ))
+    taxackbox = OrderedDict((
+        ('sppcode', False),
+        ('kingdom', False),
+        ('subkingdom', False),
+        ('infrakingdom', False),
+        ('superdivision', False),
+        ('divsion', False),
+        ('subdivision', False),
+        ('superphylum', False),
+        ('phylum', False),
+        ('subphylum', False),
+        ('clss', False),
+        ('subclass', False),
+        ('ordr', False),
+        ('family', False),
+        ('genus', True),
+        ('species', True),
+        ('common_name', True)
+    ))
+    taxacreate = {
+        'taxacreate': False
+    }    
+    available = [
+        x for x,y in zip(
+            list(taxalned.keys()), list(
+                taxackbox.values()))
+        if y is True
+    ]    
+    taxaini = ini.InputHandler(
+        name='taxainfo',
+        tablename='taxa_table',
+        lnedentry= extract(taxalned, available),
+        checks=taxacreate)
+    return taxaini
+
+# ------------------------------------------------------ #
+# ---------------- time handle --------------- #
+# ------------------------------------------------------ #
+@pytest.fixture
+def time_handle_1_count():
+    d = {
+        'dayname': 'date',
+        'dayform': 'dd-mm-YYYY (Any Order)',
+        'monthname': 'date',
+        'monthform': 'dd-mm-YYYY (Any Order)',
+        'yearname': 'date',
+        'yearform': 'dd-mm-YYYY (Any Order)',
+        'jd': False,
+        'mspell': False
+    }
+    timeini = ini.InputHandler(
+        name='timeinfo', tablename='timetable',
+        lnedentry= d)
+    return timeini
+
+@pytest.fixture
+def time_handle_2_density():
+    d = {
+        'dayname': '',
+        'dayform': 'NULL',
+        'monthname': 'MONTH',
+        'monthform': 'mm',
+        'yearname': 'YEAR',
+        'yearform': 'YYYY',
+        'jd': False,
+        'mspell': False
+    }
+    timeini = ini.InputHandler(
+        name='timeinfo', tablename='timetable',
+        lnedentry= d)
+    return timeini
+
+@pytest.fixture
+def time_handle_3_biomass():
+    d = {
+        'dayname': '',
+        'dayform': 'NULL',
+        'monthname': 'month',
+        'monthform': 'mm',
+        'yearname': 'year',
+        'yearform': 'YYYY',
+        'jd': False,
+        'mspell': False
+    }
+    timeini = ini.InputHandler(
+        name='timeinfo', tablename='timetable',
+        lnedentry= d)
+    return timeini
+
+@pytest.fixture
+def time_handle_4_percent_cover():
+    d = {
+        'dayname': '',
+        'dayform': 'NULL',
+        'monthname': 'month',
+        'monthform': 'mm',
+        'yearname': 'year',
+        'yearform': 'YYYY',
+        'jd': False,
+        'mspell': False
+    }
+    timeini = ini.InputHandler(
+        name='timeinfo', tablename='timetable',
+        lnedentry= d)
+    return timeini
+
+@pytest.fixture
+def time_handle5():
+    d = {
+        'dayname': '',
+        'dayform': 'NULL',
+        'monthname': '',
+        'monthform': 'NULL',
+        'yearname': 'YEAR',
+        'yearform': 'YYYY',
+        'jd': False,
+        'mspell': False
+    }
+    timeini = ini.InputHandler(
+        name='timeinfo', tablename='timetable',
+        lnedentry= d)
+    return timeini
+
+# ------------------------------------------------------ #
+# ---------------- covar handle --------------- #
+# ------------------------------------------------------ #
+@pytest.fixture
+def covar_handle_1_count():
+    covarlned = {'columns': None}    
+    covarlned['columns'] = string_to_list('temp')
+    covarini = ini.InputHandler(
+        name='covarinfo', tablename='covartable',
+        lnedentry=covarlned)
+    return covarini
+
+@pytest.fixture
+def covar_handle_2_density():
+    covarlned = {'columns': None}    
+    covarlned['columns'] = string_to_list('AREA, VIS, OBS_CODE')
+    covarini = ini.InputHandler(
+        name='covarinfo', tablename='covartable',
+        lnedentry=covarlned)
+    return covarini
+
+@pytest.fixture
+def covar_handle_3_biomass():
+    covarlned = {'columns': None}    
+    covarlned['columns'] = string_to_list('temp')
+    covarini = ini.InputHandler(
+        name='covarinfo', tablename='covartable',
+        lnedentry=covarlned)
+    return covarini
+
+@pytest.fixture
+def covar_handle_4_percent_cover():
+    covarlned = {'columns': None}    
+    covarlned['columns'] = string_to_list('Precip')
+    covarini = ini.InputHandler(
+        name='covarinfo', tablename='covartable',
+        lnedentry=covarlned)
+    return covarini
+
+
+@pytest.fixture
+def covar_handle5():
+    covarlned = {'columns': None}    
+    covarlned['columns'] = string_to_list('TEMP, TAG')
+    covarini = ini.InputHandler(
+        name='covarinfo', tablename='covartable',
+        lnedentry=covarlned)
+    return covarini
+
+# ------------------------------------------------------ #
+# ---------------- obs table handle --------------- #
+# ------------------------------------------------------ #
+@pytest.fixture
+def count_handle_1_count():
+    obslned = OrderedDict((
+        ('spatial_replication_level_2', 'transect'),
+        ('spatial_replication_level_3', ''),
+        ('spatial_replication_level_4', ''),
+        ('spatial_replication_level_5', ''),
+        ('structured_type_1', ''),
+        ('structured_type_2', ''),
+        ('structured_type_3', ''),
+        ('treatment_type_1', ''),
+        ('treatment_type_2', ''),
+        ('treatment_type_3', ''),
+        ('unitobs', 'count')
+    ))    
+    obsckbox = OrderedDict((
+        ('spatial_replication_level_2', True),
+        ('spatial_replication_level_3', False),
+        ('spatial_replication_level_4', False),
+        ('spatial_replication_level_5', False),
+        ('structured_type_1', False),
+        ('structured_type_2', False),
+        ('structured_type_3', False),
+        ('treatment_type_1', False),
+        ('treatment_type_2', False),
+        ('treatment_type_3', False),
+        ('unitobs', True)
+    ))
+    available = [
+        x for x,y in zip(
+            list(obslned.keys()), list(
+                obsckbox.values()))
+        if y is True
+    ]
+    countini = ini.InputHandler(
+        name='rawinfo',
+        tablename='count_table',
+        lnedentry=extract(obslned, available),
+        checks=obsckbox)
+    return countini
+
+
+@pytest.fixture
+def count_handle_2_density():
+    obslned = OrderedDict((
+        ('spatial_replication_level_2', 'TRANSECT'),
+        ('spatial_replication_level_3', 'QUAD'),
+        ('spatial_replication_level_4', 'SIDE'),
+        ('spatial_replication_level_5', ''),
+        ('structured_type_1', ''),
+        ('structured_type_2', ''),
+        ('structured_type_3', ''),
+        ('treatment_type_1', ''),
+        ('treatment_type_2', ''),
+        ('treatment_type_3', ''),
+        ('unitobs', 'DENSITY')
+    ))    
+    obsckbox = OrderedDict((
+        ('spatial_replication_level_2', True),
+        ('spatial_replication_level_3', True),
+        ('spatial_replication_level_4', True),
+        ('spatial_replication_level_5', False),
+        ('structured_type_1', False),
+        ('structured_type_2', False),
+        ('structured_type_3', False),
+        ('treatment_type_1', False),
+        ('treatment_type_2', False),
+        ('treatment_type_3', False),
+        ('unitobs', True)
+    ))
+    available = [
+        x for x,y in zip(
+            list(obslned.keys()), list(
+                obsckbox.values()))
+        if y is True
+    ]
+    countini = ini.InputHandler(
+        name='rawinfo',
+        tablename='density_table',
+        lnedentry=extract(obslned, available),
+        checks=obsckbox)
+    return countini
+
+@pytest.fixture
+def count_handle_3_biomass():
+    obslned = OrderedDict((
+        ('spatial_replication_level_2', 'plot'),
+        ('spatial_replication_level_3', 'quadrat'),
+        ('spatial_replication_level_4', ''),
+        ('spatial_replication_level_5', ''),
+        ('structured_type_1', ''),
+        ('structured_type_2', ''),
+        ('structured_type_3', ''),
+        ('treatment_type_1', ''),
+        ('treatment_type_2', ''),
+        ('treatment_type_3', ''),
+        ('unitobs', 'biomass')
+    ))    
+    obsckbox = OrderedDict((
+        ('spatial_replication_level_2', True),
+        ('spatial_replication_level_3', True),
+        ('spatial_replication_level_4', False),
+        ('spatial_replication_level_5', False),
+        ('structured_type_1', False),
+        ('structured_type_2', False),
+        ('structured_type_3', False),
+        ('treatment_type_1', False),
+        ('treatment_type_2', False),
+        ('treatment_type_3', False),
+        ('unitobs', True)
+    ))
+    available = [
+        x for x,y in zip(
+            list(obslned.keys()), list(
+                obsckbox.values()))
+        if y is True
+    ]
+    countini = ini.InputHandler(
+        name='rawinfo',
+        tablename='biomass_table',
+        lnedentry=extract(obslned, available),
+        checks=obsckbox)
+    return countini
+
+@pytest.fixture
+def biomass_handle_4_percent_cover():
+    obslned = OrderedDict((
+        ('spatial_replication_level_2', 'block'),
+        ('spatial_replication_level_3', 'plot'),
+        ('spatial_replication_level_4', ''),
+        ('spatial_replication_level_5', ''),
+        ('structured_type_1', ''),
+        ('structured_type_2', ''),
+        ('structured_type_3', ''),
+        ('treatment_type_1', ''),
+        ('treatment_type_2', ''),
+        ('treatment_type_3', ''),
+        ('unitobs', 'cover')
+    ))    
+    obsckbox = OrderedDict((
+        ('spatial_replication_level_2', True),
+        ('spatial_replication_level_3', True),
+        ('spatial_replication_level_4', False),
+        ('spatial_replication_level_5', False),
+        ('structured_type_1', False),
+        ('structured_type_2', False),
+        ('structured_type_3', False),
+        ('treatment_type_1', False),
+        ('treatment_type_2', False),
+        ('treatment_type_3', False),
+        ('unitobs', True)
+    ))
+    available = [
+        x for x,y in zip(
+            list(obslned.keys()), list(
+                obsckbox.values()))
+        if y is True
+    ]
+    countini = ini.InputHandler(
+        name='rawinfo',
+        tablename='percent_cover_table',
+        lnedentry=extract(obslned, available),
+        checks=obsckbox)
+    return countini
+
+
+@pytest.fixture
+def count_handle5():
+    obslned = OrderedDict((
+        ('spatial_replication_level_2', 'TRANSECT'),
+        ('spatial_replication_level_3', ''),
+        ('spatial_replication_level_4', ''),
+        ('spatial_replication_level_5', ''),
+        ('structured_type_1', ''),
+        ('structured_type_2', ''),
+        ('structured_type_3', ''),
+        ('treatment_type_1', ''),
+        ('treatment_type_2', ''),
+        ('treatment_type_3', ''),
+        ('unitobs', '')
+    ))    
+    obsckbox = OrderedDict((
+        ('spatial_replication_level_2', True),
+        ('spatial_replication_level_3', False),
+        ('spatial_replication_level_4', False),
+        ('spatial_replication_level_5', False),
+        ('structured_type_1', False),
+        ('structured_type_2', False),
+        ('structured_type_3', False),
+        ('treatment_type_1', False),
+        ('treatment_type_2', False),
+        ('treatment_type_3', False),
+        ('unitobs', True)
+    ))
+    available = [
+        x for x,y in zip(
+            list(obslned.keys()), list(
+                obsckbox.values()))
+        if y is True
+    ]
+    countini = ini.InputHandler(
+        name='rawinfo',
+        tablename='individual_table',
+        lnedentry=extract(obslned, available),
+        checks=obsckbox)
+    return countini
+
+# ------------------------------------------------------ #
+# ---------------- MergeToUpload Class --------------- #
+# ------------------------------------------------------ #
 
 @pytest.fixture
 def MergeToUpload():
@@ -39,6 +881,8 @@ def MergeToUpload():
             self.rawdata = None
             self.metadata_key = None
             self.sitelabel = None
+            self.formateddata = None
+
         def site_in_proj_key_df(
                 self, studysitetabledf, projecttabledf, lterlocation,
                 observationtabledf, studysitelabel, studysitelevels):
@@ -46,13 +890,10 @@ def MergeToUpload():
 
             Method to take the data stored in the user facade class
             and upload to the database
-
             REQUIRES: study_site_table, project_table, lter,
             observation_table, study_site_label, studysitelevels...
-
             to make the site_in_project_table (including the merge)
             as well as merge all other tables for keys and upload.
-
             To merge the site_in_project_table a series of steps
             must be performed
 
@@ -77,7 +918,6 @@ def MergeToUpload():
             then merged primary keys to sitelevel data and
             return the dataframe (to be merged in another method)
             '''
-
             self.rawdata = observationtabledf
             self.sitelabel = studysitelabel
             # Types of outcomes to govern push behavior
@@ -85,10 +925,10 @@ def MergeToUpload():
             site_table_data_partially_uploaded = False
             all_site_table_data_not_yet_uploaded = False
 
-            # Saving the column that contains the metadata keys
             project_metadat_key = projecttabledf[
                 'proj_metadata_key']
-            self.metadata_key = project_metadat_key
+            self.metadata_key = int(project_metadat_key)
+
             study_site_table_query = (
                 self.session.query(
                     orm.study_site_table.__table__).
@@ -101,10 +941,8 @@ def MergeToUpload():
             study_site_table_query_df = read_sql(
                 study_site_table_query.statement,
                 study_site_table_query.session.bind)
-
             study_site_table_query_list = study_site_table_query_df[
                 'study_site_key'].values.tolist()
-
             study_site_table_list_from_user = studysitetabledf[
                 'study_site_key'].drop_duplicates().values.tolist()
 
@@ -119,13 +957,10 @@ def MergeToUpload():
             # ------------------------------------ #
             if (
                     study_site_table_list_from_user == ['NULL']
-
                     and
-
                     study_site_table_query_df.empty == False
                 ):
                 print('ALL Study site data is already stored')
-
                 site_in_proj_levels_to_push = DataFrame(
                     study_site_table_query_df[
                         'study_site_key']).drop_duplicates()
@@ -194,7 +1029,6 @@ def MergeToUpload():
                 all_site_table_data_not_yet_uploaded = True
                 print(site_in_proj_levels_to_push)
                 print('all_site_table_data_not_yet_uploaded = True')
-
             try:
                 print('loaded site levels: ', studysitelevels)
                 print('derived site levels: ', study_site_levels_derived)
@@ -223,12 +1057,11 @@ def MergeToUpload():
                         'year_derived'].values.tolist()
                 yr_list.sort()
                 [yr_all.append(x) for x in yr_list]
-
                 site_in_proj_table_to_push.loc[
                     site_in_proj_table_to_push.
                     study_site_table_fkey == item, 'sitestartyr'
                 ] = yr_list[0]
-
+                
                 site_in_proj_table_to_push.loc[
                     site_in_proj_table_to_push.
                     study_site_table_fkey == item, 'siteendyr'
@@ -254,7 +1087,6 @@ def MergeToUpload():
                 orm.site_in_project_table.project_table_fkey ==
                 int(project_metadat_key)
             )
-
             site_in_proj_key_statement = session.execute(
                 site_in_proj_key_query)
             session.close()
@@ -263,7 +1095,6 @@ def MergeToUpload():
             site_in_proj_key_df.columns = site_in_proj_key_statement.keys()
             return site_in_proj_key_df
 
-
         def merge_for_taxa_table_upload(
                 self, formated_taxa_table, siteinprojkeydf,
                 sitelabel
@@ -271,16 +1102,13 @@ def MergeToUpload():
             '''
             Method to take the data stored in the user facade class
             and upload the database
-
             REQUIRES: formated taxa table (with database names),
             dataframe with site levels merged to site_in_project
             (formated_taxa_table)
             primary keys (created in method above...siteinprojkeydf)
             , and the name of the column with the site (sitelabel)
-
             to make the site_in_project_table (including the merge)
             as well as merge all other tables for keys and upload.
-
             To merge the site_in_project_table a series of steps
             must be performed
 
@@ -298,7 +1126,7 @@ def MergeToUpload():
             4) Push taxa_table to database
 
             '''
-
+            
             print('starting taxa table upload')
             orm.replace_numeric_null_with_string(formated_taxa_table)
             print('past orm replace numeric')
@@ -309,12 +1137,10 @@ def MergeToUpload():
                 how='inner')
             print('past tbl_taxa site in proj key')
             tbl_taxa_merged = tbl_taxa_with_site_in_proj_key.copy()
-
             tbl_taxa_merged.drop([
                 'study_site_table_fkey', sitelabel,
                 'project_table_fkey'], inplace=True, axis=1)
             print('past tbl_taxa drop: ', tbl_taxa_merged)
-
             tbl_taxa_merged.rename(
                 columns={
                     'site_in_project_key': 'site_in_project_taxa_key'}, inplace=True)
@@ -322,7 +1148,6 @@ def MergeToUpload():
 
             tbl_taxa_merged.fillna('NA', inplace=True)
             orm.convert_types(tbl_taxa_merged, orm.taxa_types)
-
             tbl_taxa_merged.to_sql(
                 'taxa_table', orm.conn, if_exists='append', index=False)
 
@@ -385,7 +1210,6 @@ def MergeToUpload():
                 left_index=True, right_index=True, how='inner',
                 suffixes=('', '_y'))
 
-
             # Step 7) List the columns that will be needed to push the
             # dtype table to the database (including foreign keys)
             tbl_dtype_columns_to_upload = [
@@ -399,16 +1223,13 @@ def MergeToUpload():
                 'treatment_type_3',
                 'covariates'
             ]
-
             time_cols_rename = {
                 'year_derived': 'year',
                 'month_derived': 'month',
                 'day_derived': 'day'
-            }
-            
+            }            
             tbl_dtype_columns_to_upload.append(
                 '{}_observation'.format(str(formated_dataframe_name)))
-
             tbl_dtype_merged_with_all_keys = concat(
                 [tbl_dtype_merged_with_all_keys, covariate_dataframe],
                 axis=1)
@@ -416,7 +1237,6 @@ def MergeToUpload():
             # Step 8) Subsetting the fully merged dtype table data
             tbl_dtype_to_upload = tbl_dtype_merged_with_all_keys[
                 tbl_dtype_columns_to_upload]
-
             tbl_dtype_to_upload.rename(
                 columns=time_cols_rename, inplace=True
             )
@@ -425,8 +1245,7 @@ def MergeToUpload():
             # And converting data types
             tbl_dtype_to_upload.rename(columns={
                 'taxa_table_key': 'taxa_{}_fkey'.format(str(formated_dataframe_name))}
-                , inplace=True)
-            
+                , inplace=True)            
             datatype_key = 'site_in_project_{}_fkey'.format(str(formated_dataframe_name))
             tbl_dtype_to_upload.rename(columns={
                 'site_in_project_taxa_key': datatype_key}, inplace=True)
@@ -434,23 +1253,89 @@ def MergeToUpload():
             orm.convert_types(
                 tbl_dtype_to_upload, self.table_types[str(formated_dataframe_name)])
 
-            datatype_table = '{}_table'.format(str(formated_dataframe_name))
-            # Step 10) Uploading to the database
+            self.formateddata = tbl_dtype_to_upload
 
+            # Step 10) Uploading to the database
+            datatype_table = '{}_table'.format(str(formated_dataframe_name))
             tbl_dtype_to_upload.to_sql(
                 datatype_table,
                 orm.conn, if_exists='append', index=False)
 
         def update_project_table(
                 self,
-                spatial_rep_columns_data,
-                spatial_rep_columns_formated):
+                spatial_rep_columns_from_og_df,
+                spatial_rep_columns_from_formated_df):
+            '''
+            Methods to update the projcet table with information
+            that was gathered toward the end of a user session
+            Arguments are the column names for 
+            the different levels of spatial replication that
+            are present (key/value pairs)
+            
+            '''
             ##
             # ADD STUDYSTARTYR, STUDYENDYR, SPAT_LEV_UNQ_REPS(1-5),
             # SPAT_LEV_LABELS(1-5)
             ##
+            spatial_index = [
+                i for i, item in enumerate(
+                    spatial_rep_columns_from_formated_df)
+                if 'spatial' in item
+            ]
+            spatial_label_col = ['spatial_replication_level_1_label']
+            spatial_label_val = [self.sitelabel]
+            spatial_uq_num_of_rep_col = [
+                'spatial_replication_level_1_number_of_unique_reps']
+            spatial_uq_num_of_rep_val = [
+                len(self.rawdata[self.sitelabel].unique())
+                ]
+
+            for i in range(len(spatial_index)):
+                spatial_label_col.append(
+                    spatial_rep_columns_from_formated_df[i] + '_label')
+                spatial_label_val.append(
+                    spatial_rep_columns_from_og_df[i])
+
+                spatial_uq_num_of_rep_col.append(
+                    spatial_rep_columns_from_formated_df[i] +
+                    '_number_of_unique_reps')
+                spatial_uq_num_of_rep_val.append(
+                    len(
+                        self.rawdata[
+                            spatial_rep_columns_from_og_df[i]].unique()
+                    )
+                )
+            print(self.formateddata.columns)
+            print(self.formateddata)
+            print('Populating update_dict')
+            update_dict = {
+                'studystartyr': self.formateddata.loc[:, 'year'].min(),
+                'studyendyr': self.formateddata.loc[:, 'year'].max()
+            }
+            for i, item in enumerate(spatial_label_col):
+                update_dict[item] = spatial_label_val[i]
+                update_dict[spatial_uq_num_of_rep_col[i]] = spatial_uq_num_of_rep_val[i]
+                
+                
+            print(self.metadata_key)
+            print('startyear: ',update_dict['studystartyr'])
+            print('endyear: ', update_dict['studyendyr'])
+            print(
+                'spatial_replication_level_1_label:  ',
+                update_dict['spatial_replication_level_1_label']
+            )
+            print(
+                'spatial_replication_level_2_label:  ',
+                update_dict['spatial_replication_level_2_label']
+            )
             
-        
+            orm.conn.execute(
+                update(orm.project_table).
+                where(
+                    column('proj_metadata_key') == self.metadata_key).
+                values(update_dict)
+            )
+
     return MergeToUpload
 
 
