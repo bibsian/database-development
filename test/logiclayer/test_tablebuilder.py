@@ -457,13 +457,15 @@ def AbstractTableBuilder():
             return self.tabledict[
                 self._inputs.tablename]['columns']
 
+        @abc.abstractmethod
         def get_available_columns(self):
             return list(self._inputs.lnedentry.values())
 
         def get_key_columns(self):
             return self.tabledict[
                 self._inputs.tablename]['table_keys']
-        
+
+        @abc.abstractmethod
         def get_null_columns(self):
             availcol = list(self._inputs.lnedentry.keys())
             allcol = self.tabledict[
@@ -574,6 +576,15 @@ def Project_Table_Builder(AbstractTableBuilder):
         Note, no get methods because there is no
         alternate informatoin needed
         '''
+
+        def get_available_columns(self):
+            return list(self._inputs.lnedentry.values())
+
+        def get_null_columns(self):
+            availcol = list(self._inputs.lnedentry.keys())
+            allcol = self.tabledict[
+                self._inputs.tablename]['columns']
+            return [x for x in allcol if x not in availcol]
 
         def get_dataframe(
                 self, dataframe, acols, nullcols, keycols, dbcol,
@@ -705,6 +716,8 @@ def Project_Table_Builder(AbstractTableBuilder):
                     'authors', 'authors_contact', 'metalink', 'knbid',
                 ], index=[0])
 
+            
+
             return maindata
         
     return Project_Table_Builder
@@ -731,7 +744,6 @@ def Taxa_Table_Builder(AbstractTableBuilder):
                 acols = [int(x) for x in acols]
                 uniquesubset = dataframe[acols]
                 print(str(e))
-
 
             try:
                 [dbcol.remove(x) for x in keycols]
@@ -1180,6 +1192,7 @@ def test_project_table_build(
         show_project_table['datatype'].drop_duplicates().values.tolist()
         == ['count']) is True
     print(show_project_table)
+
     
     
 # ------------------------------------------------------ #

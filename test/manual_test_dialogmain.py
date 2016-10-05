@@ -3,6 +3,7 @@ import pytest
 import pytestqt
 from PyQt4 import QtGui, QtCore
 from pandas import read_sql
+from collections import OrderedDict
 import sys, os
 sys.path.append(os.path.realpath(os.path.dirname(__file__)))
 from Views import ui_mainrefactor as mw
@@ -24,9 +25,6 @@ def MainWindow():
 
             self.facade = None
             
-            self.mainini = ini.InputHandler(
-                name='maininfo', tablename='project_table')
-
             # Place holder: Data Model/ Data model view
             self.mainmodel = None
             self.viewEdit = view.PandasTableModelEdit
@@ -38,9 +36,6 @@ def MainWindow():
             # Placeholder: Director (table builder), log
             self.maindirector = None
             self._log = None
-
-            # Placeholder for maindata Orms
-            self.mainorms = {}
 
             # Actions
             self.btnSaveClose.clicked.connect(self.submit_change)
@@ -57,6 +52,8 @@ def MainWindow():
             set the data model,
             set the data model viewer
             '''
+
+            
             if self.project_tablemod is None:
                 self.facade.input_register(self.mainini)
                 self.maindirector = self.facade.make_table('maininfo')
