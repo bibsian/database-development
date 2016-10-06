@@ -1,7 +1,7 @@
 import pytest
 from pandas import merge, concat, DataFrame, read_sql
 from sqlalchemy import select, update, column, Table
-from collections import OrderedDict
+from collections import OrderedDict, namedtuple
 import os, sys
 if sys.platform == "darwin":
     rootpath = (
@@ -201,8 +201,50 @@ def site_handle5():
 # ------------------------------------------------------ #
 @pytest.fixture
 def project_handle_1_count():
+
+    studytype = namedtuple('studytype', 'checked entry unit')
+    # derived
+    derived = namedtuple('derived', 'checked entry unit')
+    # treatments
+    treatments = namedtuple('treatments', 'checked entry unit')
+    # Contacts: author, contact email
+    contacts = namedtuple('contacts', 'checked entry unit')
+    # Community
+    community = namedtuple('community', 'checked entry unit')
+    # SamplingFreq
+    sampfreq = namedtuple('sampfreq', 'checked entry unit')
+    # Datatype/units
+    dtype = namedtuple('dtype', 'checked entry unit')
+    # organism structure
+    structure = namedtuple('structure', 'checked entry unit')
+    # Spatial extent
+    ext = namedtuple('spatial_ext', 'checked entry unit')
+
+    form_dict = OrderedDict((
+        ('samplingunits', dtype(False, '', None)),
+        ('datatype', dtype(True, 'count', None)),
+        ('structured_type_1', structure(True, 'size', 'cm')),
+        ('structured_type_2', structure(False, '', '')),
+        ('structured_type_3', structure(False, '', '')),
+        ('samplefreq', sampfreq(True, 'month:yr', None)),
+        ('studytype', studytype(True, 'obs', None)),
+        ('community', community(True, True, None)),
+        ('spatial_replication_level_1_extent', ext(True, '100', 'm2')),
+        ('spatial_replication_level_2_extent', ext(True, '10', 'm2')),
+        ('spatial_replication_level_3_extent', ext(False, '', '')),
+        ('spatial_replication_level_4_extent', ext(False, '', '')),
+        ('spatial_replication_level_5_extent', ext(False, '', '')),
+        ('treatment_type_1', treatments(False, 'NULL', None)),
+        ('treatment_type_2', treatments(False, 'NULL', None)),
+        ('treatment_type_3', treatments(False, 'NULL', None)),
+        ('derived', derived(True, 'no', None)),
+        ('authors', contacts(True, 'AJ Bibian, TEX Miller', None)),
+        ('authors_contact', contacts(True, 'aj@hotmail.com, tex@hotmail.com', None))
+    ))
+    
     main_input = ini.InputHandler(
-        name='maininfo', tablename='project_table')
+        name='maininfo', tablename='project_table',
+        lnedentry=form_dict)
     return main_input
 
 @pytest.fixture
