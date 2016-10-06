@@ -4,10 +4,6 @@ import re
 from pandas import concat, DataFrame
 from poplerGUI.logiclayer import class_helpers as hlp 
 
-__all__ = [
-    'SiteTableBuilder', 'MainTableBuilder',
-    'TaxaTableBuilder', 'RawTableBuilder',
-    'UpdaterTableBuilder', 'DatabaseTable', 'TableDirector']
 
 class AbstractTableBuilder(object):
     '''
@@ -543,29 +539,36 @@ class Project_Table_Builder(AbstractTableBuilder):
     Note, no get methods because there is no
     alternate informatoin needed
     '''
+    @staticmethod
+    def entry_verifier(dictionary):
+        for i, (key, value) in enumerate(dictionary.items()):
+            try:
+                if value.checked is True:
+                    assert (value.entry != '' and value.entry != 'NULL') is True
+                    if 'spatial' in key:
+                        assert(value.unit != '')
+                    else:
+                        pass
+                else:
+                    assert (value.entry == '' or value.entry == 'NULL') is True
+                    if 'spatial' in key:
+                        assert(value.unit == '')
+                    else:
+                        pass
+            except Exception as e:
+                print(str(e))
+                raise AssertionError(key + ': entries not valid.')
+        print('Entries are valid')
+
+    def get_available_columns(self):
+        return None
+
+    def get_null_columns(self):
+        return None
 
     def get_dataframe(
             self, dataframe, acols, nullcols, keycols, dbcol,
             globalid, siteid, sitelevels):
-
-        acols = [x.rstrip() for x in acols]
-        nullcols = [x.rstrip() for x in nullcols]
-        dbcol = [x.rstrip() for x in dbcol]
-
-        if 'lter_proj_site' in dbcol:
-            dbcol.remove('lter_proj_site')
-        else:
-            pass
-        if 'lter_proj_site' in nullcols:
-            nullcols.remove('lter_proj_site')
-        else:
-            pass
-        try:
-            assert sitelevels is not None
-        except Exception as e:
-            print(str(e))
-            raise AttributeError(
-                'Site levels not passed to builder')
 
         # Columns that will be updated later in the
         # program
@@ -574,19 +577,21 @@ class Project_Table_Builder(AbstractTableBuilder):
             'siteendyr', 'totalobs', 'uniquetaxaunits',
             'spatial_replication_level_1_label',
             'spatial_replication_level_1_number_of_unique_reps',
-            'spatial_replication_level_2_label', 'spatial_replication_level_2_number_of_unique_reps',
-            'spatial_replication_level_3_label', 'spatial_replication_level_3_number_of_unique_reps',
-            'spatial_replication_level_4_label', 'spatial_replication_level_4_number_of_unique_reps',
-            'spatial_replication_level_5_label', 'spatial_replication_level_5_number_of_unique_reps',
-            'treatment_type_1',
-            'treatment_type_2',
-            'treatment_type_3'
+            'spatial_replication_level_2_label',
+            'spatial_replication_level_2_number_of_unique_reps',
+            'spatial_replication_level_3_label',
+            'spatial_replication_level_3_number_of_unique_reps',
+            'spatial_replication_level_4_label',
+            'spatial_replication_level_4_number_of_unique_reps',
+            'spatial_replication_level_5_label',
+            'spatial_replication_level_5_number_of_unique_reps',
+
         ]
 
         # Creating main data table
         maindata = DataFrame(
             {
-                'proj_metadata_key':dataframe['global_id'], 
+                'proj_metadata_key': dataframe['global_id'], 
                 'title': dataframe['title'],
                 'samplingunits': 'NA',
                 'datatype': dataframe['data_type'],
@@ -622,7 +627,6 @@ class Project_Table_Builder(AbstractTableBuilder):
                 'spatial_replication_level_5_extent_units': 'NA',
                 'spatial_replication_level_5_label': 'NA',
                 'spatial_replication_level_5_number_of_unique_reps': -99999,
-
                 'treatment_type_1': 'NA',
                 'treatment_type_2': 'NA',
                 'treatment_type_3': 'NA',
@@ -632,8 +636,7 @@ class Project_Table_Builder(AbstractTableBuilder):
                 'metalink': dataframe['site_metadata'],
                 'knbid': dataframe['portal_id']
             },
-            columns = [
-
+            columns=[
                 'proj_metadata_key', 'title', 'samplingunits',
                 'datatype',
                 'structured_type_1',
@@ -674,6 +677,18 @@ class Project_Table_Builder(AbstractTableBuilder):
                 'authors', 'authors_contact', 'metalink', 'knbid',
             ], index=[0])
 
+        form_dict = self._inputs.lnedentry
+        self.entry_verifier(form_dict)
+
+        for i, (key, value) in enumerate(form_dict.items()):
+            if value.checked is True:
+                maindata.loc[0, key] = value.entry
+                if 'spatial' in key or 'structure' in key:
+                    maindata.loc[0, '{}_units'.format(key)] = value.unit
+                else:
+                    pass
+            else:
+                pass
         return maindata
 
     

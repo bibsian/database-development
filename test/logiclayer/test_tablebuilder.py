@@ -576,38 +576,36 @@ def Project_Table_Builder(AbstractTableBuilder):
         Note, no get methods because there is no
         alternate informatoin needed
         '''
+        @staticmethod
+        def entry_verifier(dictionary):
+            for i, (key, value) in enumerate(dictionary.items()):
+                try:
+                    if value.checked is True:
+                        assert (value.entry != '' and value.entry != 'NULL') is True
+                        if 'spatial' in key:
+                            assert(value.unit != '')
+                        else:
+                            pass
+                    else:
+                        assert (value.entry == '' or value.entry == 'NULL') is True
+                        if 'spatial' in key:
+                            assert(value.unit == '')
+                        else:
+                            pass
+                except Exception as e:
+                    print(str(e))
+                    raise AssertionError(key + ': entries not valid.')
+            print('Entries are valid')
 
         def get_available_columns(self):
-            return list(self._inputs.lnedentry.values())
+            return None
 
         def get_null_columns(self):
-            availcol = list(self._inputs.lnedentry.keys())
-            allcol = self.tabledict[
-                self._inputs.tablename]['columns']
-            return [x for x in allcol if x not in availcol]
+            return None
 
         def get_dataframe(
                 self, dataframe, acols, nullcols, keycols, dbcol,
                 globalid, siteid, sitelevels):
-
-            acols = [x.rstrip() for x in acols]
-            nullcols = [x.rstrip() for x in nullcols]
-            dbcol = [x.rstrip() for x in dbcol]
-            
-            if 'lter_proj_site' in dbcol:
-                dbcol.remove('lter_proj_site')
-            else:
-                pass
-            if 'lter_proj_site' in nullcols:
-                nullcols.remove('lter_proj_site')
-            else:
-                pass
-            try:
-                assert sitelevels is not None
-            except Exception as e:
-                print(str(e))
-                raise AttributeError(
-                    'Site levels not passed to builder')
 
             # Columns that will be updated later in the
             # program
@@ -616,19 +614,21 @@ def Project_Table_Builder(AbstractTableBuilder):
                 'siteendyr', 'totalobs', 'uniquetaxaunits',
                 'spatial_replication_level_1_label',
                 'spatial_replication_level_1_number_of_unique_reps',
-                'spatial_replication_level_2_label', 'spatial_replication_level_2_number_of_unique_reps',
-                'spatial_replication_level_3_label', 'spatial_replication_level_3_number_of_unique_reps',
-                'spatial_replication_level_4_label', 'spatial_replication_level_4_number_of_unique_reps',
-                'spatial_replication_level_5_label', 'spatial_replication_level_5_number_of_unique_reps',
-                'treatment_type_1',
-                'treatment_type_2',
-                'treatment_type_3'
+                'spatial_replication_level_2_label',
+                'spatial_replication_level_2_number_of_unique_reps',
+                'spatial_replication_level_3_label',
+                'spatial_replication_level_3_number_of_unique_reps',
+                'spatial_replication_level_4_label',
+                'spatial_replication_level_4_number_of_unique_reps',
+                'spatial_replication_level_5_label',
+                'spatial_replication_level_5_number_of_unique_reps',
+
             ]
 
             # Creating main data table
             maindata = DataFrame(
                 {
-                    'proj_metadata_key':dataframe['global_id'], 
+                    'proj_metadata_key': dataframe['global_id'], 
                     'title': dataframe['title'],
                     'samplingunits': 'NA',
                     'datatype': dataframe['data_type'],
@@ -664,7 +664,6 @@ def Project_Table_Builder(AbstractTableBuilder):
                     'spatial_replication_level_5_extent_units': 'NA',
                     'spatial_replication_level_5_label': 'NA',
                     'spatial_replication_level_5_number_of_unique_reps': -99999,
-
                     'treatment_type_1': 'NA',
                     'treatment_type_2': 'NA',
                     'treatment_type_3': 'NA',
@@ -674,8 +673,7 @@ def Project_Table_Builder(AbstractTableBuilder):
                     'metalink': dataframe['site_metadata'],
                     'knbid': dataframe['portal_id']
                 },
-                columns = [
-                    
+                columns=[
                     'proj_metadata_key', 'title', 'samplingunits',
                     'datatype',
                     'structured_type_1',
@@ -716,8 +714,18 @@ def Project_Table_Builder(AbstractTableBuilder):
                     'authors', 'authors_contact', 'metalink', 'knbid',
                 ], index=[0])
 
-            
+            form_dict = self._inputs.lnedentry
+            self.entry_verifier(form_dict)
 
+            for i, (key, value) in enumerate(form_dict.items()):
+                if value.checked is True:
+                    maindata.loc[0, key] = value.entry
+                    if 'spatial' in key or 'structure' in key:
+                        maindata.loc[0, '{}_units'.format(key)] = value.unit
+                    else:
+                        pass
+                else:
+                    pass
             return maindata
         
     return Project_Table_Builder
@@ -1106,12 +1114,6 @@ def Table_Builder_Director(Database_Table_Setter):
 # ------------------------------------------------------ #
 # ---------------- Site table build test --------------- #
 # ------------------------------------------------------ #
-@pytest.fixture
-def user_input():
-    lned = {'study_site_key': 'site'}
-    user_input = ini.InputHandler(
-        name='siteinfo', tablename='study_site_table', lnedentry=lned)
-    return user_input
 
 @pytest.fixture
 def dataset_test_1():
@@ -1121,13 +1123,13 @@ def dataset_test_1():
 
 def test_study_site_table_build(
         Study_Site_Table_Builder, Table_Builder_Director,
-        user_input, dataset_test_1):
+        site_handle_1_count, dataset_test_1):
     '''
     Testing builder class for site table
     '''
     facade = face.Facade()
-    facade.input_register(user_input)
-    face_input = facade._inputs[user_input.name]
+    facade.input_register(site_handle_1_count)
+    face_input = facade._inputs[site_handle_1_count.name]
     assert (isinstance(face_input, ini.InputHandler)) is True
 
     study_site_table_build = Study_Site_Table_Builder()
@@ -1149,10 +1151,6 @@ def test_study_site_table_build(
 # ------------------------------------------------------ #
 # ---------------- Project table build test --------------- #
 # ------------------------------------------------------ #
-@pytest.fixture
-def project_user_input():
-    return ini.InputHandler(name='maininfo', tablename='project_table')
-
 
 @pytest.fixture
 def metadata_data():
@@ -1163,13 +1161,13 @@ def metadata_data():
 
 def test_project_table_build(
         Project_Table_Builder, Table_Builder_Director,
-        project_user_input, metadata_data, dataset_test_1):
+        project_handle_1_count, metadata_data, dataset_test_1):
     sitelevels = dataset_test_1[
         'site'].drop_duplicates().values.tolist()
 
     facade = face.Facade()
-    facade.input_register(project_user_input)
-    face_input = facade._inputs[project_user_input.name]
+    facade.input_register(project_handle_1_count)
+    face_input = facade._inputs[project_handle_1_count.name]
 
     assert (isinstance(face_input, ini.InputHandler)) is True
     project_table = Project_Table_Builder()
@@ -1191,71 +1189,12 @@ def test_project_table_build(
     assert (
         show_project_table['datatype'].drop_duplicates().values.tolist()
         == ['count']) is True
-    print(show_project_table)
 
-    
-    
+
 # ------------------------------------------------------ #
 # ---------------- Taxa table build test --------------- #
 # --------------- Create taxa feature is OFF ----------- #
 # ------------------------------------------------------ #
-@pytest.fixture
-def taxa_user_input():
-    taxalned = OrderedDict((
-        ('sppcode', ''),
-        ('kingdom', ''),
-        ('subkingdom', ''),
-        ('infrakingdom', ''),
-        ('superdivision', ''),
-        ('divsion', ''),
-        ('subdivision', ''),
-        ('superphylum', ''),
-        ('phylum', ''),
-        ('subphylum', ''),
-        ('clss', ''),
-        ('subclass', ''),
-        ('ordr', ''),
-        ('family', ''),
-        ('genus', 'genus'),
-        ('species', 'species')
-    ))
-
-    taxackbox = OrderedDict((
-        ('sppcode', False),
-        ('kingdom', False),
-        ('subkingdom', False),
-        ('infrakingdom', False),
-        ('superdivision', False),
-        ('divsion', False),
-        ('subdivision', False),
-        ('superphylum', False),
-        ('phylum', False),
-        ('subphylum', False),
-        ('clss', False),
-        ('subclass', False),
-        ('ordr', False),
-        ('family', False),
-        ('genus', True),
-        ('species', True)
-    ))
-
-    taxacreate = {
-        'taxacreate': False
-    }
-    
-    available = [
-        x for x,y in zip(
-            list(taxalned.keys()), list(
-                taxackbox.values()))
-        if y is True
-    ]
-    
-    taxaini = ini.InputHandler(
-        name='taxainput',
-        tablename='taxa_table',
-        lnedentry= hlp.extract(taxalned, available),
-        checks=taxacreate)
-    return taxaini
 
 @pytest.fixture
 def taxadfexpected():
@@ -1266,13 +1205,13 @@ def taxadfexpected():
     return taxadfexpected
     
 def test_taxatable_build(
-        Taxa_Table_Builder, Table_Builder_Director, taxa_user_input,
+        Taxa_Table_Builder, Table_Builder_Director, taxa_handle_1_count,
         dataset_test_1, taxadfexpected):
     sitelevels = dataset_test_1['site'].drop_duplicates().values.tolist()
     sitelevels.sort()
     facade = face.Facade()
-    facade.input_register(taxa_user_input)
-    face_input = facade._inputs[taxa_user_input.name]
+    facade.input_register(taxa_handle_1_count)
+    face_input = facade._inputs[taxa_handle_1_count.name]
     taxabuilder = Taxa_Table_Builder()
     assert (isinstance(taxabuilder, Taxa_Table_Builder)) is True
 
@@ -1429,58 +1368,16 @@ def test_taxatable_build_create(
 # ------------------------------------------------------ #
 # ------------ Observation (count) table build test --------------- #
 # ------------------------------------------------------ #
-@pytest.fixture
-def count_userinput():
-    obslned = OrderedDict((
-        ('spatial_replication_level_2', 'transect'),
-        ('spatial_replication_level_3', ''),
-        ('spatial_replication_level_4', ''),
-        ('structured_type_1', ''),
-        ('structured_type_2', ''),
-        ('structured_type_3', ''),
-        ('treatment_type_1', ''),
-        ('treatment_type_2', ''),
-        ('treatment_type_3', ''),
-        ('unitobs', 'count')
-    ))
-    
-    obsckbox = OrderedDict((
-        ('spatial_replication_level_2', True),
-        ('spatial_replication_level_3', False),
-        ('spatial_replication_level_4', False),
-        ('structured_type_1', False),
-        ('structured_type_2', False),
-        ('structured_type_3', False),
-        ('treatment_type_1', False),
-        ('treatment_type_2', False),
-        ('treatment_type_3', False),
-        ('unitobs', True)
-    ))
-    available = [
-        x for x,y in zip(
-            list(obslned.keys()), list(
-                obsckbox.values()))
-        if y is True
-    ]
-
-    countini = ini.InputHandler(
-        name='countinfo',
-        tablename='count_table',
-        lnedentry=hlp.extract(obslned, available),
-        checks=obsckbox)
-
-    return countini
-
 
 def test_count_table_build(
-        Table_Builder_Director, count_userinput,
+        Table_Builder_Director, count_handle_1_count,
         dataset_test_1, Observation_Table_Builder):
     sitelevels = dataset_test_1[
         'site'].drop_duplicates().values.tolist()
     sitelevels.sort()
     facade = face.Facade()
-    facade.input_register(count_userinput)
-    face_input = facade._inputs[count_userinput.name]
+    facade.input_register(count_handle_1_count)
+    face_input = facade._inputs[count_handle_1_count.name]
     countbuilder = Observation_Table_Builder()
     assert (isinstance(countbuilder, Observation_Table_Builder)) is True
 
@@ -1508,49 +1405,6 @@ def test_count_table_build(
 # ------------------------------------------------------ #
 # ------------ Observation (percentcover) table build test -------- #
 # ------------------------------------------------------ #
-@pytest.fixture
-def percent_cover_userinput():
-    obslned = OrderedDict((
-        ('spatial_replication_level_2', 'block'),
-        ('spatial_replication_level_3', 'plot'),
-        ('spatial_replication_level_4', ''),
-        ('structured_type_1', ''),
-        ('structured_type_2', ''),
-        ('structured_type_3', ''),
-        ('treatment_type_1', 'trt'),
-        ('treatment_type_2', ''),
-        ('treatment_type_3', ''),
-        ('unitobs', 'cover')
-    ))
-    
-    obsckbox = OrderedDict((
-        ('spatial_replication_level_2', True),
-        ('spatial_replication_level_3', True),
-        ('spatial_replication_level_4', False),
-        ('structured_type_1', False),
-        ('structured_type_2', False),
-        ('structured_type_3', False),
-        ('treatment_type_1', True),
-        ('treatment_type_2', False),
-        ('treatment_type_3', False),
-        ('unitobs', True)
-    ))
-
-    available = [
-        x for x,y in zip(
-            list(obslned.keys()), list(
-                obsckbox.values()))
-        if y is True
-    ]
-
-    countini = ini.InputHandler(
-        name='percentcoverinfo',
-        tablename='percent_cover_table',
-        lnedentry=hlp.extract(obslned, available),
-        checks=obsckbox)
-
-    return countini
-
 
 @pytest.fixture
 def dataset_test_4():
@@ -1559,14 +1413,14 @@ def dataset_test_4():
         'Datasets_manual_test/raw_data_test_4.csv')
 
 def test_percent_cover_table_build(
-        Table_Builder_Director,  percent_cover_userinput,
+        Table_Builder_Director,  biomass_handle_4_percent_cover,
         dataset_test_4, Observation_Table_Builder):
     sitelevels = dataset_test_4[
         'site'].drop_duplicates().values.tolist()
     sitelevels.sort()
     facade = face.Facade()
-    facade.input_register(percent_cover_userinput)
-    face_input = facade._inputs[percent_cover_userinput.name]
+    facade.input_register(biomass_handle_4_percent_cover)
+    face_input = facade._inputs[biomass_handle_4_percent_cover.name]
     percent_coverbuilder = Observation_Table_Builder()
     assert (isinstance(percent_coverbuilder, Observation_Table_Builder)) is True
 
@@ -1598,50 +1452,6 @@ def test_percent_cover_table_build(
 # ------------------------------------------------------ #
 # ------------ Observation (individual) table build test -------- #
 # ------------------------------------------------------ #
-@pytest.fixture
-def individual_userinput():
-    obslned = OrderedDict((
-        ('spatial_replication_level_2', 'TRANSECT'),
-        ('spatial_replication_level_3', ''),
-        ('spatial_replication_level_4', ''),
-        ('spatial_replication_level_5', ''),
-        ('structured_type_1', ''),
-        ('structured_type_2', ''),
-        ('structured_type_3', ''),
-        ('treatment_type_1', ''),
-        ('treatment_type_2', ''),
-        ('treatment_type_3', ''),
-        ('unitobs', '')
-    ))
-    
-    obsckbox = OrderedDict((
-        ('spatial_replication_level_2', True),
-        ('spatial_replication_level_3', False),
-        ('spatial_replication_level_4', False),
-        ('spatial_replication_level_5', False),
-        ('structured_type_1', False),
-        ('structured_type_2', False),
-        ('structured_type_3', False),
-        ('treatment_type_1', False),
-        ('treatment_type_2', False),
-        ('treatment_type_3', False),
-        ('unitobs', True)
-    ))
-    available = [
-        x for x,y in zip(
-            list(obslned.keys()), list(
-                obsckbox.values()))
-        if y is True
-    ]
-
-    countini = ini.InputHandler(
-        name='individual',
-        tablename='individual_table',
-        lnedentry=hlp.extract(obslned, available),
-        checks=obsckbox)
-
-    return countini
-
 
 @pytest.fixture
 def dataset_test_5():
@@ -1650,14 +1460,14 @@ def dataset_test_5():
         'Datasets_manual_test/raw_data_test_5.csv')
 
 def test_individual_table_build(
-        Table_Builder_Director,  individual_userinput,
+        Table_Builder_Director, count_handle5,
         dataset_test_5, Observation_Table_Builder):
     sitelevels = dataset_test_5[
         'SITE'].drop_duplicates().values.tolist()
     sitelevels.sort()
     facade = face.Facade()
-    facade.input_register(individual_userinput)
-    face_input = facade._inputs[individual_userinput.name]
+    facade.input_register(count_handle5)
+    face_input = facade._inputs[count_handle5.name]
     individualbuilder = Observation_Table_Builder()
     assert (isinstance(individualbuilder, Observation_Table_Builder)) is True
 
