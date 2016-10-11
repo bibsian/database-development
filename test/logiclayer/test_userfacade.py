@@ -293,14 +293,18 @@ def Facade():
             is initiated here.
             '''
             uniqueinput = self._inputs[inputname]
+            print('uqinput facade:', uniqueinput)
             tablename = self._inputs[inputname].tablename
+            print('tbl name facade: ', tablename)
             globalid = self._inputs['metacheck'].lnedentry['globalid']
+            print('globalid facade: ', globalid)
             sitecol = self._inputs['siteinfo'].lnedentry['study_site_key']
             uqsitelevels = self._valueregister['sitelevels']
             
             director = Table_Builder_Director()           
             builder = self._dbtabledict[tablename]
             director.set_user_input(uniqueinput)
+            director.set_globalid(globalid)
             director.set_builder(builder)
 
             if tablename != 'project_table':
@@ -308,12 +312,12 @@ def Facade():
             else:
                 metaverify = MetaVerifier(self._inputs['metacheck'])
                 metadata = metaverify._meta
-                director.set_data(metadata.iloc[globalid-1,:])
+                director.set_data(metadata[metadata['global_id'] == globalid].copy())
 
-            director.set_globalid(globalid)
-            director.set_siteid(sitecol)
             director.set_sitelevels(uqsitelevels)
+            director.set_siteid(sitecol)
 
+            print('facade get db table: ', director.get_database_table()._availdf)
             return director.get_database_table()
 
     return Facade
@@ -458,21 +462,22 @@ def project_table_input():
     return main_input
 
 def test_build_project_table(
-        sitehandle, Facade, filehandle, metahandle, project_table_input):
+        sitehandle, Facade, filehandle, metahandle, project_table_input,
+        project_handle_1_count):
     face = Facade()
     face.input_register(metahandle)
     face.meta_verify()
     face.input_register(filehandle)
     face.load_data()
     face.input_register(sitehandle)
-    face.input_register(project_table_input)
+    face.input_register(project_handle_1_count)
     sitelevels = face._data['site'].drop_duplicates().values.tolist()
     sitelevels.sort()
     face.register_site_levels(sitelevels)
     
     maindirector = face.make_table('maininfo')
     df = maindirector._availdf
-    print(df)
+    print('test facade build: ',df)
     assert (isinstance(df, DataFrame)) is True
     assert (
         df['proj_metadata_key'].drop_duplicates().values.tolist() ==
@@ -557,11 +562,10 @@ def test_build_taxa(
     taxadirector = face.make_table('taxainfo')
     df = taxadirector._availdf
     print(df)
+    assert 0
     print('test taxa build, userfacade: ', df)
     
     assert (isinstance(df, DataFrame)) is True
-
-    
 
 @pytest.fixture
 def count_userinput():

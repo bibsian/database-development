@@ -607,6 +607,7 @@ def Project_Table_Builder(AbstractTableBuilder):
                 self, dataframe, acols, nullcols, keycols, dbcol,
                 globalid, siteid, sitelevels):
 
+            dataframe.reset_index(inplace=True)
             # Columns that will be updated later in the
             # program
             autoupdated = [
@@ -715,6 +716,7 @@ def Project_Table_Builder(AbstractTableBuilder):
                 ], index=[0])
 
             form_dict = self._inputs.lnedentry
+            
             self.entry_verifier(form_dict)
 
             for i, (key, value) in enumerate(form_dict.items()):
@@ -1155,13 +1157,14 @@ def test_study_site_table_build(
 @pytest.fixture
 def metadata_data():
     return read_csv(
-        rootpath + end + 'test' + end +
-        'Datasets_manual_test/meta_file_test.csv')
+        rootpath + end + 'data' + end +
+        'Identified_to_upload.csv', encoding='iso-8859-11')
 
 
 def test_project_table_build(
         Project_Table_Builder, Table_Builder_Director,
         project_handle_1_count, metadata_data, dataset_test_1):
+
     sitelevels = dataset_test_1[
         'site'].drop_duplicates().values.tolist()
 
@@ -1180,15 +1183,19 @@ def test_project_table_build(
     director.set_builder(project_table)
     director.set_data(metadata_data)
     director.set_sitelevels(sitelevels)
+    director.set_siteid('site')
 
     project_table_df = director.get_database_table()
     show_project_table = project_table_df._availdf
-    show_project_table.to_csv(
-        'project_table_test_write.csv', index=False)
+
     assert (isinstance(show_project_table, DataFrame)) is True
     assert (
         show_project_table['datatype'].drop_duplicates().values.tolist()
         == ['count']) is True
+    assert (
+        show_project_table['proj_metadata_key'].values.tolist()
+        == [1]) is True
+
 
 
 # ------------------------------------------------------ #
@@ -1338,6 +1345,7 @@ def test_taxatable_build_create(
     taxatable = director.get_database_table()
     showtaxa = taxatable._availdf
     assert isinstance(showtaxa, DataFrame)
+    print(showtaxa)
     showtaxa['phylum'] = 'Animalia'
     print(showtaxa)
     

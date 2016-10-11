@@ -570,6 +570,8 @@ class Project_Table_Builder(AbstractTableBuilder):
             self, dataframe, acols, nullcols, keycols, dbcol,
             globalid, siteid, sitelevels):
 
+        print('buidler df: ', dataframe)
+        dataframe.reset_index(inplace=True)
         # Columns that will be updated later in the
         # program
         autoupdated = [
@@ -678,6 +680,7 @@ class Project_Table_Builder(AbstractTableBuilder):
             ], index=[0])
 
         form_dict = self._inputs.lnedentry
+
         self.entry_verifier(form_dict)
 
         for i, (key, value) in enumerate(form_dict.items()):
@@ -689,6 +692,7 @@ class Project_Table_Builder(AbstractTableBuilder):
                     pass
             else:
                 pass
+
         return maindata
 
     

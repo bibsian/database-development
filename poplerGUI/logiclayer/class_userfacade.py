@@ -127,7 +127,8 @@ class Facade:
             'density_table': None,
             'percent_cover_table': None,
             'individual_table': None,
-            'covariates': None
+            'covariates': None,
+            'covartable': None
         }
 
         self.pushtables = None
@@ -208,6 +209,7 @@ class Facade:
         register command with invoker and register proxy
         data with file caretaker)
         return a proxy of the original dataset loaded.
+
         '''
         try:
             assert self._inputs[
@@ -281,6 +283,7 @@ class Facade:
         uniqueinput = self._inputs[inputname]
         tablename = self._inputs[inputname].tablename
         globalid = self._inputs['metacheck'].lnedentry['globalid']
+        print('facade globalid: ', globalid)
         sitecol = self._inputs['siteinfo'].lnedentry['study_site_key']
         uqsitelevels = self._valueregister['sitelevels']
 
@@ -294,14 +297,14 @@ class Facade:
         else:
             metaverify = MetaVerifier(self._inputs['metacheck'])
             metadata = metaverify._meta
-            director.set_data(metadata.iloc[globalid-1,:])
+            director.set_data(metadata[metadata['global_id'] == globalid])
 
         director.set_globalid(globalid)
         director.set_siteid(sitecol)
         director.set_sitelevels(uqsitelevels)
 
+        print ('facade table: ', director.get_database_table()._availdf)
         return director.get_database_table()
-
     def push_merged_data(self):
         '''
         Method in facade class to check if all data tables
@@ -310,10 +313,8 @@ class Facade:
         database).
         '''
 
-
         # Tables created from use input
         study_site_table_df = self.push_tables['study_site_table']
-        study_site_table_df.fillna('NA', inplace=True)
         project_table_df = self.push_tables['project_table']
         taxa_table_df = self.push_tables['taxa_table']
         time_table_df = self.push_tables['timetable']
@@ -327,27 +328,23 @@ class Facade:
         # -------------------------------------- #
         # --- Pushing study site table data --- #
         # -------------------------------------- #
-        nulltest = study_site_table_df['study_site_key'].drop_duplicates().values.tolist()
-        if nulltest == ['NULL']:
-            if self.sitepushed is None:
-                try:
-                    study_site_table_df.to_sql(
-                        'study_site_table',
-                        orm.conn, if_exists='append', index=False)
-                    self.sitepushed = True
-                except Exception as e:
-                    print(str(e))
-                    self._tablelog['study_site_table'].debug(str(e))
-                    raise ValueError(
-                        'Could not push study site table data: ' + str(e)
+
+        if self.sitepushed is None:
+            try:
+                study_site_table_df.to_sql(
+                    'study_site_table',
+                    orm.conn, if_exists='append', index=False)
+                self.sitepushed = True
+            except Exception as e:
+                print(str(e))
+                self._tablelog['study_site_table'].debug(str(e))
+                raise ValueError(
+                    'Could not push study site table data: ' + str(e)
                     )
-        else:
-            pass       
 
         # -------------------------------------- #
         # --- Pushing project table data --- #
         # -------------------------------------- #
-        
         if self.mainpushed is None:
             try:
                 project_table_df.to_sql(
@@ -381,7 +378,6 @@ class Facade:
             studysitelevels=site_levels
         )
 
-
         merge_object.merge_for_taxa_table_upload(
             formated_taxa_table=taxa_table_df,
             siteinprojkeydf=site_in_project_key_df,
@@ -389,23 +385,37 @@ class Facade:
         )
 
         taxa_column_in_data = [
-            x[0] for x in 
+            x[0] for x in
             list(self._inputs['taxainfo'].lnedentry.items())
         ]
 
         taxa_column_in_push_table = [
-            x[1] for x in 
+            x[1] for x in
             list(self._inputs['taxainfo'].lnedentry.items())
         ]
         print('past taxa')
         merge_object.merge_for_datatype_table_upload(
             raw_dataframe=time_table_df,
             formated_dataframe=observation_table_df,
-            formated_dataframe_name=
-            '{}'.format(
-                        re.sub('_table', '', self._inputs['rawinfo'].tablename)),
-            covariate_dataframe = covariate_table_df,
+            formated_dataframe_name=(
+                '{}'.format(
+                    re.sub(
+                        '_table', '', self._inputs['rawinfo'].tablename))
+                ),
+            covariate_dataframe=covariate_table_df,
             siteinprojkeydf=site_in_project_key_df,
             raw_data_taxa_columns=taxa_column_in_data,
             uploaded_taxa_columns=taxa_column_in_push_table
+        )
+        obs_columns_in_data = [
+            x[1] for x in
+            list(self._inputs['rawinfo'].lnedentry.items())
+        ]
+        obs_columns_in_push_table = [
+            x[0] for x in
+            list(self._inputs['rawinfo'].lnedentry.items())
+        ]
+        merge_object.update_project_table(
+            spatial_rep_columns_from_og_df=obs_columns_in_data,
+            spatial_rep_columns_from_formated_df=obs_columns_in_push_table
         )

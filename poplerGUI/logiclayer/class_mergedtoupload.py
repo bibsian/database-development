@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 from pandas import merge, concat, DataFrame, read_sql
-from sqlalchemy import select
+from sqlalchemy import select, update, column
 import sys, os
 if sys.platform == "darwin":
     rootpath = (
@@ -14,7 +14,14 @@ elif sys.platform == "win32":
 os.chdir(rootpath)
 from poplerGUI.logiclayer.datalayer import config as orm
 
+
 class MergeToUpload(object):
+    '''
+    Class that encapsulated the processes of
+    merging, pushing, and updating data for the database.
+    All tabels past study_site_table  and part of the project_table
+    are managed through this class.
+    '''
     print('trying to initiate')
     def __init__(self):
         self.session = orm.Session()
@@ -24,23 +31,61 @@ class MergeToUpload(object):
             'density': orm.density_types,
             'biomass': orm.biomass_types,
             'individual': orm.individual_types,
-            'percent_cover': orm.percent_cover_types
+            'percent_cover': orm.percent_cover_types,
+            'project': orm.project_types
         }
+        self.rawdata = None
+        self.metadata_key = None
+        self.sitelabel = None
+        self.formateddata = None
 
     def site_in_proj_key_df(
             self, studysitetabledf, projecttabledf, lterlocation,
             observationtabledf, studysitelabel, studysitelevels):
         '''
 
-        Method to format the site_in_project_table with derived
-        information.
+        Method to take the data stored in the user facade class
+        and upload to the database
+        REQUIRES: study_site_table, project_table, lter,
+        observation_table, study_site_label, studysitelevels...
+        to make the site_in_project_table (including the merge)
+        as well as merge all other tables for keys and upload.
+        To merge the site_in_project_table a series of steps
+        must be performed
 
+        1) Check to see if any of the original site levels
+        are present in the database
+
+        2) test whether the dataset site levels are contained
+        within the raw data or database, or both, and
+        make the site_in_project_table site labels based
+        off of this test. (this is necessary because if sites are
+        already in the database when we pull in the study_site
+        table some will be missing since present ones aren't 
+        pushed).
+
+        3) Calculate all derived values for the 
+        site_in_project_table (sitestartyr, siteendyr, uniquetaxa,
+        totalobs).
+
+        4) Push all data
+
+        5) Query the pushed data to retrieve primary keys
+        then merged primary keys to sitelevel data and
+        return the dataframe (to be merged in another method)
         '''
-        # Step 1)
+        self.rawdata = observationtabledf
+        self.sitelabel = studysitelabel
+        # Types of outcomes to govern push behavior
+        all_site_table_data_already_uploaded = False
+        site_table_data_partially_uploaded = False
+        all_site_table_data_not_yet_uploaded = False
+
         project_metadat_key = projecttabledf[
             'proj_metadata_key']
+        self.metadata_key = int(project_metadat_key)
 
-        sitecheck = (
+        study_site_table_query = (
             self.session.query(
                 orm.study_site_table.__table__).
             order_by(
@@ -49,80 +94,146 @@ class MergeToUpload(object):
                 orm.study_site_table.__table__.c.lter_table_fkey ==
                 lterlocation)
         )
-        sitecheckdf = read_sql(
-            sitecheck.statement, sitecheck.session.bind)
+        study_site_table_query_df = read_sql(
+            study_site_table_query.statement,
+            study_site_table_query.session.bind)
+        study_site_table_query_list = study_site_table_query_df[
+            'study_site_key'].values.tolist()
+        study_site_table_list_from_user = studysitetabledf[
+            'study_site_key'].drop_duplicates().values.tolist()
 
-        qsitelist = sitecheckdf['study_site_key'].values.tolist()
-        nulltest = studysitetabledf['study_site_key'].drop_duplicates().values.tolist()
+        # ------------------------------------ #
+        # ------- study_site_table ------ #
+        # ------------------------------------ #
+        print('empty', study_site_table_query_df.empty)
+        print('nulltest', study_site_table_list_from_user == ['NULL'])
+        print('user table', study_site_table_list_from_user)
+        # ------------------------------------ #
+        # ---------- site_in_project_table --- #
+        # ------------------------------------ #
+        if (
+                study_site_table_list_from_user == ['NULL']
+                and
+                study_site_table_query_df.empty == False
+            ):
+            print('ALL Study site data is already stored')
+            site_in_proj_levels_to_push = DataFrame(
+                study_site_table_query_df[
+                    'study_site_key']).drop_duplicates()
+            site_in_proj_levels_to_push = (
+                site_in_proj_levels_to_push[
+                    site_in_proj_levels_to_push.study_site_key != 'NULL']
+            )
+            study_site_levels_derived = (
+                site_in_proj_levels_to_push[
+                    'study_site_key'].values.tolist()
+            )
+            all_site_table_data_already_uploaded = True
+            print(site_in_proj_levels_to_push)
+            print('all_site_table_data_already_uploaded = True')
+        elif (
+                len(
+                    [
+                        i for i in
+                        study_site_table_query_list
+                        if i in
+                        study_site_table_list_from_user
+                    ]
+                ) > 0
+                and
+                (
+                    len(study_site_table_query_list) <
+                    len(study_site_table_list_from_user)
+                )
+        ):
+            print('Study site data is partially stored already')
+            site_in_proj_levels_to_push = concat(
+                [
+                    studysitetabledf,
+                    study_site_table_query_df
+                ], axis=0).drop_duplicates()
+            site_in_proj_levels_to_push = (
+                site_in_proj_levels_to_push[
+                    'study_site_key'].drop_duplicates()
+            )
+            site_in_proj_levels_to_push = (
+                site_in_proj_levels_to_push[
+                    site_in_proj_levels_to_push.
+                    study_site_key != 'NULL']
+            )
+            study_site_levels_derived = (
+                site_in_proj_levels_to_push[
+                    'study_site_key'].values.tolist()
+            )
+            site_table_data_partially_uploaded = True
+            print(site_in_proj_levels_to_push)
+            print('site_table_data_partially_uploaded = True')
 
-        if nulltest == ['NULL']:
-            print('merged NA block')
-            study_sites = DataFrame(
-                sitecheckdf['study_site_key']).drop_duplicates()
-            study_sites = study_sites[study_sites.study_site_key != 'NULL']
-            studysitelevels = study_sites['study_site_key'].values.tolist()
-            print(study_sites)
-        if len(qsitelist) >= 1 and nulltest != ['NULL']:
-            print('merged qsitelist >=1 block')
-            study_sites_stacked = concat(
-                [studysitetabledf, sitecheckdf], axis=0)
-            study_sites = DataFrame(
-                study_sites_stacked['study_site_key']).drop_duplicates()
-            study_sites = study_sites[study_sites.study_site_key != 'NULL']
-            studysitelevels = study_sites['study_site_key'].values.tolist()
-            print(study_sites)
-        if len(qsitelist) == 0:
-            print('merged qusitelist = 0')
-            study_sites = DataFrame(
+        else:
+            print('Study site data is not stored')
+            site_in_proj_levels_to_push = DataFrame(
                 studysitetabledf['study_site_key']).drop_duplicates()
-            study_sites = study_sites[study_sites.study_site_key != 'NULL']
-            studysitelevels = study_sites['study_site_key'].values.tolist()
-            print(study_sites)
+            site_in_proj_levels_to_push = (
+                site_in_proj_levels_to_push[
+                    site_in_proj_levels_to_push.
+                    study_site_key != 'NULL']
+            )
+            study_site_levels_derived = (
+                site_in_proj_levels_to_push[
+                    'study_site_key'].values.tolist()
+            )
+            all_site_table_data_not_yet_uploaded = True
+            print(site_in_proj_levels_to_push)
+            print('all_site_table_data_not_yet_uploaded = True')
+        try:
+            print('loaded site levels: ', studysitelevels)
+            print('derived site levels: ', study_site_levels_derived)
+            assert (studysitelevels == study_site_levels_derived)
+        except Exception as e:
+            print(str(e))
+            raise AttributeError(
+                'Study site levels derived from query and user ' +
+                'do not match the original site levels stored ' +
+                'in the user facade class: ' + str(e))
+        site_in_proj_table_to_push = site_in_proj_levels_to_push
+        site_in_proj_table_to_push.columns = (
+            ['study_site_table_fkey']
+        )
+        site_in_proj_table_to_push['sitestartyr'] = 'NA'
+        site_in_proj_table_to_push['siteendyr'] = 'NA'
+        site_in_proj_table_to_push['totalobs'] = 'NA'
+        site_in_proj_table_to_push['uniquetaxaunits'] = -99999
+        site_in_proj_table_to_push['project_table_fkey'] = int(
+            project_metadat_key)
 
-        study_sites.columns = ['study_site_table_fkey']
-        print('merge class site in proj col: ', study_sites.columns)
-        study_sites['sitestartyr'] = 'NA'
-        study_sites['siteendyr'] = 'NA'
-        study_sites['totalobs'] = 'NA'
-        study_sites['uniquetaxaunits'] = -99999
-        study_sites['project_table_fkey'] = int(project_metadat_key)
-        sites = study_sites['study_site_table_fkey'].values.tolist()
-        print('merge class past study site table')
-        print(studysitelevels)
-        print('obsdf', observationtabledf)
-        
+        print('before deriving data: ', site_in_proj_table_to_push)
         yr_all = []
-        for i, item in enumerate(studysitelevels):
+        for i, item in enumerate(study_site_levels_derived):
             yr_list = observationtabledf[
                 observationtabledf[studysitelabel] == item][
                     'year_derived'].values.tolist()
             yr_list.sort()
             [yr_all.append(x) for x in yr_list]
-
-            study_sites.loc[
-                study_sites.study_site_table_fkey == item,
-                'sitestartyr'
+            site_in_proj_table_to_push.loc[
+                site_in_proj_table_to_push.
+                study_site_table_fkey == item, 'sitestartyr'
             ] = yr_list[0]
 
-            study_sites.loc[
-                study_sites.study_site_table_fkey == item,
-                'siteendyr'
+            site_in_proj_table_to_push.loc[
+                site_in_proj_table_to_push.
+                study_site_table_fkey == item, 'siteendyr'
             ] = yr_list[-1]
 
-            study_sites.loc[
-                study_sites.study_site_table_fkey == item,
-                'totalobs'
+            site_in_proj_table_to_push.loc[
+                site_in_proj_table_to_push.
+                study_site_table_fkey == item, 'totalobs'
             ] = len(yr_list)
-
-
-        print('past year info and total obs')
-        print(study_sites)
-        print(studysitelabel)
-
-        print('merge class site in proj table: ', study_sites)
-        study_sites.to_sql(
+        print('Populated site_in_project_table to push')
+        print(site_in_proj_table_to_push)
+        site_in_proj_table_to_push.to_sql(
             'site_in_project_table', orm.conn,
             if_exists='append', index=False)
+        print('site_in_project_table table UPLOADED')
 
         session = self.session
         site_in_proj_key_query = select([
@@ -133,7 +244,6 @@ class MergeToUpload(object):
             orm.site_in_project_table.project_table_fkey ==
             int(project_metadat_key)
         )
-
         site_in_proj_key_statement = session.execute(
             site_in_proj_key_query)
         session.close()
@@ -142,46 +252,59 @@ class MergeToUpload(object):
         site_in_proj_key_df.columns = site_in_proj_key_statement.keys()
         return site_in_proj_key_df
 
-
     def merge_for_taxa_table_upload(
             self, formated_taxa_table, siteinprojkeydf,
             sitelabel
     ):
+        '''
+        Method to take the data stored in the user facade class
+        and upload the database
+        REQUIRES: formated taxa table (with database names),
+        dataframe with site levels merged to site_in_project
+        (formated_taxa_table)
+        primary keys (created in method above...siteinprojkeydf)
+        , and the name of the column with the site (sitelabel)
+        to make the site_in_project_table (including the merge)
+        as well as merge all other tables for keys and upload.
+        To merge the site_in_project_table a series of steps
+        must be performed
 
+        1) Merged the formated taxa table with the site_in_project
+        data that contains primary keys for site_in_project table
+        and site levels (merge on site levels)
 
-        # Step 2) Merge the formatted taxa_table with the quieried
-        # site_in_project_key dataframe (to add foreign keys to
-        # the taxa_table)
+        2) Dropping columns not neccessary for the taxa_table
+        push (metadata key: project_table_fkey,
+        site label:study_site_table_fkey)
+
+        3) Rename merged site_in_project_table primary key
+        to match taxa table name
+
+        4) Push taxa_table to database
+
+        '''
+
+        print('starting taxa table upload')
         orm.replace_numeric_null_with_string(formated_taxa_table)
-        tbl_taxa_with_site_in_proj_key= merge(
+        print('past orm replace numeric')
+        tbl_taxa_with_site_in_proj_key = merge(
             formated_taxa_table, siteinprojkeydf,
-            left_on=[sitelabel],
-            right_on=['study_site_table_fkey'],
+            left_on=sitelabel,
+            right_on='study_site_table_fkey',
             how='inner')
-
-        # Step 3) Making a copy of the merged table
+        print('past tbl_taxa site in proj key')
         tbl_taxa_merged = tbl_taxa_with_site_in_proj_key.copy()
-
-        # Step 4) Dropping the unneccessary columns from the copy
-        # of the merged taxa_table (that has foreign keys now)
         tbl_taxa_merged.drop([
             'study_site_table_fkey', sitelabel,
             'project_table_fkey'], inplace=True, axis=1)
-
-        # Step 5) Renaming the foreign keys to match the column
-        # label in the database
+        print('past tbl_taxa drop: ', tbl_taxa_merged)
         tbl_taxa_merged.rename(
-            columns= {
+            columns={
                 'site_in_project_key': 'site_in_project_taxa_key'}, inplace=True)
         print('merge class taxa merged: ', tbl_taxa_merged)
 
-        # Step 6) Filling Null values (blank or NaN) with 'NA' strings
-        # then converting each column into it's appropriate data type
-        # for the database
         tbl_taxa_merged.fillna('NA', inplace=True)
         orm.convert_types(tbl_taxa_merged, orm.taxa_types)
-
-        # Step 7) Upload table to datbase
         tbl_taxa_merged.to_sql(
             'taxa_table', orm.conn, if_exists='append', index=False)
 
@@ -244,26 +367,26 @@ class MergeToUpload(object):
             left_index=True, right_index=True, how='inner',
             suffixes=('', '_y'))
 
-
         # Step 7) List the columns that will be needed to push the
         # dtype table to the database (including foreign keys)
         tbl_dtype_columns_to_upload = [
             'taxa_table_key', 'site_in_project_taxa_key', 'year_derived',
             'month_derived', 'day_derived', 'spatial_replication_level_1',
             'spatial_replication_level_2', 'spatial_replication_level_3',
-            'spatial_replication_level_4', 'structure',
-            'covariates', 'trt_label'
+            'spatial_replication_level_4', 'spatial_replication_level_5',
+            'structure_type_1', 'structure_type_2',
+            'structure_type_3',
+            'treatment_type_1', 'treatment_type_2',
+            'treatment_type_3',
+            'covariates'
         ]
-
         time_cols_rename = {
             'year_derived': 'year',
             'month_derived': 'month',
             'day_derived': 'day'
-        }
-
+        }            
         tbl_dtype_columns_to_upload.append(
             '{}_observation'.format(str(formated_dataframe_name)))
-
         tbl_dtype_merged_with_all_keys = concat(
             [tbl_dtype_merged_with_all_keys, covariate_dataframe],
             axis=1)
@@ -271,7 +394,6 @@ class MergeToUpload(object):
         # Step 8) Subsetting the fully merged dtype table data
         tbl_dtype_to_upload = tbl_dtype_merged_with_all_keys[
             tbl_dtype_columns_to_upload]
-
         tbl_dtype_to_upload.rename(
             columns=time_cols_rename, inplace=True
         )
@@ -280,8 +402,7 @@ class MergeToUpload(object):
         # And converting data types
         tbl_dtype_to_upload.rename(columns={
             'taxa_table_key': 'taxa_{}_fkey'.format(str(formated_dataframe_name))}
-            , inplace=True)
-
+            , inplace=True)            
         datatype_key = 'site_in_project_{}_fkey'.format(str(formated_dataframe_name))
         tbl_dtype_to_upload.rename(columns={
             'site_in_project_taxa_key': datatype_key}, inplace=True)
@@ -289,9 +410,85 @@ class MergeToUpload(object):
         orm.convert_types(
             tbl_dtype_to_upload, self.table_types[str(formated_dataframe_name)])
 
-        datatype_table = '{}_table'.format(str(formated_dataframe_name))
-        # Step 10) Uploading to the database
+        self.formateddata = tbl_dtype_to_upload
 
+        # Step 10) Uploading to the database
+        datatype_table = '{}_table'.format(str(formated_dataframe_name))
         tbl_dtype_to_upload.to_sql(
             datatype_table,
             orm.conn, if_exists='append', index=False)
+
+    def update_project_table(
+            self,
+            spatial_rep_columns_from_og_df,
+            spatial_rep_columns_from_formated_df):
+        '''
+        Methods to update the projcet table with information
+        that was gathered toward the end of a user session
+        Arguments are the column names for 
+        the different levels of spatial replication that
+        are present (key/value pairs)
+
+        '''
+        ##
+        # ADD STUDYSTARTYR, STUDYENDYR, SPAT_LEV_UNQ_REPS(1-5),
+        # SPAT_LEV_LABELS(1-5)
+        ##
+        spatial_index = [
+            i for i, item in enumerate(
+                spatial_rep_columns_from_formated_df)
+            if 'spatial' in item
+        ]
+        spatial_label_col = ['spatial_replication_level_1_label']
+        spatial_label_val = [self.sitelabel]
+        spatial_uq_num_of_rep_col = [
+            'spatial_replication_level_1_number_of_unique_reps']
+        spatial_uq_num_of_rep_val = [
+            len(self.rawdata[self.sitelabel].unique())
+            ]
+
+        for i in range(len(spatial_index)):
+            spatial_label_col.append(
+                spatial_rep_columns_from_formated_df[i] + '_label')
+            spatial_label_val.append(
+                spatial_rep_columns_from_og_df[i])
+
+            spatial_uq_num_of_rep_col.append(
+                spatial_rep_columns_from_formated_df[i] +
+                '_number_of_unique_reps')
+            spatial_uq_num_of_rep_val.append(
+                len(
+                    self.rawdata[
+                        spatial_rep_columns_from_og_df[i]].unique()
+                )
+            )
+        print(self.formateddata.columns)
+        print(self.formateddata)
+        print('Populating update_dict')
+        update_dict = {
+            'studystartyr': self.formateddata.loc[:, 'year'].min(),
+            'studyendyr': self.formateddata.loc[:, 'year'].max()
+        }
+        for i, item in enumerate(spatial_label_col):
+            update_dict[item] = spatial_label_val[i]
+            update_dict[spatial_uq_num_of_rep_col[i]] = spatial_uq_num_of_rep_val[i]
+
+
+        print(self.metadata_key)
+        print('startyear: ',update_dict['studystartyr'])
+        print('endyear: ', update_dict['studyendyr'])
+        print(
+            'spatial_replication_level_1_label:  ',
+            update_dict['spatial_replication_level_1_label']
+        )
+        print(
+            'spatial_replication_level_2_label:  ',
+            update_dict['spatial_replication_level_2_label']
+        )
+
+        orm.conn.execute(
+            update(orm.project_table).
+            where(
+                column('proj_metadata_key') == self.metadata_key).
+            values(update_dict)
+        )
