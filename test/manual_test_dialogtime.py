@@ -171,7 +171,7 @@ def TimeDialog(sitehandle, filehandle, metahandle, taxahandle):
                 'yearname': self.lnedYear.text(),
                 'yearform': self.cboxYear.currentText(),
                 'jd': self.ckJulian.isChecked(),
-                'mspell': self.ckMonthSpelling.isChecked()
+                'hms': self.ckMonthSpelling.isChecked()
             }
             print('dict: ', self.timelned)
             for i, item in enumerate(self.timelned.values()):
@@ -225,7 +225,7 @@ def TimeDialog(sitehandle, filehandle, metahandle, taxahandle):
                     self.timelned, self._log, 'timetable'
                 )
                 try:
-                        timeview.loc[1, 'day'] = to_numeric(timeview['day'])
+                    timeview.loc[1, 'day'] = to_numeric(timeview['day'])
                 except Exception as e:
                     print(str(e))
                     timeview['month'] = to_numeric(timeview['month'])

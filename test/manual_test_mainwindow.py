@@ -93,10 +93,6 @@ def MainWindow():
             metamodel = view.PandasTableModel(metadf)
             self.tblViewMeta.setModel(metamodel)
 
-            metadf = read_csv(metapath, encoding='iso-8859-11')
-            metamodel = view.PandasTableModel(metadf)
-            self.tblViewMeta.setModel(metamodel)
-
         def update_data_model(self):
             newdatamodel = view.PandasTableModel(self.facade._data)
             self.tblViewRaw.setModel(newdatamodel)
@@ -138,7 +134,6 @@ def MainWindow():
         def main_display(self):
             ''' Displays main dialog box'''
             self.dmain.facade = self.facade
-            self.dmain.set_data()
             self.dmain.show()
 
         def taxa_display(self):
@@ -166,14 +161,13 @@ def MainWindow():
                 name='updateinfo', tablename='updatetable')
             self.facade.input_register(commithandle)
             try:
-                self.facade.merge_push_data()
-                self.facade.update_main()
+                self.facade.push_merged_data()
                 self.actionCommit.setEnabled(False)
                 self.message.about(
                     self, 'Status', 'Database transaction complete')
             except Exception as e:
                 print(str(e))
-                self.facade._tablelog['maintable'].debug(str(e))
+                self.facade._tablelog['project_table'].debug(str(e))
                 self.error.showMessage(
                     'Datbase transaction error: ' + str(e) +
                     '. May need to alter site abbreviations.')

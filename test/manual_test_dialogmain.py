@@ -58,9 +58,6 @@ def MainWindow():
             self.message = QtGui.QMessageBox
             self.error = QtGui.QErrorMessage()
 
-
-
-        
         def submit_change(self):
             '''
             Method to get data from user form and make project table
@@ -185,25 +182,44 @@ def MainWindow():
             self._log = self.facade._tablelog['project_table']
             self.project_table = self.maindirector._availdf.copy()
 
+            try:
+                check_list = [
+                    'authors', 'authors_contact', 'studytype',
+                    'derived', 'community', 'samplefreq', 'datatype'
+                ]
+                record = None
+                for i, item in enumerate(check_list):
+                    print(item, ': ', self.form_entries[item].entry)
+                    record = item
+                    assert (
+                        self.form_entries[item].entry != 'NULL') is True
+                
+                    assert (
+                        self.form_entries[item].entry != '') is True
 
-            if sender is self.btnPreview:
-                self.mainmodel = self.viewEdit(self.project_table)
-                self.preview.tabviewPreview.setModel(self.mainmodel)
-                self.preview.show()
-                return
-            else:
-                pass
-            self.facade.push_tables['project_table'] = self.project_table
-            self._log.debug(
-                'project_table mod: ' +
-                ' '.join(self.project_table.columns.values.tolist()))
+                if sender is self.btnPreview:
+                    self.mainmodel = self.viewEdit(self.project_table)
+                    self.preview.tabviewPreview.setModel(self.mainmodel)
+                    self.preview.show()
+                    return
+                else:
+                    pass
+                self.facade.push_tables['project_table'] = self.project_table
+                self._log.debug(
+                    'project_table mod: ' +
+                    ' '.join(self.project_table.columns.values.tolist()))
 
-            orm.convert_types(self.project_table, orm.project_types)
-            hlp.write_column_to_log(
-                self.form_entries, self._log, 'project_table')
-            self.close()
+                orm.convert_types(self.project_table, orm.project_types)
+                hlp.write_column_to_log(
+                    self.form_entries, self._log, 'project_table')
+                self.close()
 
-            
+            except Exception as e:
+                print(str(e))
+                self.error.showMessage(
+                    'Invalid entry: ' + record
+                )
+
 
     class UiMainWindow(QtGui.QMainWindow, mw.Ui_MainWindow):
         '''

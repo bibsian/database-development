@@ -116,8 +116,13 @@ def ObsDialog(sitehandle, filehandle, metahandle):
                 ('spatial_replication_level_2', self.lnedRep2.text()),
                 ('spatial_replication_level_3', self.lnedRep3.text()),
                 ('spatial_replication_level_4', self.lnedRep4.text()),
-                ('structure', self.lnedStructure.text()),
-                ('trt_label', self.lnedTreatment.text()),
+                ('spatial_replication_level_5', self.lnedRep5.text()),
+                ('structured_type_1', self.lnedStructure1.text()),
+                ('structured_type_2', self.lnedStructure2.text()),
+                ('structured_type_3', self.lnedStructure3.text()),
+                ('treatment_type_1', self.lnedTreatment1.text()),
+                ('treatment_type_2', self.lnedTreatment2.text()),
+                ('treatment_type_3', self.lnedTreatment3.text()),
                 ('unitobs', self.lnedRaw.text())
             ))
 
@@ -125,46 +130,43 @@ def ObsDialog(sitehandle, filehandle, metahandle):
                 ('spatial_replication_level_2', self.ckRep2.isChecked()),
                 ('spatial_replication_level_3', self.ckRep3.isChecked()),
                 ('spatial_replication_level_4', self.ckRep4.isChecked()),
-                ('structure', self.ckStructure.isChecked()),
-                ('trt_label', self.ckTreatment.isChecked()),
-                ('unitobs', self.ckRaw.isChecked())
+                ('spatial_replication_level_5', self.ckRep5.isChecked()),
+                ('structured_type_1', self.ckStructure1.isChecked()),
+                ('structured_type_2', self.ckStructure2.isChecked()),
+                ('structured_type_3', self.ckStructure3.isChecked()),
+                ('treatment_type_1', self.ckTreatment1.isChecked()),
+                ('treatment_type_2', self.ckTreatment2.isChecked()),
+                ('treatment_type_3', self.ckTreatment3.isChecked()),
+                ('unitobs', True)
             ))
-
-
             self.table = {
-                'count_table': self.ckCount.isChecked(),
-                'biomass_table': self.ckBiomass.isChecked(),
-                'density_table': self.ckDensity.isChecked(),
-                'percent_cover_table': self.ckPercentcover.isChecked(),
-                'individual_table': self.ckIndividual.isChecked() 
+                'count_table': self.rbtnCount.isChecked(),
+                'biomass_table': self.rbtnBiomass.isChecked(),
+                'density_table': self.rbtnDensity.isChecked(),
+                'percent_cover_table': self.rbtnPercentcover.isChecked(),
+                'individual_table': self.rbtnIndividual.isChecked() 
             }
-
             available = [
                 x for x,y in zip(
                     list(self.obslned.keys()), list(
                         self.obsckbox.values()))
                 if y is True
             ]
-
             self.tablename = [
                 x for x, y in
                 zip(list(self.table.keys()), list(self.table.values()))
                 if y is True
             ][0]
-
             rawini = ini.InputHandler(
                 name='rawinfo',
                 tablename= self.tablename,
                 lnedentry= hlp.extract(self.obslned, available),
                 checks=self.obsckbox)
 
-
-
             self.facade.input_register(rawini)
             self.facade.create_log_record(self.tablename)
             self._log = self.facade._tablelog[self.tablename]
 
-            
             try:
                 self.rawdirector = self.facade.make_table('rawinfo')
                 print('obs table build: ', self.rawdirector)
@@ -178,9 +180,10 @@ def ObsDialog(sitehandle, filehandle, metahandle):
                 raise AttributeError(
                     'Column(s) not identified: ' + str(e))
 
-
             self.obstable = self.rawdirector._availdf.copy()
-            self.obsmodel = self.viewEdit(self.obstable)
+            self.obsmodel = self.viewEdit(
+                self.obstable.drop(
+                    self.obstable[['index', 'level_0']], axis=1))
             if sender is self.btnPreview:
                 self.preview.tabviewPreview.setModel(self.obsmodel)
                 self.preview.show()
