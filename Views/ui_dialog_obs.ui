@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1109</width>
-    <height>598</height>
+    <height>565</height>
    </rect>
   </property>
   <property name="focusPolicy">
@@ -331,13 +331,55 @@
                            </item>
                           </layout>
                          </item>
-                         <item row="3" column="0">
+                         <item row="5" column="0">
                           <layout class="QHBoxLayout" name="horizontalLayout_8">
                            <item>
-                            <widget class="QCheckBox" name="ckRep4">
+                            <widget class="QCheckBox" name="ckRep5">
                              <property name="focusPolicy">
                               <enum>Qt::TabFocus</enum>
                              </property>
+                             <property name="text">
+                              <string>Replication Level 5</string>
+                             </property>
+                            </widget>
+                           </item>
+                           <item>
+                            <widget class="QLineEdit" name="lnedRep5">
+                             <property name="enabled">
+                              <bool>true</bool>
+                             </property>
+                             <property name="sizePolicy">
+                              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                               <horstretch>0</horstretch>
+                               <verstretch>0</verstretch>
+                              </sizepolicy>
+                             </property>
+                             <property name="focusPolicy">
+                              <enum>Qt::StrongFocus</enum>
+                             </property>
+                             <property name="inputMask">
+                              <string/>
+                             </property>
+                             <property name="text">
+                              <string/>
+                             </property>
+                             <property name="alignment">
+                              <set>Qt::AlignCenter</set>
+                             </property>
+                             <property name="readOnly">
+                              <bool>false</bool>
+                             </property>
+                             <property name="placeholderText">
+                              <string/>
+                             </property>
+                            </widget>
+                           </item>
+                          </layout>
+                         </item>
+                         <item row="3" column="0">
+                          <layout class="QHBoxLayout" name="horizontalLayout_9">
+                           <item>
+                            <widget class="QCheckBox" name="ckRep4">
                              <property name="text">
                               <string>Replication Level 4</string>
                              </property>
@@ -549,7 +591,7 @@
                      <item row="0" column="0">
                       <layout class="QHBoxLayout" name="horizontalLayout">
                        <item>
-                        <widget class="QCheckBox" name="ckStructure">
+                        <widget class="QCheckBox" name="ckStructure1">
                          <property name="focusPolicy">
                           <enum>Qt::TabFocus</enum>
                          </property>
@@ -933,17 +975,38 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>lnedRep2</tabstop>
   <tabstop>ckRep2</tabstop>
-  <tabstop>lnedRep3</tabstop>
+  <tabstop>lnedRep2</tabstop>
   <tabstop>ckRep3</tabstop>
-  <tabstop>lnedRep4</tabstop>
+  <tabstop>lnedRep3</tabstop>
   <tabstop>ckRep4</tabstop>
-  <tabstop>lnedStructure1</tabstop>
-  <tabstop>ckStructure</tabstop>
-  <tabstop>lnedTreatment1</tabstop>
-  <tabstop>ckTreatment1</tabstop>
+  <tabstop>lnedRep4</tabstop>
+  <tabstop>ckRep5</tabstop>
+  <tabstop>lnedRep5</tabstop>
+  <tabstop>rbtnCount</tabstop>
+  <tabstop>rbtnBiomass</tabstop>
+  <tabstop>rbtnPercentcover</tabstop>
+  <tabstop>rbtnDensity</tabstop>
+  <tabstop>rbtnIndividual</tabstop>
   <tabstop>lnedRaw</tabstop>
+  <tabstop>ckStructure1</tabstop>
+  <tabstop>lnedStructure1</tabstop>
+  <tabstop>lnedStructureunits1</tabstop>
+  <tabstop>ckStructure2</tabstop>
+  <tabstop>lnedStructure2</tabstop>
+  <tabstop>lnedStructureunits2</tabstop>
+  <tabstop>ckStructure3</tabstop>
+  <tabstop>lnedStructure3</tabstop>
+  <tabstop>lnedStructureunits3</tabstop>
+  <tabstop>ckTreatment1</tabstop>
+  <tabstop>lnedTreatment1</tabstop>
+  <tabstop>cboxTreatment1</tabstop>
+  <tabstop>ckTreatment2</tabstop>
+  <tabstop>lnedTreatment2</tabstop>
+  <tabstop>cboxTreatment2</tabstop>
+  <tabstop>ckTreatment3</tabstop>
+  <tabstop>lnedTreatment3</tabstop>
+  <tabstop>cboxTreatment3</tabstop>
   <tabstop>btnPreview</tabstop>
   <tabstop>btnSaveClose</tabstop>
   <tabstop>btnCancel</tabstop>

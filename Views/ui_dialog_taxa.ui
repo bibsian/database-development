@@ -618,18 +618,40 @@
  </widget>
  <tabstops>
   <tabstop>ckCreateTaxa</tabstop>
-  <tabstop>ckSppCode</tabstop>
-  <tabstop>lnedSppCode</tabstop>
   <tabstop>ckKingdom</tabstop>
   <tabstop>lnedKingdom</tabstop>
-  <tabstop>ckPhylum</tabstop>
-  <tabstop>lnedPhylum</tabstop>
+  <tabstop>ckSubdivision</tabstop>
+  <tabstop>lnedSubdivision</tabstop>
+  <tabstop>ckSuperphylum</tabstop>
+  <tabstop>lnedSuperphylum</tabstop>
+  <tabstop>ckClass</tabstop>
   <tabstop>lnedClass</tabstop>
-  <tabstop>lnedOrder</tabstop>
   <tabstop>ckFamily</tabstop>
   <tabstop>lnedFamily</tabstop>
+  <tabstop>ckSubkingdom</tabstop>
+  <tabstop>lnedSubkingdom</tabstop>
+  <tabstop>ckSuperdivision</tabstop>
+  <tabstop>lnedSuperdivision</tabstop>
+  <tabstop>ckSubphylum</tabstop>
+  <tabstop>lnedSubphylum</tabstop>
+  <tabstop>ckSubclass</tabstop>
+  <tabstop>lnedSubclass</tabstop>
+  <tabstop>ckGenus</tabstop>
   <tabstop>lnedGenus</tabstop>
+  <tabstop>ckInfrakingdom</tabstop>
+  <tabstop>lnedInfrakingdom</tabstop>
+  <tabstop>ckDivision</tabstop>
+  <tabstop>lnedDivision</tabstop>
+  <tabstop>ckPhylum</tabstop>
+  <tabstop>lnedPhylum</tabstop>
+  <tabstop>ckOrder</tabstop>
+  <tabstop>lnedOrder</tabstop>
+  <tabstop>ckSpp</tabstop>
   <tabstop>lnedSpp</tabstop>
+  <tabstop>ckSppCode</tabstop>
+  <tabstop>lnedSppCode</tabstop>
+  <tabstop>ckCommonname</tabstop>
+  <tabstop>lnedCommonname</tabstop>
   <tabstop>btnTaxasubmit</tabstop>
   <tabstop>btnSaveClose</tabstop>
   <tabstop>btnCancel</tabstop>

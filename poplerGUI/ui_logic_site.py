@@ -337,7 +337,7 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
             [self.save_data, lterid_df]
             , axis=1).reset_index(drop=True)
         print('Pushed dataset: ', self.save_data)
-        self.facade.push_tables['sitetable'] = self.save_data
+        self.facade.push_tables['study_site_table'] = self.save_data
 
         # Helpers to keep track of user changes to site names
         hlp.write_column_to_log(
