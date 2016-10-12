@@ -188,6 +188,7 @@ def ObsDialog(sitehandle, filehandle, metahandle):
                 self.preview.tabviewPreview.setModel(self.obsmodel)
                 self.preview.show()
             elif sender is self.btnSaveClose:
+                self.facade.push_tables[self.tablename] = self.obstable
                 hlp.write_column_to_log(
                     self.obslned, self._log, self.tablename)                
                 self.close()
