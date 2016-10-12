@@ -129,6 +129,7 @@ class TaxaDialog(QtGui.QDialog, uitax.Ui_Dialog):
             self.preview.tabviewPreview.setModel(self.taxamodel)
             self.preview.show()
         elif sender is self.btnSaveClose:
+            self.facade.push_tables['taxa_table'] = self.taxa_table
             hlp.write_column_to_log(
                 self.taxalned, self._log, 'taxa_table')                
             self.close()

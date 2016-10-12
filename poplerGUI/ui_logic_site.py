@@ -123,6 +123,7 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
         self.facade.input_register(self.siteini)
         self.facade._valueregister['study_site_key'] = self.siteloc[
             'study_site_key']
+        
         self.message.about(self, 'Status', 'Information recorded')
 
         # Making study_site_table
