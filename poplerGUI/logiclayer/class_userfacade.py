@@ -333,18 +333,23 @@ class Facade:
         # --- Pushing study site table data --- #
         # -------------------------------------- #
 
-        if self.sitepushed is None:
-            try:
-                study_site_table_df.to_sql(
-                    'study_site_table',
-                    orm.conn, if_exists='append', index=False)
-                self.sitepushed = True
-            except Exception as e:
-                print(str(e))
-                self._tablelog['study_site_table'].debug(str(e))
-                raise ValueError(
-                    'Could not push study site table data: ' + str(e)
+        if study_site_table_df.loc[0, 'study_site_key'] != 'NULL':
+            if self.sitepushed is None:
+                try:
+                    study_site_table_df.to_sql(
+                        'study_site_table',
+                        orm.conn, if_exists='append', index=False)
+                    self.sitepushed = True
+                except Exception as e:
+                    print(str(e))
+                    self._tablelog['study_site_table'].debug(str(e))
+                    raise ValueError(
+                        'Could not push study site table data: ' + str(e)
                     )
+            else:
+                pass
+        else:
+            pass
 
         # -------------------------------------- #
         # --- Pushing project table data --- #
@@ -389,12 +394,12 @@ class Facade:
         )
 
         taxa_column_in_data = [
-            x[0] for x in
+            x[1] for x in
             list(self._inputs['taxainfo'].lnedentry.items())
         ]
 
         taxa_column_in_push_table = [
-            x[1] for x in
+            x[0] for x in
             list(self._inputs['taxainfo'].lnedentry.items())
         ]
         print('past taxa')

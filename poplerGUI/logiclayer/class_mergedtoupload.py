@@ -323,6 +323,12 @@ class MergeToUpload(object):
             raw_data_taxa_columns,
             uploaded_taxa_columns):
 
+        print('merged rawdf: ', raw_dataframe)
+        print('merged rawdf: ', raw_dataframe.columns)
+        print('merged formdf: ', formated_dataframe)
+        print('merged formdf: ', formated_dataframe.columns)
+        print('merged class (raw taxa col): ', raw_data_taxa_columns)
+        print('merged class (uploaded taxa col): ', uploaded_taxa_columns)
         orm.replace_numeric_null_with_string(raw_dataframe)
         orm.replace_numeric_null_with_string(formated_dataframe)
 
@@ -343,7 +349,9 @@ class MergeToUpload(object):
         dtype_subset_taxa_key_df = taxa_key_df[
             taxa_key_df['site_in_project_taxa_key'].isin(
                 siteinprojkeydf['site_in_project_key'])]
-
+        print('taxa query table: ', dtype_subset_taxa_key_df)
+        print('taxa query table: ', dtype_subset_taxa_key_df.columns)
+        
         # Step 4) Merge the taxa_table query results with
         # the site_in_project table query that was performed
         # to upload the taxa_table (see above). This gives
@@ -353,6 +361,8 @@ class MergeToUpload(object):
             dtype_subset_taxa_key_df, siteinprojkeydf,
             left_on='site_in_project_taxa_key',
             right_on='site_in_project_key', how='inner')
+        print('taxa merged with query: ', tbl_dtype_merged_taxakey_siteinprojectkey)
+        print('taxa merged with query: ', tbl_dtype_merged_taxakey_siteinprojectkey.columns)
 
         # Step 5) Merge the original dtype data with the
         # merged taxa_table query to have all foreign keys (taxa and site_project)
