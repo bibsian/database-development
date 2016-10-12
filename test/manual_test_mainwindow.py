@@ -90,7 +90,11 @@ def MainWindow():
             metadf = read_csv(
                 rootpath + end + 'data' + end +
                 'Identified_to_upload.csv', encoding='iso-8859-11')
-            metamodel = view.PandasTableModel(metadf)
+            metamodel = view.PandasTableModel(
+                metadf[
+                    ['global_id', 'lter', 'title', 'site_metadata']
+                ]
+            )
             self.tblViewMeta.setModel(metamodel)
 
         def update_data_model(self):
