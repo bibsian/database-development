@@ -84,13 +84,18 @@ class UiMainWindow(QtGui.QMainWindow, mw.Ui_MainWindow):
         self.message = QtGui.QMessageBox
 
         metadf = read_csv(metapath, encoding='iso-8859-11')
-        metamodel = view.PandasTableModel(metadf)
+        metamodel = view.PandasTableModel(
+            metadf[
+                ['global_id', 'lter', 'title', 'site_metadata']
+            ]
+        )
         self.tblViewMeta.setModel(metamodel)
 
     def update_data_model(self):
         newdatamodel = view.PandasTableModel(self.facade._data)
         self.tblViewRaw.setModel(newdatamodel)
         self.dsite.facade = self.facade
+        self.dclimatesite.facade = self.facade
 
     @QtCore.pyqtSlot(object)
     def update_webview(self, url):
@@ -127,7 +132,6 @@ class UiMainWindow(QtGui.QMainWindow, mw.Ui_MainWindow):
     def main_display(self):
         ''' Displays main dialog box'''
         self.dmain.facade = self.facade
-        self.dmain.set_data()
         self.dmain.show()
 
     def taxa_display(self):
@@ -155,22 +159,42 @@ class UiMainWindow(QtGui.QMainWindow, mw.Ui_MainWindow):
             name='updateinfo', tablename='updatetable')
         self.facade.input_register(commithandle)
         try:
-            self.facade.merge_push_data()
-            self.facade.update_main()
+            self.facade.push_merged_data()
             self.actionCommit.setEnabled(False)
             self.message.about(
                 self, 'Status', 'Database transaction complete')
         except Exception as e:
             print(str(e))
-            self.facade._tablelog['maintable'].debug(str(e))
+            self.facade._tablelog['project_table'].debug(str(e))
             self.error.showMessage(
                 'Datbase transaction error: ' + str(e) +
                 '. May need to alter site abbreviations.')
             raise ValueError(str(e))
 
+    def climate_site_display(self):
+        ''' Displays the Site Dialog box'''
+        self.dclimatesite.show()
+        self.dclimatesite.facade = self.facade
+
+    @QtCore.pyqtSlot(object)
+    def climate_site_complete_enabled(self, datamod2):
+        self.actionClimateRawTable.setEnabled(True)
+        self.update_data_model()
+
+    def climate_session_display(self):
+        ''' Displays the Site Dialog box'''
+        self.dclimatesession.show()
+        self.dclimatesession.facade = self.facade
+        self.actionSiteTable.setEnabled(False)
+        self.actionClimateSiteTable.setEnabled(True)
+        metapath = (
+            str(os.getcwd()) + 
+            '/Datasets_manual_test/meta_climate_test.csv')
+        metadf = read_csv(metapath, encoding='iso-8859-11')
+        metamodel = view.PandasTableModel(metadf)
+        self.tblViewMeta.setModel(metamodel)
+
     def end_session(self):
-        self.close()
         subprocess.call(
             "python" + " ../poplerGUI_run_main.py", shell=True)
-
-
+        self.close()
