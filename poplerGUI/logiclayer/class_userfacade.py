@@ -67,8 +67,9 @@ class Facade:
         self._valueregister = {
             'globalid': None,
             'lterid': None,
-            'siteid':None,
-            'sitelevels': None
+            'siteid': None,
+            'sitelevels': None,
+            'study_site_key': None
         }
         self._data = None
         self._dbtabledict = {
@@ -303,8 +304,8 @@ class Facade:
         director.set_siteid(sitecol)
         director.set_sitelevels(uqsitelevels)
 
-        print ('facade table: ', director.get_database_table()._availdf)
         return director.get_database_table()
+
     def push_merged_data(self):
         '''
         Method in facade class to check if all data tables
@@ -312,18 +313,21 @@ class Facade:
         site table can be empty if records are already in the 
         database).
         '''
-
         # Tables created from use input
         study_site_table_df = self.push_tables['study_site_table']
         project_table_df = self.push_tables['project_table']
         taxa_table_df = self.push_tables['taxa_table']
         time_table_df = self.push_tables['timetable']
+        print('facade time table: ', time_table_df)
+        print('facade time table col: ', time_table_df.columns)
         observation_table_df = self.push_tables[
             self._inputs['rawinfo'].tablename]
         observation_table_name = self._inputs['rawinfo'].tablename
         covariate_table_df = self.push_tables['covariates']
         site_levels = self._valueregister['sitelevels']
-        site_location = self._valueregister['siteid']
+        print('facade site levels: ', site_levels)
+        site_location = self._valueregister['study_site_key']
+        print('facade site label: ', site_location)
         lter = self._valueregister['lterid']
         # -------------------------------------- #
         # --- Pushing study site table data --- #

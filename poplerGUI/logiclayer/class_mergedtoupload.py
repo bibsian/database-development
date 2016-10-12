@@ -207,8 +207,12 @@ class MergeToUpload(object):
             project_metadat_key)
 
         print('before deriving data: ', site_in_proj_table_to_push)
+        print('observationtabledf before loop: ', observationtabledf)
+        print('observationtabledf cols before loop: ', observationtabledf.columns)
+        print('studysitelabel before loop: ', studysitelabel)
         yr_all = []
         for i, item in enumerate(study_site_levels_derived):
+            print('in deriving data loop: ', item, i)
             yr_list = observationtabledf[
                 observationtabledf[studysitelabel] == item][
                     'year_derived'].values.tolist()
@@ -285,8 +289,10 @@ class MergeToUpload(object):
         '''
 
         print('starting taxa table upload')
+        print(formated_taxa_table)
         orm.replace_numeric_null_with_string(formated_taxa_table)
         print('past orm replace numeric')
+
         tbl_taxa_with_site_in_proj_key = merge(
             formated_taxa_table, siteinprojkeydf,
             left_on=sitelabel,
@@ -472,19 +478,6 @@ class MergeToUpload(object):
         for i, item in enumerate(spatial_label_col):
             update_dict[item] = spatial_label_val[i]
             update_dict[spatial_uq_num_of_rep_col[i]] = spatial_uq_num_of_rep_val[i]
-
-
-        print(self.metadata_key)
-        print('startyear: ',update_dict['studystartyr'])
-        print('endyear: ', update_dict['studyendyr'])
-        print(
-            'spatial_replication_level_1_label:  ',
-            update_dict['spatial_replication_level_1_label']
-        )
-        print(
-            'spatial_replication_level_2_label:  ',
-            update_dict['spatial_replication_level_2_label']
-        )
 
         orm.conn.execute(
             update(orm.project_table).

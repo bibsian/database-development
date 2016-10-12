@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+4#! /usr/bin/env python
 import pytest
 from collections import namedtuple, OrderedDict
 import datetime as tm
@@ -79,8 +79,9 @@ def Facade():
             self._valueregister = {
                 'globalid': None,
                 'lterid': None,
-                'siteid':None,
-                'sitelevels': None
+                'siteid': None,
+                'sitelevels': None,
+                'study_site_key': None
             }
             self._data = None
             self._dbtabledict = {
@@ -317,7 +318,7 @@ def Facade():
             director.set_sitelevels(uqsitelevels)
             director.set_siteid(sitecol)
 
-            print('facade get db table: ', director.get_database_table()._availdf)
+
             return director.get_database_table()
 
     return Facade
@@ -558,13 +559,11 @@ def test_build_taxa(
     sitelevels = face._data['site'].drop_duplicates().values.tolist()
     sitelevels.sort()
     face.register_site_levels(sitelevels)
-    
     taxadirector = face.make_table('taxainfo')
     df = taxadirector._availdf
     print(df)
-    assert 0
+    print(len(df['site'].name))
     print('test taxa build, userfacade: ', df)
-    
     assert (isinstance(df, DataFrame)) is True
 
 @pytest.fixture
