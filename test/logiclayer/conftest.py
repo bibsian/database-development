@@ -1,6 +1,6 @@
 import pytest
 from pandas import merge, concat, DataFrame, read_sql
-from sqlalchemy import select, update, column, Table
+from sqlalchemy import select, update, column
 from collections import OrderedDict, namedtuple
 import os, sys
 if sys.platform == "darwin":
@@ -560,7 +560,7 @@ def time_handle_1_count():
         'yearname': 'date',
         'yearform': 'dd-mm-YYYY (Any Order)',
         'jd': False,
-        'mspell': False
+        'hms': False
     }
     timeini = ini.InputHandler(
         name='timeinfo', tablename='timetable',
@@ -577,7 +577,7 @@ def time_handle_2_density():
         'yearname': 'YEAR',
         'yearform': 'YYYY',
         'jd': False,
-        'mspell': False
+        'hms': False
     }
     timeini = ini.InputHandler(
         name='timeinfo', tablename='timetable',
@@ -594,7 +594,7 @@ def time_handle_3_biomass():
         'yearname': 'year',
         'yearform': 'YYYY',
         'jd': False,
-        'mspell': False
+        'hms': False
     }
     timeini = ini.InputHandler(
         name='timeinfo', tablename='timetable',
@@ -611,7 +611,7 @@ def time_handle_4_percent_cover():
         'yearname': 'year',
         'yearform': 'YYYY',
         'jd': False,
-        'mspell': False
+        'hms': False
     }
     timeini = ini.InputHandler(
         name='timeinfo', tablename='timetable',
@@ -628,7 +628,7 @@ def time_handle5():
         'yearname': 'YEAR',
         'yearform': 'YYYY',
         'jd': False,
-        'mspell': False
+        'hms': False
     }
     timeini = ini.InputHandler(
         name='timeinfo', tablename='timetable',
@@ -900,7 +900,6 @@ def count_handle5():
 
 @pytest.fixture
 def MergeToUpload():
-
     class MergeToUpload(object):
         '''
         Class that encapsulated the processes of
@@ -1091,7 +1090,8 @@ def MergeToUpload():
             site_in_proj_table_to_push['uniquetaxaunits'] = -99999
             site_in_proj_table_to_push['project_table_fkey'] = int(
                 project_metadat_key)
-
+            print(
+                'before deriving records: ', site_in_proj_table_to_push)
             yr_all = []
             for i, item in enumerate(study_site_levels_derived):
                 yr_list = observationtabledf[
@@ -1172,6 +1172,11 @@ def MergeToUpload():
             print('starting taxa table upload')
             orm.replace_numeric_null_with_string(formated_taxa_table)
             print('past orm replace numeric')
+            print('siteingproj key df: ', siteinprojkeydf)
+            print('siteingproj key df: ', siteinprojkeydf.columns)
+            print('formatted taxa df: ', formated_taxa_table)
+            print('formatted taxa df: ', formated_taxa_table.columns)
+
             tbl_taxa_with_site_in_proj_key = merge(
                 formated_taxa_table, siteinprojkeydf,
                 left_on=sitelabel,
@@ -1362,14 +1367,6 @@ def MergeToUpload():
             print(self.metadata_key)
             print('startyear: ',update_dict['studystartyr'])
             print('endyear: ', update_dict['studyendyr'])
-            print(
-                'spatial_replication_level_1_label:  ',
-                update_dict['spatial_replication_level_1_label']
-            )
-            print(
-                'spatial_replication_level_2_label:  ',
-                update_dict['spatial_replication_level_2_label']
-            )
             
             orm.conn.execute(
                 update(orm.project_table).
