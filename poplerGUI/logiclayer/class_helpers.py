@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-from pandas import  DataFrame, concat
+from pandas import  DataFrame, concat, melt
 import re
 from numpy import where
 from collections import OrderedDict
@@ -8,15 +8,28 @@ from itertools import chain
 __all__ = [
     'string_to_list', 'strip_time', 'year_strip', 'extract',
     'check_int', 'produce_null_df', 'check_registration',
-    'UniqueReplace', 'updated_df_values', 'write_column_to_log']
+    'UniqueReplace', 'updated_df_values', 'write_column_to_log',
+    'wide_to_long'
+]
+
+def wide_to_long(dataframe, value_columns, value_column_name):
+    all_columns = dataframe.columns.values.tolist()
+    id_columns = [x for x in all_columns if x not in value_columns]
+    melted_df = melt(
+        dataframe,
+        value_vars=value_columns, var_name='species_column',
+        id_vars=id_columns, value_name=str(value_column_name)
+    )
+    return melted_df
 
 def string_to_list(userinput):
     '''
     Function to take a string with names separated by
     commas and turn that into a list of names
     '''
-    strtolist = re.sub(
-        ",\s", " ", userinput.rstrip()).split()
+    strtolist = [
+    	x.strip() for x in re.split(',', userinput)
+    ]
     return strtolist
 
 

@@ -475,6 +475,16 @@ def TimeParse():
                 # Year only data
                 if day == 'NULL' and month == 'NULL':
                     print('In YEAR block')
+                    try:
+                        uq_years = self.data[
+                            self.yearname].astype(str).apply(len)
+                        print('parser time: ', uq_years)
+                        assert (len(set(uq_years)) == 1) is True
+                    except:
+                        raise ValueError(
+                            'Inconsistent formatting: ',
+                            list(set(self.data[self.yearname]))
+                        )                        
                     yeardf = self.time_regex(
                         data=self.data, col=[self.yearname],
                         form=self.yformat, nulls=['day', 'month'])
@@ -639,7 +649,76 @@ def TimeParse():
 # Begin Testing
 # Singles (y, m, d)
 # ------
+
+@pytest.fixture
+def yearmod():
+    d = {
+        'dayname': '',
+        'dayform': 'NULL',
+        'monthname': '',
+        'monthform': 'NULL',
+        'yearname': 'ymod',
+        'yearform': 'YYYY',
+        'jd': False,
+        'hms': False
+    }
+    return d
+
+def test_yearmod(df_all, TimeParse, yearmod):
+    alltest = TimeParse(df_all, yearmod)
+    with pytest.raises(ValueError):
+        alltest.formater()
+
+@pytest.fixture
+def blank_cell_dmy():
+    d = {
+        'dayname': 'mdymod',
+        'dayform': 'dd-mm-YYYY (Any Order)',
+        'monthname': 'mdymod',
+        'monthform': 'dd-mm-YYYY (Any Order)',
+        'yearname': 'mdymod',
+        'yearform': 'dd-mm-YYYY (Any Order)',
+        'jd': False,
+        'hms': False
+    }
+    return d
+
+def test_blank_cell(df_all, TimeParse, blank_cell_dmy):
+    alltest = TimeParse(df_all, blank_cell_dmy)
+    alldf = alltest.formater()
+    ytestlist = alldf['year'].values.tolist()
+    print(ytestlist)
     
+
+@pytest.fixture
+def df_blank_line():
+    return read_csv(
+        rootpath + end + 'test' + end +
+        'Datasets_manual_test/time_file_test_blank_line.csv'
+    )
+
+
+@pytest.fixture
+def blank_line_dmy():
+    d = {
+        'dayname': 'mdy',
+        'dayform': 'dd-mm-YYYY (Any Order)',
+        'monthname': 'mdy',
+        'monthform': 'dd-mm-YYYY (Any Order)',
+        'yearname': 'mdy',
+        'yearform': 'dd-mm-YYYY (Any Order)',
+        'jd': False,
+        'hms': False
+    }
+    return d
+
+def test_blank_line(df_blank_line, TimeParse, blank_line_dmy):
+    alltest = TimeParse(df_blank_line, blank_line_dmy)
+    alldf = alltest.formater()
+    print(alldf)
+    
+    
+
 def test_all_diff_julian(df_all, TimeParse, julianyear4):
     alltest = TimeParse(df_all, julianyear4)
     alldf = alltest.formater()

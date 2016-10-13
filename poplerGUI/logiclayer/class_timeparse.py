@@ -240,6 +240,16 @@ class TimeParse(object):
             # Year only data
             if day == 'NULL' and month == 'NULL':
                 print('In YEAR block')
+                try:
+                    uq_years = self.data[
+                        self.yearname].astype(str).apply(len)
+                    print('parser time: ', uq_years)
+                    assert (len(set(uq_years)) == 1) is True
+                except:
+                    raise ValueError(
+                        'Inconsistent formatting: ',
+                        list(set(self.data[self.yearname]))
+                    )
                 yeardf = self.time_regex(
                     data=self.data, col=[self.yearname],
                     form=self.yformat, nulls=['day', 'month'])

@@ -28,7 +28,6 @@ def abscommand():
         instantiating commands throughout
         the UI.
         '''
-
         __meta__ = abc.ABCMeta
 
         @abc.abstractmethod
@@ -66,7 +65,6 @@ def caretakerreceiver():
         '''
         def __init__(self):
             self.caretaker = None
-
         def load_file_caretaker(self):
             self.caretaker = fhndl.FileCaretaker()
             return self.caretaker
@@ -83,13 +81,10 @@ def commandinvoker():
         sent among all the receivers. Right now the
         only reciever is for file loading (but will incoroporate
         reicevers to interact with the database too)
-
         '''
         def __init__(self, commands):
             self.perform_commands = commands
             self.history = {}
-
-
         def load_file_caretaker(self):
             self.perform_commands.execute()
             self.history['caretaker'] = self.perform_commands
@@ -98,13 +93,9 @@ def commandinvoker():
 
 def test_caretaker_command(
         caretakercommander, caretakerreceiver, commandinvoker):
-
     carecommand = caretakercommander(caretakerreceiver())
-
     careinvoker = commandinvoker(carecommand)
-
     careinvoker.load_file_caretaker()
-
     sessioncaretaker = carecommand._caretaker
     print(sessioncaretaker)
     assert isinstance(sessioncaretaker, fhndl.FileCaretaker)

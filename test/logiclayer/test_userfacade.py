@@ -1,4 +1,4 @@
-4#! /usr/bin/env python
+#!/usr/bin/env python
 import pytest
 from collections import namedtuple, OrderedDict
 import datetime as tm
@@ -23,16 +23,13 @@ from poplerGUI.logiclayer.class_commanders import (
 from poplerGUI.logiclayer.class_commanders import (
     CareTakerCommand, CareTakerReceiver)
 from poplerGUI.logiclayer.class_metaverify import MetaVerifier
-
 from poplerGUI.logiclayer.class_helpers import (
     UniqueReplace, check_registration, extract, string_to_list,
     updated_df_values, produce_null_df)
-
 from poplerGUI.logiclayer.class_tablebuilder import (
     Study_Site_Table_Builder, Table_Builder_Director,
     Project_Table_Builder, Taxa_Table_Builder,
     Observation_Table_Builder, UpdaterTableBuilder)
-
 from poplerGUI.logiclayer import class_dictionarydataframe as ddf
 from poplerGUI.logiclayer import class_timeparse as tparse
 from poplerGUI.logiclayer import class_logconfig as log
@@ -60,7 +57,7 @@ def Facade():
         sessioninvoker.load_file_caretaker()
         sessioncaretaker = carecommand._caretaker
         manager = namedtuple(
-            'maanger', 'caretaker invoker')
+            'manager', 'caretaker invoker')
         input_manager = manager(
             sessioncaretaker, sessioninvoker)
 
@@ -118,7 +115,8 @@ def Facade():
                 'covartable': None,
                 'climatesite': None,
                 'climateobs': None,
-                'addsite': None
+                'addsite': None,
+                'widetolong': None
             }
 
             self._colinputlog = {
@@ -159,6 +157,7 @@ def Facade():
             self.input_manager.invoker.make_proxy_data()
             self.input_manager.caretaker.save_to_memento(
                 proxycmd._proxy.create_memento())
+            print(self.input_manager)
             self._data = (
                 self.input_manager.caretaker.restore_memento(
                     label))
@@ -555,6 +554,9 @@ def test_build_taxa(
     face.input_register(filehandle)
     face.load_data()
     face.input_register(sitehandle)
+    print('caretaker: ', face.input_manager.caretaker)
+    print('invoker: ', face.input_manager.invoker.history)
+    assert 0
     face.input_register(taxa_user_input)
     sitelevels = face._data['site'].drop_duplicates().values.tolist()
     sitelevels.sort()

@@ -106,7 +106,8 @@ class Facade:
             'covartable': None,
             'climatesite': None,
             'climateobs': None,
-            'addsite': None
+            'addsite': None,
+            'widetolong': None
         }
 
         self._colinputlog = {
@@ -163,9 +164,9 @@ class Facade:
         self.clsinstance = clsinstance
         try:
             self._inputs[self.clsinstance.name] = self.clsinstance
-        except:
+        except Exception as e:
             raise AttributeError(
-                'Wrong class input for program facade.')
+                'Wrong class input for program facade: ', str(e))
 
     def meta_verify(self):
         '''
