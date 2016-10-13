@@ -1,15 +1,17 @@
 #!/usr/bin/env python
 import pytest
 import pytestqt
-from pandas import read_sql, DataFrame, concat
+from pandas import read_sql, DataFrame, concat, read_csv
 from PyQt4 import QtGui, QtCore
 import sys,os
 if sys.platform == "darwin":
     rootpath = (
         "/Users/bibsian/Desktop/git/database-development/")
+    end = "/"
 elif sys.platform == "win32":
     rootpath = (
         "C:\\Users\MillerLab\\Desktop\\database-development\\")
+    end = "\\"
 sys.path.append(os.path.realpath(os.path.dirname(
     rootpath)))
 os.chdir(rootpath)
@@ -424,6 +426,19 @@ def MainWindow():
             # actions
             self.actionStart_Session.triggered.connect(
                 self.session_display)
+
+            self.mdiArea.addSubWindow(self.subwindow_2)
+            self.mdiArea.addSubWindow(self.subwindow_1)
+
+            metadf = read_csv(
+                rootpath + end + 'data' + end +
+                'Identified_to_upload.csv', encoding='iso-8859-11')
+            metamodel = view.PandasTableModel(
+                metadf[
+                    ['global_id', 'lter', 'title', 'site_metadata']
+                ]
+            )
+            self.tblViewMeta.setModel(metamodel)
 
 
         def update_data_model(self):

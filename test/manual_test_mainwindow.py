@@ -5,7 +5,6 @@ from PyQt4 import QtGui, QtCore
 from pandas import read_csv
 import subprocess
 import sys,os
-import unicodedata
 if sys.platform == "darwin":
     rootpath = (
         "/Users/bibsian/Desktop/git/database-development")
@@ -24,6 +23,7 @@ from poplerGUI import ui_logic_time as timelogic
 from poplerGUI import ui_logic_obs as rawlogic
 from poplerGUI import ui_logic_covar as covarlogic
 from poplerGUI import ui_logic_climatesite as climsitelogic
+from poplerGUI import ui_logic_widetolong as widetolonglogic
 from poplerGUI.logiclayer import class_userfacade as face
 from poplerGUI import class_modelviewpandas as view
 from poplerGUI import class_inputhandler as ini
@@ -52,8 +52,11 @@ def MainWindow():
             self.dcovar = covarlogic.CovarDialog()
             self.dclimatesite = climsitelogic.ClimateSite()
             self.dclimatesession = sesslogic.SessionDialog()
-
+            self.dwidetolong = widetolonglogic.WidetoLongDialog()
+            
             # Actions
+            self.actionConvert_Wide_to_Long.triggered.connect(
+                self.wide_to_long_display)
             self.actionSiteTable.triggered.connect(self.site_display)
             self.actionStart_Session.triggered.connect(
                 self.session_display)
@@ -76,6 +79,7 @@ def MainWindow():
             
             # Custom Signals
             self.dsite.site_unlocks.connect(self.site_complete_enable)
+            self.dwidetolong.update_data.connect(self.update_data_model)
             self.dclimatesite.climatesite_unlocks.connect(
                 self.climate_site_complete_enabled)
             self.dsession.raw_data_model.connect(
@@ -97,6 +101,7 @@ def MainWindow():
             )
             self.tblViewMeta.setModel(metamodel)
 
+        @QtCore.pyqtSlot(object)
         def update_data_model(self):
             newdatamodel = view.PandasTableModel(self.facade._data)
             self.tblViewRaw.setModel(newdatamodel)
@@ -120,6 +125,11 @@ def MainWindow():
             self.actionCovariates.setEnabled(True)
             self.update_data_model()
 
+        def wide_to_long_display(self):
+            ''' Displays dialog box to melt data '''
+            self.dwidetolong.show()
+            self.dwidetolong.facade = self.facade
+            
         def site_display(self):
             ''' Displays the Site Dialog box'''
             self.dsite.show()
