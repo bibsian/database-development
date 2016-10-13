@@ -22,7 +22,7 @@ def engine():
     ''' engine for creating connection and executing statements'''
     engine = create_engine(
         'postgresql+psycopg2:///',
-        echo=True)
+        echo=False)
     return engine
 
 @pytest.fixture

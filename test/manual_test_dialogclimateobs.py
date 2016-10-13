@@ -15,12 +15,12 @@ elif sys.platform == "win32":
 sys.path.append(os.path.realpath(os.path.dirname(
     rootpath)))
 os.chdir(rootpath)
-from test import ui_dialog_climateobs as climobs
-from test import ui_logic_preview as prev
-from test import class_modelviewpandas as view
-from test import class_inputhandler as ini
-from test.logiclayer import class_userfacade as face
-from test.logiclayer import class_helpers as hlp
+from Views import ui_dialog_climateobs as climobs
+from poplerGUI import ui_logic_preview as prev
+from poplerGUI import class_modelviewpandas as view
+from poplerGUI import class_inputhandler as ini
+from poplerGUI.logiclayer import class_userfacade as face
+from poplerGUI.logiclayer import class_helpers as hlp
 
 @pytest.fixture
 def metahandle():

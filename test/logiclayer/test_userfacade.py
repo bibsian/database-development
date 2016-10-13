@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#!/usr/bin/env python
 import pytest
 from collections import namedtuple, OrderedDict
 import datetime as tm
@@ -6,14 +6,12 @@ from pandas import merge, concat, DataFrame, read_csv, read_sql, to_numeric
 import sys, os
 if sys.platform == "darwin":
     rootpath = (
-        "/Users/bibsian/Desktop/git/database-development/" +
-        "test/")
+        "/Users/bibsian/Desktop/git/database-development/")
     end = "/"
 
 elif sys.platform == "win32":
     rootpath = (
-        "C:\\Users\MillerLab\\Desktop\\database-development" +
-        "\\test\\")
+        "C:\\Users\MillerLab\\Desktop\\database-development")
     end = "\\"
 
 from poplerGUI.logiclayer.class_commanders import (
@@ -25,16 +23,13 @@ from poplerGUI.logiclayer.class_commanders import (
 from poplerGUI.logiclayer.class_commanders import (
     CareTakerCommand, CareTakerReceiver)
 from poplerGUI.logiclayer.class_metaverify import MetaVerifier
-
 from poplerGUI.logiclayer.class_helpers import (
     UniqueReplace, check_registration, extract, string_to_list,
     updated_df_values, produce_null_df)
-
 from poplerGUI.logiclayer.class_tablebuilder import (
     Study_Site_Table_Builder, Table_Builder_Director,
     Project_Table_Builder, Taxa_Table_Builder,
     Observation_Table_Builder, UpdaterTableBuilder)
-
 from poplerGUI.logiclayer import class_dictionarydataframe as ddf
 from poplerGUI.logiclayer import class_timeparse as tparse
 from poplerGUI.logiclayer import class_logconfig as log
@@ -62,7 +57,7 @@ def Facade():
         sessioninvoker.load_file_caretaker()
         sessioncaretaker = carecommand._caretaker
         manager = namedtuple(
-            'maanger', 'caretaker invoker')
+            'manager', 'caretaker invoker')
         input_manager = manager(
             sessioncaretaker, sessioninvoker)
 
@@ -72,7 +67,6 @@ def Facade():
             user inputs (for logging and session management).
             Class instances will be registered with the 
             input dictionary. 
-
             In addtion a filecaretaker will be instantiated
             when a raw data file is loaded. This will help track
             changes to data
@@ -82,8 +76,9 @@ def Facade():
             self._valueregister = {
                 'globalid': None,
                 'lterid': None,
-                'siteid':None,
-                'sitelevels': None
+                'siteid': None,
+                'sitelevels': None,
+                'study_site_key': None
             }
             self._data = None
             self._dbtabledict = {
@@ -108,6 +103,7 @@ def Facade():
             self._tablelog = {
                 'study_site_table': None,
                 'project_table': None,
+                'maintable': None,
                 'maintable_update': None,
                 'timetable': None,
                 'taxa_table': None,
@@ -118,7 +114,9 @@ def Facade():
                 'individual_table': None,
                 'covartable': None,
                 'climatesite': None,
-                'climateobs': None
+                'climateobs': None,
+                'addsite': None,
+                'widetolong': None
             }
 
             self._colinputlog = {
@@ -140,12 +138,14 @@ def Facade():
                 'density_table': None,
                 'percent_cover_table': None,
                 'individual_table': None,
-                'covariates': None
+                'covariates': None,
+                'covartable': None
             }
 
             self.pushtables = None
             self.sitepushed = None
             self.mainpushed = None
+            self.siteinproject = None
             self.taxapushed = None
             self.rawpushed = None
             
@@ -157,6 +157,7 @@ def Facade():
             self.input_manager.invoker.make_proxy_data()
             self.input_manager.caretaker.save_to_memento(
                 proxycmd._proxy.create_memento())
+            print(self.input_manager)
             self._data = (
                 self.input_manager.caretaker.restore_memento(
                     label))
@@ -191,8 +192,8 @@ def Facade():
                 pass
             else:
                 verifier._meta = read_csv((
-                    rootpath + end + 'Datasets_manual_test' + end +
-                    'meta_file_test.csv'),
+                    rootpath + end + 'data' + end +
+                    'Identified_to_upload.csv'),
                     encoding='iso-8859-11')
 
             try:
@@ -214,14 +215,11 @@ def Facade():
             self.input_manager attribute. This meas all
             commands are registered with the invoker and all
             loaded data is regeristered with the file caretaker
-
             1) Load Data via the LoadDataCommand (register with
             invoker and registed data loaded with file caretaker)
-
             2) Generate proxy data from MakeProxyCommander (
             register command with invoker and register proxy
             data with file caretaker)
-
             return a proxy of the original dataset loaded.
             
             '''
@@ -282,7 +280,7 @@ def Facade():
 
             self._tablelog[tablename] =(
                 log.configure_logger('tableformat',(
-                    'Logs_UI/{}_{}_{}_{}.log'.format(
+                    'logs/{}_{}_{}_{}.log'.format(
                         globalid, tablename,filename,dt))))
         
         def make_table(self, inputname):
@@ -291,19 +289,22 @@ def Facade():
             that contain informatoin that will be pushed into 
             the database. The formating of the tables is handled by
             class_tablebuilder.py module.
-
             Additionally logging of table specific informatoin
             is initiated here.
             '''
             uniqueinput = self._inputs[inputname]
+            print('uqinput facade:', uniqueinput)
             tablename = self._inputs[inputname].tablename
+            print('tbl name facade: ', tablename)
             globalid = self._inputs['metacheck'].lnedentry['globalid']
+            print('globalid facade: ', globalid)
             sitecol = self._inputs['siteinfo'].lnedentry['study_site_key']
             uqsitelevels = self._valueregister['sitelevels']
             
             director = Table_Builder_Director()           
             builder = self._dbtabledict[tablename]
             director.set_user_input(uniqueinput)
+            director.set_globalid(globalid)
             director.set_builder(builder)
 
             if tablename != 'project_table':
@@ -311,11 +312,11 @@ def Facade():
             else:
                 metaverify = MetaVerifier(self._inputs['metacheck'])
                 metadata = metaverify._meta
-                director.set_data(metadata.iloc[globalid-1,:])
+                director.set_data(metadata[metadata['global_id'] == globalid].copy())
 
-            director.set_globalid(globalid)
-            director.set_siteid(sitecol)
             director.set_sitelevels(uqsitelevels)
+            director.set_siteid(sitecol)
+
 
             return director.get_database_table()
 
@@ -328,7 +329,7 @@ def Facade():
 @pytest.fixture
 def badmetahandle():
     lentry = {
-        'globalid': 5,
+        'globalid': 1,
         'metaurl': ('http://sbc.lternet.edu/cgi-bin/showDataset' +
                     '.cgi?docid=knb-lter-sbc.17'),
         'lter': 'SBC'}
@@ -352,9 +353,10 @@ def test_incorrect_userinput(badmetahandle, Facade):
 @pytest.fixture
 def metahandle():
     lentry = {
-        'globalid': 1,
-        'metaurl': ('http://sev.1.test.rice.com'),
-        'lter': 'SEV'}
+        'globalid': 3,
+        'metaurl': (
+            'http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.19'),
+        'lter': 'SBC'}
     ckentry = {}
     metainput = InputHandler(
         name='metacheck', tablename=None, lnedentry=lentry,
@@ -394,7 +396,7 @@ def filehandle():
         name='fileoptions',tablename=None, lnedentry=lned,
         rbtns=rbtn, checks=ckentry, session=True,
         filename=(
-            rootpath + end + 'Datasets_manual_test' + end +
+            rootpath + end + 'test' + end + 'Datasets_manual_test' + end +
             'raw_data_test_1.csv'))
 
     return fileinput
@@ -402,10 +404,8 @@ def filehandle():
 def test_file_loader(filehandle, Facade):
     '''
     Testing the file_load command of the facade class.
-
     NOTE ONLY TESTED FOR CSV FILES ****
     STILL NEED TO EXTEND BEHAVIOR FOR OTHER FILES***
-
     '''
     face = Facade()
     face.input_register(filehandle)
@@ -430,6 +430,7 @@ def test_register_sitelevels(Facade):
     face.register_site_levels(test)
     assert (
         isinstance(face._valueregister['sitelevels'], list)) is True
+    del face
 
 
 def test_build_site(sitehandle, Facade, filehandle, metahandle):
@@ -461,25 +462,26 @@ def project_table_input():
     return main_input
 
 def test_build_project_table(
-        sitehandle, Facade, filehandle, metahandle, project_table_input):
+        sitehandle, Facade, filehandle, metahandle, project_table_input,
+        project_handle_1_count):
     face = Facade()
     face.input_register(metahandle)
     face.meta_verify()
     face.input_register(filehandle)
     face.load_data()
     face.input_register(sitehandle)
-    face.input_register(project_table_input)
+    face.input_register(project_handle_1_count)
     sitelevels = face._data['site'].drop_duplicates().values.tolist()
     sitelevels.sort()
     face.register_site_levels(sitelevels)
     
     maindirector = face.make_table('maininfo')
     df = maindirector._availdf
-    print(df)
+    print('test facade build: ',df)
     assert (isinstance(df, DataFrame)) is True
     assert (
         df['proj_metadata_key'].drop_duplicates().values.tolist() ==
-        [1]) is True
+        [3]) is True
 
 # ------------------------------------------------------ #
 # ---------------- Taxa table build test --------------- #
@@ -552,14 +554,18 @@ def test_build_taxa(
     face.input_register(filehandle)
     face.load_data()
     face.input_register(sitehandle)
+    print('caretaker: ', face.input_manager.caretaker)
+    print('invoker: ', face.input_manager.invoker.history)
+    assert 0
     face.input_register(taxa_user_input)
     sitelevels = face._data['site'].drop_duplicates().values.tolist()
     sitelevels.sort()
     face.register_site_levels(sitelevels)
-    
     taxadirector = face.make_table('taxainfo')
     df = taxadirector._availdf
     print(df)
+    print(len(df['site'].name))
+    print('test taxa build, userfacade: ', df)
     assert (isinstance(df, DataFrame)) is True
 
 @pytest.fixture
@@ -614,4 +620,3 @@ def test_build_count(
     df = countdirector._availdf
     print(df)
     assert (isinstance(df, DataFrame)) is True
-

@@ -5,23 +5,23 @@ from PyQt4 import QtGui
 import sys,os
 if sys.platform == "darwin":
     rootpath = (
-        "/Users/bibsian/Desktop/git/database-development/" +
-        "test/")
+        "/Users/bibsian/Desktop/git/database-development/")
+    end = "/"
 elif sys.platform == "win32":
     rootpath = (
-        "C:\\Users\MillerLab\\Desktop\\database-development" +
-        "\\test\\")
+        "C:\\Users\MillerLab\\Desktop\\database-development")
+    end = "\\"
 sys.path.append(os.path.realpath(os.path.dirname(
     rootpath)))
 os.chdir(rootpath)
-from test import class_inputhandler as ini
-from test import class_userfacade as face
-from test import class_modelviewpandas as views
-from test import ui_dialog_covariate as covar
-from test import ui_logic_preview as tprev
+from poplerGUI import class_inputhandler as ini
+from poplerGUI import class_modelviewpandas as views
+from poplerGUI import ui_logic_preview as tprev
+from Views import ui_dialog_covariate as covar
 
-from test.logiclayer import class_helpers as hlp
-from test.logiclayer import class_dictionarydataframe as ddf
+from poplerGUI.logiclayer import class_userfacade as face
+from poplerGUI.logiclayer import class_helpers as hlp
+from poplerGUI.logiclayer import class_dictionarydataframe as ddf
 
 @pytest.fixture
 def metahandle():
@@ -45,15 +45,18 @@ def filehandle():
     fileinput = ini.InputHandler(
         name='fileoptions',tablename=None, lnedentry=lned,
         rbtns=rbtn, checks=ckentry, session=True,
-        filename='raw_data_test.csv')
+        filename= (
+            rootpath + end + 'test' + end + 'Datasets_manual_test' +
+            end + 'raw_data_test_1.csv'
+        ))
 
     return fileinput
 
 @pytest.fixture
 def sitehandle():
-    lned = {'siteid': 'SITE'}
+    lned = {'study_site_key': 'site'}
     sitehandle = ini.InputHandler(
-        name='siteinfo', lnedentry=lned, tablename='sitetable')
+        name='siteinfo', lnedentry=lned, tablename='study_site_table')
     return sitehandle
 
 @pytest.fixture
@@ -78,7 +81,7 @@ def CovarDialog(metahandle, filehandle, sitehandle):
             self.facade.load_data()
             self.facade.input_register(sitehandle)
             sitelevels = self.facade._data[
-                'SITE'].drop_duplicates().values.tolist()
+                'site'].drop_duplicates().values.tolist()
             self.facade.register_site_levels(sitelevels)
 
             # Attributes

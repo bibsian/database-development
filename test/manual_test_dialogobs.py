@@ -6,21 +6,24 @@ from collections import OrderedDict
 import sys,os
 if sys.platform == "darwin":
     rootpath = (
-        "/Users/bibsian/Desktop/git/database-development/" +
-        "test/")
+        "/Users/bibsian/Desktop/git/database-development/")
+    end = "/"
+    
 elif sys.platform == "win32":
     rootpath = (
-        "C:\\Users\MillerLab\\Desktop\\database-development" +
-        "\\test\\")
+        "C:\\Users\MillerLab\\Desktop\\database-development")
+    end = "\\"
+
+    
 sys.path.append(os.path.realpath(os.path.dirname(
     rootpath)))
 os.chdir(rootpath)
-from test import ui_dialog_obs as obs
-from test import ui_logic_preview as prev
-from test import class_modelviewpandas as view
-from test import class_inputhandler as ini
-from test.logiclayer import class_userfacade as face
-from test.logiclayer import class_helpers as hlp
+from Views import ui_dialog_obs as obs
+from poplerGUI import ui_logic_preview as prev
+from poplerGUI import class_modelviewpandas as view
+from poplerGUI import class_inputhandler as ini
+from poplerGUI.logiclayer import class_userfacade as face
+from poplerGUI.logiclayer import class_helpers as hlp
 
 @pytest.fixture
 def metahandle():
@@ -45,16 +48,17 @@ def filehandle():
         name='fileoptions',tablename=None, lnedentry=lned,
         rbtns=rbtn, checks=ckentry, session=True,
         filename=
-        str(os.getcwd()) + '/Datasets_manual_test/' +
+        rootpath + end + 'test' + end +
+        'Datasets_manual_test' + end + 
         'raw_data_test_1.csv')
 
     return fileinput
 
 @pytest.fixture
 def sitehandle():
-    lned = {'siteid': 'SITE'}
+    lned = {'study_site_key': 'site'}
     sitehandle = ini.InputHandler(
-        name='siteinfo', lnedentry=lned, tablename='sitetable')
+        name='siteinfo', lnedentry=lned, tablename='study_site_table')
     return sitehandle
     
 @pytest.fixture
@@ -74,8 +78,9 @@ def ObsDialog(sitehandle, filehandle, metahandle):
             self.facade.load_data()
             self.facade.input_register(sitehandle)
             sitelevels = self.facade._data[
-                'SITE'].drop_duplicates().values.tolist()
+                'site'].drop_duplicates().values.tolist()
             self.facade.register_site_levels(sitelevels)
+
 
             # Place holders for user inputs
             self.obslned = {}
@@ -97,6 +102,8 @@ def ObsDialog(sitehandle, filehandle, metahandle):
             self.btnPreview.clicked.connect(self.submit_change)
             self.btnSaveClose.clicked.connect(self.submit_change)
             self.btnCancel.clicked.connect(self.close)
+            self.tablename = None
+            self.table = None
 
             # Update boxes/preview box
             self.message = QtGui.QMessageBox
@@ -106,44 +113,63 @@ def ObsDialog(sitehandle, filehandle, metahandle):
         def submit_change(self):
             sender = self.sender()
             self.obslned = OrderedDict((
-                ('spt_rep2', self.lnedRep2.text()),
-                ('spt_rep3', self.lnedRep3.text()),
-                ('spt_rep4', self.lnedRep4.text()),
-                ('structure', self.lnedStructure.text()),
-                ('individ', self.lnedIndividual.text()),
-                ('trt_label', self.lnedTreatment.text()),
+                ('spatial_replication_level_2', self.lnedRep2.text()),
+                ('spatial_replication_level_3', self.lnedRep3.text()),
+                ('spatial_replication_level_4', self.lnedRep4.text()),
+                ('spatial_replication_level_5', self.lnedRep5.text()),
+                ('structured_type_1', self.lnedStructure1.text()),
+                ('structured_type_2', self.lnedStructure2.text()),
+                ('structured_type_3', self.lnedStructure3.text()),
+                ('treatment_type_1', self.lnedTreatment1.text()),
+                ('treatment_type_2', self.lnedTreatment2.text()),
+                ('treatment_type_3', self.lnedTreatment3.text()),
                 ('unitobs', self.lnedRaw.text())
             ))
 
             self.obsckbox = OrderedDict((
-                ('spt_rep2', self.ckRep2.isChecked()),
-                ('spt_rep3', self.ckRep3.isChecked()),
-                ('spt_rep4', self.ckRep4.isChecked()),
-                ('structure', self.ckStructure.isChecked()),
-                ('individ', self.ckIndividual.isChecked()),
-                ('trt_label', self.ckTreatment.isChecked()),
-                ('unitobs', False)
+                ('spatial_replication_level_2', self.ckRep2.isChecked()),
+                ('spatial_replication_level_3', self.ckRep3.isChecked()),
+                ('spatial_replication_level_4', self.ckRep4.isChecked()),
+                ('spatial_replication_level_5', self.ckRep5.isChecked()),
+                ('structured_type_1', self.ckStructure1.isChecked()),
+                ('structured_type_2', self.ckStructure2.isChecked()),
+                ('structured_type_3', self.ckStructure3.isChecked()),
+                ('treatment_type_1', self.ckTreatment1.isChecked()),
+                ('treatment_type_2', self.ckTreatment2.isChecked()),
+                ('treatment_type_3', self.ckTreatment3.isChecked()),
+                ('unitobs', True)
             ))
-
+            self.table = {
+                'count_table': self.rbtnCount.isChecked(),
+                'biomass_table': self.rbtnBiomass.isChecked(),
+                'density_table': self.rbtnDensity.isChecked(),
+                'percent_cover_table': self.rbtnPercentcover.isChecked(),
+                'individual_table': self.rbtnIndividual.isChecked() 
+            }
             available = [
                 x for x,y in zip(
                     list(self.obslned.keys()), list(
                         self.obsckbox.values()))
-                if y is False
+                if y is True
             ]
-
+            self.tablename = [
+                x for x, y in
+                zip(list(self.table.keys()), list(self.table.values()))
+                if y is True
+            ][0]
             rawini = ini.InputHandler(
                 name='rawinfo',
-                tablename='rawtable',
+                tablename= self.tablename,
                 lnedentry= hlp.extract(self.obslned, available),
                 checks=self.obsckbox)
 
             self.facade.input_register(rawini)
-            self.facade.create_log_record('rawtable')
-            self._log = self.facade._tablelog['rawtable']
-            
+            self.facade.create_log_record(self.tablename)
+            self._log = self.facade._tablelog[self.tablename]
+
             try:
                 self.rawdirector = self.facade.make_table('rawinfo')
+                print('obs table build: ', self.rawdirector)
                 assert self.rawdirector._availdf is not None
 
             except Exception as e:
@@ -151,17 +177,20 @@ def ObsDialog(sitehandle, filehandle, metahandle):
                 self._log.debug(str(e))
                 self.error.showMessage(
                     'Column(s) not identified')
-                raise AttributeError('Column(s) not identified')
-
+                raise AttributeError(
+                    'Column(s) not identified: ' + str(e))
 
             self.obstable = self.rawdirector._availdf.copy()
-            self.obsmodel = self.viewEdit(self.obstable)
+            self.obsmodel = self.viewEdit(
+                self.obstable.drop(
+                    self.obstable[['index', 'level_0']], axis=1))
             if sender is self.btnPreview:
                 self.preview.tabviewPreview.setModel(self.obsmodel)
                 self.preview.show()
             elif sender is self.btnSaveClose:
+                self.facade.push_tables[self.tablename] = self.obstable
                 hlp.write_column_to_log(
-                    self.obslned, self._log, 'rawtable')                
+                    self.obslned, self._log, self.tablename)                
                 self.close()
 
         

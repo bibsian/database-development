@@ -1,7 +1,8 @@
+from collections import OrderedDict
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import *
-from sqlalchemy.dialects.postgresql import *
-from sqlalchemy.orm import sessionmaker, load_only
+from sqlalchemy import (
+    select, update, MetaData, create_engine, Table, column)
+from sqlalchemy.orm import sessionmaker
 import pandas as pd
 import pprint as pp
 import sys, os
@@ -14,9 +15,90 @@ elif sys.platform == "win32":
     rootpath = (
         "C:\\Users\MillerLab\\Desktop\\database-development\\")
     end = "\\"
+os.chdir(rootpath)
+from poplerGUI.logiclayer.datalayer import config as orm
+from poplerGUI.logiclayer import class_helpers as hlp
+
+obslned = OrderedDict((
+    ('spatial_replication_level_2', 'transect'),
+    ('spatial_replication_level_3', 'plot'),
+    ('spatial_replication_level_4', ''),
+    ('spatial_replication_level_5', ''),
+    ('structured_type_1', ''),
+    ('structured_type_2', ''),
+    ('structured_type_3', ''),
+    ('treatment_type_1', ''),
+    ('treatment_type_2', ''),
+    ('treatment_type_3', ''),
+    ('unitobs', 'count')
+))
+obsckbox = OrderedDict((
+    ('spatial_replication_level_2', True),
+    ('spatial_replication_level_3', True),
+    ('spatial_replication_level_4', False),
+    ('spatial_replication_level_5', False),
+    ('structured_type_1', False),
+    ('structured_type_2', False),
+    ('structured_type_3', False),
+    ('treatment_type_1', False),
+    ('treatment_type_2', False),
+    ('treatment_type_3', False),
+    ('unitobs', True)
+))
+available = [
+    x for x,y in zip(
+        list(obslned.keys()), list(
+            obsckbox.values()))
+    if y is True
+]
+obslned_extracted = hlp.extract(obslned, available)
+study_site_label = 'site'
+obs_columns_in_data = [
+    x[1] for x in 
+    list(obslned_extracted.items())
+]
+obs_columns_in_push_table = [
+    x[0] for x in 
+    list(obslned_extracted.items())
+]
+spatial_index = [
+    i for i, item in enumerate(obs_columns_in_push_table)
+    if 'spatial' in item]
+spatial_label = [study_site_label]
+spatial_key = ['spatial_replication_level_1_label']
+for i in range(len(spatial_index)):
+    spatial_key.append(obs_columns_in_push_table[i]+'_label')
+    spatial_label.append(obs_columns_in_data[i])
+
+update_dict = {}
+for i, item in enumerate(spatial_key):
+    update_dict[item] = spatial_label[i]
+
+
+orm.conn.execute(
+    update(orm.project_table).
+    where(column('proj_metadata_key') == 1).
+    values(update_dict)
+)
+
+
+
+
+
+session = orm.Session()
+sitecheck = session.query(
+    orm.study_site_table.__table__).order_by(
+        orm.study_site_table.__table__.c.study_site_key).filter(
+            orm.study_site_table.__table__.c.lter_table_fkey == 'SBC')
+sitecheckdf = pd.read_sql(
+    sitecheck.statement, sitecheck.session.bind)
+sitecheckdf['test'] = [i for i in range(len(sitecheckdf))]
+
+sitecheckdf.loc[:,'test'].idxmax()
+sitecheckdf.loc[:,'test'].idxmin()
 
 engine = create_engine(
-    'postgresql+psycopg2:///',
+    'postgresql+psycopg2://postgres:demography@localhost/popler_3',
     echo=True)
 metadata = MetaData(bind=engine)
 base = declarative_base()
@@ -43,6 +125,19 @@ class percent_cover_table(base):
     __table__ = Table('percent_cover_table', metadata, autoload=True)
 class individual_table(base):
     __table__ = Table('individual_table', metadata, autoload=True)
+
+
+
+Session = sessionmaker(bind=engine)
+session = Session()
+sitecheck = session.query(
+    study_site_table.study_site_key).order_by(
+        study_site_table.study_site_key).filter(
+            study_site_table.lter_table_fkey == 'SBC'
+            )
+session.close()
+sitecheckdf = pd.read_sql(
+    sitecheck.statement, sitecheck.session.bind)
 
 
 # First subquery links the site_in_project_table

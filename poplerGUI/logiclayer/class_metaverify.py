@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 import sys
-from pandas import read_csv
+from pandas import read_csv, read_sql
+from poplerGUI.logiclayer.datalayer import config as orm
 
 __all__ = ['MetaVerifier']
 
@@ -9,7 +10,6 @@ class MetaVerifier(object):
     This is going to be a Singleton pattern i.e. 
     only one instance of this class will be created 
     in the whole program.
-
     Keyword Arguments
     -----------------
     idnumber: integer
@@ -19,14 +19,14 @@ class MetaVerifier(object):
 
     if sys.platform == "darwin":
         metapath = (
-        "/Users/bibsian/Desktop/git/database-development/test/" +
-        "Datasets_manual_test/meta_file_test.csv")
+        "/Users/bibsian/Desktop/git/database-development/data/" +
+        "Identified_to_upload.csv")
 
     elif sys.platform == "win32":
         metapath = (
         "C:\\Users\MillerLab\\Desktop\\database-development" +
-        "\\test\\Datasets_manual_test\\meta_file_test.csv")
-
+        "\\data\\Identified_to_upload.csv")
+        
     _meta = read_csv(metapath, encoding='iso-8859-11')
 
     def __init__(self,  inputclsinstance):
@@ -54,7 +54,20 @@ class MetaVerifier(object):
                     'Plese enter the globalid number.')
 
             try:
+                session = orm.Session()
+                global_check_q = session.query(
+                    orm.project_table.proj_metadata_key).order_by(
+                        orm.project_table.proj_metadata_key)
+                session.close()
+                global_check_df = read_sql(
+                    global_check_q.statement,
+                    global_check_q.session.bind)
 
+                uploaded_globals = global_check_df[
+                    'proj_metadata_key'].values.tolist()
+
+                assert self.idnumber not in uploaded_globals
+                
                 assert (self._meta.loc[
                     self._meta['global_id']== self.idnumber][
                             'global_id'] == 
@@ -71,8 +84,10 @@ class MetaVerifier(object):
                         == self.metaurl).bool() is True
 
                 return True
-            except:
+            except Exception as e:
+                print(str(e))
                 raise LookupError(
                     "The verification attributes have not been set" +
-                    " correctly. Please check values for the " +
-                    "global_id, LTER location, and metadata url.")
+                    " correctly. Or global_id is already present: " +
+                    str(e)
+                )

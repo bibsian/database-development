@@ -205,7 +205,13 @@ project_table = Table(
     # META: This column specifies the type of information
     # about the sampling organisms life stage
     # ie. size, age, life-stage 
-    Column('structured',  VARCHAR(50)),
+    Column('structured_type_1',  VARCHAR(50)),
+    Column('structured_type_1_units',  VARCHAR(50)),
+    Column('structured_type_2',  VARCHAR(50)),
+    Column('structured_type_2_units',  VARCHAR(50)),
+    Column('structured_type_3',  VARCHAR(50)),
+    Column('structured_type_3_units',  VARCHAR(50)),
+    
     Column('studystartyr', NUMERIC),
     Column('studyendyr', NUMERIC),
 
@@ -261,8 +267,16 @@ project_table = Table(
     Column('spatial_replication_level_4_label', VARCHAR(200)),
     Column('spatial_replication_level_4_number_of_unique_reps', NUMERIC),
 
+    Column('spatial_replication_level_5_extent', NUMERIC),
+    Column('spatial_replication_level_5_extent_units', VARCHAR(200)),
+    Column('spatial_replication_level_5_label', VARCHAR(200)),
+    Column('spatial_replication_level_5_number_of_unique_reps', NUMERIC),
+    
     # Columns regarding treatments
-    Column('treatment_type', VARCHAR(200)),
+    Column('treatment_type_1', VARCHAR(200)),
+    Column('treatment_type_2', VARCHAR(200)),
+    Column('treatment_type_3', VARCHAR(200)),
+
     Column('derived', VARCHAR(200)),
     
     # Columns relating to author, metadata, other sources
@@ -342,8 +356,6 @@ taxa_accepted_table = Table(
     Column('taxa_accepted_table_key', Integer, primary_key=True),
     Column('taxa_original_fkey', None, ForeignKey(
         'taxa_table.taxa_table_key', ondelete="CASCADE")),
-    Column('site_in_project_taxa_accepted_key', None, ForeignKey(
-        'site_in_project_table.site_in_project_key', ondelete="CASCADE")),
     Column('sppcode', VARCHAR(100)),
     Column('kingdom_accepted', VARCHAR(100)),
     Column('subkingdom_accepted', VARCHAR(100)),
@@ -380,10 +392,15 @@ count_table = Table(
     Column('spatial_replication_level_2', VARCHAR(50)),
     Column('spatial_replication_level_3', VARCHAR(50)),
     Column('spatial_replication_level_4', VARCHAR(50)),
-    Column('structure', VARCHAR(50)),
+    Column('spatial_replication_level_5', VARCHAR(50)),
+    Column('treatment_type_1', VARCHAR(200)),
+    Column('treatment_type_2', VARCHAR(200)),
+    Column('treatment_type_3', VARCHAR(200)),
+    Column('structure_type_1', VARCHAR(200)),
+    Column('structure_type_2', VARCHAR(200)),
+    Column('structure_type_3', VARCHAR(200)),
     Column('count_observation', NUMERIC),
-    Column('covariates', TEXT),
-    Column('trt_label', VARCHAR(200)))
+    Column('covariates', TEXT))
 
 # Biomass Table
 biomass_table = Table(
@@ -400,10 +417,15 @@ biomass_table = Table(
     Column('spatial_replication_level_2', VARCHAR(50)),
     Column('spatial_replication_level_3', VARCHAR(50)),
     Column('spatial_replication_level_4', VARCHAR(50)),
-    Column('structure', VARCHAR(50)),
+    Column('spatial_replication_level_5', VARCHAR(50)),
+    Column('treatment_type_1', VARCHAR(200)),
+    Column('treatment_type_2', VARCHAR(200)),
+    Column('treatment_type_3', VARCHAR(200)),
+    Column('structure_type_1', VARCHAR(200)),
+    Column('structure_type_2', VARCHAR(200)),
+    Column('structure_type_3', VARCHAR(200)),
     Column('biomass_observation', NUMERIC),
-    Column('covariates', TEXT),
-    Column('trt_label', VARCHAR(200)))
+    Column('covariates', TEXT))
 
 # Density Table
 density_table = Table(
@@ -420,10 +442,15 @@ density_table = Table(
     Column('spatial_replication_level_2', VARCHAR(50)),
     Column('spatial_replication_level_3', VARCHAR(50)),
     Column('spatial_replication_level_4', VARCHAR(50)),
-    Column('structure', VARCHAR(50)),
+    Column('spatial_replication_level_5', VARCHAR(50)),
+    Column('treatment_type_1', VARCHAR(200)),
+    Column('treatment_type_2', VARCHAR(200)),
+    Column('treatment_type_3', VARCHAR(200)),
+    Column('structure_type_1', VARCHAR(200)),
+    Column('structure_type_2', VARCHAR(200)),
+    Column('structure_type_3', VARCHAR(200)),
     Column('density_observation', NUMERIC),
-    Column('covariates', TEXT),
-    Column('trt_label', VARCHAR(200)))
+    Column('covariates', TEXT))
 
 # Percent Cover Table
 percent_cover_table = Table(
@@ -440,10 +467,15 @@ percent_cover_table = Table(
     Column('spatial_replication_level_2', VARCHAR(50)),
     Column('spatial_replication_level_3', VARCHAR(50)),
     Column('spatial_replication_level_4', VARCHAR(50)),
-    Column('structure', VARCHAR(200)),
+    Column('spatial_replication_level_5', VARCHAR(50)),
+    Column('treatment_type_1', VARCHAR(200)),
+    Column('treatment_type_2', VARCHAR(200)),
+    Column('treatment_type_3', VARCHAR(200)),
+    Column('structure_type_1', VARCHAR(200)),
+    Column('structure_type_2', VARCHAR(200)),
+    Column('structure_type_3', VARCHAR(200)),
     Column('percent_cover_observation', NUMERIC),
-    Column('covariates', TEXT),
-    Column('trt_label', VARCHAR(200)))
+    Column('covariates', TEXT))
 
 
 # Percent Cover Table
@@ -461,10 +493,15 @@ individual_table = Table(
     Column('spatial_replication_level_2', VARCHAR(50)),
     Column('spatial_replication_level_3', VARCHAR(50)),
     Column('spatial_replication_level_4', VARCHAR(50)),
-    Column('structure', VARCHAR(200)),
+    Column('spatial_replication_level_5', VARCHAR(50)),
+    Column('treatment_type_1', VARCHAR(200)),
+    Column('treatment_type_2', VARCHAR(200)),
+    Column('treatment_type_3', VARCHAR(200)),
+    Column('structure_type_1', VARCHAR(200)),
+    Column('structure_type_2', VARCHAR(200)),
+    Column('structure_type_3', VARCHAR(200)),
     Column('individual_observation', NUMERIC),
-    Column('covariates', TEXT),
-    Column('trt_label', VARCHAR(200)))
+    Column('covariates', TEXT))
 
 
 # This command takes all the information that was stored in the

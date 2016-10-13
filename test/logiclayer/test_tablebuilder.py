@@ -7,14 +7,12 @@ import re
 import sys, os
 if sys.platform == "darwin":
     rootpath = (
-        "/Users/bibsian/Desktop/git/database-development/" +
-        "test/")
+        "/Users/bibsian/Desktop/git/database-development/")
     end = "/"
 
 elif sys.platform == "win32":
     rootpath = (
-        "C:\\Users\MillerLab\\Desktop\\database-development" +
-        "\\test\\")
+        "C:\\Users\MillerLab\\Desktop\\database-development")
     end = "\\"
 sys.path.append(os.path.realpath(os.path.dirname(
     rootpath + 'logiclayer' + end)))
@@ -117,7 +115,11 @@ def AbstractTableBuilder():
         project_table = {
             'columns': [
                 'proj_metadata_key', 'title', 'samplingunits',
-                'datatype', 'structured', 'studystartyr',
+                'datatype',
+                'structured_type_1', 'structured_type_1_units',
+                'structured_type_2', 'structured_type_2_units',
+                'structured_type_3', 'structured_type_3_units',
+                'studystartyr',
                 'studyendyr',
                 'samplefreq',
                 'studytype',
@@ -139,7 +141,13 @@ def AbstractTableBuilder():
                 'spatial_replication_level_4_extent_units',
                 'spatial_replication_level_4_label',
                 'spatial_replication_level_4_number_of_unique_reps',
-                'treatment_type', 'derived'
+                'spatial_replication_level_5_extent',
+                'spatial_replication_level_5_extent_units',
+                'spatial_replication_level_5_label',
+                'spatial_replication_level_5_number_of_unique_reps',
+                'treatment_type_1', 'treatment_type_2',
+                'treatment_type_3',
+                'derived'
                 'authors', 'authors_contact', 'metalink', 'knbid',
             ],
             'time': False,
@@ -241,10 +249,15 @@ def AbstractTableBuilder():
                 'spatial_replication_level_2',
                 'spatial_replication_level_3',
                 'spatial_replication_level_4',
-                'structure',
+                'spatial_replication_level_5',
+                'treatment_type_1',
+                'treatment_type_2',
+                'treatment_type_3',
+                'structure_type_1',
+                'structure_type_2',
+                'structure_type_3',
                 'count_observation',
-                'covariates',
-                'trt_label'
+                'covariates'
             ],
 
             'time': True,
@@ -267,10 +280,15 @@ def AbstractTableBuilder():
                 'spatial_replication_level_2',
                 'spatial_replication_level_3',
                 'spatial_replication_level_4',
-                'structure',
+                'spatial_replication_level_5',
+                'treatment_type_1',
+                'treatment_type_2',
+                'treatment_type_3',
+                'structure_type_1',
+                'structure_type_2',
+                'structure_type_3',
                 'biomass_observation',
-                'covariates',
-                'trt_label'
+                'covariates'
             ],
 
             'time': True,
@@ -293,10 +311,15 @@ def AbstractTableBuilder():
                 'spatial_replication_level_2',
                 'spatial_replication_level_3',
                 'spatial_replication_level_4',
-                'structure',
+                'spatial_replication_level_5',
+                'treatment_type_1',
+                'treatment_type_2',
+                'treatment_type_3',
+                'structure_type_1',
+                'structure_type_2',
+                'structure_type_3',
                 'density_observation',
-                'covariates',
-                'trt_label'
+                'covariates'
             ],
 
             'time': True,
@@ -319,10 +342,15 @@ def AbstractTableBuilder():
                 'spatial_replication_level_2',
                 'spatial_replication_level_3',
                 'spatial_replication_level_4',
-                'structure',
+                'spatial_replication_level_5',
+                'treatment_type_1',
+                'treatment_type_2',
+                'treatment_type_3',
+                'structure_type_1',
+                'structure_type_2',
+                'structure_type_3',
                 'percent_cover_observation',
-                'covariates',
-                'trt_label'
+                'covariates'
             ],
             
             'time': True,
@@ -345,10 +373,15 @@ def AbstractTableBuilder():
                 'spatial_replication_level_2',
                 'spatial_replication_level_3',
                 'spatial_replication_level_4',
-                'structure',
+                'spatial_replication_level_5',
+                'treatment_type_1',
+                'treatment_type_2',
+                'treatment_type_3',
+                'structure_type_1',
+                'structure_type_2',
+                'structure_type_3',
                 'individual_observation',
-                'covariates',
-                'trt_label'
+                'covariates'
             ],
             'time': True,
             'cov': True,
@@ -371,7 +404,11 @@ def AbstractTableBuilder():
                 'spatial_replication_level_3_label',
                 'spatial_replication_level_3_number_of_unique_reps',
                 'spatial_replication_level_4_label',
-                'spatial_replication_level_4_number_of_unique_reps'
+                'spatial_replication_level_4_number_of_unique_reps',
+                'spatial_replication_level_5_label',
+                'spatial_replication_level_5_number_of_unique_reps',
+                'treatment_type_1', 'treatment_type_2',
+                'treatment_type_3'
             ],
             'time': False,
             'cov': False,
@@ -420,13 +457,15 @@ def AbstractTableBuilder():
             return self.tabledict[
                 self._inputs.tablename]['columns']
 
+        @abc.abstractmethod
         def get_available_columns(self):
             return list(self._inputs.lnedentry.values())
 
         def get_key_columns(self):
             return self.tabledict[
                 self._inputs.tablename]['table_keys']
-        
+
+        @abc.abstractmethod
         def get_null_columns(self):
             availcol = list(self._inputs.lnedentry.keys())
             allcol = self.tabledict[
@@ -483,19 +522,30 @@ def Study_Site_Table_Builder(AbstractTableBuilder):
                 acols = [int(x) for x in acols]
                 uniquesubset = dataframe[acols]
                 print(str(e))
+                
+            try:
+                remove_from_null = ['lter_table_fkey']
+                [nullcols.remove(x) for x in remove_from_null]
+            except Exception as e:
+                print(str(e))
+            try:
+                remove_known_fkey = ['lter_table_fkey']
+                [dbcol.remove(x) for x in remove_known_fkey]
+            except Exception as e:
+                print(str(e))
+            try:
+                lat_lng_null_list = ['lat_study_site', 'lng_study_site']
+                [nullcols.remove(x) for x in lat_lng_null_list]
+            except Exception as e:
+                print(str(e))
 
-            remove_from_null = ['lter_table_fkey']
-            [nullcols.remove(x) for x in remove_from_null]
-            remove_known_fkey = ['lter_table_fkey']
-            [dbcol.remove(x) for x in remove_known_fkey]
-            lat_lng_null_list = ['lat_study_site', 'lng_study_site']
-            [nullcols.remove(x) for x in lat_lng_null_list]
-            
+
             print('acols after: ', acols)
             print('nullcols after: ', nullcols)
             print('dbcol after: ', dbcol)
 
             uniquesubset = dataframe[acols]
+            uniquesubset.columns = ['study_site_key']
             nullcols_non_numeric = hlp.produce_null_df(
                 ncols=len(nullcols),
                 colnames=nullcols,
@@ -526,30 +576,38 @@ def Project_Table_Builder(AbstractTableBuilder):
         Note, no get methods because there is no
         alternate informatoin needed
         '''
+        @staticmethod
+        def entry_verifier(dictionary):
+            for i, (key, value) in enumerate(dictionary.items()):
+                try:
+                    if value.checked is True:
+                        assert (value.entry != '' and value.entry != 'NULL') is True
+                        if 'spatial' in key:
+                            assert(value.unit != '')
+                        else:
+                            pass
+                    else:
+                        assert (value.entry == '' or value.entry == 'NULL') is True
+                        if 'spatial' in key:
+                            assert(value.unit == '')
+                        else:
+                            pass
+                except Exception as e:
+                    print(str(e))
+                    raise AssertionError(key + ': entries not valid.')
+            print('Entries are valid')
+
+        def get_available_columns(self):
+            return None
+
+        def get_null_columns(self):
+            return None
 
         def get_dataframe(
                 self, dataframe, acols, nullcols, keycols, dbcol,
                 globalid, siteid, sitelevels):
 
-            acols = [x.rstrip() for x in acols]
-            nullcols = [x.rstrip() for x in nullcols]
-            dbcol = [x.rstrip() for x in dbcol]
-            
-            if 'lter_proj_site' in dbcol:
-                dbcol.remove('lter_proj_site')
-            else:
-                pass
-            if 'lter_proj_site' in nullcols:
-                nullcols.remove('lter_proj_site')
-            else:
-                pass
-            try:
-                assert sitelevels is not None
-            except Exception as e:
-                print(str(e))
-                raise AttributeError(
-                    'Site levels not passed to builder')
-
+            dataframe.reset_index(inplace=True)
             # Columns that will be updated later in the
             # program
             autoupdated = [
@@ -557,22 +615,32 @@ def Project_Table_Builder(AbstractTableBuilder):
                 'siteendyr', 'totalobs', 'uniquetaxaunits',
                 'spatial_replication_level_1_label',
                 'spatial_replication_level_1_number_of_unique_reps',
-                'spatial_replication_level_2_label', 'spatial_replication_level_2_number_of_unique_reps',
-                'spatial_replication_level_3_label', 'spatial_replication_level_3_number_of_unique_reps',
-                'spatial_replication_level_4_label', 'spatial_replication_level_4_number_of_unique_reps',
-                'num_treatments'
+                'spatial_replication_level_2_label',
+                'spatial_replication_level_2_number_of_unique_reps',
+                'spatial_replication_level_3_label',
+                'spatial_replication_level_3_number_of_unique_reps',
+                'spatial_replication_level_4_label',
+                'spatial_replication_level_4_number_of_unique_reps',
+                'spatial_replication_level_5_label',
+                'spatial_replication_level_5_number_of_unique_reps',
+
             ]
 
             # Creating main data table
             maindata = DataFrame(
                 {
-                    'proj_metadata_key':dataframe['global_id'], 
+                    'proj_metadata_key': dataframe['global_id'], 
                     'title': dataframe['title'],
                     'samplingunits': 'NA',
                     'datatype': dataframe['data_type'],
-                    'structured': 'NA',
-                    'studystartyr': 'NA',
-                    'studyendyr': 'NA',
+                    'structured_type_1': 'NA',
+                    'structured_type_1_units': 'NA',
+                    'structured_type_2': 'NA',
+                    'structured_type_2_units': 'NA',
+                    'structured_type_3': 'NA',
+                    'structured_type_3_units': 'NA',
+                    'studystartyr': -99999,
+                    'studyendyr': -99999,
                     'samplefreq': dataframe['temp_int'],
                     'studytype': dataframe['study_type'],
                     'community': dataframe['comm_data'],
@@ -580,30 +648,42 @@ def Project_Table_Builder(AbstractTableBuilder):
                     'spatial_replication_level_1_extent': -99999,
                     'spatial_replication_level_1_extent_units': 'NA',
                     'spatial_replication_level_1_label': 'NA',
-                    'spatial_replication_level_1_number_of_unique_reps': 'NA',
+                    'spatial_replication_level_1_number_of_unique_reps': -99999,
                     'spatial_replication_level_2_extent': -99999,
                     'spatial_replication_level_2_extent_units': 'NA',
                     'spatial_replication_level_2_label': 'NA',
-                    'spatial_replication_level_2_number_of_unique_reps': 'NA',
+                    'spatial_replication_level_2_number_of_unique_reps': -99999,
                     'spatial_replication_level_3_extent': -99999,
                     'spatial_replication_level_3_extent_units': 'NA',
                     'spatial_replication_level_3_label': 'NA',
-                    'spatial_replication_level_3_number_of_unique_reps': 'NA',
+                    'spatial_replication_level_3_number_of_unique_reps': -99999,
                     'spatial_replication_level_4_extent': -99999,
                     'spatial_replication_level_4_extent_units': 'NA',
                     'spatial_replication_level_4_label': 'NA',
-                    'spatial_replication_level_4_number_of_unique_reps': 'NA',
-                    'treatment_type': dataframe['treatment_type'],
+                    'spatial_replication_level_4_number_of_unique_reps': -99999,
+                    'spatial_replication_level_5_extent': -99999,
+                    'spatial_replication_level_5_extent_units': 'NA',
+                    'spatial_replication_level_5_label': 'NA',
+                    'spatial_replication_level_5_number_of_unique_reps': -99999,
+                    'treatment_type_1': 'NA',
+                    'treatment_type_2': 'NA',
+                    'treatment_type_3': 'NA',
                     'derived': 'NA',
                     'authors': 'NA',
                     'authors_contact': 'NA',
                     'metalink': dataframe['site_metadata'],
                     'knbid': dataframe['portal_id']
                 },
-                columns = [
-                    
+                columns=[
                     'proj_metadata_key', 'title', 'samplingunits',
-                    'datatype', 'structured', 'studystartyr',
+                    'datatype',
+                    'structured_type_1',
+                    'structured_type_1_units',
+                    'structured_type_2',
+                    'structured_type_2_units',
+                    'structured_type_3',
+                    'structured_type_3_units',
+                    'studystartyr',
                     'studyendyr',
                     'samplefreq',
                     'studytype', 'community',
@@ -624,10 +704,30 @@ def Project_Table_Builder(AbstractTableBuilder):
                     'spatial_replication_level_4_extent_units',
                     'spatial_replication_level_4_label',
                     'spatial_replication_level_4_number_of_unique_reps',
-                    'treatment_type', 'derived',
+                    'spatial_replication_level_5_extent',
+                    'spatial_replication_level_5_extent_units',
+                    'spatial_replication_level_5_label',
+                    'spatial_replication_level_5_number_of_unique_reps',
+                    'treatment_type_1',
+                    'treatment_type_2',
+                    'treatment_type_3',
+                    'derived',
                     'authors', 'authors_contact', 'metalink', 'knbid',
                 ], index=[0])
 
+            form_dict = self._inputs.lnedentry
+            
+            self.entry_verifier(form_dict)
+
+            for i, (key, value) in enumerate(form_dict.items()):
+                if value.checked is True:
+                    maindata.loc[0, key] = value.entry
+                    if 'spatial' in key or 'structure' in key:
+                        maindata.loc[0, '{}_units'.format(key)] = value.unit
+                    else:
+                        pass
+                else:
+                    pass
             return maindata
         
     return Project_Table_Builder
@@ -655,9 +755,17 @@ def Taxa_Table_Builder(AbstractTableBuilder):
                 uniquesubset = dataframe[acols]
                 print(str(e))
 
-            remove_unknown_pkey = ['taxa_table_key']
-            [dbcol.remove(x) for x in remove_unknown_pkey]
-            [nullcols.remove(x) for x in remove_unknown_pkey]
+            try:
+                [dbcol.remove(x) for x in keycols]
+            except Exception as e:
+                print(str(e))
+            
+            try:
+                [nullcols.remove(x) for x in keycols]
+            except Exception as e:
+                print(str(e))
+
+
             print('SELF INPUTS: ', self._inputs.checks)
             print('AVAILABLE COLUMNS: ', acols)
             print('DB COLUMNS: ', dbcol)
@@ -716,6 +824,8 @@ def Taxa_Table_Builder(AbstractTableBuilder):
                     columns={acols[i]: item},
                     inplace=True)
             dbcol.append(siteid)
+            print(final)
+
             return final[dbcol]
 
     return Taxa_Table_Builder
@@ -749,6 +859,11 @@ def Observation_Table_Builder(AbstractTableBuilder):
             print('obs acols: ', acols)
             print('obs nullcols: ', nullcols)
 
+            if self._inputs.tablename == 'individual_table':
+                acols.remove('')
+            else:
+                pass
+            
             try:
                 acols = [x.rstrip() for x in acols]
             except Exception as e:
@@ -1001,28 +1116,22 @@ def Table_Builder_Director(Database_Table_Setter):
 # ------------------------------------------------------ #
 # ---------------- Site table build test --------------- #
 # ------------------------------------------------------ #
-@pytest.fixture
-def user_input():
-    lned = {'study_site_key': 'site'}
-    user_input = ini.InputHandler(
-        name='siteinfo', tablename='study_site_table', lnedentry=lned)
-    return user_input
 
 @pytest.fixture
 def dataset_test_1():
     return read_csv(
-        rootpath + end +
+        rootpath + end + 'test' + end +
         'Datasets_manual_test/raw_data_test_1.csv')
 
 def test_study_site_table_build(
         Study_Site_Table_Builder, Table_Builder_Director,
-        user_input, dataset_test_1):
+        site_handle_1_count, dataset_test_1):
     '''
     Testing builder class for site table
     '''
     facade = face.Facade()
-    facade.input_register(user_input)
-    face_input = facade._inputs[user_input.name]
+    facade.input_register(site_handle_1_count)
+    face_input = facade._inputs[site_handle_1_count.name]
     assert (isinstance(face_input, ini.InputHandler)) is True
 
     study_site_table_build = Study_Site_Table_Builder()
@@ -1038,33 +1147,30 @@ def test_study_site_table_build(
     sitetab = director.get_database_table()
     showsite = sitetab._availdf
     assert (isinstance(showsite, DataFrame)) is True
+    print(showsite)
 
 
 # ------------------------------------------------------ #
 # ---------------- Project table build test --------------- #
 # ------------------------------------------------------ #
-@pytest.fixture
-def project_user_input():
-    return ini.InputHandler(name='maininfo', tablename='project_table')
-
 
 @pytest.fixture
 def metadata_data():
     return read_csv(
-        rootpath + end +
-        'Datasets_manual_test/meta_file_test.csv')
+        rootpath + end + 'data' + end +
+        'Identified_to_upload.csv', encoding='iso-8859-11')
 
 
 def test_project_table_build(
         Project_Table_Builder, Table_Builder_Director,
-        project_user_input, metadata_data, dataset_test_1):
+        project_handle_1_count, metadata_data, dataset_test_1):
 
     sitelevels = dataset_test_1[
         'site'].drop_duplicates().values.tolist()
 
     facade = face.Facade()
-    facade.input_register(project_user_input)
-    face_input = facade._inputs[project_user_input.name]
+    facade.input_register(project_handle_1_count)
+    face_input = facade._inputs[project_handle_1_count.name]
 
     assert (isinstance(face_input, ini.InputHandler)) is True
     project_table = Project_Table_Builder()
@@ -1077,96 +1183,42 @@ def test_project_table_build(
     director.set_builder(project_table)
     director.set_data(metadata_data)
     director.set_sitelevels(sitelevels)
+    director.set_siteid('site')
 
     project_table_df = director.get_database_table()
     show_project_table = project_table_df._availdf
-    show_project_table.to_csv(
-        'project_table_test_write.csv', index=False)
+
     assert (isinstance(show_project_table, DataFrame)) is True
     assert (
         show_project_table['datatype'].drop_duplicates().values.tolist()
         == ['count']) is True
-    print(show_project_table)
-    
-    
+    assert (
+        show_project_table['proj_metadata_key'].values.tolist()
+        == [1]) is True
+
+
+
 # ------------------------------------------------------ #
 # ---------------- Taxa table build test --------------- #
 # --------------- Create taxa feature is OFF ----------- #
 # ------------------------------------------------------ #
-@pytest.fixture
-def taxa_user_input():
-    taxalned = OrderedDict((
-        ('sppcode', ''),
-        ('kingdom', ''),
-        ('subkingdom', ''),
-        ('infrakingdom', ''),
-        ('superdivision', ''),
-        ('divsion', ''),
-        ('subdivision', ''),
-        ('superphylum', ''),
-        ('phylum', ''),
-        ('subphylum', ''),
-        ('clss', ''),
-        ('subclass', ''),
-        ('ordr', ''),
-        ('family', ''),
-        ('genus', 'genus'),
-        ('species', 'species')
-    ))
-
-    taxackbox = OrderedDict((
-        ('sppcode', False),
-        ('kingdom', False),
-        ('subkingdom', False),
-        ('infrakingdom', False),
-        ('superdivision', False),
-        ('divsion', False),
-        ('subdivision', False),
-        ('superphylum', False),
-        ('phylum', False),
-        ('subphylum', False),
-        ('clss', False),
-        ('subclass', False),
-        ('ordr', False),
-        ('family', False),
-        ('genus', True),
-        ('species', True)
-    ))
-
-    taxacreate = {
-        'taxacreate': False
-    }
-    
-    available = [
-        x for x,y in zip(
-            list(taxalned.keys()), list(
-                taxackbox.values()))
-        if y is True
-    ]
-    
-    taxaini = ini.InputHandler(
-        name='taxainput',
-        tablename='taxa_table',
-        lnedentry= hlp.extract(taxalned, available),
-        checks=taxacreate)
-    return taxaini
 
 @pytest.fixture
 def taxadfexpected():
     taxadfexpected = read_csv(
-        rootpath + end +
+        rootpath + end + 'test' +  end +
         'Datasets_manual_test' + end + 'taxa_table_test.csv')
     taxadfexpected.fillna('NA', inplace=True)
     return taxadfexpected
     
 def test_taxatable_build(
-        Taxa_Table_Builder, Table_Builder_Director, taxa_user_input,
+        Taxa_Table_Builder, Table_Builder_Director, taxa_handle_1_count,
         dataset_test_1, taxadfexpected):
     sitelevels = dataset_test_1['site'].drop_duplicates().values.tolist()
     sitelevels.sort()
     facade = face.Facade()
-    facade.input_register(taxa_user_input)
-    face_input = facade._inputs[taxa_user_input.name]
+    facade.input_register(taxa_handle_1_count)
+    face_input = facade._inputs[taxa_handle_1_count.name]
     taxabuilder = Taxa_Table_Builder()
     assert (isinstance(taxabuilder, Taxa_Table_Builder)) is True
 
@@ -1212,6 +1264,7 @@ def test_taxatable_build(
 @pytest.fixture
 def taxa_user_input_create():
     taxalned = OrderedDict((
+        ('commonname', ''),
         ('sppcode', ''),
         ('kingdom', 'Animalia'),
         ('subkingdom', ''),
@@ -1231,6 +1284,7 @@ def taxa_user_input_create():
     ))
 
     taxackbox = OrderedDict((
+        ('commonname', False),
         ('sppcode', False),
         ('kingdom', True),
         ('subkingdom', False),
@@ -1291,9 +1345,10 @@ def test_taxatable_build_create(
     taxatable = director.get_database_table()
     showtaxa = taxatable._availdf
     assert isinstance(showtaxa, DataFrame)
+    print(showtaxa)
     showtaxa['phylum'] = 'Animalia'
     print(showtaxa)
-
+    
     testphylum = list(set(showtaxa['phylum'].values.tolist()))
     testphylum.sort()
     testorder = list(set(showtaxa['genus'].values.tolist()))
@@ -1321,50 +1376,16 @@ def test_taxatable_build_create(
 # ------------------------------------------------------ #
 # ------------ Observation (count) table build test --------------- #
 # ------------------------------------------------------ #
-@pytest.fixture
-def count_userinput():
-    obslned = OrderedDict((
-        ('spatial_replication_level_2', 'transect'),
-        ('spatial_replication_level_3', ''),
-        ('spatial_replication_level_4', ''),
-        ('structure', ''),
-        ('unitobs', 'count'),
-        ('trt_label', '')
-    ))
-    
-    obsckbox = OrderedDict((
-        ('spatial_replication_level_2', False),
-        ('spatial_replication_level_3', True),
-        ('spatial_replication_level_4', True),
-        ('structure', True),
-        ('unitobs', False),
-        ('trt_label', True)
-    ))
-    available = [
-        x for x,y in zip(
-            list(obslned.keys()), list(
-                obsckbox.values()))
-        if y is False
-    ]
-
-    countini = ini.InputHandler(
-        name='countinfo',
-        tablename='count_table',
-        lnedentry=hlp.extract(obslned, available),
-        checks=obsckbox)
-
-    return countini
-
 
 def test_count_table_build(
-        Table_Builder_Director, count_userinput,
+        Table_Builder_Director, count_handle_1_count,
         dataset_test_1, Observation_Table_Builder):
     sitelevels = dataset_test_1[
         'site'].drop_duplicates().values.tolist()
     sitelevels.sort()
     facade = face.Facade()
-    facade.input_register(count_userinput)
-    face_input = facade._inputs[count_userinput.name]
+    facade.input_register(count_handle_1_count)
+    face_input = facade._inputs[count_handle_1_count.name]
     countbuilder = Observation_Table_Builder()
     assert (isinstance(countbuilder, Observation_Table_Builder)) is True
 
@@ -1379,7 +1400,6 @@ def test_count_table_build(
     counttable = director.get_database_table()
     showcount = counttable._availdf
     print('finished: ', showcount)
-
     counttest = showcount['count_observation'].values.tolist()
     counttrue = dataset_test_1['count'].values.tolist()
 
@@ -1393,56 +1413,22 @@ def test_count_table_build(
 # ------------------------------------------------------ #
 # ------------ Observation (percentcover) table build test -------- #
 # ------------------------------------------------------ #
-@pytest.fixture
-def percent_cover_userinput():
-    obslned = OrderedDict((
-        ('spatial_replication_level_2', 'block'),
-        ('spatial_replication_level_3', 'plot'),
-        ('spatial_replication_level_4', ''),
-        ('structure', ''),
-        ('unitobs', 'cover'),
-        ('trt_label', 'trt')
-    ))
-    
-    obsckbox = OrderedDict((
-        ('spatial_replication_level_2', False),
-        ('spatial_replication_level_3', False),
-        ('spatial_replication_level_4', True),
-        ('structure', True),
-        ('unitobs', False),
-        ('trt_label', False)
-    ))
-    available = [
-        x for x,y in zip(
-            list(obslned.keys()), list(
-                obsckbox.values()))
-        if y is False
-    ]
-
-    countini = ini.InputHandler(
-        name='percentcoverinfo',
-        tablename='percent_cover_table',
-        lnedentry=hlp.extract(obslned, available),
-        checks=obsckbox)
-
-    return countini
-
 
 @pytest.fixture
 def dataset_test_4():
     return read_csv(
-        rootpath + end +
+        rootpath + end + 'test' + end +
         'Datasets_manual_test/raw_data_test_4.csv')
 
 def test_percent_cover_table_build(
-        Table_Builder_Director,  percent_cover_userinput,
+        Table_Builder_Director,  biomass_handle_4_percent_cover,
         dataset_test_4, Observation_Table_Builder):
     sitelevels = dataset_test_4[
         'site'].drop_duplicates().values.tolist()
     sitelevels.sort()
     facade = face.Facade()
-    facade.input_register(percent_cover_userinput)
-    face_input = facade._inputs[percent_cover_userinput.name]
+    facade.input_register(biomass_handle_4_percent_cover)
+    face_input = facade._inputs[biomass_handle_4_percent_cover.name]
     percent_coverbuilder = Observation_Table_Builder()
     assert (isinstance(percent_coverbuilder, Observation_Table_Builder)) is True
 
@@ -1474,56 +1460,22 @@ def test_percent_cover_table_build(
 # ------------------------------------------------------ #
 # ------------ Observation (individual) table build test -------- #
 # ------------------------------------------------------ #
-@pytest.fixture
-def individual_userinput():
-    obslned = OrderedDict((
-        ('spatial_replication_level_2', 'TRANSECT'),
-        ('spatial_replication_level_3', ''),
-        ('spatial_replication_level_4', ''),
-        ('structure', ''),
-        ('unitobs', ''),
-        ('trt_label', '')
-    ))
-    
-    obsckbox = OrderedDict((
-        ('spatial_replication_level_2', False),
-        ('spatial_replication_level_3', True),
-        ('spatial_replication_level_4', True),
-        ('structure', True),
-        ('unitobs', True),
-        ('trt_label', True)
-    ))
-    available = [
-        x for x,y in zip(
-            list(obslned.keys()), list(
-                obsckbox.values()))
-        if y is False
-    ]
-
-    countini = ini.InputHandler(
-        name='individual',
-        tablename='individual_table',
-        lnedentry=hlp.extract(obslned, available),
-        checks=obsckbox)
-
-    return countini
-
 
 @pytest.fixture
 def dataset_test_5():
     return read_csv(
-        rootpath + end +
+        rootpath + end + 'test' + end +
         'Datasets_manual_test/raw_data_test_5.csv')
 
 def test_individual_table_build(
-        Table_Builder_Director,  individual_userinput,
+        Table_Builder_Director, count_handle5,
         dataset_test_5, Observation_Table_Builder):
     sitelevels = dataset_test_5[
         'SITE'].drop_duplicates().values.tolist()
     sitelevels.sort()
     facade = face.Facade()
-    facade.input_register(individual_userinput)
-    face_input = facade._inputs[individual_userinput.name]
+    facade.input_register(count_handle5)
+    face_input = facade._inputs[count_handle5.name]
     individualbuilder = Observation_Table_Builder()
     assert (isinstance(individualbuilder, Observation_Table_Builder)) is True
 

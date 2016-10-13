@@ -6,23 +6,43 @@ from collections import OrderedDict
 import sys,os
 if sys.platform == "darwin":
     rootpath = (
-        "/Users/bibsian/Desktop/git/database-development/" +
-        "test/")
+        "/Users/bibsian/Desktop/git/database-development")
+    end = "/"
 elif sys.platform == "win32":
     rootpath = (
-        "C:\\Users\MillerLab\\Desktop\\database-development" +
-        "\\test\\")
+        "C:\\Users\MillerLab\\Desktop\\database-development")
+    end = "\\"
 sys.path.append(os.path.realpath(os.path.dirname(
     rootpath)))
 os.chdir(rootpath)
-from test import ui_dialog_taxa as uitax
-from test import ui_dialog_table_preview as uiprev
-from test import class_dialogpreview as prev
-from test import class_inputhandler as ini
-from test import class_userfacade as face
-from test import class_modelviewpandas as view
-from test.logiclayer import class_helpers as hlp
+from Views import ui_dialog_taxa as uitax
+from Views import ui_dialog_table_preview as uiprev
+from poplerGUI import class_inputhandler as ini
+from poplerGUI import class_modelviewpandas as view
+from poplerGUI.logiclayer import class_helpers as hlp
+from poplerGUI.logiclayer import class_userfacade as face
+from poplerGUI.logiclayer.datalayer import config as orm
 
+
+def test_drop_records():
+
+    table_dict = OrderedDict([
+        ('biomass_table', orm.biomass_table),
+        ('count_table', orm.count_table),
+        ('density_table', orm.density_table),
+        ('individual_table', orm.individual_table),
+        ('percent_cover_table', orm.percent_cover_table),
+        ('taxa_accepted_table', orm.taxa_accepted_table),
+        ('taxa_table', orm.taxa_table),
+        ('site_in_project_table', orm.site_in_project_table),
+        ('project_table', orm.project_table),
+        ('study_site_table', orm.study_site_table)]
+    )
+
+    for i, item in enumerate(table_dict):
+        delete_statement = table_dict[item].__table__.delete()
+        orm.conn.execute(delete_statement)
+    orm.conn.close()
 
 @pytest.fixture
 def metahandle():
@@ -46,15 +66,18 @@ def filehandle():
     fileinput = ini.InputHandler(
         name='fileoptions',tablename=None, lnedentry=lned,
         rbtns=rbtn, checks=ckentry, session=True,
-        filename='raw_data_test.csv')
+        filename=(
+            rootpath + end + 'test' + end +
+            'Datasets_manual_test' + end + 'raw_data_test_1.csv'
+        ))
 
     return fileinput
 
 @pytest.fixture
 def sitehandle():
-    lned = {'siteid': 'SITE'}
+    lned = {'study_site_key': 'site'}
     sitehandle = ini.InputHandler(
-        name='siteinfo', lnedentry=lned, tablename='sitetable')
+        name='siteinfo', lnedentry=lned, tablename='study_site_key')
     return sitehandle
     
 @pytest.fixture
@@ -83,7 +106,7 @@ def TaxaDialog(sitehandle, filehandle, metahandle, TablePreview):
             self.facade.load_data()
             self.facade.input_register(sitehandle)
             sitelevels = self.facade._data[
-                'SITE'].drop_duplicates().values.tolist()
+                'site'].drop_duplicates().values.tolist()
             self.facade.register_site_levels(sitelevels)
 
             # Place holders for user inputs
@@ -96,7 +119,7 @@ def TaxaDialog(sitehandle, filehandle, metahandle, TablePreview):
             self.taxamodel = None
             self.viewEdit = view.PandasTableModelEdit
             # Placeholders: Data tables
-            self.taxatable = None
+            self.taxa_table = None
             # Placeholder: Director (table builder), log
             self.taxadirector = None
             self._log = None
@@ -110,7 +133,7 @@ def TaxaDialog(sitehandle, filehandle, metahandle, TablePreview):
             # Update boxes/preview box
             self.message = QtGui.QMessageBox
             self.error = QtGui.QErrorMessage()
-            self.preview = prev.PreviewDialog()
+            self.preview = TablePreview()
 
         def submit_change(self):
             '''
@@ -121,20 +144,39 @@ def TaxaDialog(sitehandle, filehandle, metahandle, TablePreview):
             '''
             sender = self.sender()
             self.taxalned = OrderedDict((
+                ('commonname', self.lnedCommonname.text().strip()),
                 ('sppcode', self.lnedSppCode.text().strip()),
                 ('kingdom', self.lnedKingdom.text().strip()),
+                ('subkingdom', self.lnedSubkingdom.text().strip()),
+                ('infrakingdom', self.lnedInfrakingdom.text().strip()),
+                ('superdivision', self.lnedSuperdivision.text().strip()),
+                ('division', self.lnedDivision.text().strip()),
+                ('subsubdivision', self.lnedSubdivision.text().strip()),
+                ('superphylum', self.lnedSuperphylum.text().strip()),
                 ('phylum', self.lnedPhylum.text().strip()),
+                ('subphylum', self.lnedSubphylum.text().strip()),
                 ('clss', self.lnedClass.text().strip()),
+                ('subclass', self.lnedSubclass.text().strip()),
                 ('ordr', self.lnedOrder.text().strip()),
                 ('family', self.lnedFamily.text().strip()),
                 ('genus', self.lnedGenus.text().strip()),
                 ('species', self.lnedSpp.text().strip())
             ))
+
             self.taxackbox = OrderedDict((
+                ('commonname', self.ckCommonname.isChecked()),
                 ('sppcode', self.ckSppCode.isChecked()),
                 ('kingdom', self.ckKingdom.isChecked()),
+                ('subkingdom', self.ckSubkingdom.isChecked()),
+                ('infrakingdom', self.ckInfrakingdom.isChecked()),
+                ('superdivision', self.ckSuperdivision.isChecked()),
+                ('division', self.ckDivision.isChecked()),
+                ('subsubdivision', self.ckSubdivision.isChecked()),
+                ('superphylum', self.ckSuperphylum.isChecked()),
                 ('phylum', self.ckPhylum.isChecked()),
+                ('subphylum', self.ckSubphylum.isChecked()),
                 ('clss', self.ckClass.isChecked()),
+                ('subclass', self.ckSubclass.isChecked()),
                 ('ordr', self.ckOrder.isChecked()),
                 ('family', self.ckFamily.isChecked()),
                 ('genus', self.ckGenus.isChecked()),
@@ -156,13 +198,13 @@ def TaxaDialog(sitehandle, filehandle, metahandle, TablePreview):
             
             self.taxaini = ini.InputHandler(
                 name='taxainfo',
-                tablename='taxatable',
+                tablename='taxa_table',
                 lnedentry=hlp.extract(self.taxalned, self.available),
                 checks=self.taxacreate
             )
             self.facade.input_register(self.taxaini)
-            self.facade.create_log_record('taxatable')
-            self._log = self.facade._tablelog['taxatable']
+            self.facade.create_log_record('taxa_table')
+            self._log = self.facade._tablelog['taxa_table']
 
             try:
                 print('about to make taxa table')
@@ -174,17 +216,19 @@ def TaxaDialog(sitehandle, filehandle, metahandle, TablePreview):
                 self._log.debug(str(e))
                 self.error.showMessage(
                     'Column(s) not identified')
-                raise AttributeError('Column(s) not identified')
+                raise AttributeError(
+                    'Column(s) not identified: ' + str(e))
 
-            self.taxatable = self.taxadirector._availdf.copy()
-            self.taxamodel = self.viewEdit(self.taxatable)
+            self.taxa_table = self.taxadirector._availdf.copy()
+            self.taxamodel = self.viewEdit(self.taxa_table)
             
             if sender is self.btnTaxasubmit:
                 self.preview.tabviewPreview.setModel(self.taxamodel)
                 self.preview.show()
             elif sender is self.btnSaveClose:
+                self.facade.push_tables['taxa_table'] = self.taxa_table
                 hlp.write_column_to_log(
-                    self.taxalned, self._log, 'taxatable')                
+                    self.taxalned, self._log, 'taxa_table')                
                 self.close()
                 
     return TaxaDialog()

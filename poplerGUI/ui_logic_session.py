@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from PyQt4 import QtGui, QtCore
-from poplerGUI import ui_dialog_session as dsess
+from Views import ui_dialog_session as dsess
 from poplerGUI import class_inputhandler as ini
 from poplerGUI import class_modelviewpandas as view
 
@@ -67,7 +67,7 @@ class SessionDialog(QtGui.QDialog, dsess.Ui_Dialog):
 
         except Exception as e:
             print(str(e))
-            self.error.showMessage('Invalid entries')
+            self.error.showMessage('Invalid entries: '  + str(e))
             raise LookupError('Invalid metadata entries')
 
     def file_handler(self):

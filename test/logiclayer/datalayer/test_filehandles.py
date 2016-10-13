@@ -205,7 +205,8 @@ def FileHandler(FileMemento):
                                 pass
                         else:
                                 pass
-
+                    dfstate = dfstate[
+                        dfstate.isnull().all(axis=1) != True]
                     memento = FileMemento(dfstate= dfstate,
                                 state= self.state)
                     return memento

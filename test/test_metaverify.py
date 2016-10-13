@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 import pytest
-from pandas import read_csv
+from pandas import read_csv, read_sql
 import sys, os
 if sys.platform == "darwin":
     rootpath = (
@@ -15,7 +15,8 @@ elif sys.platform == "win32":
 sys.path.append(os.path.realpath(os.path.dirname(
     rootpath + 'logiclayer' + end)))
 os.chdir(rootpath)
-import class_inputhandler as ini
+from poplerGUI import class_inputhandler as ini
+from poplerGUI.logiclayer.datalayer import config as orm
 
 
 class MetaVerifier(object):
@@ -23,7 +24,6 @@ class MetaVerifier(object):
     This is going to be a Singleton pattern i.e. 
     only one instance of this class will be created 
     in the whole program.
-
     Keyword Arguments
     -----------------
     idnumber: integer
@@ -33,13 +33,13 @@ class MetaVerifier(object):
 
     if sys.platform == "darwin":
         metapath = (
-        "/Users/bibsian/Desktop/git/database-development/test/Datasets_manual_test" +
-        "/meta_file_test.csv")
+        "/Users/bibsian/Desktop/git/database-development/" +
+        "data/Identified_to_upload.csv")
 
     elif sys.platform == "win32":
         metapath = (
         "C:\\Users\MillerLab\\Desktop\\database-development" +
-        "\\test\\Datasets_manual_test\\meta_file_test.csv")
+        "\\data\\Identified_to_upload.csv")
 
     _meta = read_csv(metapath, encoding='iso-8859-11')
 
@@ -68,7 +68,20 @@ class MetaVerifier(object):
                     'Plese enter the globalid number.')
 
             try:
+                session = orm.Session()
+                global_check_q = session.query(
+                    orm.project_table.proj_metadata_key).order_by(
+                        orm.project_table.proj_metadata_key)
+                session.close()
+                global_check_df = read_sql(
+                    global_check_q.statement,
+                    global_check_q.session.bind)
 
+                uploaded_globals = global_check_df[
+                    'proj_metadata_key'].values.tolist()
+
+                assert self.idnumber not in uploaded_globals
+                
                 assert (self._meta.loc[
                     self._meta['global_id']== self.idnumber][
                             'global_id'] == 
@@ -85,15 +98,21 @@ class MetaVerifier(object):
                         == self.metaurl).bool() is True
 
                 return True
-            except:
+            except Exception as e:
+                print(str(e))
                 raise LookupError(
                     "The verification attributes have not been set" +
-                    " correctly. Please check values for the " +
-                    "global_id, LTER location, and metadata url.")
+                    " correctly. Or global_id is already present: " +
+                    str(e)
+                )
 
 @pytest.fixture
-def metahandle():
-    lentry = {'globalid': 2, 'metaurl': 'https://test', 'lter': 'SBC'}
+def metahandle_correct():
+    lentry = {
+        'globalid': 10,
+        'metaurl':(
+            'http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.49'),
+        'lter':'SBC'}
     ckentry = {}
     metainput = ini.InputHandler(
         name='metacheck', tablename=None, lnedentry=lentry,
@@ -101,13 +120,10 @@ def metahandle():
     return metainput
 
 @pytest.fixture
-def metahandlecorrect():
+def metahandle_bad():
     lentry = {
-        'globalid': '2',
-
-        'metaurl':
-        'http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.17',
-
+        'globalid': 2,
+        'metaurl':'http://test',
         'lter': 'SBC'}
     ckentry = {}
     metainput = ini.InputHandler(
@@ -116,18 +132,13 @@ def metahandlecorrect():
     return metainput
 
 
-def test_init_nodata(metahandle):
-    t = MetaVerifier(metahandle)
-
-    assert (t.idnumber == 2) is True
-    assert (t.metaurl == 'https://test') is True
-    assert (t.lterloc == 'SBC') is True
+def test_init_nodata(metahandle_bad):
+    t = MetaVerifier(metahandle_bad)
 
     with pytest.raises(LookupError):
         t.verify_entries()
 
 
-def test_correct_userinput(metahandlecorrect):
-    verify = MetaVerifier(metahandlecorrect)
+def test_correct_userinput(metahandle_correct):
+    verify = MetaVerifier(metahandle_correct)
     verify.verify_entries()
-

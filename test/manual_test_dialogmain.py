@@ -3,119 +3,223 @@ import pytest
 import pytestqt
 from PyQt4 import QtGui, QtCore
 from pandas import read_sql
+from collections import OrderedDict, namedtuple
 import sys, os
 sys.path.append(os.path.realpath(os.path.dirname(__file__)))
-from test import ui_mainrefactor as mw
-from test import ui_logic_session as logicsess
-from test import ui_logic_site as logicsite
-from test import ui_dialog_main as dmainw
-from test import class_inputhandler as ini
-from test import class_modelviewpandas as view
-from test.logiclayer.datalayer import config as orm
-from test.logiclayer import class_userfacade as face
-from test.logiclayer import class_helpers as hlp
+from Views import ui_mainrefactor as mw
+from Views import ui_dialog_main as dmainw
+from poplerGUI import ui_logic_session as logicsess
+from poplerGUI import ui_logic_site as logicsite
+from poplerGUI import class_inputhandler as ini
+from poplerGUI import class_modelviewpandas as view
+from poplerGUI import ui_logic_preview as tprev
+from poplerGUI.logiclayer.datalayer import config as orm
+from poplerGUI.logiclayer import class_userfacade as face
+from poplerGUI.logiclayer import class_helpers as hlp
 
 @pytest.fixture
 def MainWindow():
     class MainDialog(QtGui.QDialog, dmainw.Ui_Dialog):
+
+        studytype = namedtuple('studytype', 'checked entry unit')
+        derived = namedtuple('derived', 'checked entry unit')
+        treatments = namedtuple('treatments', 'checked entry unit')
+        contacts = namedtuple('contacts', 'checked entry unit')
+        community = namedtuple('community', 'checked entry unit')
+        sampfreq = namedtuple('sampfreq', 'checked entry unit')
+        dtype = namedtuple('dtype', 'checked entry unit')
+        structure = namedtuple('structure', 'checked entry unit')
+        ext = namedtuple('spatial_ext', 'checked entry unit')
+
         def __init__(self, parent=None):
             super().__init__(parent)
             self.setupUi(self)
 
             self.facade = None
-            
-            self.mainini = ini.InputHandler(
-                name='maininfo', tablename='maintable')
-
+            self.mainini = None
             # Place holder: Data Model/ Data model view
             self.mainmodel = None
             self.viewEdit = view.PandasTableModelEdit
-
+            self.form_entries = None
+            
             # Placeholders: Data tables
-            self.maintable = None
-            self.maintablemod = None
+            self.project_table = None
 
             # Placeholder: Director (table builder), log
             self.maindirector = None
             self._log = None
 
-            # Placeholder for maindata Orms
-            self.mainorms = {}
-
             # Actions
+            self.btnPreview.clicked.connect(self.submit_change)
             self.btnSaveClose.clicked.connect(self.submit_change)
             self.btnCancel.clicked.connect(self.close)
 
+            self.preview = tprev.TablePreview()
             self.message = QtGui.QMessageBox
             self.error = QtGui.QErrorMessage()
-        def set_data(self):
-            '''
-            Method to register user input with facade,
-            request the formated table from the facade,
-            invoke the logger,
-            set the data model,
-            set the data model viewer
-            '''
-            if self.maintablemod is None:
-                self.facade.input_register(self.mainini)
-                self.maindirector = self.facade.make_table('maininfo')
-                self.facade.create_log_record('maintable')
-                self._log = self.facade._tablelog['maintable']
-                self.maintable = self.maindirector._availdf.copy()
-                self.maintable = self.maintable.reset_index(
-                    drop=True)
-            else:
-                self.maintable = self.mainmodel.data(
-                    None, QtCore.Qt.UserRole).reset_index(drop=True)
-
-            self.mainmodel = self.viewEdit(self.maintable)
-            self.tabviewMetadata.setModel(self.mainmodel)
 
         def submit_change(self):
-            self.maintablemod = self.mainmodel.data(
-                None, QtCore.Qt.UserRole).reset_index(drop=True)
-            self.facade.push_tables['maintable'] = self.maintablemod
-            print('retrieved edited data')
-            print('main mod: ', self.maintablemod)
-            self._log.debug(
-                'maintable mod: ' +
-                ' '.join(self.maintablemod.columns.values.tolist()))
+            '''
+            Method to get data from user form and make project table
+            to upload
+            '''
+            sender = self.sender()
+            self.form_entries = OrderedDict((
+                ('samplingunits', self.dtype(
+                    self.lnedDatatypeunits.text() != '',
+                    self.lnedDatatypeunits.text(),
+                    None
+                )),
+                ('datatype', self.dtype(
+                    self.cboxDatatype.currentText() != '',
+                    self.cboxDatatype.currentText(),
+                    None
+                )),
+                ('structured_type_1', self.structure(
+                    self.ckStructure1.isChecked(),
+                    self.lnedStructure1.text(),
+                    self.lnedStructureunits1.text()
+                )),
+                ('structured_type_2', self.structure(
+                    self.ckStructure2.isChecked(),
+                    self.lnedStructure2.text(),
+                    self.lnedStructureunits2.text()
+                )),
+                ('structured_type_3', self.structure(
+                    self.ckStructure3.isChecked(),
+                    self.lnedStructure3.text(),
+                    self.lnedStructureunits3.text()
+                )),
+                ('samplefreq', self.sampfreq(
+                    self.cboxSamplingfrequency.currentText() != 'NULL',
+                    self.cboxSamplingfrequency.currentText(),
+                    None
+                )),
+                ('studytype', self.studytype(
+                    self.cboxStudytype.currentText() != 'NULL',
+                    self.cboxStudytype.currentText(),
+                    None
+                )),
+                ('community', self.community(
+                    True,
+                    (
+                        'yes' if
+                        self.rbtnCommunityyes.isChecked() is True
+                        else 'no'
+                    ),
+                    None
+                )),
+                ('spatial_replication_level_1_extent', self.ext(
+                    self.ckSpatialextent1.isChecked(),
+                    self.lnedSpatialextent1.text(),
+                    self.lnedSpatialextentunits1.text()
+                )),
+                ('spatial_replication_level_2_extent', self.ext(
+                    self.ckSpatialextent2.isChecked(),
+                    self.lnedSpatialextent2.text(),
+                    self.lnedSpatialextentunits2.text()
+                )),
+                ('spatial_replication_level_3_extent', self.ext(
+                    self.ckSpatialextent3.isChecked(),
+                    self.lnedSpatialextent3.text(),
+                    self.lnedSpatialextentunits3.text()
+                )),
+                ('spatial_replication_level_4_extent', self.ext(
+                    self.ckSpatialextent4.isChecked(),
+                    self.lnedSpatialextent4.text(),
+                    self.lnedSpatialextentunits4.text()
+                )),
+                ('spatial_replication_level_5_extent', self.ext(
+                    self.ckSpatialextent5.isChecked(),
+                    self.lnedSpatialextent5.text(),
+                    self.lnedSpatialextentunits5.text()
+
+                )),
+                ('treatment_type_1', self.treatments(
+                    self.cboxTreatment1.currentText() != 'NULL',
+                    self.cboxTreatment1.currentText(),
+                    None
+                )),
+                ('treatment_type_2', self.treatments(
+                    self.cboxTreatment2.currentText() != 'NULL',
+                    self.cboxTreatment2.currentText(),
+                    None
+                )),
+                ('treatment_type_3', self.treatments(
+                    self.cboxTreatment3.currentText() != 'NULL',
+                    self.cboxTreatment3.currentText(),
+                    None
+                )),
+                ('derived', self.derived(
+                    self.cboxDerived.currentText() != 'NULL',
+                    self.cboxDerived.currentText(),
+                    None
+                )),
+                ('authors', self.contacts(
+                    self.lnedAuthor.text() != '',
+                    self.lnedAuthor.text(),
+                    None
+                )),
+                ('authors_contact', self.contacts(
+                    self.lnedContact.text() != '',
+                    self.lnedContact.text(),
+                    None
+                ))
+            ))
+            
+            self.mainini = ini.InputHandler(
+                name='maininfo', tablename='project_table',
+                lnedentry=self.form_entries
+            )
+
+            self.facade.input_register(self.mainini)
+            try:
+                self.maindirector = self.facade.make_table('maininfo')
+            except Exception as e:
+                print(str(e))
+                self.error.showMessage(str(e))
+            self.facade.create_log_record('project_table')
+            self._log = self.facade._tablelog['project_table']
+            self.project_table = self.maindirector._availdf.copy()
 
             try:
-                session = orm.Session()
-                maincheck = session.query(
-                    orm.Maintable.metarecordid).order_by(
-                        orm.Maintable.metarecordid)
-                maincheckdf = read_sql(
-                    maincheck.statement, maincheck.session.bind)
-                metaid_entered = maincheckdf[
-                    'metarecordid'].values.tolist()
-                print(metaid_entered)
-                print(self.facade._valueregister['globalid'])
-                if self.facade._valueregister[
-                        'globalid'] in metaid_entered:
-                    self.message.about(
-                        self, 'Status',
-                        'Metarecord ID is already present in database')
+                check_list = [
+                    'authors', 'authors_contact', 'studytype',
+                    'derived', 'community', 'samplefreq', 'datatype'
+                ]
+                record = None
+                for i, item in enumerate(check_list):
+                    print(item, ': ', self.form_entries[item].entry)
+                    record = item
+                    assert (
+                        self.form_entries[item].entry != 'NULL') is True
+                
+                    assert (
+                        self.form_entries[item].entry != '') is True
+
+                if sender is self.btnPreview:
+                    self.mainmodel = self.viewEdit(self.project_table)
+                    self.preview.tabviewPreview.setModel(self.mainmodel)
+                    self.preview.show()
                     return
                 else:
                     pass
+                self.facade.push_tables['project_table'] = self.project_table
+                self._log.debug(
+                    'project_table mod: ' +
+                    ' '.join(self.project_table.columns.values.tolist()))
 
-                orm.convert_types(self.maintable, orm.maintypes)
-                orm.convert_types(self.maintablemod, orm.maintypes)
-
-                hlp.updated_df_values(
-                    self.maintable, self.maintablemod,
-                    self._log, 'maintable')
+                orm.convert_types(self.project_table, orm.project_types)
+                hlp.write_column_to_log(
+                    self.form_entries, self._log, 'project_table')
                 self.close()
 
             except Exception as e:
                 print(str(e))
                 self.error.showMessage(
-                    'Global Id already present in database')
-                raise AttributeError(
-                    'Global Id already present in database')
-            
+                    'Invalid entry: ' + record
+                )
+
 
     class UiMainWindow(QtGui.QMainWindow, mw.Ui_MainWindow):
         '''
@@ -146,8 +250,7 @@ def MainWindow():
             # Custom signals
             self.dsession.raw_data_model.connect(
                 self.update_data_model)
-            self.dsession.webview_url.connect(
-                self.update_webview)
+
             # actions
             self.actionStart_Session.triggered.connect(
                 self.session_display)
@@ -160,18 +263,11 @@ def MainWindow():
         def main_display(self):
             ''' Displays main dialog box'''
             self.dmain.facade = self.facade
-            self.dmain.set_data()
             self.dmain.show()
         
         def update_data_model(self):
             newdatamodel = view.PandasTableModel(self.facade._data)
             self.tblViewRaw.setModel(newdatamodel)
-            
-
-        # ----------- START SESSION DIALOG CODE ----- #
-        @QtCore.pyqtSlot(object)
-        def update_webview(self, url):
-            self.webView.load(QtCore.QUrl(url))
 
         def session_display(self):
             ''' Displays the Site Dialog box'''
@@ -203,6 +299,7 @@ def MainWindow():
 
     return UiMainWindow()
 
+        # ----------- START SESSION DIALOG CODE ----- #
 def test_dialog_site(qtbot, MainWindow):
     MainWindow.show()
     qtbot.addWidget(MainWindow)

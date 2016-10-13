@@ -6,38 +6,26 @@ from pandas import (
 import sys, os
 if sys.platform == "darwin":
     rootpath = (
-        "/Users/bibsian/Desktop/git/database-development/" +
-        "test/")
+        "/Users/bibsian/Desktop/git/database-development/")
     end = "/"
 
 elif sys.platform == "win32":
     rootpath = (
-        "C:\\Users\MillerLab\\Desktop\\database-development" +
-        "\\test\\")
+        "C:\\Users\MillerLab\\Desktop\\database-development")
     end = "\\"
 sys.path.append(os.path.realpath(os.path.dirname(
     rootpath + 'logiclayer' + end)))
-import class_helpers as hlp
+from poplerGUI.logiclayer import class_helpers as hlp
 os.chdir(rootpath)
 
 # -----------
 # Test data set
 # -----------
 @pytest.fixture
-def df():
-    return read_csv('Datasets_manual_test/time_file_test.csv')
-
-@pytest.fixture
-def df2():
-    return read_csv('Datasets_manual_test/raw_data_test_dialogsite.csv')
-
-@pytest.fixture
-def df_jd():
-    return read_csv('Datasets_manual_test/raw_data_test_2.csv')
-
-@pytest.fixture
-def df_test_5():
-    return read_csv('Datasets_manual_test/raw_data_test_5.csv')
+def df_all():
+    return read_csv(
+        rootpath + end + 'test' + end +
+        'Datasets_manual_test/time_file_test.csv')
 
 # -----------
 # 1 Column Input
@@ -55,21 +43,6 @@ def yearonly():
         'hms': False
     }
     return d
-
-@pytest.fixture
-def yearonly2():
-    d = {
-        'dayname': '',
-        'dayform': 'NULL',
-        'monthname': '',
-        'monthform': 'NULL',
-        'yearname': 'YEAR',
-        'yearform': 'YYYY',
-        'jd': False,
-        'hms': False
-    }
-    return d
-
 
 @pytest.fixture
 def monthonly():
@@ -180,20 +153,6 @@ def julianyear4():
         'dayform': 'julian day',
         'monthname': '',
         'monthform': 'NULL',
-        'yearname': 'YEAR',
-        'yearform': 'YYYY',
-        'jd': True,
-        'hms': False
-    }
-    return d
-
-@pytest.fixture
-def julianyear4_timedataset():
-    d = {
-        'dayname': 'jd',
-        'dayform': 'julian day',
-        'monthname': '',
-        'monthform': 'NULL',
         'yearname': 'y',
         'yearform': 'YYYY',
         'jd': True,
@@ -226,20 +185,6 @@ def daymonthyear4():
         'monthname': 'dmy',
         'monthform': 'dd-mm-YYYY (Any Order)',
         'yearname': 'dmy',
-        'yearform': 'dd-mm-YYYY (Any Order)',
-        'jd': False,
-        'hms': False
-    }
-    return d
-
-@pytest.fixture
-def daymonthyear4_df2():
-    d = {
-        'dayname': 'DATE',
-        'dayform': 'dd-mm-YYYY (Any Order)',
-        'monthname': 'DATE',
-        'monthform': 'dd-mm-YYYY (Any Order)',
-        'yearname': 'DATE',
         'yearform': 'dd-mm-YYYY (Any Order)',
         'jd': False,
         'hms': False
@@ -530,6 +475,16 @@ def TimeParse():
                 # Year only data
                 if day == 'NULL' and month == 'NULL':
                     print('In YEAR block')
+                    try:
+                        uq_years = self.data[
+                            self.yearname].astype(str).apply(len)
+                        print('parser time: ', uq_years)
+                        assert (len(set(uq_years)) == 1) is True
+                    except:
+                        raise ValueError(
+                            'Inconsistent formatting: ',
+                            list(set(self.data[self.yearname]))
+                        )                        
                     yeardf = self.time_regex(
                         data=self.data, col=[self.yearname],
                         form=self.yformat, nulls=['day', 'month'])
@@ -694,59 +649,127 @@ def TimeParse():
 # Begin Testing
 # Singles (y, m, d)
 # ------
+
+@pytest.fixture
+def yearmod():
+    d = {
+        'dayname': '',
+        'dayform': 'NULL',
+        'monthname': '',
+        'monthform': 'NULL',
+        'yearname': 'ymod',
+        'yearform': 'YYYY',
+        'jd': False,
+        'hms': False
+    }
+    return d
+
+def test_yearmod(df_all, TimeParse, yearmod):
+    alltest = TimeParse(df_all, yearmod)
+    with pytest.raises(ValueError):
+        alltest.formater()
+
+@pytest.fixture
+def blank_cell_dmy():
+    d = {
+        'dayname': 'mdymod',
+        'dayform': 'dd-mm-YYYY (Any Order)',
+        'monthname': 'mdymod',
+        'monthform': 'dd-mm-YYYY (Any Order)',
+        'yearname': 'mdymod',
+        'yearform': 'dd-mm-YYYY (Any Order)',
+        'jd': False,
+        'hms': False
+    }
+    return d
+
+def test_blank_cell(df_all, TimeParse, blank_cell_dmy):
+    alltest = TimeParse(df_all, blank_cell_dmy)
+    alldf = alltest.formater()
+    ytestlist = alldf['year'].values.tolist()
+    print(ytestlist)
     
-def test_all_diff_julian(df_jd, TimeParse, julianyear4):
-    alltest = TimeParse(df_jd, julianyear4)
+
+@pytest.fixture
+def df_blank_line():
+    return read_csv(
+        rootpath + end + 'test' + end +
+        'Datasets_manual_test/time_file_test_blank_line.csv'
+    )
+
+
+@pytest.fixture
+def blank_line_dmy():
+    d = {
+        'dayname': 'mdy',
+        'dayform': 'dd-mm-YYYY (Any Order)',
+        'monthname': 'mdy',
+        'monthform': 'dd-mm-YYYY (Any Order)',
+        'yearname': 'mdy',
+        'yearform': 'dd-mm-YYYY (Any Order)',
+        'jd': False,
+        'hms': False
+    }
+    return d
+
+def test_blank_line(df_blank_line, TimeParse, blank_line_dmy):
+    alltest = TimeParse(df_blank_line, blank_line_dmy)
+    alldf = alltest.formater()
+    print(alldf)
+    
+    
+
+def test_all_diff_julian(df_all, TimeParse, julianyear4):
+    alltest = TimeParse(df_all, julianyear4)
     alldf = alltest.formater()
     assert (1985 in alldf['year'].values.tolist()) is True
     print(alldf)
 
 
-def test_single_columns(df, yearonly, monthonly, dayonly, TimeParse):
+def test_single_columns(df_all, yearonly, monthonly, dayonly, TimeParse):
     # year test block
-    assert isinstance(df, DataFrame)
+    assert isinstance(df_all, DataFrame)
     assert isinstance(yearonly, dict)
     assert isinstance(monthonly, dict)
     assert isinstance(dayonly, dict)
-    ytest = TimeParse(df, yearonly)
+    ytest = TimeParse(df_all, yearonly)
     yeardf = ytest.formater()
 #    print(yeardf)
     ytestlist = yeardf['year'].values.tolist()
-    ytruelist = df['y'].values.tolist()
+    ytruelist = df_all['y'].values.tolist()
     assert (ytestlist == ytruelist) is True
-
     # month test block
-    mtest = TimeParse(df, monthonly)
+    mtest = TimeParse(df_all, monthonly)
     monthdf = mtest.formater()
 #    print(monthdf)
     monthtestlist = monthdf['month'].values.tolist()
-    monthtruelist = df['m'].values.tolist()
+    monthtruelist = df_all['m'].values.tolist()
     assert (monthtestlist == monthtruelist) is True
 
     # day test block
-    dtest = TimeParse(df, dayonly)
+    dtest = TimeParse(df_all, dayonly)
     daydf = dtest.formater()
 #    print(daydf)
     daytestlist = daydf['day'].values.tolist()
-    daytruelist = df['d'].values.tolist()
+    daytruelist = df_all['d'].values.tolist()
     assert (daytestlist == daytruelist) is True
     
     
 def test_three_columns_same(
-        df, TimeParse, monthdayyear4, daymonthyear4):
-    alltest = TimeParse(df, monthdayyear4)
+        df_all, TimeParse, monthdayyear4, daymonthyear4):
+    alltest = TimeParse(df_all, monthdayyear4)
     alldf = alltest.formater()
     daytestlist = alldf['day'].values.tolist()
     monthtestlist = alldf['month'].values.tolist()
     yeartestlist = alldf['year'].values.tolist()
-    daytruelist = df['d'].values.tolist()
-    monthtruelist = df['m'].values.tolist()
-    yeartruelist = df['y'].values.tolist()
+    daytruelist = df_all['d'].values.tolist()
+    monthtruelist = df_all['m'].values.tolist()
+    yeartruelist = df_all['y'].values.tolist()
     assert (daytestlist == daytruelist) is True
     assert (monthtestlist == monthtruelist) is True
     assert (yeartestlist == yeartruelist) is True
 
-    all2test = TimeParse(df, daymonthyear4)
+    all2test = TimeParse(df_all, daymonthyear4)
     all2df = all2test.formater()
     daytestlist = all2df['day'].values.tolist()
     monthtestlist = all2df['month'].values.tolist()
@@ -758,145 +781,79 @@ def test_three_columns_same(
 
 
 def test_three_column_entries_all_data_different_names(
-        df, TimeParse, daymonthyear4_separate):
-    alltest = TimeParse(df, daymonthyear4_separate)
+        df_all, TimeParse, daymonthyear4_separate):
+    alltest = TimeParse(df_all, daymonthyear4_separate)
     alldf = alltest.formater()
 #    print(alldf)
     yeartestlist = alldf['year'].values.tolist()
     monthtestlist = alldf['month'].values.tolist()
     daytestlist = alldf['day'].values.tolist()
-    daytruelist = df['d'].values.tolist()
-    monthtruelist = df['m'].values.tolist()
-    yeartruelist = df['y'].values.tolist()
+    daytruelist = df_all['d'].values.tolist()
+    monthtruelist = df_all['m'].values.tolist()
+    yeartruelist = df_all['y'].values.tolist()
     assert (daytestlist == daytruelist) is True
     assert (monthtestlist == monthtruelist) is True
     assert (yeartestlist == yeartruelist) is True
     
 def test_two_column_entries_all_data_different_names(
-        df, TimeParse, dmy4_two_col_diff):
-    alltest = TimeParse(df, dmy4_two_col_diff)
+        df_all, TimeParse, dmy4_two_col_diff):
+    alltest = TimeParse(df_all, dmy4_two_col_diff)
     alldf = alltest.formater()
     print(alldf)
     yeartestlist = alldf['year'].values.tolist()
     monthtestlist = alldf['month'].values.tolist()
     daytestlist = alldf['day'].values.tolist()
-    daytruelist = df['d'].values.tolist()
-    monthtruelist = df['m'].values.tolist()
-    yeartruelist = df['y'].values.tolist()
+    daytruelist = df_all['d'].values.tolist()
+    monthtruelist = df_all['m'].values.tolist()
+    yeartruelist = df_all['y'].values.tolist()
     assert (daytestlist == daytruelist) is True
     assert (monthtestlist == monthtruelist) is True
     assert (yeartestlist == yeartruelist) is True
 
-def test_all_same_column_mdy(df, TimeParse, daymonthyear4_same):
-    alltest = TimeParse(df, daymonthyear4_same)
+def test_all_same_column_mdy(df_all, TimeParse, daymonthyear4_same):
+    alltest = TimeParse(df_all, daymonthyear4_same)
     alldf = alltest.formater()
     print(alldf)
     yeartestlist = alldf['year'].values.tolist()
     monthtestlist = alldf['month'].values.tolist()
     daytestlist = alldf['day'].values.tolist()
-    daytruelist = df['d'].values.tolist()
-    monthtruelist = df['m'].values.tolist()
-    yeartruelist = df['y'].values.tolist()
+    daytruelist = df_all['d'].values.tolist()
+    monthtruelist = df_all['m'].values.tolist()
+    yeartruelist = df_all['y'].values.tolist()
     assert (daytestlist == daytruelist) is True
     assert (monthtestlist == monthtruelist) is True
     assert (yeartestlist == yeartruelist) is True
 
-def test_all_same_column_mdy_df2(df2, TimeParse, daymonthyear4_df2):
-
-    alltest = TimeParse(df2, daymonthyear4_df2)
-    alldf = alltest.formater()
-    print(alldf)
-    yeartestlist = alldf['year'].values.tolist()
-    monthtestlist = alldf['month'].values.tolist()
-    daytestlist = alldf['day'].values.tolist()
-    datecol = to_datetime(df2['DATE'])
-    daytruelist = datecol.dt.day.values.tolist()
-    monthtruelist = datecol.dt.month.values.tolist()
-    yeartruelist = datecol.dt.year.values.tolist()
-    assert (daytestlist == daytruelist) is True
-    assert (monthtestlist == monthtruelist) is True
-    assert (yeartestlist == yeartruelist) is True
 
 def test_double_columns_different(
-        df, dayyear4, monthyear4, TimeParse, daymonth,
+        df_all, dayyear4, monthyear4, TimeParse, daymonth,
         julianyear4):
     # Month-year 4
-    mytest = TimeParse(df, monthyear4)
+    mytest = TimeParse(df_all, monthyear4)
 #    print(mytest)
     mydf = mytest.formater()
     print('returned data: ', mydf)
     yeartestlist = mydf['year'].values.tolist()
-    yeartruelist = df['y'].values.tolist() 
+    yeartruelist = df_all['y'].values.tolist() 
     assert (yeartestlist == yeartruelist) is True
     monthtestlist = mydf['month'].values.tolist()
-    monthtruelist = df['m'].values.tolist()
+    monthtruelist = df_all['m'].values.tolist()
     assert (monthtestlist == monthtruelist) is True
 
     #day-year
-    dytest = TimeParse(df, dayyear4)
+    dytest = TimeParse(df_all, dayyear4)
     dytest = dytest.formater()
 #    print(dytest)
     daytestlist = dytest['day'].values.tolist()
-    daytruelist = df['d'].values.tolist()
+    daytruelist = df_all['d'].values.tolist()
     assert (daytestlist == daytruelist) is True
     yeartestlist = dytest['year'].values.tolist()
     assert (yeartestlist == yeartruelist) is True
     
-    dmtest = TimeParse(df, daymonth)
+    dmtest = TimeParse(df_all, daymonth)
     dmdf = dmtest.formater()
 #    print(dmdf)
     daytestlist = dmdf['day'].values.tolist()
     assert (daytestlist == daytruelist) is True
     monthtestlist = dmdf['month'].values.tolist()
     assert (monthtestlist == monthtruelist) is True
-
-def test_jd_two(df, TimeParse, julianyear4_timedataset):
-
-    jdytest = TimeParse(df, julianyear4_timedataset)
-    jdytest = jdytest.formater()
-
-    daytestlist = jdytest['day'].values.tolist()
-    daytruelist = df['d'].values.tolist()
-    assert (daytestlist == daytruelist) is True
-    yeartestlist = jdytest['year'].values.tolist()
-    assert (yeartestlist == df['y'].values.tolist()) is True
-
-def test_year2(yearonly2, TimeParse, df_test_5):
-    ytest = TimeParse(df_test_5, yearonly2)
-    ytest = ytest.formater()
-    print(ytest)
-
-
-@pytest.fixture
-def df_txt_hms():
-    return read_table(
-        'Datasets_manual_test/climate_precip.txt',
-        header=-1, engine='c')
-
-@pytest.fixture
-def df_no_header():
-    return read_table(
-        'Datasets_manual_test/climate_temp_test_noheader.txt',
-        header=-1, engine='c', delimiter=',')
-
-@pytest.fixture
-def txt_input_noheader():
-    d = {
-        'dayname': '2',
-        'dayform': 'dd',
-        'monthname': '1',
-        'monthform': 'mm',
-        'yearname': '0',
-        'yearform': 'YYYY',
-        'jd': False,
-        'hms': False
-    }
-    return d
-
-def test_no_header(
-        df_no_header, txt_input_noheader, TimeParse):
-    nohead_test = TimeParse(df_no_header, txt_input_noheader)
-    nohead_test = nohead_test.formater()
-    print('final: ', nohead_test)
-
-

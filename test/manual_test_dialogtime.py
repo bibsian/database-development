@@ -3,32 +3,33 @@ import pytest
 import pytestqt
 from PyQt4 import QtGui, QtCore
 from collections import OrderedDict
+from pandas import to_numeric, concat
 import sys,os
 if sys.platform == "darwin":
     rootpath = (
-        "/Users/bibsian/Desktop/git/database-development/" +
-        "test/")
+        "/Users/bibsian/Desktop/git/database-development/")
+    end = "/"
 elif sys.platform == "win32":
     rootpath = (
-        "C:\\Users\MillerLab\\Desktop\\database-development" +
-        "\\test\\")
+        "C:\\Users\MillerLab\\Desktop\\database-development")
+    end = "\\"
 sys.path.append(os.path.realpath(os.path.dirname(
     rootpath)))
 os.chdir(rootpath)
-from test import class_inputhandler as ini
-from test import ui_dialog_time as uitime
-from test import ui_logic_preview as tprev
-from test import class_modelviewpandas as view
-from test.logiclayer import class_userfacade as face
-from test.logiclayer import class_timeparse as tmpa
-from test.logiclayer import class_helpers as hlp
+from poplerGUI import class_inputhandler as ini
+from Views import ui_dialog_time as uitime
+from poplerGUI import ui_logic_preview as tprev
+from poplerGUI import class_modelviewpandas as view
+from poplerGUI.logiclayer import class_userfacade as face
+from poplerGUI.logiclayer import class_timeparse as tmpa
+from poplerGUI.logiclayer import class_helpers as hlp
 
 
 @pytest.fixture
 def metahandle():
     lentry = {
-        'globalid': 8,
-        'metaurl': ('http://sbc.test.rice.com'),
+        'globalid': 1,
+        'metaurl': ('http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.18'),
         'lter': 'SBC'}
     ckentry = {}
     metainput = ini.InputHandler(
@@ -45,13 +46,16 @@ def filehandle():
     fileinput = ini.InputHandler(
         name='fileoptions',tablename=None, lnedentry=lned,
         rbtns=rbtn, checks=ckentry, session=True,
-        filename='Datasets_manual_test/raw_data_test_2.csv')
+        filename=(
+            rootpath + end + 'test' + end +
+            'Datasets_manual_test' + end + 'raw_data_test_1.csv')
+        )
 
     return fileinput
 
 @pytest.fixture
 def sitehandle():
-    lned = {'siteid': 'SITE'}
+    lned = {'siteid': 'site'}
     sitehandle = ini.InputHandler(
         name='siteinfo', lnedentry=lned, tablename='sitetable')
     return sitehandle
@@ -61,23 +65,39 @@ def taxahandle():
     taxalned = OrderedDict((
         ('sppcode', ''),
         ('kingdom', ''),
-        ('phylum', 'TAXON_PHYLUM'),
-        ('class', 'TAXON_CLASS'),
-        ('order', 'TAXON_ORDER'),
-        ('family', 'TAXON_FAMILY'),
-        ('genus', 'TAXON_GENUS'),
-        ('species', 'TAXON_SPECIES') 
+        ('subkingdom', ''),
+        ('infrakingdom', ''),
+        ('superdivision', ''),
+        ('divsion', ''),
+        ('subdivision', ''),
+        ('superphylum', ''),
+        ('phylum', ''),
+        ('subphylum', ''),
+        ('clss', ''),
+        ('subclass', ''),
+        ('ordr', ''),
+        ('family', ''),
+        ('genus', 'genus'),
+        ('species', 'species')
     ))
 
     taxackbox = OrderedDict((
         ('sppcode', False),
         ('kingdom', False),
-        ('phylum', True),
-        ('class', True),
-        ('order', True),
-        ('family', True),
+        ('subkingdom', False),
+        ('infrakingdom', False),
+        ('superdivision', False),
+        ('divsion', False),
+        ('subdivision', False),
+        ('superphylum', False),
+        ('phylum', False),
+        ('subphylum', False),
+        ('clss', False),
+        ('subclass', False),
+        ('ordr', False),
+        ('family', False),
         ('genus', True),
-        ('species', True) 
+        ('species', True)
     ))
 
     taxacreate = {
@@ -116,7 +136,7 @@ def TimeDialog(sitehandle, filehandle, metahandle, taxahandle):
             self.facade.load_data()
             self.facade.input_register(sitehandle)
             sitelevels = self.facade._data[
-                'SITE'].drop_duplicates().values.tolist()
+                'site'].drop_duplicates().values.tolist()
             self.facade.register_site_levels(sitelevels)
             self.facade.input_register(taxahandle)
 
@@ -151,7 +171,7 @@ def TimeDialog(sitehandle, filehandle, metahandle, taxahandle):
                 'yearname': self.lnedYear.text(),
                 'yearform': self.cboxYear.currentText(),
                 'jd': self.ckJulian.isChecked(),
-                'mspell': self.ckMonthSpelling.isChecked()
+                'hms': self.ckMonthSpelling.isChecked()
             }
             print('dict: ', self.timelned)
             for i, item in enumerate(self.timelned.values()):
@@ -173,7 +193,15 @@ def TimeDialog(sitehandle, filehandle, metahandle, taxahandle):
 
             try:
                 # Calling formater method
-                timeview =self.timetable.formater().copy()
+                timeview = self.timetable.formater().copy()
+                timeview_og_col = timeview.columns.values.tolist()
+                timeview.columns = [
+                    x+'_derived' for x in timeview_og_col
+                ]
+                timeview = concat(
+                    [timeview, self.facade._data], axis=1)
+
+
             except Exception as e:
                 print(str(e))
                 self._log.debug(str(e))
@@ -197,9 +225,25 @@ def TimeDialog(sitehandle, filehandle, metahandle, taxahandle):
                     self.timelned, self._log, 'timetable'
                 )
                 try:
-                    timeview = timeview.applymap(int)
+                    timeview.loc[1, 'day'] = to_numeric(timeview['day'])
+                except Exception as e:
+                    print(str(e))
+                    timeview['month'] = to_numeric(timeview['month'])
+
+                try:
+                    timeview['year'] = to_numeric(timeview['year'])
+                except Exception as e:
+                    print(str(e))
+
+                try:
                     self.facade.push_tables['timetable'] = (
                         timeview)
+                except Exception as e:
+                    print(str(e))
+                print('save block: ', timeview.columns)
+                print('save block: ', timeview)
+
+                try:
                     assert timeview is not None
                 except Exception as e:
                     print(str(e))

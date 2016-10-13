@@ -5,35 +5,29 @@ from PyQt4 import QtGui, QtCore
 from pandas import read_csv
 import subprocess
 import sys,os
-import unicodedata
 if sys.platform == "darwin":
     rootpath = (
-        "/Users/bibsian/Desktop/git/database-development/" +
-        "test/")
+        "/Users/bibsian/Desktop/git/database-development")
+    end ="/"
+    
 elif sys.platform == "win32":
     rootpath = (
-        "C:\\Users\MillerLab\\Desktop\\database-development" +
-        "\\test\\")
+        "C:\\Users\MillerLab\\Desktop\\database-development" )
+    end = "\\"
+from Views import ui_mainrefactor as mw
+from poplerGUI import ui_logic_session as sesslogic
+from poplerGUI import ui_logic_site as sitelogic
+from poplerGUI import ui_logic_main as mainlogic
+from poplerGUI import ui_logic_taxa as taxalogic
+from poplerGUI import ui_logic_time as timelogic
+from poplerGUI import ui_logic_obs as rawlogic
+from poplerGUI import ui_logic_covar as covarlogic
+from poplerGUI import ui_logic_climatesite as climsitelogic
+from poplerGUI import ui_logic_widetolong as widetolonglogic
+from poplerGUI.logiclayer import class_userfacade as face
+from poplerGUI import class_modelviewpandas as view
+from poplerGUI import class_inputhandler as ini
 
-from test import ui_mainrefactor as mw
-from test import ui_logic_session as sesslogic
-from test import ui_logic_site as sitelogic
-from test import ui_logic_main as mainlogic
-from test import ui_logic_taxa as taxalogic
-from test import ui_logic_time as timelogic
-from test import ui_logic_obs as rawlogic
-from test import ui_logic_covar as covarlogic
-from test import ui_logic_climatesite as climsitelogic
-from test.logiclayer import class_userfacade as face
-from test import class_modelviewpandas as view
-from test import class_inputhandler as ini
-
-if sys.platform == 'darwin':
-    os.chdir(
-        '/Users/bibsian/Desktop/git/database-development/test/')
-elif sys.platform == 'win32':
-    os.chdir(
-        'C:\\Users\\MillerLab\\Desktop\\database-development\\test\\')
 
 @pytest.fixture
 def MainWindow():
@@ -58,8 +52,11 @@ def MainWindow():
             self.dcovar = covarlogic.CovarDialog()
             self.dclimatesite = climsitelogic.ClimateSite()
             self.dclimatesession = sesslogic.SessionDialog()
-
+            self.dwidetolong = widetolonglogic.WidetoLongDialog()
+            
             # Actions
+            self.actionConvert_Wide_to_Long.triggered.connect(
+                self.wide_to_long_display)
             self.actionSiteTable.triggered.connect(self.site_display)
             self.actionStart_Session.triggered.connect(
                 self.session_display)
@@ -82,6 +79,7 @@ def MainWindow():
             
             # Custom Signals
             self.dsite.site_unlocks.connect(self.site_complete_enable)
+            self.dwidetolong.update_data.connect(self.update_data_model)
             self.dclimatesite.climatesite_unlocks.connect(
                 self.climate_site_complete_enabled)
             self.dsession.raw_data_model.connect(
@@ -93,10 +91,17 @@ def MainWindow():
             self.error = QtGui.QErrorMessage()
             self.message = QtGui.QMessageBox
 
-            metadf = read_csv('Datasets_manual_test/meta_file_test.csv')
-            metamodel = view.PandasTableModel(metadf)
+            metadf = read_csv(
+                rootpath + end + 'data' + end +
+                'Identified_to_upload.csv', encoding='iso-8859-11')
+            metamodel = view.PandasTableModel(
+                metadf[
+                    ['global_id', 'lter', 'title', 'site_metadata']
+                ]
+            )
             self.tblViewMeta.setModel(metamodel)
 
+        @QtCore.pyqtSlot(object)
         def update_data_model(self):
             newdatamodel = view.PandasTableModel(self.facade._data)
             self.tblViewRaw.setModel(newdatamodel)
@@ -120,11 +125,21 @@ def MainWindow():
             self.actionCovariates.setEnabled(True)
             self.update_data_model()
 
+        def wide_to_long_display(self):
+            ''' Displays dialog box to melt data '''
+            self.dwidetolong.show()
+            self.dwidetolong.facade = self.facade
+            
         def site_display(self):
             ''' Displays the Site Dialog box'''
             self.dsite.show()
             self.dsite.facade = self.facade
 
+        def addsite_display(self):
+            ''' Display dialog box for adding site column'''
+            self.daddsite.show()
+            self.daddsite.facade = self.facade
+            
         def session_display(self):
             ''' Displays the Site Dialog box'''
             self.dsession.show()
@@ -133,7 +148,6 @@ def MainWindow():
         def main_display(self):
             ''' Displays main dialog box'''
             self.dmain.facade = self.facade
-            self.dmain.set_data()
             self.dmain.show()
 
         def taxa_display(self):
@@ -161,14 +175,13 @@ def MainWindow():
                 name='updateinfo', tablename='updatetable')
             self.facade.input_register(commithandle)
             try:
-                self.facade.merge_push_data()
-                self.facade.update_main()
+                self.facade.push_merged_data()
                 self.actionCommit.setEnabled(False)
                 self.message.about(
                     self, 'Status', 'Database transaction complete')
             except Exception as e:
                 print(str(e))
-                self.facade._tablelog['maintable'].debug(str(e))
+                self.facade._tablelog['project_table'].debug(str(e))
                 self.error.showMessage(
                     'Datbase transaction error: ' + str(e) +
                     '. May need to alter site abbreviations.')

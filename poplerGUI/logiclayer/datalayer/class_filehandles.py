@@ -190,6 +190,8 @@ class FileHandler(object):
                             pass
                     else:
                             pass
+                dfstate = dfstate[
+                    dfstate.isnull().all(axis=1) != True]
                 dfstate.fillna('NA',inplace=True)
                 memento = FileMemento(dfstate= dfstate,
                             state= self.state)

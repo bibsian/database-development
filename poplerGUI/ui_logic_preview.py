@@ -1,5 +1,5 @@
 from PyQt4 import QtGui
-from poplerGUI import ui_dialog_table_preview as uiprev
+from Views import ui_dialog_table_preview as uiprev
 
 class TablePreview(QtGui.QDialog, uiprev.Ui_Dialog):
     def __init__(self, parent=None):

@@ -22,17 +22,17 @@ elif sys.platform == "win32":
 sys.path.append(os.path.realpath(os.path.dirname(
     rootpath)))
 os.chdir(rootpath)
-from test import ui_logic_sitechange as chg
-from test import ui_logic_session as logicsess
-from test import ui_dialog_climatesite as climsite
-from test import ui_mainrefactor as mw
-from test import class_inputhandler as ini
-from test import class_modelviewpandas as view
-from test import ui_logic_site as s_
+from poplerGUI import ui_logic_sitechange as chg
+from poplerGUI import ui_logic_session as logicsess
+from Views import ui_dialog_climatesite as climsite
+from Views import ui_mainrefactor as mw
+from poplerGUI import class_inputhandler as ini
+from poplerGUI import class_modelviewpandas as view
+from poplerGUI import ui_logic_site as s_
 
-from test.logiclayer import class_helpers as hlp
-from test.logiclayer import class_userfacade as face
-from test.logiclayer.datalayer import config as orm
+from poplerGUI.logiclayer import class_helpers as hlp
+from poplerGUI.logiclayer import class_userfacade as face
+from poplerGUI.logiclayer.datalayer import config as orm
 
 
 @pytest.fixture
@@ -116,7 +116,7 @@ def MainWindow():
                 print('Site line entry: ', self.siteloc['siteid'])
                 print('facade data (before): ', self.facade._data)
                 self.facade._data[self.siteloc[
-                    'siteid']] = self.siteloc['siteid']
+                    'study_site_key']] = self.siteloc['study_site_key']
                 print('facade data (after): ', self.facade._data)
 
             else:

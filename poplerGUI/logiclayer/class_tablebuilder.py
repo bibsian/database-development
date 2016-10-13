@@ -4,10 +4,6 @@ import re
 from pandas import concat, DataFrame
 from poplerGUI.logiclayer import class_helpers as hlp 
 
-__all__ = [
-    'SiteTableBuilder', 'MainTableBuilder',
-    'TaxaTableBuilder', 'RawTableBuilder',
-    'UpdaterTableBuilder', 'DatabaseTable', 'TableDirector']
 
 class AbstractTableBuilder(object):
     '''
@@ -97,7 +93,11 @@ class AbstractTableBuilder(object):
     project_table = {
         'columns': [
             'proj_metadata_key', 'title', 'samplingunits',
-            'datatype', 'structured', 'studystartyr',
+            'datatype',
+            'structured_type_1', 'structured_type_1_units',
+            'structured_type_2', 'structured_type_2_units',
+            'structured_type_3', 'structured_type_3_units',
+            'studystartyr',
             'studyendyr',
             'samplefreq',
             'studytype',
@@ -119,7 +119,13 @@ class AbstractTableBuilder(object):
             'spatial_replication_level_4_extent_units',
             'spatial_replication_level_4_label',
             'spatial_replication_level_4_number_of_unique_reps',
-            'treatment_type', 'derived'
+            'spatial_replication_level_5_extent',
+            'spatial_replication_level_5_extent_units',
+            'spatial_replication_level_5_label',
+            'spatial_replication_level_5_number_of_unique_reps',
+            'treatment_type_1', 'treatment_type_2',
+            'treatment_type_3',
+            'derived'
             'authors', 'authors_contact', 'metalink', 'knbid',
         ],
         'time': False,
@@ -221,10 +227,15 @@ class AbstractTableBuilder(object):
             'spatial_replication_level_2',
             'spatial_replication_level_3',
             'spatial_replication_level_4',
-            'structure',
+            'spatial_replication_level_5',
+            'treatment_type_1',
+            'treatment_type_2',
+            'treatment_type_3',
+            'structure_type_1',
+            'structure_type_2',
+            'structure_type_3',
             'count_observation',
-            'covariates',
-            'trt_label'
+            'covariates'
         ],
 
         'time': True,
@@ -247,10 +258,15 @@ class AbstractTableBuilder(object):
             'spatial_replication_level_2',
             'spatial_replication_level_3',
             'spatial_replication_level_4',
-            'structure',
+            'spatial_replication_level_5',
+            'treatment_type_1',
+            'treatment_type_2',
+            'treatment_type_3',
+            'structure_type_1',
+            'structure_type_2',
+            'structure_type_3',
             'biomass_observation',
-            'covariates',
-            'trt_label'
+            'covariates'
         ],
 
         'time': True,
@@ -273,10 +289,15 @@ class AbstractTableBuilder(object):
             'spatial_replication_level_2',
             'spatial_replication_level_3',
             'spatial_replication_level_4',
-            'structure',
+            'spatial_replication_level_5',
+            'treatment_type_1',
+            'treatment_type_2',
+            'treatment_type_3',
+            'structure_type_1',
+            'structure_type_2',
+            'structure_type_3',
             'density_observation',
-            'covariates',
-            'trt_label'
+            'covariates'
         ],
 
         'time': True,
@@ -299,10 +320,15 @@ class AbstractTableBuilder(object):
             'spatial_replication_level_2',
             'spatial_replication_level_3',
             'spatial_replication_level_4',
-            'structure',
+            'spatial_replication_level_5',
+            'treatment_type_1',
+            'treatment_type_2',
+            'treatment_type_3',
+            'structure_type_1',
+            'structure_type_2',
+            'structure_type_3',
             'percent_cover_observation',
-            'covariates',
-            'trt_label'
+            'covariates'
         ],
 
         'time': True,
@@ -325,10 +351,15 @@ class AbstractTableBuilder(object):
             'spatial_replication_level_2',
             'spatial_replication_level_3',
             'spatial_replication_level_4',
-            'structure',
+            'spatial_replication_level_5',
+            'treatment_type_1',
+            'treatment_type_2',
+            'treatment_type_3',
+            'structure_type_1',
+            'structure_type_2',
+            'structure_type_3',
             'individual_observation',
-            'covariates',
-            'trt_label'
+            'covariates'
         ],
         'time': True,
         'cov': True,
@@ -351,7 +382,11 @@ class AbstractTableBuilder(object):
             'spatial_replication_level_3_label',
             'spatial_replication_level_3_number_of_unique_reps',
             'spatial_replication_level_4_label',
-            'spatial_replication_level_4_number_of_unique_reps'
+            'spatial_replication_level_4_number_of_unique_reps',
+            'spatial_replication_level_5_label',
+            'spatial_replication_level_5_number_of_unique_reps',
+            'treatment_type_1', 'treatment_type_2',
+            'treatment_type_3'
         ],
         'time': False,
         'cov': False,
@@ -456,18 +491,29 @@ class Study_Site_Table_Builder(AbstractTableBuilder):
             uniquesubset = dataframe[acols]
             print(str(e))
 
-        remove_from_null = ['lter_table_fkey']
-        [nullcols.remove(x) for x in remove_from_null]
-        remove_known_fkey = ['lter_table_fkey']
-        [dbcol.remove(x) for x in remove_known_fkey]
-        lat_lng_null_list = ['lat_study_site', 'lng_study_site']
-        [nullcols.remove(x) for x in lat_lng_null_list]
+        try:
+            remove_from_null = ['lter_table_fkey']
+            [nullcols.remove(x) for x in remove_from_null]
+        except Exception as e:
+            print(str(e))
+        try:
+            remove_known_fkey = ['lter_table_fkey']
+            [dbcol.remove(x) for x in remove_known_fkey]
+        except Exception as e:
+            print(str(e))
+        try:
+            lat_lng_null_list = ['lat_study_site', 'lng_study_site']
+            [nullcols.remove(x) for x in lat_lng_null_list]
+        except Exception as e:
+            print(str(e))
+
 
         print('acols after: ', acols)
         print('nullcols after: ', nullcols)
         print('dbcol after: ', dbcol)
 
         uniquesubset = dataframe[acols]
+        uniquesubset.columns = ['study_site_key']
         nullcols_non_numeric = hlp.produce_null_df(
             ncols=len(nullcols),
             colnames=nullcols,
@@ -493,30 +539,39 @@ class Project_Table_Builder(AbstractTableBuilder):
     Note, no get methods because there is no
     alternate informatoin needed
     '''
+    @staticmethod
+    def entry_verifier(dictionary):
+        for i, (key, value) in enumerate(dictionary.items()):
+            try:
+                if value.checked is True:
+                    assert (value.entry != '' and value.entry != 'NULL') is True
+                    if 'spatial' in key:
+                        assert(value.unit != '')
+                    else:
+                        pass
+                else:
+                    assert (value.entry == '' or value.entry == 'NULL') is True
+                    if 'spatial' in key:
+                        assert(value.unit == '')
+                    else:
+                        pass
+            except Exception as e:
+                print(str(e))
+                raise AssertionError(key + ': entries not valid.')
+        print('Entries are valid')
+
+    def get_available_columns(self):
+        return None
+
+    def get_null_columns(self):
+        return None
 
     def get_dataframe(
             self, dataframe, acols, nullcols, keycols, dbcol,
             globalid, siteid, sitelevels):
 
-        acols = [x.rstrip() for x in acols]
-        nullcols = [x.rstrip() for x in nullcols]
-        dbcol = [x.rstrip() for x in dbcol]
-
-        if 'lter_proj_site' in dbcol:
-            dbcol.remove('lter_proj_site')
-        else:
-            pass
-        if 'lter_proj_site' in nullcols:
-            nullcols.remove('lter_proj_site')
-        else:
-            pass
-        try:
-            assert sitelevels is not None
-        except Exception as e:
-            print(str(e))
-            raise AttributeError(
-                'Site levels not passed to builder')
-
+        print('buidler df: ', dataframe)
+        dataframe.reset_index(inplace=True)
         # Columns that will be updated later in the
         # program
         autoupdated = [
@@ -530,7 +585,9 @@ class Project_Table_Builder(AbstractTableBuilder):
             'spatial_replication_level_3_number_of_unique_reps',
             'spatial_replication_level_4_label',
             'spatial_replication_level_4_number_of_unique_reps',
-            'num_treatments'
+            'spatial_replication_level_5_label',
+            'spatial_replication_level_5_number_of_unique_reps',
+
         ]
 
         # Creating main data table
@@ -540,9 +597,14 @@ class Project_Table_Builder(AbstractTableBuilder):
                 'title': dataframe['title'],
                 'samplingunits': 'NA',
                 'datatype': dataframe['data_type'],
-                'structured': 'NA',
-                'studystartyr': 'NA',
-                'studyendyr': 'NA',
+                'structured_type_1': 'NA',
+                'structured_type_1_units': 'NA',
+                'structured_type_2': 'NA',
+                'structured_type_2_units': 'NA',
+                'structured_type_3': 'NA',
+                'structured_type_3_units': 'NA',
+                'studystartyr': -99999,
+                'studyendyr': -99999,
                 'samplefreq': dataframe['temp_int'],
                 'studytype': dataframe['study_type'],
                 'community': dataframe['comm_data'],
@@ -550,30 +612,42 @@ class Project_Table_Builder(AbstractTableBuilder):
                 'spatial_replication_level_1_extent': -99999,
                 'spatial_replication_level_1_extent_units': 'NA',
                 'spatial_replication_level_1_label': 'NA',
-                'spatial_replication_level_1_number_of_unique_reps': 'NA',
+                'spatial_replication_level_1_number_of_unique_reps': -99999,
                 'spatial_replication_level_2_extent': -99999,
                 'spatial_replication_level_2_extent_units': 'NA',
                 'spatial_replication_level_2_label': 'NA',
-                'spatial_replication_level_2_number_of_unique_reps': 'NA',
+                'spatial_replication_level_2_number_of_unique_reps': -99999,
                 'spatial_replication_level_3_extent': -99999,
                 'spatial_replication_level_3_extent_units': 'NA',
                 'spatial_replication_level_3_label': 'NA',
-                'spatial_replication_level_3_number_of_unique_reps': 'NA',
+                'spatial_replication_level_3_number_of_unique_reps': -99999,
                 'spatial_replication_level_4_extent': -99999,
                 'spatial_replication_level_4_extent_units': 'NA',
                 'spatial_replication_level_4_label': 'NA',
-                'spatial_replication_level_4_number_of_unique_reps': 'NA',
-                'treatment_type': dataframe['treatment_type'],
+                'spatial_replication_level_4_number_of_unique_reps': -99999,
+                'spatial_replication_level_5_extent': -99999,
+                'spatial_replication_level_5_extent_units': 'NA',
+                'spatial_replication_level_5_label': 'NA',
+                'spatial_replication_level_5_number_of_unique_reps': -99999,
+                'treatment_type_1': 'NA',
+                'treatment_type_2': 'NA',
+                'treatment_type_3': 'NA',
                 'derived': 'NA',
                 'authors': 'NA',
                 'authors_contact': 'NA',
                 'metalink': dataframe['site_metadata'],
                 'knbid': dataframe['portal_id']
             },
-            columns = [
-
+            columns=[
                 'proj_metadata_key', 'title', 'samplingunits',
-                'datatype', 'structured', 'studystartyr',
+                'datatype',
+                'structured_type_1',
+                'structured_type_1_units',
+                'structured_type_2',
+                'structured_type_2_units',
+                'structured_type_3',
+                'structured_type_3_units',
+                'studystartyr',
                 'studyendyr',
                 'samplefreq',
                 'studytype', 'community',
@@ -594,12 +668,34 @@ class Project_Table_Builder(AbstractTableBuilder):
                 'spatial_replication_level_4_extent_units',
                 'spatial_replication_level_4_label',
                 'spatial_replication_level_4_number_of_unique_reps',
-                'treatment_type', 'derived',
+                'spatial_replication_level_5_extent',
+                'spatial_replication_level_5_extent_units',
+                'spatial_replication_level_5_label',
+                'spatial_replication_level_5_number_of_unique_reps',
+                'treatment_type_1',
+                'treatment_type_2',
+                'treatment_type_3',
+                'derived',
                 'authors', 'authors_contact', 'metalink', 'knbid',
             ], index=[0])
 
+        form_dict = self._inputs.lnedentry
+
+        self.entry_verifier(form_dict)
+
+        for i, (key, value) in enumerate(form_dict.items()):
+            if value.checked is True:
+                maindata.loc[0, key] = value.entry
+                if 'spatial' in key or 'structure' in key:
+                    maindata.loc[0, '{}_units'.format(key)] = value.unit
+                else:
+                    pass
+            else:
+                pass
+
         return maindata
 
+    
 class Taxa_Table_Builder(AbstractTableBuilder):
     '''
     Concrete table builder implementation: Site
@@ -618,14 +714,23 @@ class Taxa_Table_Builder(AbstractTableBuilder):
             uniquesubset = dataframe[acols]
             print(str(e))
 
-        remove_unknown_pkey = ['taxa_table_key']
-        [dbcol.remove(x) for x in remove_unknown_pkey]
-        [nullcols.remove(x) for x in remove_unknown_pkey]
+
+        try:
+            [dbcol.remove(x) for x in keycols]
+        except Exception as e:
+            print(str(e))
+
+        try:
+            [nullcols.remove(x) for x in keycols]
+        except Exception as e:
+            print(str(e))
+
         print('SELF INPUTS: ', self._inputs.checks)
         print('AVAILABLE COLUMNS: ', acols)
         print('DB COLUMNS: ', dbcol)
         print('NULL COLUMNS: ', nullcols)
         print('DF COLUMNS: ', dataframe.columns.values.tolist())
+
 
         if self._inputs.checks['taxacreate'] is True:
             dfcol = dataframe.columns.values.tolist()
@@ -679,6 +784,7 @@ class Taxa_Table_Builder(AbstractTableBuilder):
                 columns={acols[i]: item},
                 inplace=True)
         dbcol.append(siteid)
+        print('database columns to subset from taxa build: ', dbcol)
         return final[dbcol]
 
 
@@ -704,6 +810,11 @@ class Observation_Table_Builder(AbstractTableBuilder):
 
         print('obs acols: ', acols)
         print('obs nullcols: ', nullcols)
+
+        if self._inputs.tablename == 'individual_table':
+            acols.remove('')
+        else:
+            pass
 
         try:
             acols = [x.rstrip() for x in acols]
@@ -778,6 +889,8 @@ class Observation_Table_Builder(AbstractTableBuilder):
                     columns={
                         original_column_names_to_change[i]: item},
                     inplace=True)
+
+
             return final
 
         except Exception as e:

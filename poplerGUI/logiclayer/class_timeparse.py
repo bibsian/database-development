@@ -8,15 +8,15 @@ all = ['TimeParse']
 class TimeParse(object):
     def __init__(self, dataframe, datadict):
         self.data = dataframe
-        print('initialized data: ', self.data)
-        self.dayname = datadict['dayname']
-        self.dayform = datadict['dayform']
-        self.monthname = datadict['monthname']
-        self.monthform = datadict['monthform']
-        self.yearname = datadict['yearname']
-        self.yearform = datadict['yearform']
-        self.jd = datadict['jd']
-        self.mspell = datadict['mspell']
+        self.datadict = datadict
+        self.dayname = self.datadict['dayname']
+        self.dayform = self.datadict['dayform']
+        self.monthname = self.datadict['monthname']
+        self.monthform = self.datadict['monthform']
+        self.yearname = self.datadict['yearname']
+        self.yearform = self.datadict['yearform']
+        self.jd = self.datadict['jd']
+        self.hms = self.datadict['hms']
         self.mdyformat = [
             '%d %m %Y',  '%d %Y %m', '%m %d %Y', '%m %Y %d',
             '%Y %d %m', '%d %y %m','%d %m %y',
@@ -63,7 +63,8 @@ class TimeParse(object):
                 'Trying to converty column names' +
                 ' to integer index')
 
-            
+
+
     @staticmethod
     def concatenator(
             data, name1_keep, name2_change, block, name3=None):
@@ -72,10 +73,18 @@ class TimeParse(object):
         into multiple columns (this makes it easier for formatting
         into the table into the database's structure)
         '''
-        print('In '+block+' block')
+        try:
+            data[name1_keep]
+        except:
+            name1_keep= int(name1_keep)
+            name2_change=int(name2_change)
+            print('Chaning column to index concatenator block')
+            if name3 is not None:
+                name3 = int(name3)
 
-        print('n1: '+ name1_keep)
-        print('n2: '+ name2_change)
+        print('In '+block+' block')
+        print('n1: '+ str(name1_keep))
+        print('n2: '+ str(name2_change))
         try:
             if name1_keep == name2_change:
                 concatname = name1_keep
@@ -112,23 +121,30 @@ class TimeParse(object):
         based on user input. Returns 3 formatted columns
         i.e. (year, month, day) including nulls
         '''
+
         fields = ['month', 'day', 'year']
         if any(isinstance(i, list) for i in col):
             col = list(chain.from_iterable(col))
         else:
             pass
+        print(type(col))
+        print(col)
 
         if len(nulls) > 0:
             nulldf = hlp.produce_null_df(
                 len(nulls), nulls, len(data), 'nan')
 
+
         else:
             nulldf = DataFrame()            
         try:
             if col[0] is not None:
+                print('re_time list before: ', col)
                 time_list_re = hlp.strip_time(data, col)
             else:
                 time_list_re = []
+            print('re_time list after: ', time_list_re)
+
         except Exception as e:
             print(str(e))
             raise AttributeError('Could not strip time format')            
@@ -224,6 +240,16 @@ class TimeParse(object):
             # Year only data
             if day == 'NULL' and month == 'NULL':
                 print('In YEAR block')
+                try:
+                    uq_years = self.data[
+                        self.yearname].astype(str).apply(len)
+                    print('parser time: ', uq_years)
+                    assert (len(set(uq_years)) == 1) is True
+                except:
+                    raise ValueError(
+                        'Inconsistent formatting: ',
+                        list(set(self.data[self.yearname]))
+                    )
                 yeardf = self.time_regex(
                     data=self.data, col=[self.yearname],
                     form=self.yformat, nulls=['day', 'month'])
@@ -303,6 +329,22 @@ class TimeParse(object):
 
         # Three column entries for date information
         elif 'NULL' not in [month,day,year] and len(count) == 0:
+            if self.hms is True:
+                try:
+                    assert day == month
+                    assert month == year
+                    self.data[day] = to_datetime(
+                        self.data[day],
+                        infer_datetime_formate=True)
+                    datadict = {
+                        'formatted': self.data,
+                        'null': DataFrame()}
+                    return self.mapper(
+                        datadict, ['month','day','year'])
+                except:
+                    raise IOError(
+                        'Could not format input column ' +
+                        'names (pandas inferred)' )
             colnameslist = [
                 self.monthname, self.dayname, self.yearname]
             # 1 Column entry ALL data present
