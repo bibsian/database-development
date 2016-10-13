@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>567</width>
-    <height>208</height>
+    <width>527</width>
+    <height>212</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -88,14 +88,15 @@
                <item>
                 <widget class="QLabel" name="label">
                  <property name="text">
-                  <string>Identifier Columns (likely taxa names)</string>
+                  <string>Column Names with taxa labels (e.g.species).
+Separate names by comma's.</string>
                  </property>
                 </widget>
                </item>
                <item>
                 <layout class="QHBoxLayout" name="horizontalLayout">
                  <item>
-                  <widget class="QLineEdit" name="lnedIdentifiercolumns"/>
+                  <widget class="QLineEdit" name="lnedValuecolumns"/>
                  </item>
                  <item>
                   <spacer name="horizontalSpacer">
@@ -119,7 +120,8 @@
                <item>
                 <widget class="QLabel" name="label_2">
                  <property name="text">
-                  <string>Long Column Name</string>
+                  <string>Datatype Column
+Label</string>
                  </property>
                 </widget>
                </item>

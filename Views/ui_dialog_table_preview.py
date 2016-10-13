@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/bibsian/Desktop/git/database-development/test/Views/ui_dialog_table_preview.ui'
+# Form implementation generated from reading ui file '/Users/bibsian/Desktop/git/database-development/Views/ui_dialog_table_preview.ui'
 #
 # Created by: PyQt4 UI code generator 4.11.4
 #

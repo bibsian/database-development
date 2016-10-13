@@ -234,7 +234,7 @@ QTableView{
      <x>0</x>
      <y>0</y>
      <width>984</width>
-     <height>31</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -252,8 +252,9 @@ QTableView{
     <property name="title">
      <string>Edit</string>
     </property>
+    <addaction name="actionUndo"/>
     <addaction name="separator"/>
-    <addaction name="actionAdd_Site_Column"/>
+    <addaction name="actionConvert_Wide_to_Long"/>
    </widget>
    <widget class="QMenu" name="menuSplit">
     <property name="title">
@@ -313,16 +314,6 @@ QTableView{
   <action name="actionLoad_File">
    <property name="text">
     <string>Load File</string>
-   </property>
-  </action>
-  <action name="actionUploaded_tables">
-   <property name="text">
-    <string>Uploaded tables</string>
-   </property>
-  </action>
-  <action name="actionTables_to_upload">
-   <property name="text">
-    <string>Tables to upload..</string>
    </property>
   </action>
   <action name="actionSiteTable">
@@ -449,16 +440,6 @@ QTableView{
     </font>
    </property>
   </action>
-  <action name="actionFactor_levels">
-   <property name="text">
-    <string>not implemented</string>
-   </property>
-  </action>
-  <action name="actionValue">
-   <property name="text">
-    <string>Value</string>
-   </property>
-  </action>
   <action name="actionCommit">
    <property name="text">
     <string>Commit</string>
@@ -479,16 +460,6 @@ QTableView{
     <string>not implemented</string>
    </property>
   </action>
-  <action name="actionNot_implemented_4">
-   <property name="text">
-    <string>not implemented</string>
-   </property>
-  </action>
-  <action name="actionNot_implemented_5">
-   <property name="text">
-    <string>not implemented</string>
-   </property>
-  </action>
   <action name="actionNew_Climate">
    <property name="text">
     <string>New Climate...</string>
@@ -499,9 +470,14 @@ QTableView{
     <string>End Climate...</string>
    </property>
   </action>
-  <action name="actionAdd_Site_Column">
+  <action name="actionConvert_Wide_to_Long">
    <property name="text">
-    <string>Add Site Column</string>
+    <string>Format Wide to Long</string>
+   </property>
+  </action>
+  <action name="actionUndo">
+   <property name="text">
+    <string>Undo</string>
    </property>
   </action>
  </widget>
