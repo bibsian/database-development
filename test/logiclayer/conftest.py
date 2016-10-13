@@ -89,6 +89,21 @@ def meta_handle5():
 # ------------------------------------------------------ #
 
 @pytest.fixture
+def file_handle_wide_to_long():
+    ckentry = {}
+    rbtn = {'.csv': True, '.txt': False,
+            '.xlsx': False}
+    lned = {'sheet': '', 'delim': '', 'tskip': '', 'bskip': ''}
+    fileinput = ini.InputHandler(
+        name='fileoptions',tablename=None, lnedentry=lned,
+        rbtns=rbtn, checks=ckentry, session=True,
+        filename=(
+            rootpath + end + 'test' + end + 'Datasets_manual_test' + end +
+            'long_data_test.csv'))
+    return fileinput
+    
+
+@pytest.fixture
 def file_handle_1_count():
     ckentry = {}
     rbtn = {'.csv': True, '.txt': False,
@@ -161,6 +176,14 @@ def file_handle5():
 # ------------------------------------------------------ #
 # ---------------- Study site handle --------------- #
 # ----------------------------------------------------- #
+@pytest.fixture
+def site_handle_wide_to_long():
+    lned = {'study_site_key': 'SITE'}
+    sitehandle = ini.InputHandler(
+        name='siteinfo', lnedentry=lned, tablename='study_site_table')
+    return sitehandle
+    
+
 @pytest.fixture
 def site_handle_1_count():
     lned = {'study_site_key': 'site'}
