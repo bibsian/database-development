@@ -47,8 +47,10 @@ current/*: Anything in this folder will be related to datasets we've catalogued 
 
 db/*: All files related to the current schema for the database (python file to create db, csv with individual LTER information, and some test files)
 
-poplerGUI/*: All files are orginized into python packages. This is the source folder that contains all modules that make up the program (these files are copied over and updated from the test folder when neccessary).
+poplerGUI/*: Tested python modules to run popler GUI. These files are copied over and updated from the test folder when neccessary. Logic for user views is in this directory too.
 
 test/*: All unit test for python modules.
+
+Views/*: All Qt Designer files (*.ui) for the GUI and the python equivalent (ui*.py)
 
 poplerGUI_run_main.py: File to start script. To use this file you must have all python dependencies installed, postgresql installed, and edit the config file (poplerGUI/logiclayer/datalayer/config.py) to contect to a database created on your server/local machine.
