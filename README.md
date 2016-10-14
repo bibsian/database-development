@@ -1,35 +1,42 @@
 Population Dynamics Database
 ============================
 
-This project aims to create an open source database that wil contain raw aggregated information from numerous ecological studies on population dynamics (plants, animals, algae, etc). This database will *not* be up to third normal form standards. This is because we wish to have a centralized data repositary where all temporal and spatial replication within the data is preserved; this will allow for more accurate modeling of population dyanimcs through state-space models.
+This project contains the code for the graphical user interface (GUI) that will populate our open source database (popler). Popler contains aggregated data from numerous ecological studies on population dynamics (plants, animals, algae, etc). Popler will *not* be up to third normal form standards since we want to preserve all temporal and spatial replication within any data; this will allow for more accurate modeling of population dyanimcs through state-space models.
 
 # Identifying Data Sources
- The data sources will come from LTER research station. Individual data entities are given a unique id by us for book keeping purposes. See the 'current' folder for a list of dataset that will be uploaded (sorted by our created 'id' number) as of 07/11/16.
+ The data sources will come from all Long-Term Ecological Resarch (LTER) stations (26 in total). Individual datasets are given a unique id by us for book keeping purposes. See the 'current' folder for a list of datasets that will be uploaded (sorted by our created 'id' number) as of 07/11/16.
  
 # Database Overview
-The database will have seven tables.
+Popler has 13 tables.
 
 1. raw_climate: Table of orginal (or aggregated) meteorlogical data from individual LTER climate stations 
 
-2. climate_site: Table of LTER climate station names within any LTER
+2. climate_station_table: Table of LTER climate station names within any LTER
 
 3. lter_table: Table of all LTER research stations (lat/long included)
 
-4. site_table: Table of designated site names from studies that gathered data at a LTER station (w/ lat & log if available)
+4. study_site_table: Table of designated site names from studies that gathered data at a LTER station (w/ lat & log if available)
 
-5. main_table: Table of metadata that describes a research study (includes temporal information, levels of spatial replication, PI's, contact emails, community data set indicator, etc). See the 'db' folder for a complete overview of fields
+6. site_in_project_table:
 
-6. taxa_table: Table of taxonomic classifications for organisms found in a study
+7. project: Table of metadata that describes a research study (includes temporal information, levels of spatial replication, PI's, contact emails, community data set indicator, etc). See the 'db' folder for a complete overview of fields
 
-7. raw_table: Table of the orginal observations gathered from the study
+8. taxa_table: Table of taxonomic classifications for organisms as recording in datasheets
 
-Note, in order to keep all spatial and temporal replication intact, the main_table and taxa_table had to have the records split up on a per research site basis (within an LTER).For example if study A has three sites, site1, site2, and site3, records in the main table will have metadata for that study and site (studyA-site1, studyA-site2, studyA-site3). This lead to some redundant data but various fields in the table can vary by site. Our R package will deal with this detail when summarizing database informatoin.
+9. taxa_accepted_table: Talbe of taxonomic classifications after updating taxonomic information with proper keys (if applicable) and running names through taxize (in R) for most up to date classifications.
 
-# Overview of Methods to Populate the Database
- Raw data was gathered from LTER research stations and were formated and uploaded to the databse with our poplerGUI computer program. This program has a graphical user interface (GUI) to enable various people to upload data to the database in a repeatable, recordable, and standarized way. This could be turned into a tool to help other scientist create databases that sythensize various independent.
+10. count_table: Table of the orginal observations gathered from the studies that contained count data
 
-# Future goal
-We would like to create a website and web application to access the database (this will only be done if we have enough time/manpower)
+11. biomass_table: Table of the orginal observations gathered from the studies that contained biomass data
+
+12. percent_cover_table: Table of the orginal observations gathered from the studies that contained cover data
+
+13. density_table: Table of the orginal observations gathered from the studies that contained density data
+
+14. individual_table: Table of the orginal observations gathered from the studies that contained individual level data (mark-recap)
+
+
+The popler GUI allows people to format data for uploading to the postgres database in a repeatable, recorded, and standarized fashion. I think this could be turned into a tool to help other scientist create databases that sythensize various independent...but it may need quite a bit more work.
 
 # Repo Folder Structure
 
@@ -38,14 +45,10 @@ The program architecture is also described within this folder. This has not been
 
 current/*: Anything in this folder will be related to datasets we've catalogued and ID'ed. As well as some summary pdfs/word files (summaries were created for grant purposes).
 
-db/*: All files related to the BETA version of the database (this is the current design that will likely be retained and unmodified)
+db/*: All files related to the current schema for the database (python file to create db, csv with individual LTER information, and some test files)
 
-db_alpha_deprecated/*: All files related to the ALPH version of the database that was created (we are currently using the beta version)
+poplerGUI/*: All files are orginized into python packages. This is the source folder that contains all modules that make up the program (these files are copied over and updated from the test folder when neccessary).
 
-poplerGUI/*: All files are orginized into python packages. This is the source folder that contains all modules that make of the program (these files are copied over and updated from the test folder when neccessary).
+test/*: All unit test for python modules.
 
-poplerGUI_alpha_deprecated/*: All files related to the ALPHA version of the GUI that was created to populate the ALPHA version of the database. We are currently using the BETA version of the GUI (see 'poplerGUI' folder).
-
-test/*: All unit test, python modules, and database scripts that were written for the BETA version of our GUI.
-
-poplerGUI_run_main.py: This file starts the program to upload data to a database. To use this file you must have all python dependencies installed, postgresql installed, and edit the config file to contect to a database created on your server/local machine.
+poplerGUI_run_main.py: File to start script. To use this file you must have all python dependencies installed, postgresql installed, and edit the config file (poplerGUI/logiclayer/datalayer/config.py) to contect to a database created on your server/local machine.
