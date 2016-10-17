@@ -103,11 +103,15 @@ def MainWindow():
 
         @QtCore.pyqtSlot(object)
         def update_data_model(self):
-            newdatamodel = view.PandasTableModel(self.facade._data)
+            newdatamodel = view.PandasTableModelEdit(
+                self.facade._data)
+            newdatamodel.log_change.connect(self.write_to_log)
             self.tblViewRaw.setModel(newdatamodel)
             self.dsite.facade = self.facade
             self.dclimatesite.facade = self.facade
 
+        
+            
         @QtCore.pyqtSlot(object)
         def update_webview(self, url):
             print(url)
