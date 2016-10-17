@@ -40,7 +40,7 @@ def PandasTableModelEdit():
             self.__data = np.array(data.values)
             self.__cols = data.columns
             self.r, self.c = np.shape(self.__data)
-            
+
         def rowCount(self, parent=None):
             return self.r
 
@@ -74,22 +74,24 @@ def PandasTableModelEdit():
                 og_value = self.data(index, QtCore.Qt.DisplayRole)
                 self.__data[index.row(), index.column()] = value
                 self.dataChanged.emit(index, index)
-                self.log_change.emit({'cell_changes':{og_value: value}})
+                self.log_change.emit(
+                    {'cell_changes':{og_value: value}})
                 return True
             return False
 
-        def removeRows(self, row, count, parent=QtCore.QModelIndex()):
-            self.beginRemoveRows(
-                QtCore.QModelIndex(), row, (row + count))
-            np.delete(self.__data, np.r_[row,row+count], axis=0)
-            self.endRemoveRows()
-        
+        #def removeRows(self, rowstart, rowend, parent=QtCore.QModelIndex()):
+        #    self.beginRemoveRows(
+        #        QtCore.QModelIndex(), rowstart, rowend+1)
+        #    self.__data = np.delete(
+        #            self.__data, np.s_[rowstart:rowend+1], axis=0)
+        #    self.endRemoveRows()
+
         def event(self, event):
             if (event.key() == QtCore.Qt.Key_Return):
                 print('Presed Enter')
                 raise KeyError
-
             return QtCore.QAbStractTableModel.event(self, event)
+
     return PandasTableModelEdit
 
 @pytest.fixture
@@ -114,22 +116,24 @@ def Preview(df, PandasTableModelEdit):
             self.tabviewPreview.setContextMenuPolicy(
                 QtCore.Qt.CustomContextMenu
             )
-            self.tabviewPreview.customContextMenuRequested.connect(
-                self.on_context_menu)
+
+            #self.tabviewPreview.customContextMenuRequested.connect(
+            #    self.on_context_menu)
             # Context menu for delete action
-            self.popMenu = QtGui.QMenu(self)
-            self.popMenu.addAction(QtGui.QAction('delete', self))
-            self.popMenu.addSeparator()
-        
-        def on_context_menu(self, point):
-            ''' Method to initiate the deltion of rows'''
-            # show context menu
-            self.popMenu.exec_(
-                self.tabviewPreview.mapToGlobal(point))
-            self.model.removeRows(,)
+            #self.popMenu = QtGui.QMenu(self)
+            #self.popMenu.addAction(QtGui.QAction('delete', self))
+            #self.popMenu.addSeparator()
 
-# LEFT OFF HERE. Trying to get the delete rows feature working
-
+        #def on_context_menu(self, point):
+        #    ''' Method to initiate the deltion of rows'''
+        #    # show context menu
+        #    self.popMenu.exec_(
+        #        self.tabviewPreview.mapToGlobal(point))
+        #    indeces = list(
+        #        set([x.row() for x in 
+        #        self.tabviewPreview.selectedIndexes()]))
+        #    self.model.removeRows(indeces[0], indeces[-1])
+        # LEFT OFF HERE. Trying to get the delete rows feature working
 
         @QtCore.pyqtSlot(object)
         def write_to_log(self, change):
@@ -144,11 +148,10 @@ def Preview(df, PandasTableModelEdit):
                 df_updated = df.rename(columns={oldHeader:newHeader})
                 self.tabviewPreview.setModel(
                     PandasTableModelEdit(df_updated))
-                
+
             self.write_to_log(
                 {'column_change': {oldHeader:newHeader}})
 
-        
     return TablePreview()
     
 def test_dialog_site(qtbot, Preview):
