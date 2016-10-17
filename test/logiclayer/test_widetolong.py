@@ -1,4 +1,4 @@
-#!/usr/bin/bash python
+#!/usr/bin/env python
 import pytest
 from pandas import melt, DataFrame, read_csv
 import sys, os
@@ -34,7 +34,6 @@ def wide_to_long():
     return wide_to_long
 
 def test_long(df_long, wide_to_long):
-
     melted = wide_to_long(
         dataframe=df_long,
         value_columns=hlp.string_to_list(
