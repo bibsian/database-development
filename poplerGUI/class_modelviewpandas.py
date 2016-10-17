@@ -8,7 +8,6 @@ from PyQt4 import QtCore
 import numpy as np
 import pandas as pd
 
-
 class PandasTableModel(QtCore.QAbstractTableModel):
     '''
     This class is an abstract table class from Qt to visualize
