@@ -255,33 +255,16 @@ QTableView{
     <addaction name="actionUndo"/>
     <addaction name="separator"/>
     <addaction name="actionConvert_Wide_to_Long"/>
+    <addaction name="separator"/>
+    <addaction name="actionReplace"/>
+    <addaction name="separator"/>
+    <addaction name="actionCombine_Columns"/>
    </widget>
    <widget class="QMenu" name="menuSplit">
     <property name="title">
      <string>Split</string>
     </property>
-    <widget class="QMenu" name="menuOne_to_many">
-     <property name="title">
-      <string>One to many</string>
-     </property>
-     <addaction name="actionNot_implemented_3"/>
-    </widget>
-    <widget class="QMenu" name="menuMany_to_one">
-     <property name="title">
-      <string>Many to one</string>
-     </property>
-     <addaction name="actionNot_implemented_2"/>
-    </widget>
-    <widget class="QMenu" name="menuString_split">
-     <property name="title">
-      <string>String split</string>
-     </property>
-     <addaction name="actionNot_implemented"/>
-    </widget>
-    <addaction name="menuOne_to_many"/>
-    <addaction name="menuMany_to_one"/>
-    <addaction name="separator"/>
-    <addaction name="menuString_split"/>
+    <addaction name="actionSplit_Column_By"/>
     <addaction name="separator"/>
    </widget>
    <widget class="QMenu" name="menuDatabase">
@@ -455,11 +438,6 @@ QTableView{
     <string>not implemented</string>
    </property>
   </action>
-  <action name="actionNot_implemented_3">
-   <property name="text">
-    <string>not implemented</string>
-   </property>
-  </action>
   <action name="actionNew_Climate">
    <property name="text">
     <string>New Climate...</string>
@@ -474,10 +452,31 @@ QTableView{
    <property name="text">
     <string>Format Wide to Long</string>
    </property>
+   <property name="shortcut">
+    <string>Meta+W, Meta+L</string>
+   </property>
   </action>
   <action name="actionUndo">
    <property name="text">
     <string>Undo</string>
+   </property>
+  </action>
+  <action name="actionSplit_Column_By">
+   <property name="text">
+    <string>Split Column By</string>
+   </property>
+  </action>
+  <action name="actionReplace">
+   <property name="text">
+    <string>Replace</string>
+   </property>
+   <property name="shortcut">
+    <string>Meta+R</string>
+   </property>
+  </action>
+  <action name="actionCombine_Columns">
+   <property name="text">
+    <string>Combine Columns</string>
    </property>
   </action>
  </widget>
