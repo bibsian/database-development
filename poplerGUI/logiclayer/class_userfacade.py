@@ -107,7 +107,11 @@ class Facade:
             'climatesite': None,
             'climateobs': None,
             'addsite': None,
-            'widetolong': None
+            'widetolong': None,
+            'changecolumn': None,
+            'changecell': None,
+            'splitcolumn': None,
+            'replacevalue': None
         }
 
         self._colinputlog = {
