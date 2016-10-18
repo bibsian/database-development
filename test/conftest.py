@@ -87,6 +87,19 @@ def meta_handle5():
 # ------------------------------------------------------ #
 # ---------------- File loader handle --------------- #
 # ------------------------------------------------------ #
+@pytest.fixture
+def file_handle_split_columns():
+    ckentry = {}
+    rbtn = {'.csv': True, '.txt': False,
+            '.xlsx': False}
+    lned = {'sheet': '', 'delim': '', 'tskip': '', 'bskip': ''}
+    fileinput = ini.InputHandler(
+        name='fileoptions',tablename=None, lnedentry=lned,
+        rbtns=rbtn, checks=ckentry, session=True,
+        filename=(
+            rootpath + end + 'test' + end + 'Datasets_manual_test' + end +
+            'splitcolumn_data_test.csv'))
+    return fileinput
 
 @pytest.fixture
 def file_handle_wide_to_long():
