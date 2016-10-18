@@ -13,7 +13,7 @@ elif sys.platform == "win32":
 sys.path.append(os.path.realpath(os.path.dirname(
     rootpath)))
 os.chdir(rootpath)
-from Views import ui_dialog_splitcolumn as dsplitcolumn
+from Views import ui_dialog_replacevalue as dreplacevalue
 from poplerGUI import ui_logic_preview as tprev
 from poplerGUI import class_modelviewpandas as view
 from poplerGUI.logiclayer import class_helpers as hlp
@@ -21,8 +21,8 @@ from poplerGUI.logiclayer import class_userfacade as face
 from poplerGUI import class_inputhandler as ini
 
 @pytest.fixture
-def SplitColumnDialog(meta_handle_1_count, file_handle_split_columns):
-    class SplitColumnDialog(QtGui.QDialog, dsplitcolumn.Ui_Dialog):
+def ReplaceValueDialog(meta_handle_1_count, file_handle_1_count):
+    class ReplaceValueDialog(QtGui.QDialog, dreplacevalue.Ui_Dialog):
         '''
         User Logic to deal with split a column from one into two based
         on user supplied separator (currently regex does not work)
@@ -37,18 +37,18 @@ def SplitColumnDialog(meta_handle_1_count, file_handle_split_columns):
             self.facade = face.Facade()
             self.facade.input_register(meta_handle_1_count)
             self.facade.meta_verify()
-            self.facade.input_register(file_handle_split_columns)
+            self.facade.input_register(file_handle_1_count)
             self.facade.load_data()
 
             self.previous_click = False
             # Place holders for user inputs
-            self.splitcolumnlned = {}
+            self.replacevaluelned = {}
             
             # Place holder: Data Model/ Data model view
-            self.splitcolumnmodel = None
+            self.replacevaluemodel = None
             self.viewEdit = view.PandasTableModelEdit(None)
             # Placeholders: Data tables
-            self.splitcolumntable = None
+            self.replacevaluetable = None
 
             # Actions
             self.btnPreview.clicked.connect(self.submit_change)
@@ -62,20 +62,22 @@ def SplitColumnDialog(meta_handle_1_count, file_handle_split_columns):
 
         def submit_change(self):
             sender = self.sender()
-            self.splitcolumnlned = {
+            self.replacevaluelned = {
                 'column_name':
                 self.lnedColumnname.text().strip(),
-                'split_column_by':
-                self.lnedSplitcolumnby.text()
+                'value_from':
+                self.lnedFrom.text(),
+                'value_to':
+                self.lnedTo.text().strip(),
+                'all_columns': self.ckAllcolumns.isChecked()
             }
-            print('split inputs: ', self.splitcolumnlned)
-            self.splitcolumnini = ini.InputHandler(
-                name='splitcolumn',
-                lnedentry=self.splitcolumnlned
+            self.replacevalueini = ini.InputHandler(
+                name='replacevalue',
+                lnedentry=self.replacevaluelned
             )
-            self.facade.input_register(self.splitcolumnini)
-            self.facade.create_log_record('splitcolumn')
-            self._log = self.facade._tablelog['splitcolumn']
+            self.facade.input_register(self.replacevalueini)
+            self.facade.create_log_record('replacevalue')
+            self._log = self.facade._tablelog['replacevalue']
 
             if self.previous_click is True:
                 self.viewEdit = view.PandasTableModelEdit(None)
@@ -83,35 +85,48 @@ def SplitColumnDialog(meta_handle_1_count, file_handle_split_columns):
                 pass
 
             try:
-                self.splitcolumntable = hlp.split_column(
-                    self.facade._data,
-                    self.splitcolumnlned['column_name'],
-                    self.splitcolumnlned['split_column_by']
-                )
+                if self.replacevaluelned['all_columns'] is True:
+                    self.replacevaluetable = self.facade._data.replace(
+                        {
+                            self.replacevaluelned['value_from']:
+                            self.replacevaluelned['value_to']
+                        }
+                    )
+                else:
+                    columntochange = self.replacevaluelned['column_name']
+                    assert (columntochange is not '') is True
+                    self.replacevaluetable = self.facade._data.replace(
+                        {
+                            columntochange: {
+                                self.replacevaluelned['value_from']:
+                                self.replacevaluelned['value_to']
+                            }
+                        }
+                    )
                 self.previous_click = True
             except Exception as e:
                 print(str(e))
                 self.error.showMessage(
-                    'Could split column: ' + str(e))
+                    'Could not replace values: ' + str(e))
 
             hlp.write_column_to_log(
-                self.splitcolumnlned, self._log, 'splitcolumn')
+                self.replacevaluelned, self._log, 'replacevalue')
 
             if sender is self.btnPreview:
                 self.viewEdit.set_data(
-                    self.splitcolumntable)
+                    self.replacevaluetable)
                 self.preview.tabviewPreview.setModel(
                     self.viewEdit)
                 self.preview.show()
             elif sender is self.btnSaveClose:
-                self.facade._data = self.splitcolumntable
+                self.facade._data = self.replacevaluetable
                 self.update_data.emit('update')
                 self.close()
 
-    return SplitColumnDialog()
+    return ReplaceValueDialog()
 
-def test_dialog_site(qtbot, SplitColumnDialog):
-    SplitColumnDialog.show()
-    qtbot.addWidget(SplitColumnDialog)
+def test_dialog_site(qtbot, ReplaceValueDialog):
+    ReplaceValueDialog.show()
+    qtbot.addWidget(ReplaceValueDialog)
 
     qtbot.stopForInteraction()

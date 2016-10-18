@@ -71,7 +71,7 @@ def PandasTableModelEdit():
 
         def setData(self, index, value, role=QtCore.Qt.EditRole):
             if role == QtCore.Qt.EditRole:
-                og_value = self.data(index, QtCore.Qt.DisplayRole)
+                og_value = self.__data(index, QtCore.Qt.DisplayRole)
                 self.__data[index.row(), index.column()] = value
                 self.dataChanged.emit(index, index)
                 self.log_change.emit(
@@ -113,10 +113,9 @@ def Preview(df, PandasTableModelEdit):
             self.tabviewPreview.resizeColumnsToContents()
 
             # Right click on verticalHeader
-            self.tabviewPreview.setContextMenuPolicy(
-                QtCore.Qt.CustomContextMenu
-            )
-
+            #self.tabviewPreview.setContextMenuPolicy(
+            #    QtCore.Qt.CustomContextMenu
+            #)
             #self.tabviewPreview.customContextMenuRequested.connect(
             #    self.on_context_menu)
             # Context menu for delete action
@@ -158,4 +157,3 @@ def test_dialog_site(qtbot, Preview):
     Preview.show()
     qtbot.addWidget(Preview)
     qtbot.stopForInteraction()
-    assert 0
