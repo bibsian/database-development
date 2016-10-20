@@ -109,11 +109,7 @@ def MainWindow():
 
             try:
                 self.facade.load_data()
-
-                rawdatamodel = view.PandasTableModel(
-                    self.facade._data)
-                self.raw_data_model.emit(rawdatamodel)
-                
+                self.raw_data_model.emit('loaded_data')
             except Exception as e:
                 self.filetypeReceive.emit(str(e))
 
