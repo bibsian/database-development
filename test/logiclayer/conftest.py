@@ -1634,3 +1634,39 @@ def DataOriginator():
             self._data = memento.get_dfstate()
             self._state = memento.get_state()
     return DataOriginator
+
+
+@pytest.fixture
+def df_test_1():
+    return read_csv(
+        rootpath + end + 'test' + end + 'Datasets_manual_test' + end +
+        'raw_data_test_1.csv'
+    )
+
+@pytest.fixture
+def df_test_2():
+    return read_csv(
+        rootpath + end + 'test' + end + 'Datasets_manual_test' + end +
+        'raw_data_test_2.csv'
+    )
+
+@pytest.fixture
+def df_test_3():
+    return read_csv(
+        rootpath + end + 'test' + end + 'Datasets_manual_test' + end +
+        'raw_data_test_3.csv'
+    )
+
+@pytest.fixture
+def df_test_4():
+    return read_csv(
+        rootpath + end + 'test' + end + 'Datasets_manual_test' + end +
+        'raw_data_test_4.csv'
+    )
+
+@pytest.fixture
+def df_test_5():
+    return read_csv(
+        rootpath + end + 'test' + end + 'Datasets_manual_test' + end +
+        'raw_data_test_5.csv'
+    )
