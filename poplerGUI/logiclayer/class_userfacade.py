@@ -1,23 +1,22 @@
-#! /usr/bin/env python
-from collections import namedtuple
+#!/usr/bin/env python
 import datetime as tm
 import re
 import sys
 import os
 from pandas import read_csv
 from poplerGUI.logiclayer.class_metaverify import MetaVerifier
-from poplerGUI.logiclayer.class_commanders import (
-    LoadDataCommander, DataCommandReceiver,
-    CommandInvoker, MakeProxyCommander, MakeProxyReceiver,
-    CareTakerCommand, CareTakerReceiver)
 from poplerGUI.logiclayer.class_helpers import check_registration
 from poplerGUI.logiclayer.class_tablebuilder import (
     Study_Site_Table_Builder, Table_Builder_Director,
     Project_Table_Builder, Taxa_Table_Builder,
-    Observation_Table_Builder, UpdaterTableBuilder)
+    Observation_Table_Builder, UpdaterTableBuilder
+)
 from poplerGUI.logiclayer import class_logconfig as log
 from poplerGUI.logiclayer import class_merger as mrg
 from poplerGUI.logiclayer.datalayer import config as orm
+from poplerGUI.logiclayer.datalayer import (
+    Caretaker, DataFileOriginator, DataOriginator
+)
 if sys.platform == "darwin":
     rootpath = (
         "/Users/bibsian/Desktop/git/database-development/")
@@ -37,21 +36,15 @@ class Facade:
 
     # Class attributes are related to managing
     # various commands from user
-    carecommand = CareTakerCommand(CareTakerReceiver())
-    sessioninvoker = CommandInvoker(carecommand)
-    sessioninvoker.load_file_caretaker()
-    sessioncaretaker = carecommand._caretaker
-    manager = namedtuple(
-        'maanger', 'caretaker invoker')
-    input_manager = manager(
-        sessioncaretaker, sessioninvoker)
+    data_caretaker = Caretaker()
+    data_originator = DataOriginator(None, 'Initializing')
 
     def __init__(self):
         '''
         Initialize facade with a dictionary to track
         user inputs (for logging and session management).
-        Class instances will be registered with the
-        input dictionary.
+        Class instances will be registered with the 
+        input dictionary. 
         In addtion a filecaretaker will be instantiated
         when a raw data file is loaded. This will help track
         changes to data
@@ -103,9 +96,7 @@ class Facade:
             'addsite': None,
             'widetolong': None,
             'changecolumn': None,
-            'changecell': None,
-            'splitcolumn': None,
-            'replacevalue': None
+            'changecell': None
         }
 
         self._colinputlog = {
@@ -138,19 +129,6 @@ class Facade:
         self.taxapushed = None
         self.rawpushed = None
 
-    def make_proxy_helper(self, data, label):
-        proxycmd = MakeProxyCommander(
-            MakeProxyReceiver(), data.reset_index(
-                ), label)
-        self.input_manager.invoker.perform_commands = proxycmd
-        self.input_manager.invoker.make_proxy_data()
-        self.input_manager.caretaker.save_to_memento(
-            proxycmd._proxy.create_memento())
-        self._data = (
-            self.input_manager.caretaker.restore_memento(
-                label))
-        print('Proxy Created')
-
     def input_register(self, clsinstance):
         '''
         Sets user instantiated classes into the facade
@@ -162,9 +140,9 @@ class Facade:
         self.clsinstance = clsinstance
         try:
             self._inputs[self.clsinstance.name] = self.clsinstance
-        except Exception as e:
+        except:
             raise AttributeError(
-                'Wrong class input for program facade: ', str(e))
+                'Wrong class input for program facade.')
 
     def meta_verify(self):
         '''
@@ -173,7 +151,6 @@ class Facade:
         for logic checks.
         '''
         check_registration(self, 'metacheck')
-
         verifier = MetaVerifier(self._inputs['metacheck'])
 
         if self._inputs['metacheck'].verify is None:
@@ -190,11 +167,12 @@ class Facade:
             raise AttributeError(str(e))
 
         self._valueregister['globalid'] = (
-            self._inputs['metacheck'].lnedentry['globalid'])
+            self._inputs['metacheck'].lnedentry['globalid']
+        )
         self._valueregister['lterid'] = (
-            self._inputs['metacheck'].lnedentry['lter'])
+            self._inputs['metacheck'].lnedentry['lter']
+        )
 
-        print('Input verified')
 
     def load_data(self):
         ''' Using commander classes to peform the following
@@ -208,7 +186,6 @@ class Facade:
         register command with invoker and register proxy
         data with file caretaker)
         return a proxy of the original dataset loaded.
-
         '''
         try:
             assert self._inputs[
@@ -216,27 +193,22 @@ class Facade:
         except:
             raise AttributeError('No file selected to load.')
 
-        filecmd = LoadDataCommander(
-            DataCommandReceiver(), self._inputs['fileoptions'])
-        self.input_manager.invoker.perform_commands = filecmd
-        self.input_manager.invoker.load_file_process()
-
-        dfile = filecmd._loadfileinst
-        self.input_manager.caretaker.save_to_memento(
-            dfile.create_memento())
-        dfile.set_data(
-            self.input_manager.caretaker, 'original')
-
-        self.make_proxy_helper(dfile._data, 'proxydf')
-
-        return self._data
+        data_file_originator = DataFileOriginator(
+            self._inputs['fileoptions']
+        )
+        self.data_caretaker.save(
+            data_file_originator.save_to_memento()
+        )
+        self.data_originator.restore_from_memento(
+            self.data_caretaker.restore()
+        )
+        self._data = self.data_originator._data
 
     def register_site_levels(self, sitelevels):
         '''
         Method to store the unique sitelevel in the
         facade class
         '''
-
         try:
             assert isinstance(sitelevels, list)
         except Exception as e:
@@ -245,6 +217,7 @@ class Facade:
 
         sitelevels.sort()
         self._valueregister['sitelevels'] = sitelevels
+
 
     def create_log_record(self, tablename):
         '''
@@ -264,30 +237,33 @@ class Facade:
             raise AttributeError(
                 'Global ID and data file not set')
 
-        self._tablelog[tablename] = (
-            log.configure_logger('tableformat', (
+        self._tablelog[tablename] =(
+            log.configure_logger('tableformat',(
                 'logs/{}_{}_{}_{}.log'.format(
-                    globalid, tablename, filename, dt))))
+                    globalid, tablename,filename,dt))))
 
     def make_table(self, inputname):
         '''
         Method to take user inputs and create dataframes
-        that contain informatoin that will be pushed into
+        that contain informatoin that will be pushed into 
         the database. The formating of the tables is handled by
         class_tablebuilder.py module.
         Additionally logging of table specific informatoin
         is initiated here.
         '''
         uniqueinput = self._inputs[inputname]
+        print('uqinput facade:', uniqueinput)
         tablename = self._inputs[inputname].tablename
+        print('tbl name facade: ', tablename)
         globalid = self._inputs['metacheck'].lnedentry['globalid']
-        print('facade globalid: ', globalid)
+        print('globalid facade: ', globalid)
         sitecol = self._inputs['siteinfo'].lnedentry['study_site_key']
         uqsitelevels = self._valueregister['sitelevels']
 
-        director = Table_Builder_Director()
+        director = Table_Builder_Director()           
         builder = self._dbtabledict[tablename]
         director.set_user_input(uniqueinput)
+        director.set_globalid(globalid)
         director.set_builder(builder)
 
         if tablename != 'project_table':
@@ -295,14 +271,11 @@ class Facade:
         else:
             metaverify = MetaVerifier(self._inputs['metacheck'])
             metadata = metaverify._meta
-            director.set_data(metadata[metadata['global_id'] == globalid])
+            director.set_data(metadata[metadata['global_id'] == globalid].copy())
 
-        director.set_globalid(globalid)
-        director.set_siteid(sitecol)
         director.set_sitelevels(uqsitelevels)
-
+        director.set_siteid(sitecol)
         return director.get_database_table()
-
     def push_merged_data(self):
         '''
         Method in facade class to check if all data tables
