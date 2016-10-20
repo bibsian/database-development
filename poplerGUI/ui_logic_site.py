@@ -355,7 +355,7 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
 
         # Signal to confim this form has been completed and
         # user can move on to other tables
-        self.site_unlocks.emit(self.facade._data)
+        self.site_unlocks.emit('study_site_mod')
         site_unsorted = self.facade._data[
             self.siteloc[
                 'study_site_key']].drop_duplicates().values.tolist()

@@ -95,5 +95,5 @@ class ReplaceValueDialog(QtGui.QDialog, dreplacevalue.Ui_Dialog):
             self.preview.show()
         elif sender is self.btnSaveClose:
             self.facade._data = self.replacevaluetable
-            self.update_data.emit('update')
+            self.update_data.emit('replace_mod')
             self.close()
