@@ -14,7 +14,7 @@ from poplerGUI.logiclayer.class_tablebuilder import (
 from poplerGUI.logiclayer import class_logconfig as log
 from poplerGUI.logiclayer import class_merger as mrg
 from poplerGUI.logiclayer.datalayer import config as orm
-from poplerGUI.logiclayer.datalayer import (
+from poplerGUI.logiclayer.datalayer.class_filehandles import (
     Caretaker, DataFileOriginator, DataOriginator
 )
 if sys.platform == "darwin":
@@ -202,7 +202,7 @@ class Facade:
         self.data_originator.restore_from_memento(
             self.data_caretaker.restore()
         )
-        self._data = self.data_originator._data
+        self._data = self.data_originator._data.copy()
 
     def register_site_levels(self, sitelevels):
         '''
