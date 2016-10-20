@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#!/usr/bin/env python
 from pandas import DataFrame
 
 __all__ = ['DictionaryDataframe']

@@ -98,7 +98,7 @@ def WidetoLongDialog(meta_handle_1_count, file_handle_wide_to_long,
             except Exception as e:
                 print(str(e))
                 self.error.showMessage(
-                    'Invalid datatype column: ', str(e))
+                    'Invalid datatype column: ' + str(e))
                 return
 
             hlp.write_column_to_log(

@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#!/usr/bin/env python
 from PyQt4 import QtGui, QtCore
 from pandas import read_csv
 import subprocess
@@ -6,18 +6,19 @@ import subprocess
 import sys, os
 if sys.platform == 'darwin':
     os.chdir(
-        '/Users/bibsian/Desktop/git/database-development/poplerGUI/')
+        '/Users/bibsian/Desktop/git/database-development/')
     metapath = (
     	str(os.getcwd()) + 
-    	'/Metadata_and_og_data/Cataloged_Data_Current_sorted.csv')
+    	'/data/Identified_to_upload.csv')
+    end = '/'
 elif sys.platform == 'win32':
     os.chdir( 
-        'C:\\Users\\MillerLab\\Desktop\\database-development\\poplerGUI\\')
+        'C:\\Users\\MillerLab\\Desktop\\database-development\\')
     metapath = (
     	str(os.getcwd()) + 
-    	'\\Metadata_and_og_data/Cataloged_Data_Current_sorted.csv')
-    
-from poplerGUI import ui_mainrefactor as mw
+    	'\\data\\Identified_to_upload.csv')
+    end = '\\'
+from Views import ui_mainrefactor as mw
 from poplerGUI import ui_logic_session as sesslogic
 from poplerGUI import ui_logic_site as sitelogic
 from poplerGUI import ui_logic_main as mainlogic
@@ -25,10 +26,15 @@ from poplerGUI import ui_logic_taxa as taxalogic
 from poplerGUI import ui_logic_time as timelogic
 from poplerGUI import ui_logic_obs as rawlogic
 from poplerGUI import ui_logic_covar as covarlogic
-from poplerGUI import ui_logic_addsitecolumn as addcol
-from poplerGUI import class_inputhandler as ini
-from poplerGUI import class_modelviewpandas as view
+from poplerGUI import ui_logic_climatesite as climsitelogic
+from poplerGUI import ui_logic_widetolong as widetolonglogic
+from poplerGUI import ui_logic_splitcolumn as splitcolumnlogic
+from poplerGUI import ui_logic_replace as replacelogic
+from poplerGUI import ui_logic_cbind as cbindlogic
 from poplerGUI.logiclayer import class_userfacade as face
+from poplerGUI import class_modelviewpandas as view
+from poplerGUI import class_inputhandler as ini
+from poplerGUI.logiclayer import class_helpers as hlp
 
 
 class UiMainWindow(QtGui.QMainWindow, mw.Ui_MainWindow):
@@ -43,6 +49,7 @@ class UiMainWindow(QtGui.QMainWindow, mw.Ui_MainWindow):
         # attributes
         self.setupUi(self)
         self.facade = face.Facade()
+        self._log = None
         self.dsite = sitelogic.SiteDialog()
         self.dsession = sesslogic.SessionDialog()
         self.dmain = mainlogic.MainDialog()
@@ -50,9 +57,24 @@ class UiMainWindow(QtGui.QMainWindow, mw.Ui_MainWindow):
         self.dtime = timelogic.TimeDialog()
         self.draw = rawlogic.ObsDialog()
         self.dcovar = covarlogic.CovarDialog()
-        self.daddsite = addcol.AddSiteColumnDialog()
+        self.dclimatesite = climsitelogic.ClimateSite()
+        self.dclimatesession = sesslogic.SessionDialog()
+        self.dwidetolong = widetolonglogic.WidetoLongDialog()
+        self.dsplitcolumn = splitcolumnlogic.SplitColumnDialog()
+        self.dreplacevalue = replacelogic.ReplaceValueDialog()
+        self.dcbind = cbindlogic.CbindDialog()
+        self.data_model = view.PandasTableModelEdit(None)
+        self.data_model.log_change.connect(self.write_to_log)
 
         # Actions
+        self.actionCombine_Columns.triggered.connect(
+            self.cbind_display)
+        self.actionReplace.triggered.connect(
+            self.replace_value_display)
+        self.actionConvert_Wide_to_Long.triggered.connect(
+            self.wide_to_long_display)
+        self.actionSplit_Column_By.triggered.connect(
+            self.split_column_display)
         self.actionSiteTable.triggered.connect(self.site_display)
         self.actionStart_Session.triggered.connect(
             self.session_display)
@@ -64,19 +86,25 @@ class UiMainWindow(QtGui.QMainWindow, mw.Ui_MainWindow):
         self.actionRawTable.triggered.connect(self.obs_display)
         self.actionCovariates.triggered.connect(self.covar_display)
         self.actionCommit.triggered.connect(self.commit_data)
-        self.actionAdd_Site_Column.triggered.connect(self.addsite_display)
-
+        self.actionClimateSiteTable.triggered.connect(
+            self.climate_site_display)
+        self.actionNew_Climate.triggered.connect(
+            self.climate_session_display)
 
         self.mdiArea.addSubWindow(self.subwindow_2)
         self.mdiArea.addSubWindow(self.subwindow_1)
 
         # Custom Signals
         self.dsite.site_unlocks.connect(self.site_complete_enable)
+        self.dwidetolong.update_data.connect(self.update_data_model)
+        self.dsplitcolumn.update_data.connect(self.update_data_model)
+        self.dreplacevalue.update_data.connect(self.update_data_model)
+        self.dcbind.update_data.connect(self.update_data_model)
+        self.dclimatesite.climatesite_unlocks.connect(
+            self.climate_site_complete_enabled)
         self.dsession.raw_data_model.connect(
             self.update_data_model)
-        self.dsession.raw_data_model.connect(
-            self.update_data_model)
-        self.daddsite.btnSaveClose.clicked.connect(
+        self.dclimatesession.raw_data_model.connect(
             self.update_data_model)
 
         # Dialog boxes for user feedback
@@ -90,12 +118,29 @@ class UiMainWindow(QtGui.QMainWindow, mw.Ui_MainWindow):
             ]
         )
         self.tblViewMeta.setModel(metamodel)
+        self.tblViewMeta.resizeColumnsToContents()
+        self.tblViewRaw.horizontalHeader().sectionDoubleClicked.connect(
+            self.changeHorizontalHeader)
+        self.tblViewRaw.resizeColumnsToContents()
 
-    def update_data_model(self):
-        newdatamodel = view.PandasTableModel(self.facade._data)
-        self.tblViewRaw.setModel(newdatamodel)
+    @QtCore.pyqtSlot(object)
+    def update_data_model(self, slot_obj):
+        ''' Updating data model and facade instance with
+        other dialog boxes '''
+        self.data_model = view.PandasTableModelEdit(None)
+        self.data_model.set_data(self.facade._data)
+        self.tblViewRaw.setModel(self.data_model)
+
+        # Updating facade instances with dialog boxes
         self.dsite.facade = self.facade
         self.dclimatesite.facade = self.facade
+
+    @QtCore.pyqtSlot(object)
+    def write_to_log(self, dict_obj):
+        self.facade.create_log_record('changecell')
+        self._log = self.facade._tablelog['changecell']
+        hlp.write_column_to_log(
+            dict_obj, self._log, 'changecell')
 
     @QtCore.pyqtSlot(object)
     def update_webview(self, url):
@@ -112,7 +157,44 @@ class UiMainWindow(QtGui.QMainWindow, mw.Ui_MainWindow):
         self.actionTimeFormat.setEnabled(True)
         self.actionRawTable.setEnabled(True)
         self.actionCovariates.setEnabled(True)
-        self.update_data_model()
+        self.update_data_model('Updating data')
+
+    def changeHorizontalHeader(self, index):
+        ''' method to update data model when column headers
+        are changed '''
+        oldHeader = self.facade._data.iloc[:,index].name
+        newHeader, ok = QtGui.QInputDialog.getText(
+            self, 'Input', 'New Column Label:')
+        if ok:
+            self.facade._data.rename(
+                columns={oldHeader:newHeader}, inplace=True)
+        self.facade.create_log_record('changecolumn')
+        self._log = self.facade._tablelog['changecolumn']
+        hlp.write_column_to_log(
+            {'column_changes': {oldHeader:newHeader}},
+             self._log, 'changecolumn'
+        )
+        self.update_data_model('header_changes')
+
+    def cbind_display(self):
+        ''' Displays dialog box to combine columns '''
+        self.dcbind.show()
+        self.dcbind.facade = self.facade
+
+    def replace_value_display(self):
+        ''' Displays dialog box to split a column '''
+        self.dreplacevalue.show()
+        self.dreplacevalue.facade = self.facade
+
+    def split_column_display(self):
+        ''' Displays dialog box to split a column '''
+        self.dsplitcolumn.show()
+        self.dsplitcolumn.facade = self.facade
+
+    def wide_to_long_display(self):
+        ''' Displays dialog box to melt data '''
+        self.dwidetolong.show()
+        self.dwidetolong.facade = self.facade
 
     def site_display(self):
         ''' Displays the Site Dialog box'''
@@ -155,6 +237,7 @@ class UiMainWindow(QtGui.QMainWindow, mw.Ui_MainWindow):
         self.dcovar.show()
 
     def commit_data(self):
+        ''' Method to call the upload to database command '''
         commithandle = ini.InputHandler(
             name='updateinfo', tablename='updatetable')
         self.facade.input_register(commithandle)
@@ -171,6 +254,7 @@ class UiMainWindow(QtGui.QMainWindow, mw.Ui_MainWindow):
                 '. May need to alter site abbreviations.')
             raise ValueError(str(e))
 
+    # Below are dialog boxes and logic that relate to Climate data
     def climate_site_display(self):
         ''' Displays the Site Dialog box'''
         self.dclimatesite.show()
@@ -182,7 +266,7 @@ class UiMainWindow(QtGui.QMainWindow, mw.Ui_MainWindow):
         self.update_data_model()
 
     def climate_session_display(self):
-        ''' Displays the Site Dialog box'''
+        ''' Displays the Climate session dialog box'''
         self.dclimatesession.show()
         self.dclimatesession.facade = self.facade
         self.actionSiteTable.setEnabled(False)

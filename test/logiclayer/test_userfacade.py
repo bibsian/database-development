@@ -2,7 +2,7 @@
 import pytest
 from collections import namedtuple, OrderedDict
 import datetime as tm
-from pandas import merge, concat, DataFrame, read_csv, read_sql, to_numeric
+from pandas import DataFrame, read_csv
 import sys, os
 if sys.platform == "darwin":
     rootpath = (
@@ -14,36 +14,20 @@ elif sys.platform == "win32":
         "C:\\Users\MillerLab\\Desktop\\database-development")
     end = "\\"
 
-from poplerGUI.logiclayer.class_commanders import (
-    LoadDataCommander, DataCommandReceiver)
-from poplerGUI.logiclayer.class_commanders import (
-    CommandInvoker)
-from poplerGUI.logiclayer.class_commanders import (
-    MakeProxyCommander, MakeProxyReceiver)
-from poplerGUI.logiclayer.class_commanders import (
-    CareTakerCommand, CareTakerReceiver)
 from poplerGUI.logiclayer.class_metaverify import MetaVerifier
 from poplerGUI.logiclayer.class_helpers import (
-    UniqueReplace, check_registration, extract, string_to_list,
-    updated_df_values, produce_null_df)
+    check_registration, extract)
 from poplerGUI.logiclayer.class_tablebuilder import (
     Study_Site_Table_Builder, Table_Builder_Director,
     Project_Table_Builder, Taxa_Table_Builder,
     Observation_Table_Builder, UpdaterTableBuilder)
-from poplerGUI.logiclayer import class_dictionarydataframe as ddf
-from poplerGUI.logiclayer import class_timeparse as tparse
 from poplerGUI.logiclayer import class_logconfig as log
-from poplerGUI.logiclayer import class_flusher as flsh
-from poplerGUI.logiclayer import class_merger as mrg
-from poplerGUI.logiclayer.datalayer import config as orm
-
 sys.path.append(os.path.realpath(os.path.dirname(
     rootpath + 'logiclayer' + end)))
 from poplerGUI.class_inputhandler import InputHandler
 
 @pytest.fixture
-def Facade():
-    
+def Facade(Caretaker, DataFileOriginator, DataOriginator, Memento):
     class Facade:
         '''
         This is the facade class to handle the interaction
@@ -52,14 +36,8 @@ def Facade():
 
         # Class attributes are related to managing
         # various commands from user
-        carecommand = CareTakerCommand(CareTakerReceiver())
-        sessioninvoker = CommandInvoker(carecommand)
-        sessioninvoker.load_file_caretaker()
-        sessioncaretaker = carecommand._caretaker
-        manager = namedtuple(
-            'manager', 'caretaker invoker')
-        input_manager = manager(
-            sessioncaretaker, sessioninvoker)
+        data_caretaker = Caretaker()
+        data_originator = DataOriginator(None, 'Initializing')
 
         def __init__(self):
             '''
@@ -116,7 +94,9 @@ def Facade():
                 'climatesite': None,
                 'climateobs': None,
                 'addsite': None,
-                'widetolong': None
+                'widetolong': None,
+                'changecolumn': None,
+                'changecell': None
             }
 
             self._colinputlog = {
@@ -148,20 +128,6 @@ def Facade():
             self.siteinproject = None
             self.taxapushed = None
             self.rawpushed = None
-            
-        def make_proxy_helper(self, data, label):
-            proxycmd = MakeProxyCommander(
-                MakeProxyReceiver(), data.reset_index(
-                    ), label)            
-            self.input_manager.invoker.perform_commands = proxycmd
-            self.input_manager.invoker.make_proxy_data()
-            self.input_manager.caretaker.save_to_memento(
-                proxycmd._proxy.create_memento())
-            print(self.input_manager)
-            self._data = (
-                self.input_manager.caretaker.restore_memento(
-                    label))
-            print('Proxy Created')
     
         def input_register(self, clsinstance):
             '''
@@ -185,7 +151,6 @@ def Facade():
             for logic checks.
             '''
             check_registration(self, 'metacheck')
-            
             verifier = MetaVerifier(self._inputs['metacheck'])
 
             if self._inputs['metacheck'].verify is None:
@@ -202,11 +167,11 @@ def Facade():
                 raise AttributeError(str(e))
 
             self._valueregister['globalid'] = (
-                self._inputs['metacheck'].lnedentry['globalid'])
+                self._inputs['metacheck'].lnedentry['globalid']
+            )
             self._valueregister['lterid'] = (
-                self._inputs['metacheck'].lnedentry['lter'])
-            
-            print('Input verified')
+                self._inputs['metacheck'].lnedentry['lter']
+            )
 
 
         def load_data(self):
@@ -221,7 +186,6 @@ def Facade():
             register command with invoker and register proxy
             data with file caretaker)
             return a proxy of the original dataset loaded.
-            
             '''
             try:
                 assert self._inputs[
@@ -229,27 +193,22 @@ def Facade():
             except:
                 raise AttributeError('No file selected to load.')
 
-            filecmd = LoadDataCommander(
-                DataCommandReceiver(), self._inputs['fileoptions'])
-            self.input_manager.invoker.perform_commands = filecmd            
-            self.input_manager.invoker.load_file_process()
-
-            dfile = filecmd._loadfileinst
-            self.input_manager.caretaker.save_to_memento(
-                dfile.create_memento())
-            dfile.set_data(
-                self.input_manager.caretaker, 'original')
-
-            self.make_proxy_helper(dfile._data, 'proxydf')
-
-            return self._data
+            data_file_originator = DataFileOriginator(
+                self._inputs['fileoptions']
+            )
+            self.data_caretaker.save(
+                data_file_originator.save_to_memento()
+            )
+            self.data_originator.restore_from_memento(
+                self.data_caretaker.restore()
+            )
+            self._data = self.data_originator._data
 
         def register_site_levels(self, sitelevels):
             '''
             Method to store the unique sitelevel in the
             facade class
             '''
-            
             try:
                 assert isinstance(sitelevels, list)
             except Exception as e:
@@ -316,8 +275,6 @@ def Facade():
 
             director.set_sitelevels(uqsitelevels)
             director.set_siteid(sitecol)
-
-
             return director.get_database_table()
 
     return Facade
@@ -554,9 +511,6 @@ def test_build_taxa(
     face.input_register(filehandle)
     face.load_data()
     face.input_register(sitehandle)
-    print('caretaker: ', face.input_manager.caretaker)
-    print('invoker: ', face.input_manager.invoker.history)
-    assert 0
     face.input_register(taxa_user_input)
     sitelevels = face._data['site'].drop_duplicates().values.tolist()
     sitelevels.sort()

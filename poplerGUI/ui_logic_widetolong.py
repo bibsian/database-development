@@ -54,7 +54,7 @@ class WidetoLongDialog(QtGui.QDialog, dwidetolong.Ui_Dialog):
             )
         except Exception as e:
             print(str(e))
-            self.error.showMessage('Could not melt data: ', str(e))
+            self.error.showMessage('Could not melt data: ' + str(e))
 
         try:
             assert self.widetolonglned['datatype_name'] != 'NULL'

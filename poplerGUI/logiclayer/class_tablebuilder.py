@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#!/usr/bin/env python
 import abc
 import re
 from pandas import concat, DataFrame

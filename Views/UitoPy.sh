@@ -35,3 +35,12 @@ echo preview dialog updated
 
 python /Users/bibsian/.virtualenvs/lter/lib/python3.4/site-packages/PyQt4/uic/pyuic.py /Users/bibsian/Desktop/git/database-development/Views/ui_dialog_widetolong.ui -o /Users/bibsian/Desktop/git/database-development/Views/ui_dialog_widetolong.py
 echo wide to long dialog
+
+python /Users/bibsian/.virtualenvs/lter/lib/python3.4/site-packages/PyQt4/uic/pyuic.py /Users/bibsian/Desktop/git/database-development/Views/ui_dialog_splitcolumn.ui -o /Users/bibsian/Desktop/git/database-development/Views/ui_dialog_splitcolumn.py
+echo split column dialog
+
+python /Users/bibsian/.virtualenvs/lter/lib/python3.4/site-packages/PyQt4/uic/pyuic.py /Users/bibsian/Desktop/git/database-development/Views/ui_dialog_replacevalue.ui -o /Users/bibsian/Desktop/git/database-development/Views/ui_dialog_replacevalue.py
+echo replace value dialog
+
+python /Users/bibsian/.virtualenvs/lter/lib/python3.4/site-packages/PyQt4/uic/pyuic.py /Users/bibsian/Desktop/git/database-development/Views/ui_dialog_cbind.ui -o /Users/bibsian/Desktop/git/database-development/Views/ui_dialog_cbind.py
+echo cbind dialog

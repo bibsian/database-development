@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#!/usr/bin/env python
 # Adopted from
 # https://simpletutorials.com/
 # c/1457/Python+3+Logging+using+DictConfig

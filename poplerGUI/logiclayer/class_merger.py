@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#!/usr/bin/env python
 from pandas import read_sql
 from collections import namedtuple
 from poplerGUI.logiclayer.datalayer import config as orm

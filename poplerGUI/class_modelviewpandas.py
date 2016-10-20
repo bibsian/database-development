@@ -8,7 +8,6 @@ from PyQt4 import QtCore
 import numpy as np
 import pandas as pd
 
-
 class PandasTableModel(QtCore.QAbstractTableModel):
     '''
     This class is an abstract table class from Qt to visualize
@@ -19,7 +18,10 @@ class PandasTableModel(QtCore.QAbstractTableModel):
     ''' 
     def __init__(self, data, parent=None):
         QtCore.QAbstractTableModel.__init__(self, parent)
-        self.__data = np.array(data.values)
+        if data is not None:
+            self.__data = np.array(data.values)
+        else:
+            self.__data = pd.DataFrame()
         self.__cols = data.columns
         self.r, self.c = np.shape(self.__data)
 
@@ -60,13 +62,25 @@ class PandasTableModelEdit(QtCore.QAbstractTableModel):
     as object that supply the data to be visualized.
     To Do: Nothing
     Last edit: Removed the ability to edit the table
-    ''' 
+    '''
+    log_change = QtCore.pyqtSignal(object)
+
     def __init__(self, data, parent=None):
         QtCore.QAbstractTableModel.__init__(self, parent)
+        if data is not None:
+            self.__data = np.array(data.values)
+            self.__cols = data.columns
+            self.r, self.c = np.shape(self.__data)
+        else:
+            self.__data = None
+            self.__cols = None
+            self.r, self.c = [None, None]
+
+    def set_data(self, data):
         self.__data = np.array(data.values)
         self.__cols = data.columns
         self.r, self.c = np.shape(self.__data)
-
+        
     def rowCount(self, parent=None):
         return self.r
 
@@ -97,10 +111,12 @@ class PandasTableModelEdit(QtCore.QAbstractTableModel):
 
     def setData(self, index, value, role=QtCore.Qt.EditRole):
         if role == QtCore.Qt.EditRole:
-            row = index.row()
-            col = index.column()
+            og_value = self.data(index, QtCore.Qt.DisplayRole)
             self.__data[index.row(), index.column()] = value
             self.dataChanged.emit(index, index)
+            print('in model class: ', og_value, value)
+            self.log_change.emit(
+                {'cell_changes':{og_value: value}})
             return True
         return False
 
@@ -110,5 +126,3 @@ class PandasTableModelEdit(QtCore.QAbstractTableModel):
             raise KeyError
 
         return QtCore.QAbStractTableModel.event(self, event)
-    
-

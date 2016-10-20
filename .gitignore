@@ -1,7 +1,11 @@
-*/*/*/*.py~
-*/*.py~
-*.py~
+*/*/*/*~
+*/*~
+*~
 
+*/*/*/*#
+*/*/*#
+*/*#
+*#
 
 data/.Rhistory
 /data/RawTestTableModications.R

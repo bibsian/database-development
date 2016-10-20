@@ -1,5 +1,5 @@
-#! /usr/bin/env python
-from pandas import  DataFrame, concat, melt
+#!/usr/bin/env python
+from pandas import  DataFrame, concat, melt, Series
 import re
 from numpy import where
 from collections import OrderedDict
@@ -9,8 +9,29 @@ __all__ = [
     'string_to_list', 'strip_time', 'year_strip', 'extract',
     'check_int', 'produce_null_df', 'check_registration',
     'UniqueReplace', 'updated_df_values', 'write_column_to_log',
-    'wide_to_long'
+    'wide_to_long', 'split_column', 'cbind'
 ]
+
+def cbind(dataframe, column1, column2):
+    try:
+        column1 = int(column1)
+        column2 = int(column2)
+    except Exception as e:
+        print(str(e))
+
+    new_column = (
+        dataframe[column1].astype(str) +
+        ' ' +
+        dataframe[column2].fillna('NULL').apply(
+            lambda x: '' if x is 'NULL' else str(x))).apply(
+                lambda y: y.strip())
+    return concat([dataframe, new_column], axis=1)
+
+def split_column(dataframe, column, separator):
+    splitdf = dataframe[
+        column].apply(
+            lambda x: Series([i for i in x.split(separator)]))
+    return concat([dataframe, splitdf], axis=1)
 
 def wide_to_long(dataframe, value_columns, value_column_name):
     all_columns = dataframe.columns.values.tolist()
