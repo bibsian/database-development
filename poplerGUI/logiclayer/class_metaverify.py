@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#!/usr/bin/env python
 import sys
 from pandas import read_csv, read_sql
 from poplerGUI.logiclayer.datalayer import config as orm

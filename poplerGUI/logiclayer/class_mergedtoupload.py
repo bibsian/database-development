@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#!/usr/bin/env python
 from pandas import merge, concat, DataFrame, read_sql
 from sqlalchemy import select, update, column
 import sys, os

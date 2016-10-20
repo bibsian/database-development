@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#!/usr/bin/env python
 from itertools import chain
 from pandas import DataFrame, concat, to_datetime
 from poplerGUI.logiclayer import class_helpers as hlp
