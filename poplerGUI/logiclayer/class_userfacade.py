@@ -1,39 +1,33 @@
 #! /usr/bin/env python
 from collections import namedtuple
-import os
 import datetime as tm
 import re
-from pandas import merge, concat, DataFrame, read_csv, to_numeric
+import sys
+import os
+from pandas import read_csv
 from poplerGUI.logiclayer.class_metaverify import MetaVerifier
 from poplerGUI.logiclayer.class_commanders import (
     LoadDataCommander, DataCommandReceiver,
     CommandInvoker, MakeProxyCommander, MakeProxyReceiver,
     CareTakerCommand, CareTakerReceiver)
-from poplerGUI.logiclayer.class_helpers import UniqueReplace, check_registration
+from poplerGUI.logiclayer.class_helpers import check_registration
 from poplerGUI.logiclayer.class_tablebuilder import (
     Study_Site_Table_Builder, Table_Builder_Director,
     Project_Table_Builder, Taxa_Table_Builder,
     Observation_Table_Builder, UpdaterTableBuilder)
-
 from poplerGUI.logiclayer import class_logconfig as log
-from poplerGUI.logiclayer import class_flusher as flsh
 from poplerGUI.logiclayer import class_merger as mrg
-from poplerGUI.logiclayer.class_helpers import updated_df_values
 from poplerGUI.logiclayer.datalayer import config as orm
-from poplerGUI.logiclayer import class_mergedtoupload as mrg
-
-import sys, os
 if sys.platform == "darwin":
     rootpath = (
         "/Users/bibsian/Desktop/git/database-development/")
     end = "/"
-
 elif sys.platform == "win32":
     rootpath = (
         "C:\\Users\MillerLab\\Desktop\\database-development")
     end = "\\"
-
 all = ['Facade']
+
 
 class Facade:
     '''
@@ -56,8 +50,8 @@ class Facade:
         '''
         Initialize facade with a dictionary to track
         user inputs (for logging and session management).
-        Class instances will be registered with the 
-        input dictionary. 
+        Class instances will be registered with the
+        input dictionary.
         In addtion a filecaretaker will be instantiated
         when a raw data file is loaded. This will help track
         changes to data
@@ -147,7 +141,7 @@ class Facade:
     def make_proxy_helper(self, data, label):
         proxycmd = MakeProxyCommander(
             MakeProxyReceiver(), data.reset_index(
-                ), label)            
+                ), label)
         self.input_manager.invoker.perform_commands = proxycmd
         self.input_manager.invoker.make_proxy_data()
         self.input_manager.caretaker.save_to_memento(
@@ -202,7 +196,6 @@ class Facade:
 
         print('Input verified')
 
-
     def load_data(self):
         ''' Using commander classes to peform the following
         commands. Note All commands are executed by the
@@ -225,7 +218,7 @@ class Facade:
 
         filecmd = LoadDataCommander(
             DataCommandReceiver(), self._inputs['fileoptions'])
-        self.input_manager.invoker.perform_commands = filecmd            
+        self.input_manager.invoker.perform_commands = filecmd
         self.input_manager.invoker.load_file_process()
 
         dfile = filecmd._loadfileinst
@@ -253,7 +246,6 @@ class Facade:
         sitelevels.sort()
         self._valueregister['sitelevels'] = sitelevels
 
-
     def create_log_record(self, tablename):
         '''
         Method to initialize a logger; appends the file the log
@@ -272,15 +264,15 @@ class Facade:
             raise AttributeError(
                 'Global ID and data file not set')
 
-        self._tablelog[tablename] =(
-            log.configure_logger('tableformat',(
+        self._tablelog[tablename] = (
+            log.configure_logger('tableformat', (
                 'logs/{}_{}_{}_{}.log'.format(
-                    globalid, tablename,filename,dt))))
+                    globalid, tablename, filename, dt))))
 
     def make_table(self, inputname):
         '''
         Method to take user inputs and create dataframes
-        that contain informatoin that will be pushed into 
+        that contain informatoin that will be pushed into
         the database. The formating of the tables is handled by
         class_tablebuilder.py module.
         Additionally logging of table specific informatoin
@@ -293,7 +285,7 @@ class Facade:
         sitecol = self._inputs['siteinfo'].lnedentry['study_site_key']
         uqsitelevels = self._valueregister['sitelevels']
 
-        director = Table_Builder_Director()           
+        director = Table_Builder_Director()
         builder = self._dbtabledict[tablename]
         director.set_user_input(uniqueinput)
         director.set_builder(builder)
@@ -315,7 +307,7 @@ class Facade:
         '''
         Method in facade class to check if all data tables
         have been completed by the user (although
-        site table can be empty if records are already in the 
+        site table can be empty if records are already in the
         database).
         '''
         # Tables created from use input
@@ -327,7 +319,6 @@ class Facade:
         print('facade time table col: ', time_table_df.columns)
         observation_table_df = self.push_tables[
             self._inputs['rawinfo'].tablename]
-        observation_table_name = self._inputs['rawinfo'].tablename
         covariate_table_df = self.push_tables['covariates']
         site_levels = self._valueregister['sitelevels']
         print('facade site levels: ', site_levels)

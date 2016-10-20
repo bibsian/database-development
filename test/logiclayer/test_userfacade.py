@@ -2,7 +2,7 @@
 import pytest
 from collections import namedtuple, OrderedDict
 import datetime as tm
-from pandas import merge, concat, DataFrame, read_csv, read_sql, to_numeric
+from pandas import DataFrame, read_csv
 import sys, os
 if sys.platform == "darwin":
     rootpath = (
@@ -24,18 +24,12 @@ from poplerGUI.logiclayer.class_commanders import (
     CareTakerCommand, CareTakerReceiver)
 from poplerGUI.logiclayer.class_metaverify import MetaVerifier
 from poplerGUI.logiclayer.class_helpers import (
-    UniqueReplace, check_registration, extract, string_to_list,
-    updated_df_values, produce_null_df)
+    check_registration, extract)
 from poplerGUI.logiclayer.class_tablebuilder import (
     Study_Site_Table_Builder, Table_Builder_Director,
     Project_Table_Builder, Taxa_Table_Builder,
     Observation_Table_Builder, UpdaterTableBuilder)
-from poplerGUI.logiclayer import class_dictionarydataframe as ddf
-from poplerGUI.logiclayer import class_timeparse as tparse
 from poplerGUI.logiclayer import class_logconfig as log
-from poplerGUI.logiclayer import class_flusher as flsh
-from poplerGUI.logiclayer import class_merger as mrg
-from poplerGUI.logiclayer.datalayer import config as orm
 
 sys.path.append(os.path.realpath(os.path.dirname(
     rootpath + 'logiclayer' + end)))
