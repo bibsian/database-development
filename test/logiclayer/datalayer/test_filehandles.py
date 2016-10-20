@@ -21,11 +21,11 @@ os.chdir(rootpath)
 @pytest.fixture
 def DataFileOriginator(Memento):
     class DataFileOriginator(object):
-        """    
+        """
         FileHandler (i.e. the originator)
         is a class that will take a user selected
         file, identify the extension, and load the data as an
-        instance of a pandas dataframe... This is all the 
+        instance of a pandas dataframe... This is all the
         handler does.
 
         Class has some properties for working with file extensions
@@ -324,10 +324,17 @@ def user_txt_delim():
     return user_input
  
 def test_txt_comma_delim_reader_method(
-        user_txt_delim, Caretaker,
+        user_txt_delim, Caretaker, user_txt,
         DataFileOriginator, DataOriginator, Memento):
     caretaker = Caretaker()
+
     originator_from_file = DataFileOriginator(user_txt_delim)
+    originator = DataOriginator(None, 'Initialize')
+    assert (isinstance(originator, DataOriginator)) is True
+    caretaker.save(originator_from_file.save_to_memento())
+    originator.restore_from_memento(caretaker.restore())
+    assert (isinstance(originator._data, DataFrame)) is True
+    originator_from_file = DataFileOriginator(user_txt)
     originator = DataOriginator(None, 'Initialize')
     assert (isinstance(originator, DataOriginator)) is True
     caretaker.save(originator_from_file.save_to_memento())
