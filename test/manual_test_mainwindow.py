@@ -31,6 +31,7 @@ from poplerGUI.logiclayer import class_userfacade as face
 from poplerGUI import class_modelviewpandas as view
 from poplerGUI import class_inputhandler as ini
 from poplerGUI.logiclayer import class_helpers as hlp
+from poplerGUI.logiclayer.datalayer.class_filehandles import Memento
 
 
 @pytest.fixture
@@ -41,7 +42,6 @@ def MainWindow():
         of various dialog boxes, the facade class, model-viewer
         tables, and menu actions.
         '''
-
         def __init__(self, parent=None):
             super().__init__(parent)
             # attributes
@@ -63,8 +63,10 @@ def MainWindow():
             self.dcbind = cbindlogic.CbindDialog()
             self.data_model = view.PandasTableModelEdit(None)
             self.data_model.log_change.connect(self.write_to_log)
+            self.change_count = 0
             
             # Actions
+            self.actionUndo.triggered.connect(self.undo_data_mod)
             self.actionCombine_Columns.triggered.connect(
                 self.cbind_display)
             self.actionReplace.triggered.connect(
@@ -123,14 +125,39 @@ def MainWindow():
                 self.changeHorizontalHeader)
             self.tblViewRaw.resizeColumnsToContents()
 
-        @QtCore.pyqtSlot(object)
-        def update_data_model(self, slot_obj):
-            ''' Updating data model and facade instance with
-            other dialog boxes '''
+        @staticmethod
+        def update_data_view(self):
             self.data_model = view.PandasTableModelEdit(None)
             self.data_model.set_data(self.facade._data)
             self.tblViewRaw.setModel(self.data_model)
 
+        def undo_data_mod(self):
+            if self.facade.data_caretaker._statelist:
+                self.facade.data_originator.restore_from_memento(
+                    self.facade.data_caretaker.restore()
+                )
+                self.facade._data = self.facade.data_originator._data.copy()
+                self.update_data_view(self)
+            else:
+                self.error.showMessage(
+                    'No further undo'
+                )
+
+        @QtCore.pyqtSlot(object)
+        def update_data_model(self, dataframe_state):
+            ''' Updating data model and facade instance with
+            other dialog boxes '''
+            self.change_count += 1
+
+            new_dataframe_state = Memento(
+                self.facade._data.copy(),
+                '{}_{}'.format(dataframe_state, self.change_count)
+            )
+            self.facade.data_caretaker.save(new_dataframe_state)
+            self.facade.data_originator.restore_from_memento(
+                new_dataframe_state
+            )
+            self.update_data_view(self)
             # Updating facade instances with dialog boxes
             self.dsite.facade = self.facade
             self.dclimatesite.facade = self.facade
@@ -171,8 +198,12 @@ def MainWindow():
             self.facade.create_log_record('changecolumn')
             self._log = self.facade._tablelog['changecolumn']
             hlp.write_column_to_log(
-                {'column_changes': {oldHeader:newHeader}},
-                 self._log, 'changecolumn'
+                {
+                    'column_changes':
+                    {
+                        oldHeader: newHeader}
+                },
+                self._log, 'changecolumn'
             )
             self.update_data_model('header_changes')
 
