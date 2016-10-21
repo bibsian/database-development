@@ -12,11 +12,12 @@ from poplerGUI.logiclayer.class_tablebuilder import (
     Observation_Table_Builder, UpdaterTableBuilder
 )
 from poplerGUI.logiclayer import class_logconfig as log
-from poplerGUI.logiclayer import class_merger as mrg
+from poplerGUI.logiclayer import class_mergedtoupload as mrg
 from poplerGUI.logiclayer.datalayer import config as orm
 from poplerGUI.logiclayer.datalayer.class_filehandles import (
     Caretaker, DataFileOriginator, DataOriginator
 )
+
 if sys.platform == "darwin":
     rootpath = (
         "/Users/bibsian/Desktop/git/database-development/")
