@@ -181,7 +181,7 @@ def site_in_proj_subq_stmt(
         engine, site_in_project_table, study_site_table,
         project_table, lter_table):
     '''
-    Subquery 1 (used to perform union on all tables)
+    Subquery 1 (used to perform join on 4 of the tables)
     This subquery perform the necessary joins to bring together
     four tables:
     1) site_in_project_table
