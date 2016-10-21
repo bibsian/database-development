@@ -95,7 +95,9 @@ def file_handle_wide_to_long():
     ckentry = {}
     rbtn = {'.csv': True, '.txt': False,
             '.xlsx': False}
-    lned = {'sheet': '', 'delim': '', 'tskip': '', 'bskip': ''}
+    lned = {
+        'sheet': '', 'delim': '', 'tskip': '', 'bskip': '',
+        'header': ''}
     fileinput = ini.InputHandler(
         name='fileoptions',tablename=None, lnedentry=lned,
         rbtns=rbtn, checks=ckentry, session=True,
@@ -110,7 +112,9 @@ def file_handle_1_count():
     ckentry = {}
     rbtn = {'.csv': True, '.txt': False,
             '.xlsx': False}
-    lned = {'sheet': '', 'delim': '', 'tskip': '', 'bskip': ''}
+    lned = {
+        'sheet': '', 'delim': '', 'tskip': '', 'bskip': '',
+        'header': ''}
     fileinput = ini.InputHandler(
         name='fileoptions',tablename=None, lnedentry=lned,
         rbtns=rbtn, checks=ckentry, session=True,
@@ -124,7 +128,9 @@ def file_handle_2_density():
     ckentry = {}
     rbtn = {'.csv': True, '.txt': False,
             '.xlsx': False}
-    lned = {'sheet': '', 'delim': '', 'tskip': '', 'bskip': ''}
+    lned = {
+        'sheet': '', 'delim': '', 'tskip': '', 'bskip': '',
+        'header': ''}
     fileinput = ini.InputHandler(
         name='fileoptions',tablename=None, lnedentry=lned,
         rbtns=rbtn, checks=ckentry, session=True,
@@ -138,7 +144,9 @@ def file_handle_3_biomass():
     ckentry = {}
     rbtn = {'.csv': True, '.txt': False,
             '.xlsx': False}
-    lned = {'sheet': '', 'delim': '', 'tskip': '', 'bskip': ''}
+    lned = {
+        'sheet': '', 'delim': '', 'tskip': '', 'bskip': '',
+        'header': ''}
     fileinput = ini.InputHandler(
         name='fileoptions',tablename=None, lnedentry=lned,
         rbtns=rbtn, checks=ckentry, session=True,
@@ -152,7 +160,9 @@ def file_handle_4_percent_cover():
     ckentry = {}
     rbtn = {'.csv': True, '.txt': False,
             '.xlsx': False}
-    lned = {'sheet': '', 'delim': '', 'tskip': '', 'bskip': ''}
+    lned = {
+        'sheet': '', 'delim': '', 'tskip': '', 'bskip': '',
+        'header': ''}
     fileinput = ini.InputHandler(
         name='fileoptions',tablename=None, lnedentry=lned,
         rbtns=rbtn, checks=ckentry, session=True,
@@ -166,7 +176,9 @@ def file_handle5():
     ckentry = {}
     rbtn = {'.csv': True, '.txt': False,
             '.xlsx': False}
-    lned = {'sheet': '', 'delim': '', 'tskip': '', 'bskip': ''}
+    lned = {
+        'sheet': '', 'delim': '', 'tskip': '', 'bskip': '',
+        'header': ''}
     fileinput = ini.InputHandler(
         name='fileoptions',tablename=None, lnedentry=lned,
         rbtns=rbtn, checks=ckentry, session=True,
