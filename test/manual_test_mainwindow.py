@@ -319,7 +319,5 @@ def MainWindow():
 
 def test_dialog_site(qtbot, MainWindow):
     MainWindow.show()
-
     qtbot.addWidget(MainWindow)
-
     qtbot.stopForInteraction()

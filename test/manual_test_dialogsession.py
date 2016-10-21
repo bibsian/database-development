@@ -90,7 +90,8 @@ def MainWindow():
                 'sheet': self.lnedExcelSheet.text().strip(),
                 'delim': self.lnedDelimiter.text().strip(),
                 'tskip': self.lnedSkipTop.text().strip(),
-                'bskip': self.lnedSkipBottom.text().strip()
+                'bskip': self.lnedSkipBottom.text().strip(),
+                'header': 
             }
             rbtn = {
                 'csv': self.rbtnCsv.isChecked(),
