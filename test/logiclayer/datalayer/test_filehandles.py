@@ -278,7 +278,10 @@ def DataOriginator():
 @pytest.fixture
 def user_input():
     rbtn = {'csv': True, 'xlsx': False, 'txt': False}
-    lned = {'sheet': '', 'delim': '', 'tskip': '', 'bskip': ''}
+    lned = {
+        'sheet': '', 'delim': '', 'tskip': '', 'bskip': '',
+        'header': ''
+    }
     fname = (rootpath + end + 'Datasets_manual_test' + end +
     'raw_data_test_1.csv')
     user_input = ini.InputHandler(
@@ -302,7 +305,10 @@ def test_csv_reader_method(
 @pytest.fixture
 def user_txt():
     rbtn = {'csv': False, 'xlsx': False, 'txt': True}
-    lned = {'sheet': '', 'delim': '', 'tskip': '', 'bskip': ''}
+    lned = {
+        'sheet': '', 'delim': '', 'tskip': '', 'bskip': '',
+        'header': ''
+    }
     fname = (
         rootpath + end + 'Datasets_manual_test' + end +
         'climate_precip.txt')
@@ -327,7 +333,10 @@ def test_txt_reader_method(
 @pytest.fixture
 def user_txt_delim():
     rbtn = {'csv': False, 'xlsx': False, 'txt': True}
-    lned = {'sheet': '', 'delim': ',', 'tskip': '', 'bskip': ''}
+    lned = {
+        'sheet': '', 'delim': ',', 'tskip': '', 'bskip': '',
+        'header': ''
+    }
     fname = 'Datasets_manual_test/climate_temp_test.txt'
     user_input = ini.InputHandler(
         name='fileoptions', lnedentry=lned,
@@ -351,4 +360,66 @@ def test_txt_comma_delim_reader_method(
     caretaker.save(originator_from_file.save_to_memento())
     originator.restore_from_memento(caretaker.restore())
     assert (isinstance(originator._data, DataFrame)) is True
-   
+
+
+
+@pytest.fixture
+def user_txt_skiplines_no_header():
+    rbtn = {'csv': False, 'xlsx': False, 'txt': True}
+    lned = {
+        'sheet': '', 'delim': '\t', 'tskip': '8', 'bskip': '',
+        'header': '-1'
+    }
+    fname = (
+        rootpath + end + 'Datasets_manual_test' + end +
+        'skip_no_header_test.txt')
+    user_input = ini.InputHandler(
+        name='fileoptions', lnedentry=lned,
+        rbtns=rbtn, filename=fname, checks=True)
+    return user_input
+
+def test_txt_skiplines_no_header(
+        user_txt_skiplines_no_header, Caretaker,
+        DataFileOriginator, DataOriginator, Memento):
+    caretaker = Caretaker()
+    originator_from_file = DataFileOriginator(
+        user_txt_skiplines_no_header)
+    originator = DataOriginator(None, 'Initialize')
+    assert (isinstance(originator, DataOriginator)) is True
+    caretaker.save(originator_from_file.save_to_memento())
+    originator.restore_from_memento(caretaker.restore())
+    data = originator._data
+    assert (isinstance(data, DataFrame)) is True
+    assert (len(data.columns) == 3) is True
+    print(data)
+    
+@pytest.fixture
+def user_txt_skiplines_header():
+    rbtn = {'csv': False, 'xlsx': False, 'txt': True}
+    lned = {
+        'sheet': '', 'delim': '\t', 'tskip': '10', 'bskip': '',
+        'header': ''
+    }
+    fname = (
+        rootpath + end + 'Datasets_manual_test' + end +
+        'skip_header_test.txt')
+    user_input = ini.InputHandler(
+        name='fileoptions', lnedentry=lned,
+        rbtns=rbtn, filename=fname, checks=False)
+    return user_input
+
+def test_txt_skiplines_header(
+        user_txt_skiplines_header, Caretaker,
+        DataFileOriginator, DataOriginator, Memento):
+    caretaker = Caretaker()
+    originator_from_file = DataFileOriginator(
+        user_txt_skiplines_header)
+    originator = DataOriginator(None, 'Initialize')
+    assert (isinstance(originator, DataOriginator)) is True
+    caretaker.save(originator_from_file.save_to_memento())
+    originator.restore_from_memento(caretaker.restore())
+    data = originator._data
+    assert (isinstance(data, DataFrame)) is True
+    assert (len(data.columns) == 3) is True
+    print(data)
+    assert 0
