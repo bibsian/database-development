@@ -149,6 +149,7 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
             # has NOT been used and information has NOT been stored
             self.sitetablemodel = self.viewEdit(self.rawdata)
             self.listviewSiteLabels.setModel(self.sitetablemodel)
+            self.listviewSiteLabels.resizeColumnsToContents()
         else:
             # Setting table Model View if the dialog box has
             # been used and info has been saved
@@ -168,6 +169,7 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
             displayed_data.drop_duplicates(inplace=True)
             self.sitetablemodel = self.viewEdit(displayed_data)
             self.listviewSiteLabels.setModel(self.sitetablemodel)
+            self.listviewSiteLabels.resizeColumnsToContents()
 
     def update_data(self):
         '''
@@ -251,9 +253,9 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
                 check_view)
             self.sitequerymodel = check_view
             self.tabviewDbSiteQuery.setModel(self.sitequerymodel)
+            self.tabviewDbSiteQuery.resizeColumnsToContents()
             self.sitelevels = changed_site_list
             self.preview_validate.show()
-
 
     def validated(self):
         ''' 
@@ -281,6 +283,7 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
         print('site df (val): ', site_display_df)
         self.sitetablemodel = self.viewEdit(site_display_df)
         self.listviewSiteLabels.setModel(self.sitetablemodel)
+        self.listviewSiteLabels.resizeColumnsToContents()
         self._log.debug(
             'sitelevels (validated block)' + ' '.join(
                 self.sitelevels))

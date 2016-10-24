@@ -279,6 +279,7 @@ class UiMainWindow(QtGui.QMainWindow, mw.Ui_MainWindow):
         self.tblViewMeta.setModel(metamodel)
 
     def end_session(self):
-        subprocess.call(
-            "python" + " ../poplerGUI_run_main.py", shell=True)
         self.close()
+        subprocess.call(
+            "python" + " poplerGUI_run_main.py", shell=True)
+

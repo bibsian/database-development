@@ -116,9 +116,13 @@ def MainWindow():
                 'Identified_to_upload.csv', encoding='iso-8859-11')
             metamodel = view.PandasTableModel(
                 metadf[
-                    ['global_id', 'lter', 'title', 'site_metadata']
+                    [
+                        'global_id', 'lter', 'title', 'site_metadata',
+                        'temp_int'
+                    ]
                 ]
             )
+            
             self.tblViewMeta.setModel(metamodel)
             self.tblViewMeta.resizeColumnsToContents()
             self.tblViewRaw.horizontalHeader().sectionDoubleClicked.connect(
@@ -310,9 +314,10 @@ def MainWindow():
             self.tblViewMeta.setModel(metamodel)
 
         def end_session(self):
-            subprocess.call(
-                "python" + " ../poplerGUI_run_main.py", shell=True)
             self.close()
+            subprocess.call(
+                "python" + " poplerGUI_run_main.py", shell=True)
+            
 
     return UiMainWindow()
 
