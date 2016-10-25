@@ -87,11 +87,16 @@ class ObsDialog(QtGui.QDialog, obs.Ui_Dialog):
                     self.obsckbox.values()))
             if y is True
         ]
-        self.tablename = [
-            x for x, y in
-            zip(list(self.table.keys()), list(self.table.values()))
-            if y is True
-        ][0]
+        try:
+            self.tablename = [
+                x for x, y in
+                zip(list(self.table.keys()), list(self.table.values()))
+                if y is True
+            ][0]
+        except Exception as e:
+            print(str(e))
+            self.error.showMessage('Select data type')
+        
         rawini = ini.InputHandler(
             name='rawinfo',
             tablename= self.tablename,
