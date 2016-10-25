@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>976</width>
-    <height>693</height>
+    <width>728</width>
+    <height>615</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -60,9 +60,9 @@
 
 </string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_6">
+  <layout class="QVBoxLayout" name="verticalLayout_21">
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout_5">
+    <layout class="QVBoxLayout" name="verticalLayout_20">
      <item>
       <widget class="QFrame" name="frame">
        <property name="sizePolicy">
@@ -77,33 +77,33 @@
        <property name="frameShadow">
         <enum>QFrame::Raised</enum>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout_4">
+       <layout class="QVBoxLayout" name="verticalLayout_19">
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout">
+         <layout class="QVBoxLayout" name="verticalLayout_18">
           <item>
-           <spacer name="horizontalSpacer">
+           <spacer name="verticalSpacer">
             <property name="orientation">
-             <enum>Qt::Horizontal</enum>
+             <enum>Qt::Vertical</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>13</width>
-              <height>335</height>
+              <width>378</width>
+              <height>13</height>
              </size>
             </property>
            </spacer>
           </item>
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_3">
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
             <item>
-             <spacer name="verticalSpacer">
+             <spacer name="horizontalSpacer">
               <property name="orientation">
-               <enum>Qt::Vertical</enum>
+               <enum>Qt::Horizontal</enum>
               </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>378</width>
-                <height>5</height>
+                <width>13</width>
+                <height>335</height>
                </size>
               </property>
              </spacer>
@@ -129,410 +129,379 @@
               <property name="alignment">
                <set>Qt::AlignCenter</set>
               </property>
-              <layout class="QVBoxLayout" name="verticalLayout_2">
+              <layout class="QHBoxLayout" name="horizontalLayout">
                <item>
-                <layout class="QVBoxLayout" name="verticalLayout">
-                 <item>
+                <layout class="QGridLayout" name="gridLayout">
+                 <property name="horizontalSpacing">
+                  <number>12</number>
+                 </property>
+                 <property name="verticalSpacing">
+                  <number>20</number>
+                 </property>
+                 <item row="0" column="0" colspan="2">
                   <widget class="QCheckBox" name="ckCreateTaxa">
                    <property name="text">
                     <string>Create Taxonomic Labels</string>
                    </property>
                   </widget>
                  </item>
-                 <item>
-                  <layout class="QGridLayout" name="gridLayout">
-                   <item row="1" column="3">
-                    <layout class="QFormLayout" name="formLayout_16">
-                     <property name="fieldGrowthPolicy">
-                      <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+                 <item row="1" column="0">
+                  <layout class="QVBoxLayout" name="verticalLayout_6">
+                   <item>
+                    <widget class="QCheckBox" name="ckKingdom">
+                     <property name="text">
+                      <string>Kingom</string>
                      </property>
-                     <item row="2" column="0" colspan="2">
-                      <widget class="QLineEdit" name="lnedSubclass">
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="1" column="0">
-                      <widget class="QCheckBox" name="ckSubclass">
-                       <property name="text">
-                        <string>Subclass</string>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
+                    </widget>
                    </item>
-                   <item row="1" column="2">
-                    <layout class="QFormLayout" name="formLayout_9">
-                     <property name="fieldGrowthPolicy">
-                      <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+                   <item>
+                    <widget class="QLineEdit" name="lnedKingdom">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
                      </property>
-                     <item row="0" column="0">
-                      <widget class="QCheckBox" name="ckSubphylum">
-                       <property name="text">
-                        <string>Subphylum</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="1" column="0" colspan="2">
-                      <widget class="QLineEdit" name="lnedSubphylum">
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
+                    </widget>
                    </item>
-                   <item row="0" column="1">
-                    <layout class="QFormLayout" name="formLayout_14">
-                     <property name="fieldGrowthPolicy">
-                      <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+                  </layout>
+                 </item>
+                 <item row="1" column="1">
+                  <layout class="QVBoxLayout" name="verticalLayout_7">
+                   <item>
+                    <widget class="QCheckBox" name="ckSubkingdom">
+                     <property name="text">
+                      <string>Subkingdom</string>
                      </property>
-                     <item row="0" column="0">
-                      <widget class="QCheckBox" name="ckSubdivision">
-                       <property name="text">
-                        <string>Subdivision</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="1" column="0">
-                      <widget class="QLineEdit" name="lnedSubdivision">
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
+                    </widget>
                    </item>
-                   <item row="1" column="0">
-                    <layout class="QFormLayout" name="formLayout_10">
-                     <property name="fieldGrowthPolicy">
-                      <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+                   <item>
+                    <widget class="QLineEdit" name="lnedSubkingdom">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
                      </property>
-                     <item row="0" column="0">
-                      <widget class="QCheckBox" name="ckSubkingdom">
-                       <property name="text">
-                        <string>Subkingdom</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="1" column="0" colspan="2">
-                      <widget class="QLineEdit" name="lnedSubkingdom">
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
+                    </widget>
                    </item>
-                   <item row="0" column="2">
-                    <layout class="QFormLayout" name="formLayout_15">
-                     <property name="fieldGrowthPolicy">
-                      <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+                  </layout>
+                 </item>
+                 <item row="1" column="2">
+                  <layout class="QVBoxLayout" name="verticalLayout_8">
+                   <item>
+                    <widget class="QCheckBox" name="ckInfrakingdom">
+                     <property name="text">
+                      <string>Infrakingdom</string>
                      </property>
-                     <item row="0" column="0">
-                      <widget class="QCheckBox" name="ckSuperphylum">
-                       <property name="text">
-                        <string>Superphylum</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="1" column="0" colspan="2">
-                      <widget class="QLineEdit" name="lnedSuperphylum">
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
+                    </widget>
                    </item>
-                   <item row="2" column="1">
-                    <layout class="QFormLayout" name="formLayout_13">
-                     <property name="fieldGrowthPolicy">
-                      <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+                   <item>
+                    <widget class="QLineEdit" name="lnedInfrakingdom">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
                      </property>
-                     <item row="1" column="0" colspan="2">
-                      <widget class="QLineEdit" name="lnedDivision">
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="0" column="1">
-                      <widget class="QCheckBox" name="ckDivision">
-                       <property name="text">
-                        <string>Division</string>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
+                    </widget>
                    </item>
-                   <item row="2" column="0">
-                    <layout class="QFormLayout" name="formLayout_11">
-                     <property name="fieldGrowthPolicy">
-                      <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+                  </layout>
+                 </item>
+                 <item row="2" column="0">
+                  <layout class="QVBoxLayout" name="verticalLayout_10">
+                   <item>
+                    <widget class="QCheckBox" name="ckSuperdivision">
+                     <property name="text">
+                      <string>Superdivision</string>
                      </property>
-                     <item row="2" column="0" colspan="2">
-                      <widget class="QLineEdit" name="lnedInfrakingdom">
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="1" column="0">
-                      <widget class="QCheckBox" name="ckInfrakingdom">
-                       <property name="text">
-                        <string>Infrakingdom</string>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
+                    </widget>
                    </item>
-                   <item row="0" column="0">
-                    <layout class="QFormLayout" name="formLayout_2">
-                     <item row="0" column="0">
-                      <widget class="QCheckBox" name="ckKingdom">
-                       <property name="text">
-                        <string>Kingom</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="1" column="0" colspan="2">
-                      <widget class="QLineEdit" name="lnedKingdom">
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </item>
-                   <item row="2" column="3">
-                    <layout class="QFormLayout" name="formLayout_5">
-                     <item row="2" column="0" colspan="2">
-                      <widget class="QLineEdit" name="lnedOrder">
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="1" column="0">
-                      <widget class="QCheckBox" name="ckOrder">
-                       <property name="text">
-                        <string>Order</string>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </item>
-                   <item row="2" column="2">
-                    <layout class="QFormLayout" name="formLayout_3">
-                     <item row="0" column="0">
-                      <widget class="QCheckBox" name="ckPhylum">
-                       <property name="text">
-                        <string>Phylum</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="1" column="0" colspan="2">
-                      <widget class="QLineEdit" name="lnedPhylum">
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </item>
-                   <item row="0" column="3">
-                    <layout class="QFormLayout" name="formLayout_4">
-                     <property name="fieldGrowthPolicy">
-                      <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+                   <item>
+                    <widget class="QLineEdit" name="lnedSuperdivision">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
                      </property>
-                     <item row="2" column="0" colspan="2">
-                      <widget class="QLineEdit" name="lnedClass">
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="1" column="0">
-                      <widget class="QCheckBox" name="ckClass">
-                       <property name="layoutDirection">
-                        <enum>Qt::LeftToRight</enum>
-                       </property>
-                       <property name="text">
-                        <string>Class</string>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
+                    </widget>
                    </item>
-                   <item row="1" column="1">
-                    <layout class="QFormLayout" name="formLayout_12">
-                     <property name="fieldGrowthPolicy">
-                      <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+                  </layout>
+                 </item>
+                 <item row="2" column="2">
+                  <layout class="QVBoxLayout" name="verticalLayout_9">
+                   <item>
+                    <widget class="QCheckBox" name="ckSubdivision">
+                     <property name="text">
+                      <string>Subdivision</string>
                      </property>
-                     <item row="0" column="0">
-                      <widget class="QCheckBox" name="ckSuperdivision">
-                       <property name="text">
-                        <string>Superdivision</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="1" column="0" colspan="2">
-                      <widget class="QLineEdit" name="lnedSuperdivision">
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
+                    </widget>
                    </item>
-                   <item row="0" column="4">
-                    <layout class="QFormLayout" name="formLayout_6">
-                     <item row="0" column="0">
-                      <widget class="QCheckBox" name="ckFamily">
-                       <property name="text">
-                        <string>Family</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="1" column="0" colspan="2">
-                      <widget class="QLineEdit" name="lnedFamily">
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </item>
-                   <item row="1" column="4">
-                    <layout class="QFormLayout" name="formLayout_7">
-                     <item row="2" column="0" colspan="2">
-                      <widget class="QLineEdit" name="lnedGenus">
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="1" column="0">
-                      <widget class="QCheckBox" name="ckGenus">
-                       <property name="text">
-                        <string>Genus</string>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </item>
-                   <item row="2" column="4">
-                    <layout class="QFormLayout" name="formLayout_8">
-                     <property name="fieldGrowthPolicy">
-                      <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+                   <item>
+                    <widget class="QLineEdit" name="lnedSubdivision">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
                      </property>
-                     <item row="3" column="0" colspan="2">
-                      <widget class="QLineEdit" name="lnedSpp">
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="2" column="1">
-                      <widget class="QCheckBox" name="ckSpp">
-                       <property name="text">
-                        <string>Species Name</string>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
+                    </widget>
                    </item>
-                   <item row="3" column="1">
-                    <layout class="QFormLayout" name="formLayout_17">
-                     <property name="rightMargin">
-                      <number>5</number>
+                  </layout>
+                 </item>
+                 <item row="3" column="0">
+                  <layout class="QVBoxLayout" name="verticalLayout_12">
+                   <item>
+                    <widget class="QCheckBox" name="ckSuperphylum">
+                     <property name="text">
+                      <string>Superphylum</string>
                      </property>
-                     <item row="2" column="0" colspan="2">
-                      <widget class="QLineEdit" name="lnedCommonname">
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="1" column="1">
-                      <widget class="QCheckBox" name="ckCommonname">
-                       <property name="text">
-                        <string>Common Name</string>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
+                    </widget>
                    </item>
-                   <item row="3" column="0">
-                    <layout class="QFormLayout" name="formLayout">
-                     <item row="0" column="0">
-                      <widget class="QCheckBox" name="ckSppCode">
-                       <property name="text">
-                        <string>Species Code</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="1" column="0" colspan="2">
-                      <widget class="QLineEdit" name="lnedSppCode">
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
+                   <item>
+                    <widget class="QLineEdit" name="lnedSuperphylum">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item row="3" column="1">
+                  <layout class="QVBoxLayout" name="verticalLayout_14">
+                   <item>
+                    <widget class="QCheckBox" name="ckPhylum">
+                     <property name="text">
+                      <string>Phylum</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLineEdit" name="lnedPhylum">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item row="3" column="2">
+                  <layout class="QVBoxLayout" name="verticalLayout_13">
+                   <item>
+                    <widget class="QCheckBox" name="ckSubphylum">
+                     <property name="text">
+                      <string>Subphylum</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLineEdit" name="lnedSubphylum">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item row="4" column="0">
+                  <layout class="QVBoxLayout" name="verticalLayout_15">
+                   <item>
+                    <widget class="QCheckBox" name="ckClass">
+                     <property name="layoutDirection">
+                      <enum>Qt::LeftToRight</enum>
+                     </property>
+                     <property name="text">
+                      <string>Class</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLineEdit" name="lnedClass">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item row="4" column="1">
+                  <layout class="QVBoxLayout" name="verticalLayout_16">
+                   <item>
+                    <widget class="QCheckBox" name="ckSubclass">
+                     <property name="text">
+                      <string>Subclass</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLineEdit" name="lnedSubclass">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item row="4" column="2">
+                  <layout class="QVBoxLayout" name="verticalLayout_17">
+                   <item>
+                    <widget class="QCheckBox" name="ckOrder">
+                     <property name="text">
+                      <string>Order</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLineEdit" name="lnedOrder">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item row="4" column="3">
+                  <layout class="QVBoxLayout" name="verticalLayout_5">
+                   <item>
+                    <widget class="QCheckBox" name="ckFamily">
+                     <property name="text">
+                      <string>Family</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLineEdit" name="lnedFamily">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item row="5" column="0">
+                  <layout class="QVBoxLayout" name="verticalLayout_4">
+                   <item>
+                    <widget class="QCheckBox" name="ckGenus">
+                     <property name="text">
+                      <string>Genus</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLineEdit" name="lnedGenus">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item row="5" column="1">
+                  <layout class="QVBoxLayout" name="verticalLayout_3">
+                   <item>
+                    <widget class="QCheckBox" name="ckSpp">
+                     <property name="text">
+                      <string>Species Name</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLineEdit" name="lnedSpp">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item row="5" column="2">
+                  <layout class="QVBoxLayout" name="verticalLayout_2">
+                   <item>
+                    <widget class="QCheckBox" name="ckSppCode">
+                     <property name="text">
+                      <string>Species Code</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLineEdit" name="lnedSppCode">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item row="5" column="3">
+                  <layout class="QVBoxLayout" name="verticalLayout">
+                   <item>
+                    <widget class="QCheckBox" name="ckCommonname">
+                     <property name="text">
+                      <string>Common Name</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLineEdit" name="lnedCommonname">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item row="2" column="1">
+                  <layout class="QVBoxLayout" name="verticalLayout_11">
+                   <item>
+                    <widget class="QCheckBox" name="ckDivision">
+                     <property name="text">
+                      <string>Division</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLineEdit" name="lnedDivision">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                    </widget>
                    </item>
                   </layout>
                  </item>
@@ -542,14 +511,14 @@
              </widget>
             </item>
             <item>
-             <spacer name="verticalSpacer_2">
+             <spacer name="horizontalSpacer_2">
               <property name="orientation">
-               <enum>Qt::Vertical</enum>
+               <enum>Qt::Horizontal</enum>
               </property>
               <property name="sizeHint" stdset="0">
                <size>
                 <width>13</width>
-                <height>5</height>
+                <height>335</height>
                </size>
               </property>
              </spacer>
@@ -557,14 +526,14 @@
            </layout>
           </item>
           <item>
-           <spacer name="horizontalSpacer_2">
+           <spacer name="verticalSpacer_2">
             <property name="orientation">
-             <enum>Qt::Horizontal</enum>
+             <enum>Qt::Vertical</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
               <width>13</width>
-              <height>335</height>
+              <height>13</height>
              </size>
             </property>
            </spacer>
@@ -620,32 +589,32 @@
   <tabstop>ckCreateTaxa</tabstop>
   <tabstop>ckKingdom</tabstop>
   <tabstop>lnedKingdom</tabstop>
+  <tabstop>ckSubkingdom</tabstop>
+  <tabstop>lnedSubkingdom</tabstop>
+  <tabstop>ckInfrakingdom</tabstop>
+  <tabstop>lnedInfrakingdom</tabstop>
+  <tabstop>ckSuperdivision</tabstop>
+  <tabstop>lnedSuperdivision</tabstop>
+  <tabstop>ckDivision</tabstop>
+  <tabstop>lnedDivision</tabstop>
   <tabstop>ckSubdivision</tabstop>
   <tabstop>lnedSubdivision</tabstop>
   <tabstop>ckSuperphylum</tabstop>
   <tabstop>lnedSuperphylum</tabstop>
-  <tabstop>ckClass</tabstop>
-  <tabstop>lnedClass</tabstop>
-  <tabstop>ckFamily</tabstop>
-  <tabstop>lnedFamily</tabstop>
-  <tabstop>ckSubkingdom</tabstop>
-  <tabstop>lnedSubkingdom</tabstop>
-  <tabstop>ckSuperdivision</tabstop>
-  <tabstop>lnedSuperdivision</tabstop>
-  <tabstop>ckSubphylum</tabstop>
-  <tabstop>lnedSubphylum</tabstop>
-  <tabstop>ckSubclass</tabstop>
-  <tabstop>lnedSubclass</tabstop>
-  <tabstop>ckGenus</tabstop>
-  <tabstop>lnedGenus</tabstop>
-  <tabstop>ckInfrakingdom</tabstop>
-  <tabstop>lnedInfrakingdom</tabstop>
-  <tabstop>ckDivision</tabstop>
-  <tabstop>lnedDivision</tabstop>
   <tabstop>ckPhylum</tabstop>
   <tabstop>lnedPhylum</tabstop>
+  <tabstop>ckSubphylum</tabstop>
+  <tabstop>lnedSubphylum</tabstop>
+  <tabstop>ckClass</tabstop>
+  <tabstop>lnedClass</tabstop>
+  <tabstop>ckSubclass</tabstop>
+  <tabstop>lnedSubclass</tabstop>
   <tabstop>ckOrder</tabstop>
   <tabstop>lnedOrder</tabstop>
+  <tabstop>ckFamily</tabstop>
+  <tabstop>lnedFamily</tabstop>
+  <tabstop>ckGenus</tabstop>
+  <tabstop>lnedGenus</tabstop>
   <tabstop>ckSpp</tabstop>
   <tabstop>lnedSpp</tabstop>
   <tabstop>ckSppCode</tabstop>
