@@ -73,7 +73,7 @@ def test_site_in_project_key(
     facade.input_register(count_handle_3_biomass)
     rawdirector = facade.make_table('rawinfo')
     rawtable = rawdirector._availdf
-    print(rawtable)
+    print('rawtable facade tmaker: ', rawtable)
     facade.push_tables[count_handle_3_biomass.tablename] = rawtable
     facade.create_log_record(count_handle_3_biomass.tablename)
 
@@ -92,10 +92,10 @@ def test_site_in_project_key(
     timetable.columns = [x+'_derived' for x in timetable_og_cols]
     observationdf = facade._data
     observation_time_df = concat([timetable,observationdf], axis=1 )
-    
+    print('merge class obs_time df: ', observation_time_df)
     print('merge class obs_time columns: ', observation_time_df.columns)
     print('merge class project table: ', project_table)
-    
+
     try:
         study_site_table.to_sql(
             'study_site_table',
