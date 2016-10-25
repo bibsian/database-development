@@ -317,7 +317,7 @@ def MainWindow():
             self.close()
             subprocess.call(
                 "python" + " poplerGUI_run_main.py", shell=True)
-            
+
 
     return UiMainWindow()
 
