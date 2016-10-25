@@ -277,6 +277,7 @@ class Facade:
         director.set_sitelevels(uqsitelevels)
         director.set_siteid(sitecol)
         return director.get_database_table()
+
     def push_merged_data(self):
         '''
         Method in facade class to check if all data tables
