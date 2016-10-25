@@ -27,8 +27,8 @@ from poplerGUI.logiclayer import class_helpers as hlp
 
 @pytest.fixture
 def TimeDialog(
-        meta_handle_3_biomass, file_handle_1_count,
-        site_handle_1_count, taxa_handle_1_count
+        meta_handle5, file_handle5,
+        site_handle5, taxa_handle5
 ):
     class TimeDialog(QtGui.QDialog, uitime.Ui_Dialog):
         def __init__(self, parent=None):
@@ -39,15 +39,16 @@ def TimeDialog(
             # logged in the computer in order to
             # reach this phase
             self.facade = face.Facade()
-            self.facade.input_register(meta_handle_3_biomass)
+            self.facade.input_register(meta_handle5)
             self.facade.meta_verify()
-            self.facade.input_register(file_handle_1_count)
+            self.facade.input_register(file_handle5)
             self.facade.load_data()
-            self.facade.input_register(site_handle_1_count)
+            self.facade.input_register(site_handle5)
             sitelevels = self.facade._data[
-                'site'].drop_duplicates().values.tolist()
+                site_handle5.lnedentry['study_site_key']   
+            ].drop_duplicates().values.tolist()
             self.facade.register_site_levels(sitelevels)
-            self.facade.input_register(taxa_handle_1_count)
+            self.facade.input_register(taxa_handle5)
 
 
             # Place holders for user inputs
@@ -111,7 +112,6 @@ def TimeDialog(
                     [timeview, self.facade._data], axis=1)
                 print('timeview first try:', timeview)
 
-
             except Exception as e:
                 print(str(e))
                 self._log.debug(str(e))
@@ -137,24 +137,19 @@ def TimeDialog(
                 try:
                     timeview.loc[1, 'day_derived'] = to_numeric(
                         timeview['day_derived'])
-                except Exception as e:
-                    print(str(e))
                     timeview['month_derived'] = to_numeric(
                         timeview['month_derived'])
-
-                try:
                     timeview['year_derived'] = to_numeric(
                         timeview['year_derived'])
                 except Exception as e:
                     print(str(e))
+                    pass
 
                 try:
                     self.facade.push_tables['timetable'] = (
                         timeview)
                 except Exception as e:
                     print(str(e))
-                print('save block: ', timeview.columns)
-                print('save block: ', timeview)
 
                 try:
                     assert timeview is not None
