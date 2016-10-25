@@ -43,3 +43,4 @@ echo replace value dialog updated
 
 C:\Users\MillerLab\Envs\lter\Scripts\python.exe C:\Users\MillerLab\Envs\lter\Lib\site-packages\PyQt4\uic\pyuic.py C:\Users\MillerLab\Desktop\database-development\Views\ui_dialog_cbind.ui -o C:\Users\MillerLab\Desktop\database-development\Views\ui_dialog_cbind.py
 echo cbind dialog updated
+
