@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 import pytest
 import pytestqt
-from PyQt4 import QtGui, QtCore
-from collections import OrderedDict
+from PyQt4 import QtGui
 from pandas import to_numeric, concat
 import sys,os
 if sys.platform == "darwin":

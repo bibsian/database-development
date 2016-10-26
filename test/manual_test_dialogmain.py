@@ -5,8 +5,17 @@ from PyQt4 import QtGui, QtCore
 from pandas import read_sql
 from collections import OrderedDict, namedtuple
 import sys, os
-sys.path.append(os.path.realpath(os.path.dirname(__file__)))
-from Views import ui_mainrefactor as mw
+if sys.platform == "darwin":
+    rootpath = (
+        "/Users/bibsian/Desktop/git/database-development/")
+    end = "/"
+elif sys.platform == "win32":
+    rootpath = (
+        "C:\\Users\MillerLab\\Desktop\\database-development")
+    end = "\\"
+sys.path.append(os.path.realpath(os.path.dirname(
+    rootpath)))
+os.chdir(rootpath)
 from Views import ui_dialog_main as dmainw
 from poplerGUI import ui_logic_session as logicsess
 from poplerGUI import ui_logic_site as logicsite
@@ -18,7 +27,7 @@ from poplerGUI.logiclayer import class_userfacade as face
 from poplerGUI.logiclayer import class_helpers as hlp
 
 @pytest.fixture
-def MainWindow():
+def MainDialog(meta_handle7, file_handle5, site_handle5, taxa_handle5):
     class MainDialog(QtGui.QDialog, dmainw.Ui_Dialog):
 
         studytype = namedtuple('studytype', 'checked entry unit')
@@ -35,7 +44,19 @@ def MainWindow():
             super().__init__(parent)
             self.setupUi(self)
 
-            self.facade = None
+            self.facade = face.Facade()
+            self.facade.input_register(meta_handle7)
+            self.facade.meta_verify()
+            self.facade.input_register(file_handle5)
+            self.facade.load_data()
+            self.facade.input_register(site_handle5)
+            sitelevels = self.facade._data[
+                site_handle5.lnedentry['study_site_key']   
+            ].drop_duplicates().values.tolist()
+            self.facade.register_site_levels(sitelevels)
+            self.facade.input_register(taxa_handle5)
+
+
             self.mainini = None
             # Place holder: Data Model/ Data model view
             self.mainmodel = None
@@ -219,89 +240,13 @@ def MainWindow():
                 self.error.showMessage(
                     'Invalid entry: ' + record
                 )
+    return MainDialog()
 
 
-    class UiMainWindow(QtGui.QMainWindow, mw.Ui_MainWindow):
-        '''
-        The main window class will serve to gather all informatoin
-        from Dialog boxes, actions, and instantiate classes
-        that are required to perform the necessary lower level logic
-        (i.e. implement a Facade, Commander, MetaVerifier, etc.
-        '''
-
-        def __init__(self, parent=None):
-            super().__init__(parent)
-            # attributes
-            self.setupUi(self)
-
-            # ------- SITE DIALOG CONSTRUCTOR ARGS ----- #
-            self.facade = face.Facade()
-            self.dsite = logicsite.SiteDialog()
-            # Actions
-            self.actionSiteTable.triggered.connect(self.site_display)
-            # Custom Signals
-            self.dsite.site_unlocks.connect(self.site_complete_enable)
-
-            # ------ SESSION DIALOG CONSTRUCTOR ARGS ----- #
-            # Dialog boxes for user feedback
-            self.dsession = logicsess.SessionDialog()
-            self.error = QtGui.QErrorMessage()
-            self.message = QtGui.QMessageBox
-            # Custom signals
-            self.dsession.raw_data_model.connect(
-                self.update_data_model)
-
-            # actions
-            self.actionStart_Session.triggered.connect(
-                self.session_display)
-
-            # ------- MAIN DIALOG CONSTRUCTOR ARGS ------- #
-            self.dmain = MainDialog()
-            self.actionMainTable.triggered.connect(self.main_display)
-            
-
-        def main_display(self):
-            ''' Displays main dialog box'''
-            self.dmain.facade = self.facade
-            self.dmain.show()
-        
-        def update_data_model(self):
-            newdatamodel = view.PandasTableModel(self.facade._data)
-            self.tblViewRaw.setModel(newdatamodel)
-
-        def session_display(self):
-            ''' Displays the Site Dialog box'''
-            self.dsession.show()
-            self.dsession.facade = self.facade
-        # ------- END SESSION DIAGLOG CODE --------#
-
-        # -------- START SITE DIALOG CODE ---------#
-
-        @QtCore.pyqtSlot(object)
-        def site_complete_enable(self):
-            ''' 
-            Method to enable actions for display dialog 
-            boxes that corresond to different database tables
-            '''
-            self.actionMainTable.setEnabled(True)
-            self.actionTaxaTable.setEnabled(True)
-            self.actionTimeFormat.setEnabled(True)
-            self.actionRawTable.setEnabled(True)
-            self.actionCovariates.setEnabled(True)
-            self.update_data_model()
-
-        def site_display(self):
-            ''' Displays the Site Dialog box'''
-            self.dsite.show()
-            self.dsite.facade = self.facade
-
-        # --------- END SITE DIALOG CODE ----------#
-
-    return UiMainWindow()
 
         # ----------- START SESSION DIALOG CODE ----- #
-def test_dialog_site(qtbot, MainWindow):
-    MainWindow.show()
-    qtbot.addWidget(MainWindow)
+def test_dialog_site(qtbot, MainDialog):
+    MainDialog.show()
+    qtbot.addWidget(MainDialog)
 
     qtbot.stopForInteraction()
