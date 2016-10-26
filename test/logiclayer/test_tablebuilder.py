@@ -723,7 +723,10 @@ def Project_Table_Builder(AbstractTableBuilder):
                 if value.checked is True:
                     maindata.loc[0, key] = value.entry
                     if 'spatial' in key or 'structure' in key:
-                        maindata.loc[0, '{}_units'.format(key)] = value.unit
+                        if value.unit == '':
+                            maindata.loc[0, '{}_units'.format(key)] = 'NA'
+                        else:
+                            maindata.loc[0, '{}_units'.format(key)] = value.unit
                     else:
                         pass
                 else:
@@ -1147,7 +1150,7 @@ def test_study_site_table_build(
     sitetab = director.get_database_table()
     showsite = sitetab._availdf
     assert (isinstance(showsite, DataFrame)) is True
-    print(showsite)
+
 
 
 # ------------------------------------------------------ #
@@ -1187,7 +1190,8 @@ def test_project_table_build(
 
     project_table_df = director.get_database_table()
     show_project_table = project_table_df._availdf
-
+    print(show_project_table)
+    
     assert (isinstance(show_project_table, DataFrame)) is True
     assert (
         show_project_table['datatype'].drop_duplicates().values.tolist()

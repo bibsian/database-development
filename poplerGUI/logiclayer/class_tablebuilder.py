@@ -687,7 +687,10 @@ class Project_Table_Builder(AbstractTableBuilder):
             if value.checked is True:
                 maindata.loc[0, key] = value.entry
                 if 'spatial' in key or 'structure' in key:
-                    maindata.loc[0, '{}_units'.format(key)] = value.unit
+                    if value.unit == '':
+                        maindata.loc[0, '{}_units'.format(key)] = 'NA'
+                    else:
+                        maindata.loc[0, '{}_units'.format(key)] = value.unit
                 else:
                     pass
             else:
