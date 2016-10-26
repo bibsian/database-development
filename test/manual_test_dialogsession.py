@@ -90,7 +90,8 @@ def MainWindow():
                 'sheet': self.lnedExcelSheet.text().strip(),
                 'delim': self.lnedDelimiter.text().strip(),
                 'tskip': self.lnedSkipTop.text().strip(),
-                'bskip': self.lnedSkipBottom.text().strip()
+                'bskip': self.lnedSkipBottom.text().strip(),
+                'header': 
             }
             rbtn = {
                 'csv': self.rbtnCsv.isChecked(),
@@ -109,11 +110,7 @@ def MainWindow():
 
             try:
                 self.facade.load_data()
-
-                rawdatamodel = view.PandasTableModel(
-                    self.facade._data)
-                self.raw_data_model.emit(rawdatamodel)
-                
+                self.raw_data_model.emit('loaded_data')
             except Exception as e:
                 self.filetypeReceive.emit(str(e))
 

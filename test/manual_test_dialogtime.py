@@ -26,101 +26,10 @@ from poplerGUI.logiclayer import class_helpers as hlp
 
 
 @pytest.fixture
-def metahandle():
-    lentry = {
-        'globalid': 1,
-        'metaurl': ('http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.18'),
-        'lter': 'SBC'}
-    ckentry = {}
-    metainput = ini.InputHandler(
-        name='metacheck', tablename=None, lnedentry=lentry,
-        checks=ckentry)
-    return metainput
-
-@pytest.fixture
-def filehandle():
-    ckentry = {}
-    rbtn = {'.csv': True, '.txt': False,
-            '.xlsx': False}
-    lned = {'sheet': '', 'delim': '', 'tskip': '', 'bskip': ''}
-    fileinput = ini.InputHandler(
-        name='fileoptions',tablename=None, lnedentry=lned,
-        rbtns=rbtn, checks=ckentry, session=True,
-        filename=(
-            rootpath + end + 'test' + end +
-            'Datasets_manual_test' + end + 'raw_data_test_1.csv')
-        )
-
-    return fileinput
-
-@pytest.fixture
-def sitehandle():
-    lned = {'siteid': 'site'}
-    sitehandle = ini.InputHandler(
-        name='siteinfo', lnedentry=lned, tablename='sitetable')
-    return sitehandle
-
-@pytest.fixture
-def taxahandle():
-    taxalned = OrderedDict((
-        ('sppcode', ''),
-        ('kingdom', ''),
-        ('subkingdom', ''),
-        ('infrakingdom', ''),
-        ('superdivision', ''),
-        ('divsion', ''),
-        ('subdivision', ''),
-        ('superphylum', ''),
-        ('phylum', ''),
-        ('subphylum', ''),
-        ('clss', ''),
-        ('subclass', ''),
-        ('ordr', ''),
-        ('family', ''),
-        ('genus', 'genus'),
-        ('species', 'species')
-    ))
-
-    taxackbox = OrderedDict((
-        ('sppcode', False),
-        ('kingdom', False),
-        ('subkingdom', False),
-        ('infrakingdom', False),
-        ('superdivision', False),
-        ('divsion', False),
-        ('subdivision', False),
-        ('superphylum', False),
-        ('phylum', False),
-        ('subphylum', False),
-        ('clss', False),
-        ('subclass', False),
-        ('ordr', False),
-        ('family', False),
-        ('genus', True),
-        ('species', True)
-    ))
-
-    taxacreate = {
-        'taxacreate': False
-    }
-    
-    available = [
-        x for x,y in zip(
-            list(taxalned.keys()), list(
-                taxackbox.values()))
-        if y is True
-    ]
-    
-    taxaini = ini.InputHandler(
-        name='taxainput',
-        tablename='taxatable',
-        lnedentry= hlp.extract(taxalned, available),
-        checks=taxacreate)
-    return taxaini
-
-
-@pytest.fixture
-def TimeDialog(sitehandle, filehandle, metahandle, taxahandle):
+def TimeDialog(
+        meta_handle5, file_handle5,
+        site_handle5, taxa_handle5
+):
     class TimeDialog(QtGui.QDialog, uitime.Ui_Dialog):
         def __init__(self, parent=None):
             super().__init__(parent)
@@ -130,15 +39,16 @@ def TimeDialog(sitehandle, filehandle, metahandle, taxahandle):
             # logged in the computer in order to
             # reach this phase
             self.facade = face.Facade()
-            self.facade.input_register(metahandle)
+            self.facade.input_register(meta_handle5)
             self.facade.meta_verify()
-            self.facade.input_register(filehandle)
+            self.facade.input_register(file_handle5)
             self.facade.load_data()
-            self.facade.input_register(sitehandle)
+            self.facade.input_register(site_handle5)
             sitelevels = self.facade._data[
-                'site'].drop_duplicates().values.tolist()
+                site_handle5.lnedentry['study_site_key']   
+            ].drop_duplicates().values.tolist()
             self.facade.register_site_levels(sitelevels)
-            self.facade.input_register(taxahandle)
+            self.facade.input_register(taxa_handle5)
 
 
             # Place holders for user inputs
@@ -200,7 +110,7 @@ def TimeDialog(sitehandle, filehandle, metahandle, taxahandle):
                 ]
                 timeview = concat(
                     [timeview, self.facade._data], axis=1)
-
+                print('timeview first try:', timeview)
 
             except Exception as e:
                 print(str(e))
@@ -225,23 +135,21 @@ def TimeDialog(sitehandle, filehandle, metahandle, taxahandle):
                     self.timelned, self._log, 'timetable'
                 )
                 try:
-                    timeview.loc[1, 'day'] = to_numeric(timeview['day'])
+                    timeview.loc[1, 'day_derived'] = to_numeric(
+                        timeview['day_derived'])
+                    timeview['month_derived'] = to_numeric(
+                        timeview['month_derived'])
+                    timeview['year_derived'] = to_numeric(
+                        timeview['year_derived'])
                 except Exception as e:
                     print(str(e))
-                    timeview['month'] = to_numeric(timeview['month'])
-
-                try:
-                    timeview['year'] = to_numeric(timeview['year'])
-                except Exception as e:
-                    print(str(e))
+                    pass
 
                 try:
                     self.facade.push_tables['timetable'] = (
                         timeview)
                 except Exception as e:
                     print(str(e))
-                print('save block: ', timeview.columns)
-                print('save block: ', timeview)
 
                 try:
                     assert timeview is not None

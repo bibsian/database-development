@@ -7,19 +7,17 @@ import decimal as dc
 import sys, os
 if sys.platform == "darwin":
     rootpath = (
-        "/Users/bibsian/Desktop/git/database-development/" +
-        "test/")
+        "/Users/bibsian/Desktop/git/database-development/")
     end = "/"
 
 elif sys.platform == "win32":
     rootpath = (
-        "C:\\Users\MillerLab\\Desktop\\database-development" +
-        "\\test\\")
+        "C:\\Users\MillerLab\\Desktop\\database-development")
     end = "\\"
 sys.path.append(os.path.realpath(os.path.dirname(
     rootpath + 'logiclayer' + end)))
-import class_logconfig as log
-import datalayer.config as orm
+from poplerGUI.logiclayer import class_logconfig as log
+from poplerGUI.logiclayer.datalayer import config as orm
 os.chdir(rootpath)
 
 
@@ -71,6 +69,7 @@ def produce_null_df():
 
     return produce_null_df
 
+
 def test_nulldf(produce_null_df):
     '''test null df generator'''
     n = 2
@@ -94,27 +93,19 @@ def decimal_df_col():
     def decimal_df_col(dataframe, colname):
         dataframe[colname].apply(dc.Decimal)
         return dataframe
-    
     return decimal_df_col
 
-@pytest.fixture
-def df():
-    return read_csv('DatabaseConfig/site_table_test.csv')
 
-def test_decimal(decimal_df_col, df):
+def test_decimal(decimal_df_col, df_test_2):
     print(df.dtypes)
-    decimal_df_col(df, 'lat')
-    decimal_df_col(df, 'lng')
+    decimal_df_col(df, 'DENSITY')
     print(df)
     print(df.dtypes)
-#    cfig.session.bulk_insert_mappings(
-#    cfig.Sitetable,
-#        [df.iloc[i,:].to_dict() for i in range(len(df))])
-#    cfig.session.commit()
+
 
 @pytest.fixture
 def updated_df_values():
-    def updated_df_values(olddataframe,newdataframe,logger, name):
+    def updated_df_values(olddataframe, newdataframe, logger, name):
         '''
         Helper function to aid in logging the difference between
         dataframes after user have modified the entries.
@@ -135,70 +126,61 @@ def updated_df_values():
             print(str(e))
             raise AttributeError(
                 'Dataframe columns are not equivalent')
-        if (len(olddataframe) == 0 or
-            olddataframe is None or
-            len(olddataframe.columns) == 0):
+        if (
+                len(olddataframe) == 0 or
+                olddataframe is None or
+                len(olddataframe.columns) == 0
+        ):
             logger.info('{} "{}"'.format(
                 name,
                 'NULL'))
         else:
             diffdf = (olddataframe != newdataframe)
-            
-            for i,item in enumerate(diffdf.columns):
+            for i, item in enumerate(diffdf.columns):
                 if any(diffdf[item].values.tolist()):
                     index = where(diffdf[item].values)[0].tolist()
                     logger.info('{} "{}" = {} to {}'.format(
                         name,
                         item,
-                        olddataframe.loc[index,item].values.tolist(),
-                        newdataframe.loc[index,item].values.tolist()))
+                        olddataframe.loc[index, item].values.tolist(),
+                        newdataframe.loc[index, item].values.tolist()))
                 else:
                     pass
     return updated_df_values
 
-@pytest.fixture
-def old():
-    old = read_csv('Datasets_manual_test/DataRawTestFile.csv')
-    return old
-
-@pytest.fixture
-def new(old):
-    new = old.copy()
-    cols = list(new.columns)
-    new.loc[1,cols[2]] = 'Change1'
-    new.loc[2,cols[5]] = 'Change2'
-    new.loc[3,cols[4]] = 'Change3'
-    return new
 
 @pytest.fixture
 def mylog():
     mylog = log.configure_logger(
-        'tableformat', 'Logs_UI/test_df_diff.log')
+        'tableformat',
+        rootpath + end +' logs/test_df_diff.log'
+    )
     return mylog
 
 @pytest.fixture
 def metadf_og():
     if sys.platform == "darwin":
         metapath = (
-            "/Users/bibsian/Desktop/git/database-development/test/Datasets_manual_test" +
+            rootpath + end + 'test' + end + 'Datasets_manual_test' +
             "/meta_file_test.csv")
-            
     elif sys.platform == "win32":
         #=======================#
         # Paths to data and conversion of files to dataframe
         #=======================#
         metapath = (
-            "C:\\Users\MillerLab\\Desktop\\database-development" +
-            "\\test\\Datasets_manual_test\\meta_file_test.csv")
+            rootpath + end + 'test' + end + 'Datasets_manual_test' +
+            "/meta_file_test.csv")
 
     metadf = read_csv(metapath, encoding="iso-8859-11")
     return metadf
+
 
 @pytest.fixture
 def metadf_mod(metadf_og):
     new = metadf_og.copy()
     new.loc[3, 'treatment_type'] = 'maybe...'
     return new
+
 
 def test_logger_and_df_diff(updated_df_values, mylog, old, new):
     updated_df_values(old, new, mylog, 'maintable')

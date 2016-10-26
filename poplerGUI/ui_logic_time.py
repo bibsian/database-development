@@ -96,16 +96,15 @@ class TimeDialog(QtGui.QDialog, uitime.Ui_Dialog):
                 self.timelned, self._log, 'timetable'
             )
             try:
-                timeview.loc[1,'day'] = to_numeric(timeview['day'])
+                timeview.loc[1, 'day_derived'] = to_numeric(
+                    timeview['day_derived'])
+                timeview['month_derived'] = to_numeric(
+                    timeview['month_derived'])
+                timeview['year_derived'] = to_numeric(
+                    timeview['year_derived'])
             except Exception as e:
                 print(str(e))
-                timeview['month'] = to_numeric(timeview['month'])
-
-            try:
-                timeview['year'] = to_numeric(timeview['year'])
-            except Exception as e:
-                print(str(e))
-
+                pass
             try:
                 self.facade.push_tables['timetable'] = (
                     timeview)

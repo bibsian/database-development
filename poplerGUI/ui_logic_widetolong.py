@@ -72,5 +72,5 @@ class WidetoLongDialog(QtGui.QDialog, dwidetolong.Ui_Dialog):
             self.preview.show()
         elif sender is self.btnSaveClose:
             self.facade._data = self.widetolongtable
-            self.update_data.emit('update')
+            self.update_data.emit('wide_to_long_mod')
             self.close()

@@ -18,6 +18,7 @@ class TaxaDialog(QtGui.QDialog, uitax.Ui_Dialog):
         self.taxacreate = {}
         self.available = None
         self.null = None
+        self.saved = False
         # Place holder: Data Model/ Data model view
         self.taxamodel = None
         self.viewEdit = view.PandasTableModelEdit
@@ -47,7 +48,7 @@ class TaxaDialog(QtGui.QDialog, uitax.Ui_Dialog):
         '''
         sender = self.sender()
         self.taxalned = OrderedDict((
-            ('commonname', self.lnedCommonname.text().strip()),
+            ('common_name', self.lnedCommonname.text().strip()),
             ('sppcode', self.lnedSppCode.text().strip()),
             ('kingdom', self.lnedKingdom.text().strip()),
             ('subkingdom', self.lnedSubkingdom.text().strip()),
@@ -67,7 +68,7 @@ class TaxaDialog(QtGui.QDialog, uitax.Ui_Dialog):
         ))
 
         self.taxackbox = OrderedDict((
-            ('commonname', self.ckCommonname.isChecked()),
+            ('common_name', self.ckCommonname.isChecked()),
             ('sppcode', self.ckSppCode.isChecked()),
             ('kingdom', self.ckKingdom.isChecked()),
             ('subkingdom', self.ckSubkingdom.isChecked()),
@@ -109,18 +110,21 @@ class TaxaDialog(QtGui.QDialog, uitax.Ui_Dialog):
         self.facade.create_log_record('taxa_table')
         self._log = self.facade._tablelog['taxa_table']
 
-        try:
-            print('about to make taxa table')
-            self.taxadirector = self.facade.make_table('taxainfo')
-            assert self.taxadirector._availdf is not None
+        if self.saved is False:
+            try:
+                print('about to make taxa table')
+                self.taxadirector = self.facade.make_table('taxainfo')
+                assert self.taxadirector._availdf is not None
 
-        except Exception as e:
-            print(str(e))
-            self._log.debug(str(e))
-            self.error.showMessage(
-                'Column(s) not identified')
-            raise AttributeError(
-                'Column(s) not identified: ' + str(e))
+            except Exception as e:
+                print(str(e))
+                self._log.debug(str(e))
+                self.error.showMessage(
+                    'Column(s) not identified')
+                raise AttributeError(
+                    'Column(s) not identified: ' + str(e))
+        else:
+            pass
 
         self.taxa_table = self.taxadirector._availdf.copy()
         self.taxamodel = self.viewEdit(self.taxa_table)
@@ -131,5 +135,6 @@ class TaxaDialog(QtGui.QDialog, uitax.Ui_Dialog):
         elif sender is self.btnSaveClose:
             self.facade.push_tables['taxa_table'] = self.taxa_table
             hlp.write_column_to_log(
-                self.taxalned, self._log, 'taxa_table')                
+                self.taxalned, self._log, 'taxa_table')
+            self.saved = True
             self.close()

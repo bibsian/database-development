@@ -234,7 +234,7 @@ QTableView{
      <x>0</x>
      <y>0</y>
      <width>984</width>
-     <height>22</height>
+     <height>31</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -459,6 +459,9 @@ QTableView{
   <action name="actionUndo">
    <property name="text">
     <string>Undo</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Z</string>
    </property>
   </action>
   <action name="actionSplit_Column_By">

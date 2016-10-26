@@ -82,20 +82,23 @@ def DictionaryDataframe():
 
 @pytest.fixture
 def df():
-    return read_csv('Datasets_manual_test/raw_data_test_dialogsite.csv')
+    return read_csv(
+        rootpath + end +
+        'Datasets_manual_test/raw_data_test_1.csv'
+    )
 
 def test_dictionarydataframe(df, DictionaryDataframe):
 
-    columnstocombine = ['DEPTH', 'REP', 'TEMP']
+    columnstocombine = ['temp', 'blank', 'spelling']
     test = DictionaryDataframe(df, columnstocombine)
     testdf = test.convert_records()
     assert (isinstance(testdf, DataFrame)) is True
     assert (isinstance(testdf.iloc[0], object)) is True
     testseries = testdf['covariates'].astype(str)
     assert (isinstance(testseries.iloc[0], str)) is True
-    assert ('DEPTH' in testseries.iloc[0]) is True
-    assert ('REP' in testseries.iloc[0]) is True
-    assert ('TEMP' in testseries.iloc[0]) is True
+    assert ('temp' in testseries.iloc[0]) is True
+    assert ('blank' in testseries.iloc[0]) is True
+    assert ('spelling' in testseries.iloc[0]) is True
     assert (len(df) == len(testseries)) is True
     assert (
         len(df.columns.values.tolist()) !=

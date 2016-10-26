@@ -95,7 +95,9 @@ def file_handle_wide_to_long():
     ckentry = {}
     rbtn = {'.csv': True, '.txt': False,
             '.xlsx': False}
-    lned = {'sheet': '', 'delim': '', 'tskip': '', 'bskip': ''}
+    lned = {
+        'sheet': '', 'delim': '', 'tskip': '', 'bskip': '',
+        'header': ''}
     fileinput = ini.InputHandler(
         name='fileoptions',tablename=None, lnedentry=lned,
         rbtns=rbtn, checks=ckentry, session=True,
@@ -110,7 +112,9 @@ def file_handle_1_count():
     ckentry = {}
     rbtn = {'.csv': True, '.txt': False,
             '.xlsx': False}
-    lned = {'sheet': '', 'delim': '', 'tskip': '', 'bskip': ''}
+    lned = {
+        'sheet': '', 'delim': '', 'tskip': '', 'bskip': '',
+        'header': ''}
     fileinput = ini.InputHandler(
         name='fileoptions',tablename=None, lnedentry=lned,
         rbtns=rbtn, checks=ckentry, session=True,
@@ -124,7 +128,9 @@ def file_handle_2_density():
     ckentry = {}
     rbtn = {'.csv': True, '.txt': False,
             '.xlsx': False}
-    lned = {'sheet': '', 'delim': '', 'tskip': '', 'bskip': ''}
+    lned = {
+        'sheet': '', 'delim': '', 'tskip': '', 'bskip': '',
+        'header': ''}
     fileinput = ini.InputHandler(
         name='fileoptions',tablename=None, lnedentry=lned,
         rbtns=rbtn, checks=ckentry, session=True,
@@ -138,7 +144,9 @@ def file_handle_3_biomass():
     ckentry = {}
     rbtn = {'.csv': True, '.txt': False,
             '.xlsx': False}
-    lned = {'sheet': '', 'delim': '', 'tskip': '', 'bskip': ''}
+    lned = {
+        'sheet': '', 'delim': '', 'tskip': '', 'bskip': '',
+        'header': ''}
     fileinput = ini.InputHandler(
         name='fileoptions',tablename=None, lnedentry=lned,
         rbtns=rbtn, checks=ckentry, session=True,
@@ -152,7 +160,9 @@ def file_handle_4_percent_cover():
     ckentry = {}
     rbtn = {'.csv': True, '.txt': False,
             '.xlsx': False}
-    lned = {'sheet': '', 'delim': '', 'tskip': '', 'bskip': ''}
+    lned = {
+        'sheet': '', 'delim': '', 'tskip': '', 'bskip': '',
+        'header': ''}
     fileinput = ini.InputHandler(
         name='fileoptions',tablename=None, lnedentry=lned,
         rbtns=rbtn, checks=ckentry, session=True,
@@ -166,7 +176,9 @@ def file_handle5():
     ckentry = {}
     rbtn = {'.csv': True, '.txt': False,
             '.xlsx': False}
-    lned = {'sheet': '', 'delim': '', 'tskip': '', 'bskip': ''}
+    lned = {
+        'sheet': '', 'delim': '', 'tskip': '', 'bskip': '',
+        'header': ''}
     fileinput = ini.InputHandler(
         name='fileoptions',tablename=None, lnedentry=lned,
         rbtns=rbtn, checks=ckentry, session=True,
@@ -1001,8 +1013,10 @@ def MergeToUpload():
                 order_by(
                     orm.study_site_table.__table__.c.study_site_key).
                 filter(
-                    orm.study_site_table.__table__.c.lter_table_fkey ==
-                    lterlocation)
+                    orm.study_site_table.__table__.c.study_site_key.in_(
+                        studysitelevels
+                    )
+                )
             )
             study_site_table_query_df = read_sql(
                 study_site_table_query.statement,
@@ -1105,6 +1119,7 @@ def MergeToUpload():
                     'Study site levels derived from query and user ' +
                     'do not match the original site levels stored ' +
                     'in the user facade class: ' + str(e))
+
             site_in_proj_table_to_push = site_in_proj_levels_to_push
             site_in_proj_table_to_push.columns = (
                 ['study_site_table_fkey']
@@ -1140,10 +1155,26 @@ def MergeToUpload():
                 ] = len(yr_list)
             print('Populated site_in_project_table to push')
             print(site_in_proj_table_to_push)
-            site_in_proj_table_to_push.to_sql(
-                'site_in_project_table', orm.conn,
-                if_exists='append', index=False)
-            print('site_in_project_table table UPLOADED')
+
+            session = self.session
+            global_id_site_in_project_query = (
+                select(
+                    [orm.site_in_project_table.__table__.c.project_table_fkey]
+                ).distinct()
+            )
+            session.close()
+            global_id_statement = session.execute(
+                global_id_site_in_project_query)
+            global_id_uploaded_list = [
+                x[0] for x in global_id_statement.fetchall()]
+
+            if global_id in global_id_uploaded_list:
+                pass
+            else:
+                site_in_proj_table_to_push.to_sql(
+                    'site_in_project_table', orm.conn,
+                    if_exists='append', index=False)
+                print('site_in_project_table table UPLOADED')
 
             session = self.session
             site_in_proj_key_query = select([
@@ -1209,6 +1240,7 @@ def MergeToUpload():
                 how='inner')
             print('past tbl_taxa site in proj key')
             tbl_taxa_merged = tbl_taxa_with_site_in_proj_key.copy()
+
             tbl_taxa_merged.drop([
                 'study_site_table_fkey', sitelabel,
                 'project_table_fkey'], inplace=True, axis=1)
@@ -1263,13 +1295,25 @@ def MergeToUpload():
                 left_on='site_in_project_taxa_key',
                 right_on='site_in_project_key', how='inner')
 
+            raw_dataframe_siteinproj = merge(
+                raw_dataframe, siteinprojkeydf,
+                left_on=self.sitelabel, right_on='study_site_table_fkey',
+                sort=False, how='left')
+
+            raw_data_taxa_columns.append('site_in_project_key')
+            uploaded_taxa_columns.append('site_in_project_taxa_key')
+
+            print('updated raw data col list: ', raw_dataframe_siteinproj)
+            print('update taxa data col list: ', uploaded_taxa_columns)
             # Step 5) Merge the original dtype data with the
-            # merged taxa_table query to have all foreign keys (taxa and site_project)
+            # merged taxa_table query to have all foreign keys...
+            # taxa and site_project
             # matched up with the original observations.
             dtype_merged_with_taxa_and_siteinproj_key = merge(
-                raw_dataframe, tbl_dtype_merged_taxakey_siteinprojectkey,
-                left_on = list(raw_data_taxa_columns),
-                right_on = list(uploaded_taxa_columns),
+                raw_dataframe_siteinproj,
+                tbl_dtype_merged_taxakey_siteinprojectkey,
+                left_on=list(raw_data_taxa_columns),
+                right_on=list(uploaded_taxa_columns),
                 how='left')
 
             # Step 6) Take the merged original data with all foreign keys,
@@ -1634,3 +1678,39 @@ def DataOriginator():
             self._data = memento.get_dfstate()
             self._state = memento.get_state()
     return DataOriginator
+
+
+@pytest.fixture
+def df_test_1():
+    return read_csv(
+        rootpath + end + 'test' + end + 'Datasets_manual_test' + end +
+        'raw_data_test_1.csv'
+    )
+
+@pytest.fixture
+def df_test_2():
+    return read_csv(
+        rootpath + end + 'test' + end + 'Datasets_manual_test' + end +
+        'raw_data_test_2.csv'
+    )
+
+@pytest.fixture
+def df_test_3():
+    return read_csv(
+        rootpath + end + 'test' + end + 'Datasets_manual_test' + end +
+        'raw_data_test_3.csv'
+    )
+
+@pytest.fixture
+def df_test_4():
+    return read_csv(
+        rootpath + end + 'test' + end + 'Datasets_manual_test' + end +
+        'raw_data_test_4.csv'
+    )
+
+@pytest.fixture
+def df_test_5():
+    return read_csv(
+        rootpath + end + 'test' + end + 'Datasets_manual_test' + end +
+        'raw_data_test_5.csv'
+    )

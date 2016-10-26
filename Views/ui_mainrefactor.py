@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/bibsian/Desktop/git/database-development/Views/ui_mainrefactor.ui'
+# Form implementation generated from reading ui file 'C:\Users\MillerLab\Desktop\database-development\Views\ui_mainrefactor.ui'
 #
 # Created by: PyQt4 UI code generator 4.11.4
 #
@@ -140,7 +140,7 @@ class Ui_MainWindow(object):
         self.toolBar.setObjectName(_fromUtf8("toolBar"))
         MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 984, 22))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 984, 31))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
         self.menuFile.setObjectName(_fromUtf8("menuFile"))
@@ -308,6 +308,7 @@ class Ui_MainWindow(object):
         self.actionConvert_Wide_to_Long.setText(_translate("MainWindow", "Format Wide to Long", None))
         self.actionConvert_Wide_to_Long.setShortcut(_translate("MainWindow", "Meta+W, Meta+L", None))
         self.actionUndo.setText(_translate("MainWindow", "Undo", None))
+        self.actionUndo.setShortcut(_translate("MainWindow", "Ctrl+Z", None))
         self.actionSplit_Column_By.setText(_translate("MainWindow", "Split Column By", None))
         self.actionReplace.setText(_translate("MainWindow", "Replace", None))
         self.actionReplace.setShortcut(_translate("MainWindow", "Meta+R", None))

@@ -173,7 +173,7 @@ class DataFileOriginator(object):
                         pass
             dfstate = dfstate[
                 dfstate.isnull().all(axis=1) != True]
-            memento = Memento(dfstate= dfstate,
+            memento = Memento(dfstate= dfstate.copy(),
                         state= self.state)
             return memento
         except Exception as e:
@@ -202,7 +202,16 @@ class Caretaker(object):
         Restores a memento given a state_name
         '''
         try:
-            return self._statelogbook[self._statelist.pop()]
+            if self._statelist:
+                print('restore list:', self._statelist)
+                if len(self._statelist) == 1:
+                    print('og restore')
+                    return self._statelogbook[self._statelist[0]]
+                else:
+                    self._statelist.pop()
+                    return self._statelogbook[self._statelist[-1]]
+            else:
+                raise AttributeError('Cannot undo further')
         except Exception as e:
             print(str(e))
 
@@ -215,10 +224,10 @@ class Memento(object):
     FileCaretaker
     '''
     def __init__(self, dfstate, state):
-        self._dfstate = DataFrame(dfstate).copy()
+        self._dfstate = dfstate.copy()
         self._state = str(state)
 
-        def get_dfstate(self):
+    def get_dfstate(self):
         return self._dfstate
 
     def get_state(self):

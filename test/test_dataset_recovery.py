@@ -28,8 +28,8 @@ elif sys.platform == "win32":
 def engine():
     ''' engine for creating connection and executing statements'''
     engine = create_engine(
-        'postgresql+psycopg2:///',
-        echo=True)
+        'postgresql+psycopg2://postgres:demography@localhost/popler_3',
+        echo=False)
     return engine
 
 @pytest.fixture
@@ -181,7 +181,7 @@ def site_in_proj_subq_stmt(
         engine, site_in_project_table, study_site_table,
         project_table, lter_table):
     '''
-    Subquery 1 (used to perform union on all tables)
+    Subquery 1 (used to perform join on 4 of the tables)
     This subquery perform the necessary joins to bring together
     four tables:
     1) site_in_project_table
@@ -220,9 +220,17 @@ def taxa_tbl_subq_stmt(
         select([site_in_proj_subq_stmt, taxa_table]).
         select_from(
             site_in_proj_subq_stmt.
-            join(taxa_table)).alias()
+            join(
+                taxa_table,
+                onclause=(
+                    site_in_proj_subq_stmt.c.site_in_project_key ==
+                    taxa_table.site_in_project_taxa_key)
+                )
+            ).
+        alias()
     )
     return stmt
+
 
 def test_recover_count_data(
         taxa_tbl_subq_stmt, engine, count_table, count):
@@ -238,13 +246,10 @@ def test_recover_count_data(
                 onclause=and_(
                     taxa_tbl_subq_stmt.c.taxa_table_key ==
                     count_table.taxa_count_fkey,
-                    taxa_tbl_subq_stmt.c.site_in_project_key ==
-                    count_table.site_in_project_count_fkey
                 )
             )
         ).alias('count join')
     )
-
     # pretty.pprint(count_tbl_subq_stmt.compile().string)
     Session = sessionmaker(bind=engine)
     session = Session()
@@ -253,15 +258,11 @@ def test_recover_count_data(
     count_tbl_subq_df.columns = count_tbl_subq_result.keys()
     count_tbl_subq_df.sort_values('count_table_key', inplace=True)
     session.close()
-    print(count['site'].values.tolist())
-    print(count_tbl_subq_df['spatial_replication_level_1'].values.tolist())
 
     assert (
         count['site'].values.tolist() ==
         count_tbl_subq_df['spatial_replication_level_1'].values.tolist()
     ) == True
-
-
 
     assert (
         count['count'].values.tolist() ==
@@ -294,6 +295,7 @@ def test_recover_count_data(
         count_tbl_subq_df['month'].values.tolist()
     ) == True
 
+
 def test_recover_biomass_data(
         taxa_tbl_subq_stmt, engine, biomass_table, biomass):
     print('what')
@@ -308,13 +310,10 @@ def test_recover_biomass_data(
                 onclause=and_(
                     taxa_tbl_subq_stmt.c.taxa_table_key ==
                     biomass_table.taxa_biomass_fkey,
-                    taxa_tbl_subq_stmt.c.site_in_project_key ==
-                    biomass_table.site_in_project_biomass_fkey
                 )
             )
         ).alias('biomass join')
     )
-
     # pretty.pprint(biomass_tbl_subq_stmt.compile().string)
     Session = sessionmaker(bind=engine)
     session = Session()
@@ -355,8 +354,9 @@ def test_recover_biomass_data(
     
     assert (
         biomass['month'].values.tolist() ==
-        biomass_tbl_subq_df['month'].values.tolist()
+        [int(x) for x in biomass_tbl_subq_df['month'].values.tolist()]
     ) == True
+
 
 def test_recover_density_data(
         taxa_tbl_subq_stmt, engine, density_table, density):
@@ -372,13 +372,10 @@ def test_recover_density_data(
                 onclause=and_(
                     taxa_tbl_subq_stmt.c.taxa_table_key ==
                     density_table.taxa_density_fkey,
-                    taxa_tbl_subq_stmt.c.site_in_project_key ==
-                    density_table.site_in_project_density_fkey
                 )
             )
         ).alias('density join')
     )
-
     # pretty.pprint(density_tbl_subq_stmt.compile().string)
     Session = sessionmaker(bind=engine)
     session = Session()
@@ -386,7 +383,6 @@ def test_recover_density_data(
     density_tbl_subq_df = pd.DataFrame(density_tbl_subq_result.fetchall())
     density_tbl_subq_df.columns = density_tbl_subq_result.keys()
     density_tbl_subq_df.sort_values('density_table_key', inplace=True)
-
     session.close()
 
     assert (
@@ -418,7 +414,6 @@ def test_recover_density_data(
 
     density_true_list_transect = [str(x) for x in density_true_list_transect]
     density_test_list_transect = [str(x) for x in density_test_list_transect]
-
     
     assert (
         density_true_list_transect == density_test_list_transect
@@ -429,9 +424,9 @@ def test_recover_density_data(
         density_tbl_subq_df['month'].values.tolist()
     ) == True
 
+
 def test_recover_cover_data(
         taxa_tbl_subq_stmt, engine, percent_cover_table, percent_cover):
-
     percent_cover_tbl_subq_stmt = (
         select([
             taxa_tbl_subq_stmt,
@@ -443,13 +438,10 @@ def test_recover_cover_data(
                 onclause=and_(
                     taxa_tbl_subq_stmt.c.taxa_table_key ==
                     percent_cover_table.taxa_percent_cover_fkey,
-                    taxa_tbl_subq_stmt.c.site_in_project_key ==
-                    percent_cover_table.site_in_project_percent_cover_fkey
                 )
             )
         ).alias('density join')
     )
-
     # pretty.pprint(density_tbl_subq_stmt.compile().string)
     Session = sessionmaker(bind=engine)
     session = Session()
@@ -497,12 +489,12 @@ def test_recover_cover_data(
     
     assert (
         percent_cover['month'].values.tolist() ==
-        percent_cover_tbl_subq_df['month'].values.tolist()
+        [int(x) for x in percent_cover_tbl_subq_df['month'].values.tolist()]
     ) == True
+
 
 def test_recover_individual_data(
         taxa_tbl_subq_stmt, engine, individual_table, individual):
-
     individual_tbl_subq_stmt = (
         select([
             taxa_tbl_subq_stmt,
@@ -514,13 +506,10 @@ def test_recover_individual_data(
                 onclause=and_(
                     taxa_tbl_subq_stmt.c.taxa_table_key ==
                     individual_table.taxa_individual_fkey,
-                    taxa_tbl_subq_stmt.c.site_in_project_key ==
-                    individual_table.site_in_project_individual_fkey
                 )
             )
         ).alias('density join')
     )
-
     # pretty.pprint(density_tbl_subq_stmt.compile().string)
     Session = sessionmaker(bind=engine)
     session = Session()
@@ -539,11 +528,6 @@ def test_recover_individual_data(
             'spatial_replication_level_1'].values.tolist()
     ) == True
 
-    assert (
-        individual['Common_Name'].values.tolist() ==
-        individual_tbl_subq_df['common_name'].values.tolist()
-    ) == True
-    
 
     individual_true_list_transect = individual[
         'TRANSECT'].values.tolist()
@@ -563,111 +547,111 @@ def test_recover_individual_data(
     ) == True
 
 
-@pytest.fixture
-def union_all(replace_numeric_null_with_string):
-    union_all = pd.read_csv(
-        rootpath + 'test' + end + 'Datasets_manual_test' +
-        end + 'union_all_test.csv')
-    replace_numeric_null_with_string(union_all)
-    return union_all
-    
-def test_union_all_recovery(
-        count_table, biomass_table, density_table,
-        percent_cover_table, individual_table, union_all,
-        taxa_tbl_subq_stmt, engine):
+# @pytest.fixture
+# def union_all(replace_numeric_null_with_string):
+#     union_all = pd.read_csv(
+#         rootpath + 'test' + end + 'Datasets_manual_test' +
+#         end + 'union_all_test.csv')
+#     replace_numeric_null_with_string(union_all)
+#     return union_all
+# 
+# def test_union_all_recovery(
+#         count_table, biomass_table, density_table,
+#         percent_cover_table, individual_table, union_all,
+#         taxa_tbl_subq_stmt, engine):
+# 
+#     union_all.fillna('NA', inplace=True)
+#     union_all_select_stmt = union(
+#         select([
+#             taxa_tbl_subq_stmt,
+#             count_table]).
+#         select_from(
+#             taxa_tbl_subq_stmt.
+#             join(
+#                 count_table,
+#                 onclause=and_(
+#                     taxa_tbl_subq_stmt.c.taxa_table_key ==
+#                     count_table.taxa_count_fkey,
+#                     taxa_tbl_subq_stmt.c.site_in_project_key ==
+#                     count_table.site_in_project_count_fkey
+#                 )
+#             )
+#         ).alias('count join'),
+#         select([
+#             taxa_tbl_subq_stmt,
+#             biomass_table]).
+#         select_from(
+#             taxa_tbl_subq_stmt.
+#             join(
+#                 biomass_table,
+#                 onclause=and_(
+#                     taxa_tbl_subq_stmt.c.taxa_table_key ==
+#                     biomass_table.taxa_biomass_fkey,
+#                     taxa_tbl_subq_stmt.c.site_in_project_key ==
+#                     biomass_table.site_in_project_biomass_fkey
+#                 )
+#             )
+#         ).alias('biomass join'),
+#         select([
+#             taxa_tbl_subq_stmt,
+#             density_table]).
+#         select_from(
+#             taxa_tbl_subq_stmt.
+#             join(
+#                 density_table,
+#                 onclause=and_(
+#                     taxa_tbl_subq_stmt.c.taxa_table_key ==
+#                     density_table.taxa_density_fkey,
+#                     taxa_tbl_subq_stmt.c.site_in_project_key ==
+#                     density_table.site_in_project_density_fkey
+#                 )
+#             )
+#         ).alias('density join'),
+#         select([
+#             taxa_tbl_subq_stmt,
+#             percent_cover_table]).
+#         select_from(
+#             taxa_tbl_subq_stmt.
+#             join(
+#                 percent_cover_table,
+#                 onclause=and_(
+#                     taxa_tbl_subq_stmt.c.taxa_table_key ==
+#                     percent_cover_table.taxa_percent_cover_fkey,
+#                     taxa_tbl_subq_stmt.c.site_in_project_key ==
+#                     percent_cover_table.site_in_project_percent_cover_fkey
+#                 )
+#             )
+#         ).alias('perecent cover join'),
+#         select([
+#             taxa_tbl_subq_stmt,
+#             individual_table]).
+#         select_from(
+#             taxa_tbl_subq_stmt.
+#             join(
+#                 individual_table,
+#                 onclause=and_(
+#                     taxa_tbl_subq_stmt.c.taxa_table_key ==
+#                     individual_table.taxa_individual_fkey,
+#                     taxa_tbl_subq_stmt.c.site_in_project_key ==
+#                     individual_table.site_in_project_individual_fkey
+#                 )
+#             )
+#         ).alias('individual join')
+#     )
+# 
+#     Session = sessionmaker(bind=engine)
+#     session = Session()
+#     union_all_select_result = session.execute(union_all_select_stmt)
+#     union_all_select_df = pd.DataFrame(union_all_select_result.fetchall())
+#     union_all_select_df.columns = union_all_select_result.keys()
+#     session.close()
+# 
+#     union_all_select_df.columns
+#     union_all_select_df.sort_values([
+#         'proj_metadata_key', 'count_table_key'], inplace=True)
+# 
+#     assert (
+#         union_all['spatial_replication_level_1'].values.tolist() ==
+#         union_all_select_df['spatial_replication_level_1'].values.tolist()
+#     ) is True
 
-    union_all.fillna('NA', inplace=True)
-    union_all_select_stmt = union(
-        select([
-            taxa_tbl_subq_stmt,
-            count_table]).
-        select_from(
-            taxa_tbl_subq_stmt.
-            join(
-                count_table,
-                onclause=and_(
-                    taxa_tbl_subq_stmt.c.taxa_table_key ==
-                    count_table.taxa_count_fkey,
-                    taxa_tbl_subq_stmt.c.site_in_project_key ==
-                    count_table.site_in_project_count_fkey
-                )
-            )
-        ).alias('count join'),
-        select([
-            taxa_tbl_subq_stmt,
-            biomass_table]).
-        select_from(
-            taxa_tbl_subq_stmt.
-            join(
-                biomass_table,
-                onclause=and_(
-                    taxa_tbl_subq_stmt.c.taxa_table_key ==
-                    biomass_table.taxa_biomass_fkey,
-                    taxa_tbl_subq_stmt.c.site_in_project_key ==
-                    biomass_table.site_in_project_biomass_fkey
-                )
-            )
-        ).alias('biomass join'),
-        select([
-            taxa_tbl_subq_stmt,
-            density_table]).
-        select_from(
-            taxa_tbl_subq_stmt.
-            join(
-                density_table,
-                onclause=and_(
-                    taxa_tbl_subq_stmt.c.taxa_table_key ==
-                    density_table.taxa_density_fkey,
-                    taxa_tbl_subq_stmt.c.site_in_project_key ==
-                    density_table.site_in_project_density_fkey
-                )
-            )
-        ).alias('density join'),
-        select([
-            taxa_tbl_subq_stmt,
-            percent_cover_table]).
-        select_from(
-            taxa_tbl_subq_stmt.
-            join(
-                percent_cover_table,
-                onclause=and_(
-                    taxa_tbl_subq_stmt.c.taxa_table_key ==
-                    percent_cover_table.taxa_percent_cover_fkey,
-                    taxa_tbl_subq_stmt.c.site_in_project_key ==
-                    percent_cover_table.site_in_project_percent_cover_fkey
-                )
-            )
-        ).alias('perecent cover join'),
-        select([
-            taxa_tbl_subq_stmt,
-            individual_table]).
-        select_from(
-            taxa_tbl_subq_stmt.
-            join(
-                individual_table,
-                onclause=and_(
-                    taxa_tbl_subq_stmt.c.taxa_table_key ==
-                    individual_table.taxa_individual_fkey,
-                    taxa_tbl_subq_stmt.c.site_in_project_key ==
-                    individual_table.site_in_project_individual_fkey
-                )
-            )
-        ).alias('individual join')
-    )
-
-    Session = sessionmaker(bind=engine)
-    session = Session()
-    union_all_select_result = session.execute(union_all_select_stmt)
-    union_all_select_df = pd.DataFrame(union_all_select_result.fetchall())
-    union_all_select_df.columns = union_all_select_result.keys()
-    session.close()
-
-    union_all_select_df.columns
-    union_all_select_df.sort_values([
-        'proj_metadata_key', 'count_table_key'], inplace=True)
-
-    
-    assert (
-        union_all['spatial_replication_level_1'].values.tolist() ==
-        union_all_select_df['spatial_replication_level_1'].values.tolist()
-    ) is True

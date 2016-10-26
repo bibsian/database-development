@@ -91,8 +91,10 @@ class MergeToUpload(object):
             order_by(
                 orm.study_site_table.__table__.c.study_site_key).
             filter(
-                orm.study_site_table.__table__.c.lter_table_fkey ==
-                lterlocation)
+                orm.study_site_table.__table__.c.study_site_key.in_(
+                    studysitelevels
+                )
+            )
         )
         study_site_table_query_df = read_sql(
             study_site_table_query.statement,
@@ -205,14 +207,10 @@ class MergeToUpload(object):
         site_in_proj_table_to_push['uniquetaxaunits'] = -99999
         site_in_proj_table_to_push['project_table_fkey'] = int(
             project_metadat_key)
-
-        print('before deriving data: ', site_in_proj_table_to_push)
-        print('observationtabledf before loop: ', observationtabledf)
-        print('observationtabledf cols before loop: ', observationtabledf.columns)
-        print('studysitelabel before loop: ', studysitelabel)
+        print(
+            'before deriving records: ', site_in_proj_table_to_push)
         yr_all = []
         for i, item in enumerate(study_site_levels_derived):
-            print('in deriving data loop: ', item, i)
             yr_list = observationtabledf[
                 observationtabledf[studysitelabel] == item][
                     'year_derived'].values.tolist()
@@ -234,10 +232,27 @@ class MergeToUpload(object):
             ] = len(yr_list)
         print('Populated site_in_project_table to push')
         print(site_in_proj_table_to_push)
-        site_in_proj_table_to_push.to_sql(
-            'site_in_project_table', orm.conn,
-            if_exists='append', index=False)
-        print('site_in_project_table table UPLOADED')
+
+        session = self.session
+        global_id_site_in_project_query = (
+            select(
+                [orm.site_in_project_table.__table__.c.project_table_fkey]
+            ).distinct()
+        )
+        session.close()
+        global_id_statement = session.execute(
+            global_id_site_in_project_query)
+        global_id_uploaded_list = [
+            x[0] for x in global_id_statement.fetchall()]
+
+
+        if self.metadata_key in global_id_uploaded_list:
+            pass
+        else:
+            site_in_proj_table_to_push.to_sql(
+                'site_in_project_table', orm.conn,
+                if_exists='append', index=False)
+            print('site_in_project_table table UPLOADED')
 
         session = self.session
         site_in_proj_key_query = select([
@@ -289,9 +304,12 @@ class MergeToUpload(object):
         '''
 
         print('starting taxa table upload')
-        print(formated_taxa_table)
         orm.replace_numeric_null_with_string(formated_taxa_table)
         print('past orm replace numeric')
+        print('siteingproj key df: ', siteinprojkeydf)
+        print('siteingproj key df: ', siteinprojkeydf.columns)
+        print('formatted taxa df: ', formated_taxa_table)
+        print('formatted taxa df: ', formated_taxa_table.columns)
 
         tbl_taxa_with_site_in_proj_key = merge(
             formated_taxa_table, siteinprojkeydf,
@@ -300,6 +318,7 @@ class MergeToUpload(object):
             how='inner')
         print('past tbl_taxa site in proj key')
         tbl_taxa_merged = tbl_taxa_with_site_in_proj_key.copy()
+
         tbl_taxa_merged.drop([
             'study_site_table_fkey', sitelabel,
             'project_table_fkey'], inplace=True, axis=1)
@@ -323,14 +342,9 @@ class MergeToUpload(object):
             raw_data_taxa_columns,
             uploaded_taxa_columns):
 
-        print('merged rawdf: ', raw_dataframe)
-        print('merged rawdf: ', raw_dataframe.columns)
-        print('merged formdf: ', formated_dataframe)
-        print('merged formdf: ', formated_dataframe.columns)
-        print('merged class (raw taxa col): ', raw_data_taxa_columns)
-        print('merged class (uploaded taxa col): ', uploaded_taxa_columns)
         orm.replace_numeric_null_with_string(raw_dataframe)
         orm.replace_numeric_null_with_string(formated_dataframe)
+
 
         # Step 2) Query taxa_table to get the auto generated
         # primary keys returned. Turn query data into
@@ -349,9 +363,7 @@ class MergeToUpload(object):
         dtype_subset_taxa_key_df = taxa_key_df[
             taxa_key_df['site_in_project_taxa_key'].isin(
                 siteinprojkeydf['site_in_project_key'])]
-        print('taxa query table: ', dtype_subset_taxa_key_df)
-        print('taxa query table: ', dtype_subset_taxa_key_df.columns)
-        
+
         # Step 4) Merge the taxa_table query results with
         # the site_in_project table query that was performed
         # to upload the taxa_table (see above). This gives
@@ -361,16 +373,29 @@ class MergeToUpload(object):
             dtype_subset_taxa_key_df, siteinprojkeydf,
             left_on='site_in_project_taxa_key',
             right_on='site_in_project_key', how='inner')
-        print('taxa merged with query: ', tbl_dtype_merged_taxakey_siteinprojectkey)
-        print('taxa merged with query: ', tbl_dtype_merged_taxakey_siteinprojectkey.columns)
 
+        raw_dataframe_siteinproj = merge(
+            raw_dataframe, siteinprojkeydf,
+            left_on=self.sitelabel, right_on='study_site_table_fkey',
+            sort=False, how='left')
+
+        raw_data_taxa_columns.append('site_in_project_key')
+        uploaded_taxa_columns.append('site_in_project_taxa_key')
+
+        raw_data_taxa_columns.append('site_in_project_key')
+        uploaded_taxa_columns.append('site_in_project_taxa_key')
+
+        print('updated raw data col list: ', raw_dataframe_siteinproj)
+        print('update taxa data col list: ', uploaded_taxa_columns)
         # Step 5) Merge the original dtype data with the
-        # merged taxa_table query to have all foreign keys (taxa and site_project)
+        # merged taxa_table query to have all foreign keys...
+        # taxa and site_project
         # matched up with the original observations.
         dtype_merged_with_taxa_and_siteinproj_key = merge(
-            raw_dataframe, tbl_dtype_merged_taxakey_siteinprojectkey,
-            left_on = list(raw_data_taxa_columns),
-            right_on = list(uploaded_taxa_columns),
+            raw_dataframe_siteinproj,
+            tbl_dtype_merged_taxakey_siteinprojectkey,
+            left_on=list(raw_data_taxa_columns),
+            right_on=list(uploaded_taxa_columns),
             how='left')
 
         # Step 6) Take the merged original data with all foreign keys,
@@ -425,9 +450,7 @@ class MergeToUpload(object):
         tbl_dtype_to_upload.fillna('NA', inplace=True)
         orm.convert_types(
             tbl_dtype_to_upload, self.table_types[str(formated_dataframe_name)])
-
         self.formateddata = tbl_dtype_to_upload
-
         # Step 10) Uploading to the database
         datatype_table = '{}_table'.format(str(formated_dataframe_name))
         tbl_dtype_to_upload.to_sql(
@@ -444,7 +467,6 @@ class MergeToUpload(object):
         Arguments are the column names for 
         the different levels of spatial replication that
         are present (key/value pairs)
-
         '''
         ##
         # ADD STUDYSTARTYR, STUDYENDYR, SPAT_LEV_UNQ_REPS(1-5),
@@ -462,13 +484,11 @@ class MergeToUpload(object):
         spatial_uq_num_of_rep_val = [
             len(self.rawdata[self.sitelabel].unique())
             ]
-
         for i in range(len(spatial_index)):
             spatial_label_col.append(
                 spatial_rep_columns_from_formated_df[i] + '_label')
             spatial_label_val.append(
                 spatial_rep_columns_from_og_df[i])
-
             spatial_uq_num_of_rep_col.append(
                 spatial_rep_columns_from_formated_df[i] +
                 '_number_of_unique_reps')
@@ -488,7 +508,9 @@ class MergeToUpload(object):
         for i, item in enumerate(spatial_label_col):
             update_dict[item] = spatial_label_val[i]
             update_dict[spatial_uq_num_of_rep_col[i]] = spatial_uq_num_of_rep_val[i]
-
+        print(self.metadata_key)
+        print('startyear: ',update_dict['studystartyr'])
+        print('endyear: ', update_dict['studyendyr'])
         orm.conn.execute(
             update(orm.project_table).
             where(

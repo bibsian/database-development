@@ -65,14 +65,18 @@ def Facade_push():
             study_site_table_df = self.push_tables['study_site_table']
             project_table_df = self.push_tables['project_table']
             taxa_table_df = self.push_tables['taxa_table']
+            taxa_table_df.to_csv('taxa_table_saved.csv')
             time_table_df = self.push_tables['timetable']
+            time_table_df.to_csv('time_table_saved.csv')
             observation_table_df = self.push_tables[
                 self._inputs['rawinfo'].tablename]
+            observation_table_df.to_csv('obs_table_saved.csv')
             observation_table_name = self._inputs['rawinfo'].tablename
             covariate_table_df = self.push_tables['covariates']
             site_levels = self._valueregister['sitelevels']
             site_location = self._valueregister['siteid']
             lter = self._valueregister['lterid']
+            global_id = self._valueregister['globalid']
             # -------------------------------------- #
             # --- Pushing study site table data --- #
             # -------------------------------------- #
@@ -88,7 +92,9 @@ def Facade_push():
                         print(str(e))
                         self._tablelog['study_site_table'].debug(str(e))
                         raise ValueError(
-                            'Could not push study site table data: ' + str(e)
+                            'Could not push study site table data. ' +
+                            'Try updating site table. Error: ' + 
+                            str(e)
                         )
                 else:
                     pass

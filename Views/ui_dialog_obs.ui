@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1109</width>
-    <height>565</height>
+    <width>905</width>
+    <height>559</height>
    </rect>
   </property>
   <property name="focusPolicy">
@@ -152,7 +152,10 @@
                    <item>
                     <layout class="QHBoxLayout" name="horizontalLayout_19">
                      <property name="spacing">
-                      <number>12</number>
+                      <number>25</number>
+                     </property>
+                     <property name="topMargin">
+                      <number>10</number>
                      </property>
                      <item>
                       <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -175,10 +178,13 @@
                        <item>
                         <layout class="QGridLayout" name="gridLayout_7" columnstretch="0">
                          <property name="leftMargin">
-                          <number>20</number>
+                          <number>0</number>
+                         </property>
+                         <property name="topMargin">
+                          <number>0</number>
                          </property>
                          <property name="rightMargin">
-                          <number>15</number>
+                          <number>0</number>
                          </property>
                          <property name="spacing">
                           <number>9</number>
@@ -424,6 +430,9 @@
                      </item>
                      <item>
                       <layout class="QGridLayout" name="gridLayout_8">
+                       <property name="verticalSpacing">
+                        <number>1</number>
+                       </property>
                        <item row="0" column="0">
                         <widget class="QRadioButton" name="rbtnCount">
                          <property name="text">
@@ -585,6 +594,9 @@
                    </property>
                    <item row="0" column="0">
                     <layout class="QGridLayout" name="gridLayout">
+                     <property name="leftMargin">
+                      <number>75</number>
+                     </property>
                      <property name="spacing">
                       <number>10</number>
                      </property>
@@ -631,22 +643,6 @@
                          </property>
                         </widget>
                        </item>
-                       <item>
-                        <widget class="QLineEdit" name="lnedStructureunits1">
-                         <property name="sizePolicy">
-                          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                           <horstretch>1</horstretch>
-                           <verstretch>0</verstretch>
-                          </sizepolicy>
-                         </property>
-                         <property name="alignment">
-                          <set>Qt::AlignCenter</set>
-                         </property>
-                         <property name="placeholderText">
-                          <string>units</string>
-                         </property>
-                        </widget>
-                       </item>
                       </layout>
                      </item>
                      <item row="1" column="0">
@@ -660,22 +656,6 @@
                        </item>
                        <item>
                         <widget class="QLineEdit" name="lnedStructure2"/>
-                       </item>
-                       <item>
-                        <widget class="QLineEdit" name="lnedStructureunits2">
-                         <property name="sizePolicy">
-                          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                           <horstretch>1</horstretch>
-                           <verstretch>0</verstretch>
-                          </sizepolicy>
-                         </property>
-                         <property name="alignment">
-                          <set>Qt::AlignCenter</set>
-                         </property>
-                         <property name="placeholderText">
-                          <string>units</string>
-                         </property>
-                        </widget>
                        </item>
                       </layout>
                      </item>
@@ -691,28 +671,15 @@
                        <item>
                         <widget class="QLineEdit" name="lnedStructure3"/>
                        </item>
-                       <item>
-                        <widget class="QLineEdit" name="lnedStructureunits3">
-                         <property name="sizePolicy">
-                          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                           <horstretch>1</horstretch>
-                           <verstretch>0</verstretch>
-                          </sizepolicy>
-                         </property>
-                         <property name="alignment">
-                          <set>Qt::AlignCenter</set>
-                         </property>
-                         <property name="placeholderText">
-                          <string>units</string>
-                         </property>
-                        </widget>
-                       </item>
                       </layout>
                      </item>
                     </layout>
                    </item>
                    <item row="0" column="1">
                     <layout class="QGridLayout" name="gridLayout_2">
+                     <property name="rightMargin">
+                      <number>75</number>
+                     </property>
                      <property name="spacing">
                       <number>10</number>
                      </property>
@@ -728,50 +695,6 @@
                        <item>
                         <widget class="QLineEdit" name="lnedTreatment1"/>
                        </item>
-                       <item>
-                        <widget class="QComboBox" name="cboxTreatment1">
-                         <item>
-                          <property name="text">
-                           <string>Type</string>
-                          </property>
-                         </item>
-                         <item>
-                          <property name="text">
-                           <string>fire</string>
-                          </property>
-                         </item>
-                         <item>
-                          <property name="text">
-                           <string>removal</string>
-                          </property>
-                         </item>
-                         <item>
-                          <property name="text">
-                           <string>consumer</string>
-                          </property>
-                         </item>
-                         <item>
-                          <property name="text">
-                           <string>precipitation</string>
-                          </property>
-                         </item>
-                         <item>
-                          <property name="text">
-                           <string>temperature</string>
-                          </property>
-                         </item>
-                         <item>
-                          <property name="text">
-                           <string>disturbance</string>
-                          </property>
-                         </item>
-                         <item>
-                          <property name="text">
-                           <string>density</string>
-                          </property>
-                         </item>
-                        </widget>
-                       </item>
                       </layout>
                      </item>
                      <item row="1" column="0">
@@ -786,50 +709,6 @@
                        <item>
                         <widget class="QLineEdit" name="lnedTreatment2"/>
                        </item>
-                       <item>
-                        <widget class="QComboBox" name="cboxTreatment2">
-                         <item>
-                          <property name="text">
-                           <string>Type</string>
-                          </property>
-                         </item>
-                         <item>
-                          <property name="text">
-                           <string>fire</string>
-                          </property>
-                         </item>
-                         <item>
-                          <property name="text">
-                           <string>removal</string>
-                          </property>
-                         </item>
-                         <item>
-                          <property name="text">
-                           <string>consumer</string>
-                          </property>
-                         </item>
-                         <item>
-                          <property name="text">
-                           <string>precipitation</string>
-                          </property>
-                         </item>
-                         <item>
-                          <property name="text">
-                           <string>temperature</string>
-                          </property>
-                         </item>
-                         <item>
-                          <property name="text">
-                           <string>disturbance</string>
-                          </property>
-                         </item>
-                         <item>
-                          <property name="text">
-                           <string>density</string>
-                          </property>
-                         </item>
-                        </widget>
-                       </item>
                       </layout>
                      </item>
                      <item row="2" column="0">
@@ -843,50 +722,6 @@
                        </item>
                        <item>
                         <widget class="QLineEdit" name="lnedTreatment3"/>
-                       </item>
-                       <item>
-                        <widget class="QComboBox" name="cboxTreatment3">
-                         <item>
-                          <property name="text">
-                           <string>Type</string>
-                          </property>
-                         </item>
-                         <item>
-                          <property name="text">
-                           <string>fire</string>
-                          </property>
-                         </item>
-                         <item>
-                          <property name="text">
-                           <string>removal</string>
-                          </property>
-                         </item>
-                         <item>
-                          <property name="text">
-                           <string>consumer</string>
-                          </property>
-                         </item>
-                         <item>
-                          <property name="text">
-                           <string>precipitation</string>
-                          </property>
-                         </item>
-                         <item>
-                          <property name="text">
-                           <string>temperature</string>
-                          </property>
-                         </item>
-                         <item>
-                          <property name="text">
-                           <string>disturbance</string>
-                          </property>
-                         </item>
-                         <item>
-                          <property name="text">
-                           <string>density</string>
-                          </property>
-                         </item>
-                        </widget>
                        </item>
                       </layout>
                      </item>
@@ -991,22 +826,16 @@
   <tabstop>lnedRaw</tabstop>
   <tabstop>ckStructure1</tabstop>
   <tabstop>lnedStructure1</tabstop>
-  <tabstop>lnedStructureunits1</tabstop>
   <tabstop>ckStructure2</tabstop>
   <tabstop>lnedStructure2</tabstop>
-  <tabstop>lnedStructureunits2</tabstop>
   <tabstop>ckStructure3</tabstop>
   <tabstop>lnedStructure3</tabstop>
-  <tabstop>lnedStructureunits3</tabstop>
   <tabstop>ckTreatment1</tabstop>
   <tabstop>lnedTreatment1</tabstop>
-  <tabstop>cboxTreatment1</tabstop>
   <tabstop>ckTreatment2</tabstop>
   <tabstop>lnedTreatment2</tabstop>
-  <tabstop>cboxTreatment2</tabstop>
   <tabstop>ckTreatment3</tabstop>
   <tabstop>lnedTreatment3</tabstop>
-  <tabstop>cboxTreatment3</tabstop>
   <tabstop>btnPreview</tabstop>
   <tabstop>btnSaveClose</tabstop>
   <tabstop>btnCancel</tabstop>
