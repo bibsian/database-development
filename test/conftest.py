@@ -84,6 +84,17 @@ def meta_handle5():
         checks=ckentry)
     return metainput
 
+@pytest.fixture
+def meta_handle7():
+    lentry = {
+        'globalid': 7,
+        'metaurl': ('http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.30'),
+        'lter': 'SBC'}
+    ckentry = {}
+    metainput = ini.InputHandler(
+        name='metacheck', tablename=None, lnedentry=lentry,
+        checks=ckentry)
+    return metainput
 # ------------------------------------------------------ #
 # ---------------- File loader handle --------------- #
 # ------------------------------------------------------ #
