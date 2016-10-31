@@ -28,7 +28,7 @@ elif sys.platform == "win32":
 def engine():
     ''' engine for creating connection and executing statements'''
     engine = create_engine(
-        'postgresql+psycopg2://postgres:demography@localhost/popler_3',
+        'postgresql+psycopg2:///',
         echo=False)
     return engine
 
@@ -546,6 +546,68 @@ def test_recover_individual_data(
         individual_tbl_subq_df['year'].values.tolist()
     ) == True
 
+def test_recover_real_dataset(
+        taxa_tbl_subq_stmt, engine, count_table, count):
+    print('what')
+    count_tbl_subq_stmt = (
+        select([
+            taxa_tbl_subq_stmt,
+            count_table]).
+        select_from(
+            taxa_tbl_subq_stmt.
+            join(
+                count_table,
+                onclause=and_(
+                    taxa_tbl_subq_stmt.c.taxa_table_key ==
+                    count_table.taxa_count_fkey,
+                )
+            )
+        ).alias('count join')
+    )
+    # pretty.pprint(count_tbl_subq_stmt.compile().string)
+    Session = sessionmaker(bind=engine)
+    session = Session()
+    count_tbl_subq_result = session.execute(count_tbl_subq_stmt)
+    count_tbl_subq_df = pd.DataFrame(count_tbl_subq_result.fetchall())
+    count_tbl_subq_df.columns = count_tbl_subq_result.keys()
+    count_tbl_subq_df.sort_values('count_table_key', inplace=True)
+    session.close()
+
+    assert (
+        count['site'].values.tolist() ==
+        count_tbl_subq_df['spatial_replication_level_1'].values.tolist()
+    ) == True
+
+    assert (
+        count['count'].values.tolist() ==
+        count_tbl_subq_df['count_observation'].values.tolist()
+    ) == True
+
+    assert (
+        count['genus'].values.tolist() ==
+        count_tbl_subq_df['genus'].values.tolist()
+    ) == True
+
+    assert (
+        count['species'].values.tolist() ==
+        count_tbl_subq_df['species'].values.tolist()
+    ) == True
+
+
+    count_tbl_subq_df['spatial_replication_level_2'] = pd.to_numeric(
+        count_tbl_subq_df['spatial_replication_level_2'])
+    
+    assert (
+        count['transect'].values.tolist() ==
+        count_tbl_subq_df['spatial_replication_level_2'].values.tolist()
+    ) == True
+
+    count_tbl_subq_df['month'] = count_tbl_subq_df['month'].astype(int)
+    
+    assert (
+        count['month'].values.tolist() ==
+        count_tbl_subq_df['month'].values.tolist()
+    ) == True
 
 # @pytest.fixture
 # def union_all(replace_numeric_null_with_string):
