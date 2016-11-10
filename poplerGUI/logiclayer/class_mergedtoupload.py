@@ -26,13 +26,13 @@ class MergeToUpload(object):
     def __init__(self):
         self.session = orm.Session()
         self.table_types = {
-            'taxa': orm.taxa_types,
-            'count': orm.count_types,
-            'density': orm.density_types,
-            'biomass': orm.biomass_types,
-            'individual': orm.individual_types,
-            'percent_cover': orm.percent_cover_types,
-            'project': orm.project_types
+            'taxa_table': orm.taxa_types,
+            'count_table': orm.count_types,
+            'density_table': orm.density_types,
+            'biomass_table': orm.biomass_types,
+            'individual_table': orm.individual_types,
+            'percent_cover_table': orm.percent_cover_types,
+            'project_table': orm.project_types
         }
         self.rawdata = None
         self.metadata_key = None
@@ -187,16 +187,16 @@ class MergeToUpload(object):
             all_site_table_data_not_yet_uploaded = True
             print(site_in_proj_levels_to_push)
             print('all_site_table_data_not_yet_uploaded = True')
-        try:
-            print('loaded site levels: ', studysitelevels)
-            print('derived site levels: ', study_site_levels_derived)
-            assert (studysitelevels == study_site_levels_derived)
-        except Exception as e:
-            print(str(e))
-            raise AttributeError(
-                'Study site levels derived from query and user ' +
-                'do not match the original site levels stored ' +
-                'in the user facade class: ' + str(e))
+        # try:
+        #    print('loaded site levels: ', studysitelevels)
+        #    print('derived site levels: ', study_site_levels_derived)
+        #    assert (studysitelevels == study_site_levels_derived)
+        #except Exception as e:
+        #    print(str(e))
+        #    raise AttributeError(
+        #        'Study site levels derived from query and user ' +
+        #        'do not match the original site levels stored ' +
+        #        'in the user facade class: ' + str(e))
         site_in_proj_table_to_push = site_in_proj_levels_to_push
         site_in_proj_table_to_push.columns = (
             ['study_site_table_fkey']
@@ -247,7 +247,9 @@ class MergeToUpload(object):
 
 
         if self.metadata_key in global_id_uploaded_list:
+            print('passing site in project table to upload')
             pass
+        
         else:
             site_in_proj_table_to_push.to_sql(
                 'site_in_project_table', orm.conn,
@@ -330,8 +332,31 @@ class MergeToUpload(object):
 
         tbl_taxa_merged.fillna('NA', inplace=True)
         orm.convert_types(tbl_taxa_merged, orm.taxa_types)
-        tbl_taxa_merged.to_sql(
-            'taxa_table', orm.conn, if_exists='append', index=False)
+
+        session = self.session
+        site_in_proj_key_query = session.execute(
+            select(
+                [orm.taxa_table.__table__.c.site_in_project_taxa_key]
+            ).
+            distinct()
+        )
+        session.close()
+        
+        check_site_in_proj_keys = DataFrame(site_in_proj_key_query.fetchall())
+        if check_site_in_proj_keys.empty:
+            check_site_in_proj_keys = []
+        else:
+            check_site_in_proj_keys = check_site_in_proj_keys[0].values.tolist()
+            
+    
+        if all(
+                x in check_site_in_proj_keys
+                for x in
+                siteinprojkeydf['site_in_project_key'].values.tolist()):
+            pass
+        else:
+            tbl_taxa_merged.to_sql(
+                'taxa_table', orm.conn, if_exists='append', index=False)
 
     def merge_for_datatype_table_upload(
             self, raw_dataframe,
@@ -342,16 +367,22 @@ class MergeToUpload(object):
             raw_data_taxa_columns,
             uploaded_taxa_columns):
 
+        print('start dtype upload')
         orm.replace_numeric_null_with_string(raw_dataframe)
         orm.replace_numeric_null_with_string(formated_dataframe)
-
+        print('replacing nulls is a pain')
 
         # Step 2) Query taxa_table to get the auto generated
         # primary keys returned. Turn query data into
         # dataframe.
         session = self.session
-        taxa_key_query = select([orm.taxa_table])
-        taxa_key_statement = session.execute(taxa_key_query)
+        taxa_key_statement = session.execute(
+            select([orm.taxa_table]).
+            where(
+                orm.taxa_table.__table__.c.site_in_project_taxa_key.in_
+                (siteinprojkeydf['site_in_project_key'].values.tolist())
+            )
+        )
         session.close()
         taxa_key_df = DataFrame(taxa_key_statement.fetchall())
         taxa_key_df.columns = taxa_key_statement.keys()
@@ -448,11 +479,17 @@ class MergeToUpload(object):
         tbl_dtype_to_upload.rename(columns={
             'site_in_project_taxa_key': datatype_key}, inplace=True)
         tbl_dtype_to_upload.fillna('NA', inplace=True)
-        orm.convert_types(
-            tbl_dtype_to_upload, self.table_types[str(formated_dataframe_name)])
         self.formateddata = tbl_dtype_to_upload
         # Step 10) Uploading to the database
         datatype_table = '{}_table'.format(str(formated_dataframe_name))
+
+        print('push raw_before', tbl_dtype_to_upload.columns)
+        print(tbl_dtype_to_upload.dtypes)
+
+        orm.convert_types(tbl_dtype_to_upload, self.table_types[datatype_table])
+        print('push raw_after', tbl_dtype_to_upload.columns)
+        print(tbl_dtype_to_upload.dtypes)
+
         tbl_dtype_to_upload.to_sql(
             datatype_table,
             orm.conn, if_exists='append', index=False)
