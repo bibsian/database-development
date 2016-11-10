@@ -146,7 +146,7 @@ def AbstractTableBuilder():
                 'spatial_replication_level_5_label',
                 'spatial_replication_level_5_number_of_unique_reps',
                 'treatment_type_1', 'treatment_type_2',
-                'treatment_type_3',
+                'treatment_type_3', 'control_group',
                 'derived'
                 'authors', 'authors_contact', 'metalink', 'knbid',
             ],
@@ -668,6 +668,7 @@ def Project_Table_Builder(AbstractTableBuilder):
                     'treatment_type_1': 'NA',
                     'treatment_type_2': 'NA',
                     'treatment_type_3': 'NA',
+                    'control_group': 'NA',
                     'derived': 'NA',
                     'authors': 'NA',
                     'authors_contact': 'NA',
@@ -711,6 +712,7 @@ def Project_Table_Builder(AbstractTableBuilder):
                     'treatment_type_1',
                     'treatment_type_2',
                     'treatment_type_3',
+                    'control_group',
                     'derived',
                     'authors', 'authors_contact', 'metalink', 'knbid',
                 ], index=[0])
@@ -790,9 +792,9 @@ def Taxa_Table_Builder(AbstractTableBuilder):
             print('DB COLUMN REVISED: ', dbcolrevised)
             uniquesubset_site_list = []
             for i,item in enumerate(sitelevels):                
-                unqdf = dataframe[dataframe[siteid]==item]
+                uniquesubset = dataframe[dataframe[siteid]==item]
                 try:
-                    uniquesubset = unqdf[acols]
+                    uniquesubset = uniquesubset[acols]
                 except Exception as e:
                     print(str(e))
                     
@@ -1191,6 +1193,10 @@ def test_project_table_build(
     project_table_df = director.get_database_table()
     show_project_table = project_table_df._availdf
     print(show_project_table)
+    assert 0
+
+    assert (
+        'control_group' in show_project_table.columns.values.tolist()) is True
     
     assert (isinstance(show_project_table, DataFrame)) is True
     assert (
