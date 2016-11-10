@@ -91,12 +91,12 @@ class TimeParse(object):
                 print('concatname: ' + concatname)
             else:
                 print('different columns')
-                print(data)
+
                 data['concat1'] = data[
                     name1_keep].astype(str).str.cat(
                         data[name2_change].astype(
                             str), sep = '-')
-                print('concat1 df: ', data)
+
                 concatname = 'concat1'
                 if name3 is not None:
                     data['concat2'] = data[
@@ -105,8 +105,7 @@ class TimeParse(object):
                     concatname = 'concat2'
                 else:
                     pass
-                print('concatname final: ', concatname)
-                print('data post concat: ', data)
+
 
             return concatname
 
@@ -139,11 +138,9 @@ class TimeParse(object):
             nulldf = DataFrame()            
         try:
             if col[0] is not None:
-                print('re_time list before: ', col)
                 time_list_re = hlp.strip_time(data, col)
             else:
                 time_list_re = []
-            print('re_time list after: ', time_list_re)
 
         except Exception as e:
             print(str(e))
@@ -243,7 +240,7 @@ class TimeParse(object):
                 try:
                     uq_years = self.data[
                         self.yearname].astype(str).apply(len)
-                    print('parser time: ', uq_years)
+                    print('parser time: ')
                     assert (len(set(uq_years)) == 1) is True
                 except:
                     raise ValueError(
@@ -302,7 +299,7 @@ class TimeParse(object):
             # but Julian Day is account for here
             if month == 'NULL' and self.jd is True:
 
-                print('dataframe in class JD: ', self.data)
+                print('dataframe in class JD: ')
                 catcol = self.concatenator(
                     data=self.data,
                     name1_keep=self.yearname,
