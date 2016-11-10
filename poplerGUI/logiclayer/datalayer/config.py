@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#!/usr/bin/env python
 import sys, os
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, create_engine, MetaData
@@ -99,20 +99,28 @@ def convert_types(dataframe, types):
     column types in database
     '''
     for i in dataframe.columns:
-        if types[i] in ['FLOAT', 'Float']:
-            dataframe.loc[:, i] = pd.to_numeric(dataframe[i], errors='coerce')
-        if types[i] in ['INTEGER', 'Integer']:
-            dataframe.loc[:, i] = dataframe[i].astype(int)
-        if types[i] in ['VARCHAR', 'TEXT']:
+
+        #if types[i] in ['FLOAT', 'Float', 'numeric']:
+        #    dataframe.loc[:, i] = pd.to_numeric(dataframe[i], errors='coerce')
+        #if types[i] in ['INTEGER', 'Integer']:
+        #    dataframe.loc[:, i] = dataframe[i].astype(int)
+        if types[i] in ['VARCHAR', 'TEXT', 'VARCHAR(50)', 'VARCHAR(200)']:
             try:
                 dataframe.loc[:, i] = dataframe[i].astype(str)
-            except:
-                print('string conversion did not work')
-            finally:
-                dataframe.loc[:, i] = dataframe[i].astype(object)
+                print('In CONVERT: ', i ,dataframe.loc[:,i].dtypes)
+            except Exception as e:
+                print('string conversion did not work:', i, str(e))
+            
+            dataframe.loc[:, i] = dataframe[i].astype(object)
         if i in ['year', 'month', 'day']:
             dataframe.loc[:, i] = pd.to_numeric(dataframe[i], errors='coerce')
             dataframe[i].fillna('NaN', inplace=True)
+        if 'observation' in i or 'extent' in i or 'unique_rep' in i:
+            dataframe.loc[:, i] = pd.to_numeric(dataframe[i], errors='coerce')
+
+        print('CONVERSION TYPES: ', i, types[i])
+
+
 
 def replace_numeric_null_with_string(dataframe):
     ''' Function to take values such as -99999 and convert them
