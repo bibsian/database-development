@@ -106,6 +106,7 @@ def Facade_push():
             # -------------------------------------- #
             if self.mainpushed is None:
                 try:
+                    project_table_df['lter_project_fkey'] = lter
                     project_table_df.to_sql(
                         'project_table', orm.conn,
                         if_exists='append', index=False
