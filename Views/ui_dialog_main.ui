@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>776</width>
-    <height>816</height>
+    <width>789</width>
+    <height>854</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -722,6 +722,20 @@ Units</string>
                          </property>
                         </item>
                        </widget>
+                      </item>
+                     </layout>
+                    </item>
+                    <item row="4" column="0">
+                     <layout class="QHBoxLayout" name="horizontalLayout_49">
+                      <item>
+                       <widget class="QCheckBox" name="ckControlgroup">
+                        <property name="text">
+                         <string>Control Group</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QLineEdit" name="lnedControlgroup"/>
                       </item>
                      </layout>
                     </item>

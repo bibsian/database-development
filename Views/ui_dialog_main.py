@@ -25,7 +25,7 @@ except AttributeError:
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName(_fromUtf8("Dialog"))
-        Dialog.resize(776, 816)
+        Dialog.resize(789, 854)
         Dialog.setStyleSheet(_fromUtf8(".QLabel{\n"
 "    background: None;\n"
 "    padding: 0px;\n"
@@ -332,6 +332,15 @@ class Ui_Dialog(object):
         self.cboxDatatype.addItem(_fromUtf8(""))
         self.horizontalLayout_2.addWidget(self.cboxDatatype)
         self.gridLayout.addLayout(self.horizontalLayout_2, 3, 0, 1, 1)
+        self.horizontalLayout_49 = QtGui.QHBoxLayout()
+        self.horizontalLayout_49.setObjectName(_fromUtf8("horizontalLayout_49"))
+        self.ckControlgroup = QtGui.QCheckBox(self.groupBox_7)
+        self.ckControlgroup.setObjectName(_fromUtf8("ckControlgroup"))
+        self.horizontalLayout_49.addWidget(self.ckControlgroup)
+        self.lnedControlgroup = QtGui.QLineEdit(self.groupBox_7)
+        self.lnedControlgroup.setObjectName(_fromUtf8("lnedControlgroup"))
+        self.horizontalLayout_49.addWidget(self.lnedControlgroup)
+        self.gridLayout.addLayout(self.horizontalLayout_49, 4, 0, 1, 1)
         self.verticalLayout_9.addLayout(self.gridLayout)
         self.gridLayout_4.addWidget(self.groupBox_7, 0, 1, 1, 1)
         self.verticalLayout_18.addLayout(self.gridLayout_4)
@@ -677,6 +686,7 @@ class Ui_Dialog(object):
         self.cboxDatatype.setItemText(3, _translate("Dialog", "biomass", None))
         self.cboxDatatype.setItemText(4, _translate("Dialog", "percent_cover", None))
         self.cboxDatatype.setItemText(5, _translate("Dialog", "individual", None))
+        self.ckControlgroup.setText(_translate("Dialog", "Control Group", None))
         self.groupBox_4.setTitle(_translate("Dialog", "Organism Structure", None))
         self.ckStructure1.setText(_translate("Dialog", "Structure 1", None))
         self.label_21.setText(_translate("Dialog", "Units", None))
