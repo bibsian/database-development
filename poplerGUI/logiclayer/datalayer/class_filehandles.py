@@ -16,6 +16,7 @@ class DataFileOriginator(object):
 
     This is the originator of the initial data
     """
+
     get_info = namedtuple(
         'get_info', 'name ext version')
     state = 'original'
@@ -81,10 +82,12 @@ class DataFileOriginator(object):
                     print('filename (class): ', filename, ex)
                     return self.get_info(
                         name=filename, ext=ex, version=self.state)
+
                 else:
                     raise IOError(self.ext_error)
             except:
                 raise IOError(self.ext_error)
+
 
     def save_to_memento(self):
         '''
@@ -92,25 +95,26 @@ class DataFileOriginator(object):
         attribute. File type must be able to be read in by
         pandas.
         '''
+
         if self.file_id.ext not in self.accepted_filetypes:
             raise IOError('Cannot open file type')
         try:
             if self.file_id.ext == '.csv':
-                dfstate = read_csv(
+                self._data = read_csv(
                     self.inputoptions[
                         '.csv']['filename']
                     )
             elif (
                     self.file_id.ext == '.xls' or
                     self.file_id.ext == '.xlsx'):
-                dfstate = read_excel(
+                self._data = read_excel(
                     self.inputoptions[
                         'xlsx']['filename'],
                     sheetname=self.inputoptions[
                         'xlsx']['sheet']
                     )
             elif self.file_id.ext == '.txt':
-                dfstate = read_table(
+                self._data = read_table(
                     self.inputoptions[
                         '.txt']['filename'],
                     delimiter=self.inputoptions[
@@ -122,64 +126,27 @@ class DataFileOriginator(object):
                     error_bad_lines=False,
                     engine='c'
                     )
-            dfstate.fillna('NA',inplace=True)
-            for i, item in enumerate(dfstate.columns):
-                if isinstance(
-                        dfstate.dtypes.values.tolist()[i],
-                        object):
-                    try:
-                        dfstate.loc[:, item] = dfstate.loc[
-                            :,item].str.rstrip()
-                        na_vals = [
-                            9999, 99999, 999999,
-                            -9999, -99999, -999999,
-                            -8888, -88888, -88888, -888
-                        ]
-                        na_vals_float = [
-                            9999.0, 99999.0, 999999.0,
-                            -9999.0, -99999.0, -999999.0
-                            -8888.0, -88888.0, -888888.0,
-                            -888.0
-                        ]
-                        na_text_vals = [
-                            '9999', '99999', '999999',
-                            '-9999', '-99999', '-999999',
-                            '-8888', '-88888', '-888888',
-                            '-888'
-                        ]
-                        for j,text_val in enumerate(
-                                na_text_vals):
-                            if (
-                                    (
-                                        dfstate[item].dtypes
-                                        == int)
-                                    or
-                                    (
-                                        dfstate[item].dtypes
-                                        == float)):
-                                dfstate[item].replace(
-                                    {na_vals[j]: 'NA'},
-                                    inplace=True)
-                                dfstate[item].replace(
-                                    {na_vals_float[j]: 'NA'},
-                                    inplace=True)
-                            else:
-                                dfstate[item].replace(
-                                    {text_val: 'NA'},
-                                    inplace=True)
-                    except:
-                        print('error trying to set predefined nulls')
-                else:
-                        pass
-            dfstate = dfstate[
-                dfstate.isnull().all(axis=1) != True]
-            memento = Memento(dfstate= dfstate.copy(),
-                        state= self.state)
-            return memento
         except Exception as e:
-            print(str(e))
-            raise IOError('Cannot read in file: ' + str(e))
+            print('Could not read in file: ', str(e))
 
+        for i, item in enumerate(self._data.columns):
+            na_vals = [
+                9999, 99999, 999999,
+                -9999, -99999, -999999,
+                -8888, -88888, -88888, -888,
+                9999.0, 99999.0, 999999.0,
+                -9999.0, -99999.0, -999999.0,
+                -8888.0, -88888.0, -888888.0,
+                -888.0
+            ]
+            self._data[item].replace(
+                dict(zip(na_vals, ['NaN']*len(na_vals))),
+                inplace=True)
+        self._data.fillna('NA', inplace=True)
+        self._data = self._data[
+            self._data.isnull().all(axis=1) != True]
+        memento = Memento(dfstate = self._data.copy(),state= self.state)
+        return memento
 
 
 class Caretaker(object):

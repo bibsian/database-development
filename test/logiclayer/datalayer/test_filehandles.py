@@ -8,11 +8,19 @@ if sys.platform == "darwin":
     rootpath = (
         "/Users/bibsian/Desktop/git/database-development/" +
         "test/")
+    rawpath = (
+        "/Users/bibsian/Dropbox/database-development/" +
+        "popler_version2/git-repo-revert/poplerGUI/Metadata_and_og_data/")
+
     end = "/"
 elif sys.platform == "win32":
     rootpath = (
         "C:\\Users\MillerLab\\Desktop\\database-development" +
         "\\test\\")
+    rawpath = (
+        "\\Users\\MillerLab\\Dropbox\\database-development\\" +
+        "popler_version2\\git-repo-revert\\poplerGUI\\Metadata_and_og_data\\")
+
     end = "\\"
 sys.path.append(os.path.realpath(os.path.dirname(
     rootpath + 'logiclayer' + end)))
@@ -118,21 +126,21 @@ def DataFileOriginator(Memento):
                 raise IOError('Cannot open file type')
             try:
                 if self.file_id.ext == '.csv':
-                    dfstate = read_csv(
+                    self._data = read_csv(
                         self.inputoptions[
                             '.csv']['filename']
                         )
                 elif (
                         self.file_id.ext == '.xls' or
                         self.file_id.ext == '.xlsx'):
-                    dfstate = read_excel(
+                    self._data = read_excel(
                         self.inputoptions[
                             'xlsx']['filename'],
                         sheetname=self.inputoptions[
                             'xlsx']['sheet']
                         )
                 elif self.file_id.ext == '.txt':
-                    dfstate = read_table(
+                    self._data = read_table(
                         self.inputoptions[
                             '.txt']['filename'],
                         delimiter=self.inputoptions[
@@ -144,64 +152,28 @@ def DataFileOriginator(Memento):
                         error_bad_lines=False,
                         engine='c'
                         )
-                dfstate.fillna('NA',inplace=True)
-                for i, item in enumerate(dfstate.columns):
-                    if isinstance(
-                            dfstate.dtypes.values.tolist()[i],
-                            object):
-                        try:
-                            dfstate.loc[:, item] = dfstate.loc[
-                                :,item].str.rstrip()
-                            na_vals = [
-                                9999, 99999, 999999,
-                                -9999, -99999, -999999,
-                                -8888, -88888, -88888, -888
-                            ]
-                            na_vals_float = [
-                                9999.0, 99999.0, 999999.0,
-                                -9999.0, -99999.0, -999999.0
-                                -8888.0, -88888.0, -888888.0,
-                                -888.0
-                            ]
-                            na_text_vals = [
-                                '9999', '99999', '999999',
-                                '-9999', '-99999', '-999999',
-                                '-8888', '-88888', '-888888',
-                                '-888'
-                            ]
-                            for j,text_val in enumerate(
-                                    na_text_vals):
-                                if (
-                                        (
-                                            dfstate[item].dtypes
-                                            == int)
-                                        or
-                                        (
-                                            dfstate[item].dtypes
-                                            == float)):
-                                    dfstate[item].replace(
-                                        {na_vals[j]: 'NA'},
-                                        inplace=True)
-                                    dfstate[item].replace(
-                                        {na_vals_float[j]: 'NA'},
-                                        inplace=True)
-                                else:
-                                    dfstate[item].replace(
-                                        {text_val: 'NA'},
-                                        inplace=True)
-                        except:
-                            print('error trying to set predefined nulls')
-                    else:
-                            pass
-                dfstate = dfstate[
-                    dfstate.isnull().all(axis=1) != True]
-                memento = Memento(dfstate= dfstate.copy(),
-                            state= self.state)
-                return memento
             except Exception as e:
-                print(str(e))
-                raise IOError('Cannot read in file: ' + str(e))
+                print('Could not read in file: ', str(e))
 
+            for i, item in enumerate(self._data.columns):
+                na_vals = [
+                    9999, 99999, 999999,
+                    -9999, -99999, -999999,
+                    -8888, -88888, -88888, -888,
+                    9999.0, 99999.0, 999999.0,
+                    -9999.0, -99999.0, -999999.0,
+                    -8888.0, -88888.0, -888888.0,
+                    -888.0
+                ]
+                self._data[item].replace(
+                    dict(zip(na_vals, ['NaN']*len(na_vals))),
+                    inplace=True)
+            self._data.fillna('NA',inplace=True)
+            print(self._data['FRONDS'])
+            self._data = self._data[
+                self._data.isnull().all(axis=1) != True]
+            memento = Memento(dfstate = self._data.copy(),state= self.state)
+            return memento
     return DataFileOriginator
 
 @pytest.fixture
@@ -282,144 +254,170 @@ def user_input():
         'sheet': '', 'delim': '', 'tskip': '', 'bskip': '',
         'header': ''
     }
-    fname = (rootpath + end + 'Datasets_manual_test' + end +
-    'raw_data_test_1.csv')
+    fname = (
+        rootpath + end + 'Datasets_manual_test' + end +
+        'raw_data_test_1.csv')
     user_input = ini.InputHandler(
         name='fileoptions',lnedentry=lned,
         rbtns=rbtn, filename=fname, checks=False)
     return user_input
 
-
-def test_csv_reader_method(
-        user_input, Caretaker,
-        DataFileOriginator, DataOriginator, Memento):
-    caretaker = Caretaker()
-    originator_from_file = DataFileOriginator(user_input)
-    originator = DataOriginator(None, 'Initialize')
-    assert (isinstance(originator, DataOriginator)) is True
-    caretaker.save(originator_from_file.save_to_memento())
-    originator.restore_from_memento(caretaker.restore())
-    assert (isinstance(originator._data, DataFrame)) is True
-
-
 @pytest.fixture
-def user_txt():
-    rbtn = {'csv': False, 'xlsx': False, 'txt': True}
+def real_data():
+    rbtn = {'csv': True, 'xlsx': False, 'txt': False}
     lned = {
         'sheet': '', 'delim': '', 'tskip': '', 'bskip': '',
         'header': ''
     }
-    fname = (
-        rootpath + end + 'Datasets_manual_test' + end +
-        'climate_precip.txt')
+    fname = (rawpath + 'giant_kelp_all_years_20140908.csv')
     user_input = ini.InputHandler(
-        name='fileoptions', lnedentry=lned,
-        rbtns=rbtn, filename=fname, checks=True)
-    return user_input
-
-def test_txt_reader_method(
-        user_txt, Caretaker,
-        DataFileOriginator, DataOriginator, Memento):
-    caretaker = Caretaker()
-    originator_from_file = DataFileOriginator(user_txt)
-    originator = DataOriginator(None, 'Initialize')
-    assert (isinstance(originator, DataOriginator)) is True
-    caretaker.save(originator_from_file.save_to_memento())
-    originator.restore_from_memento(caretaker.restore())
-    assert (isinstance(originator._data, DataFrame)) is True
-
-
-
-@pytest.fixture
-def user_txt_delim():
-    rbtn = {'csv': False, 'xlsx': False, 'txt': True}
-    lned = {
-        'sheet': '', 'delim': ',', 'tskip': '', 'bskip': '',
-        'header': ''
-    }
-    fname = 'Datasets_manual_test/climate_temp_test.txt'
-    user_input = ini.InputHandler(
-        name='fileoptions', lnedentry=lned,
+        name='fileoptions',lnedentry=lned,
         rbtns=rbtn, filename=fname, checks=False)
     return user_input
- 
-def test_txt_comma_delim_reader_method(
-        user_txt_delim, Caretaker, user_txt,
-        DataFileOriginator, DataOriginator, Memento):
-    caretaker = Caretaker()
-
-    originator_from_file = DataFileOriginator(user_txt_delim)
-    originator = DataOriginator(None, 'Initialize')
-    assert (isinstance(originator, DataOriginator)) is True
-    caretaker.save(originator_from_file.save_to_memento())
-    originator.restore_from_memento(caretaker.restore())
-    assert (isinstance(originator._data, DataFrame)) is True
-    originator_from_file = DataFileOriginator(user_txt)
-    originator = DataOriginator(None, 'Initialize')
-    assert (isinstance(originator, DataOriginator)) is True
-    caretaker.save(originator_from_file.save_to_memento())
-    originator.restore_from_memento(caretaker.restore())
-    assert (isinstance(originator._data, DataFrame)) is True
-
-
-
-@pytest.fixture
-def user_txt_skiplines_no_header():
-    rbtn = {'csv': False, 'xlsx': False, 'txt': True}
-    lned = {
-        'sheet': '', 'delim': '\t', 'tskip': '8', 'bskip': '',
-        'header': '-1'
-    }
-    fname = (
-        rootpath + end + 'Datasets_manual_test' + end +
-        'skip_no_header_test.txt')
-    user_input = ini.InputHandler(
-        name='fileoptions', lnedentry=lned,
-        rbtns=rbtn, filename=fname, checks=True)
-    return user_input
-
-def test_txt_skiplines_no_header(
-        user_txt_skiplines_no_header, Caretaker,
-        DataFileOriginator, DataOriginator, Memento):
-    caretaker = Caretaker()
-    originator_from_file = DataFileOriginator(
-        user_txt_skiplines_no_header)
-    originator = DataOriginator(None, 'Initialize')
-    assert (isinstance(originator, DataOriginator)) is True
-    caretaker.save(originator_from_file.save_to_memento())
-    originator.restore_from_memento(caretaker.restore())
-    data = originator._data
-    assert (isinstance(data, DataFrame)) is True
-    assert (len(data.columns) == 3) is True
-    print(data)
     
-@pytest.fixture
-def user_txt_skiplines_header():
-    rbtn = {'csv': False, 'xlsx': False, 'txt': True}
-    lned = {
-        'sheet': '', 'delim': '\t', 'tskip': '10', 'bskip': '',
-        'header': ''
-    }
-    fname = (
-        rootpath + end + 'Datasets_manual_test' + end +
-        'skip_header_test.txt')
-    user_input = ini.InputHandler(
-        name='fileoptions', lnedentry=lned,
-        rbtns=rbtn, filename=fname, checks=False)
-    return user_input
 
-def test_txt_skiplines_header(
-        user_txt_skiplines_header, Caretaker,
+# def test_csv_reader_method(
+#         user_input, Caretaker,
+#         DataFileOriginator, DataOriginator, Memento):
+#     caretaker = Caretaker()
+#     originator_from_file = DataFileOriginator(user_input)
+#     originator = DataOriginator(None, 'Initialize')
+#     assert (isinstance(originator, DataOriginator)) is True
+#     caretaker.save(originator_from_file.save_to_memento())
+#     originator.restore_from_memento(caretaker.restore())
+#     assert (isinstance(originator._data, DataFrame)) is True
+
+def test_csv_true(
+        real_data, Caretaker,
         DataFileOriginator, DataOriginator, Memento):
     caretaker = Caretaker()
-    originator_from_file = DataFileOriginator(
-        user_txt_skiplines_header)
+    originator_from_file = DataFileOriginator(real_data)
     originator = DataOriginator(None, 'Initialize')
     assert (isinstance(originator, DataOriginator)) is True
     caretaker.save(originator_from_file.save_to_memento())
     originator.restore_from_memento(caretaker.restore())
-    data = originator._data
-    assert (isinstance(data, DataFrame)) is True
-    assert (len(data.columns) == 3) is True
-    print(data)
-    assert 0
+    assert (isinstance(originator._data, DataFrame)) is True
+
+
+# 
+# @pytest.fixture
+# def user_txt():
+#     rbtn = {'csv': False, 'xlsx': False, 'txt': True}
+#     lned = {
+#         'sheet': '', 'delim': '', 'tskip': '', 'bskip': '',
+#         'header': ''
+#     }
+#     fname = (
+#         rootpath + end + 'Datasets_manual_test' + end +
+#         'climate_precip.txt')
+#     user_input = ini.InputHandler(
+#         name='fileoptions', lnedentry=lned,
+#         rbtns=rbtn, filename=fname, checks=True)
+#     return user_input
+# 
+# def test_txt_reader_method(
+#         user_txt, Caretaker,
+#         DataFileOriginator, DataOriginator, Memento):
+#     caretaker = Caretaker()
+#     originator_from_file = DataFileOriginator(user_txt)
+#     originator = DataOriginator(None, 'Initialize')
+#     assert (isinstance(originator, DataOriginator)) is True
+#     caretaker.save(originator_from_file.save_to_memento())
+#     originator.restore_from_memento(caretaker.restore())
+#     assert (isinstance(originator._data, DataFrame)) is True
+# 
+# 
+# 
+# @pytest.fixture
+# def user_txt_delim():
+#     rbtn = {'csv': False, 'xlsx': False, 'txt': True}
+#     lned = {
+#         'sheet': '', 'delim': ',', 'tskip': '', 'bskip': '',
+#         'header': ''
+#     }
+#     fname = 'Datasets_manual_test/climate_temp_test.txt'
+#     user_input = ini.InputHandler(
+#         name='fileoptions', lnedentry=lned,
+#         rbtns=rbtn, filename=fname, checks=False)
+#     return user_input
+#  
+# def test_txt_comma_delim_reader_method(
+#         user_txt_delim, Caretaker, user_txt,
+#         DataFileOriginator, DataOriginator, Memento):
+#     caretaker = Caretaker()
+# 
+#     originator_from_file = DataFileOriginator(user_txt_delim)
+#     originator = DataOriginator(None, 'Initialize')
+#     assert (isinstance(originator, DataOriginator)) is True
+#     caretaker.save(originator_from_file.save_to_memento())
+#     originator.restore_from_memento(caretaker.restore())
+#     assert (isinstance(originator._data, DataFrame)) is True
+#     originator_from_file = DataFileOriginator(user_txt)
+#     originator = DataOriginator(None, 'Initialize')
+#     assert (isinstance(originator, DataOriginator)) is True
+#     caretaker.save(originator_from_file.save_to_memento())
+#     originator.restore_from_memento(caretaker.restore())
+#     assert (isinstance(originator._data, DataFrame)) is True
+# 
+# 
+# 
+# @pytest.fixture
+# def user_txt_skiplines_no_header():
+#     rbtn = {'csv': False, 'xlsx': False, 'txt': True}
+#     lned = {
+#         'sheet': '', 'delim': '\t', 'tskip': '8', 'bskip': '',
+#         'header': '-1'
+#     }
+#     fname = (
+#         rootpath + end + 'Datasets_manual_test' + end +
+#         'skip_no_header_test.txt')
+#     user_input = ini.InputHandler(
+#         name='fileoptions', lnedentry=lned,
+#         rbtns=rbtn, filename=fname, checks=True)
+#     return user_input
+# 
+# def test_txt_skiplines_no_header(
+#         user_txt_skiplines_no_header, Caretaker,
+#         DataFileOriginator, DataOriginator, Memento):
+#     caretaker = Caretaker()
+#     originator_from_file = DataFileOriginator(
+#         user_txt_skiplines_no_header)
+#     originator = DataOriginator(None, 'Initialize')
+#     assert (isinstance(originator, DataOriginator)) is True
+#     caretaker.save(originator_from_file.save_to_memento())
+#     originator.restore_from_memento(caretaker.restore())
+#     data = originator._data
+#     assert (isinstance(data, DataFrame)) is True
+#     assert (len(data.columns) == 3) is True
+#     print(data)
+#     
+# @pytest.fixture
+# def user_txt_skiplines_header():
+#     rbtn = {'csv': False, 'xlsx': False, 'txt': True}
+#     lned = {
+#         'sheet': '', 'delim': '\t', 'tskip': '10', 'bskip': '',
+#         'header': ''
+#     }
+#     fname = (
+#         rootpath + end + 'Datasets_manual_test' + end +
+#         'skip_header_test.txt')
+#     user_input = ini.InputHandler(
+#         name='fileoptions', lnedentry=lned,
+#         rbtns=rbtn, filename=fname, checks=False)
+#     return user_input
+# 
+# def test_txt_skiplines_header(
+#         user_txt_skiplines_header, Caretaker,
+#         DataFileOriginator, DataOriginator, Memento):
+#     caretaker = Caretaker()
+#     originator_from_file = DataFileOriginator(
+#         user_txt_skiplines_header)
+#     originator = DataOriginator(None, 'Initialize')
+#     assert (isinstance(originator, DataOriginator)) is True
+#     caretaker.save(originator_from_file.save_to_memento())
+#     originator.restore_from_memento(caretaker.restore())
+#     data = originator._data
+#     assert (isinstance(data, DataFrame)) is True
+#     assert (len(data.columns) == 3) is True
+#     print(data)
+# 
