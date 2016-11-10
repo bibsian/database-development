@@ -16,17 +16,16 @@ import pandas as pd
 import sys, os
 if sys.platform == "darwin":
     rootpath = (
-        "/Users/bibsian/Desktop/git/database-development/" +
-        "test/")
+        "/Users/bibsian/Desktop/git/database-development/")
     end = "/"
 
 elif sys.platform == "win32":
     rootpath = (
-        "C:\\Users\MillerLab\\Desktop\\database-development" +
-        "\\db\\")
+        "C:\\Users\MillerLab\\Desktop\\database-development\\")
     end = "\\"
 
-lterex = pd.read_csv(('lter_table_test.csv'))
+lterex = pd.read_csv(
+	rootpath + 'db' + end + 'lter_table_test.csv')
 ltertablename = 'lter_table'
 
 
@@ -160,8 +159,8 @@ lter_table = Table(
     'lter_table', metadata,
     Column('lterid', VARCHAR(10), primary_key=True),
     Column('lter_name', TEXT),
-    Column('lat_lter', FLOAT),
-    Column('lng_lter', FLOAT),
+    Column('lat_lter', NUMERIC),
+    Column('lng_lter', NUMERIC),
     Column('currently_funded', VARCHAR(50)),
     Column('current_principle_investigator', VARCHAR(200)),
     Column('current_contact_email', VARCHAR(200)),
@@ -191,6 +190,8 @@ project_table = Table(
     # in order to keep track of all the datasets that
     # will be uploaded
     Column('proj_metadata_key', INTEGER, primary_key=True),
+    Column('lter_project_fkey', VARCHAR(10),
+           ForeignKey('lter_table.lterid')),
     Column('title', TEXT),
 
     # META: This column specifies the type of information
@@ -250,32 +251,33 @@ project_table = Table(
     Column('spatial_replication_level_1_extent', NUMERIC),
     Column('spatial_replication_level_1_extent_units', VARCHAR(200)),
     Column('spatial_replication_level_1_label', VARCHAR(200)),
-    Column('spatial_replication_level_1_number_of_unique_reps', NUMERIC),
+    Column('spatial_replication_level_1_number_of_unique_reps', INTEGER),
     
     Column('spatial_replication_level_2_extent', NUMERIC),
     Column('spatial_replication_level_2_extent_units', VARCHAR(200)),
     Column('spatial_replication_level_2_label', VARCHAR(200)),
-    Column('spatial_replication_level_2_number_of_unique_reps', NUMERIC),
+    Column('spatial_replication_level_2_number_of_unique_reps', INTEGER),
     
     Column('spatial_replication_level_3_extent', NUMERIC),
     Column('spatial_replication_level_3_extent_units', VARCHAR(200)),
     Column('spatial_replication_level_3_label', VARCHAR(200)),
-    Column('spatial_replication_level_3_number_of_unique_reps', NUMERIC),
+    Column('spatial_replication_level_3_number_of_unique_reps', INTEGER),
     
     Column('spatial_replication_level_4_extent', NUMERIC),
     Column('spatial_replication_level_4_extent_units', VARCHAR(200)),
     Column('spatial_replication_level_4_label', VARCHAR(200)),
-    Column('spatial_replication_level_4_number_of_unique_reps', NUMERIC),
+    Column('spatial_replication_level_4_number_of_unique_reps', INTEGER),
 
     Column('spatial_replication_level_5_extent', NUMERIC),
     Column('spatial_replication_level_5_extent_units', VARCHAR(200)),
     Column('spatial_replication_level_5_label', VARCHAR(200)),
-    Column('spatial_replication_level_5_number_of_unique_reps', NUMERIC),
+    Column('spatial_replication_level_5_number_of_unique_reps', INTEGER),
     
     # Columns regarding treatments
     Column('treatment_type_1', VARCHAR(200)),
     Column('treatment_type_2', VARCHAR(200)),
     Column('treatment_type_3', VARCHAR(200)),
+    Column('control_group', VARCHAR(200)),
 
     Column('derived', VARCHAR(200)),
     
