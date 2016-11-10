@@ -171,6 +171,11 @@ def MainDialog(meta_handle7, file_handle5, site_handle5, taxa_handle5):
                     self.cboxTreatment3.currentText(),
                     None
                 )),
+                ('control_group', self.treatments(
+                    self.ckControlgroup.isChecked(),
+                    self.lnedControlgroup.text(),
+                    None
+                )),
                 ('derived', self.derived(
                     self.cboxDerived.currentText() != 'NULL',
                     self.cboxDerived.currentText(),

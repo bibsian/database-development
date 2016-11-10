@@ -142,6 +142,11 @@ class MainDialog(QtGui.QDialog, dmainw.Ui_Dialog):
                 self.cboxTreatment3.currentText(),
                 None
             )),
+            ('control_group', self.treatments(
+                self.ckControlgroup.isChecked(),
+                self.lnedControlgroup.text(),
+                None
+            )),
             ('derived', self.derived(
                 self.cboxDerived.currentText() != 'NULL',
                 self.cboxDerived.currentText(),
