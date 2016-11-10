@@ -342,7 +342,7 @@ def test_site_in_project_key_number_two(
     study_site_table.to_sql(
         'study_site_table',
         orm.conn, if_exists='append', index=False)
-
+    project_table['lter_project_fkey'] = facade._valueregister['lter']
     project_table.to_sql(
         'project_table', orm.conn,
         if_exists='append', index=False

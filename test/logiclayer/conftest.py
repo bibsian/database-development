@@ -86,6 +86,18 @@ def meta_handle5():
         checks=ckentry)
     return metainput
 
+@pytest.fixture
+def meta_handle7():
+    lentry = {
+        'globalid': 7,
+        'metaurl': ('http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.30'),
+        'lter': 'SBC'}
+    ckentry = {}
+    metainput = ini.InputHandler(
+        name='metacheck', tablename=None, lnedentry=lentry,
+        checks=ckentry)
+    return metainput
+
 # ------------------------------------------------------ #
 # ---------------- File loader handle --------------- #
 # ------------------------------------------------------ #
@@ -95,7 +107,7 @@ def file_handle_wide_to_long():
     ckentry = {}
     rbtn = {'.csv': True, '.txt': False,
             '.xlsx': False}
-    lned = {
+    Xlned = {
         'sheet': '', 'delim': '', 'tskip': '', 'bskip': '',
         'header': ''}
     fileinput = ini.InputHandler(
@@ -274,6 +286,7 @@ def project_handle_1_count():
         ('treatment_type_1', treatments(False, 'NULL', None)),
         ('treatment_type_2', treatments(False, 'NULL', None)),
         ('treatment_type_3', treatments(False, 'NULL', None)),
+        ('control_group', treatments(False, '', None)),
         ('derived', derived(True, 'no', None)),
         ('authors', contacts(True, 'AJ Bibian, TEX Miller', None)),
         ('authors_contact', contacts(True, 'aj@hotmail.com, tex@hotmail.com', None))
@@ -948,13 +961,13 @@ def MergeToUpload():
         def __init__(self):
             self.session = orm.Session()
             self.table_types = {
-                'taxa': orm.taxa_types,
-                'count': orm.count_types,
-                'density': orm.density_types,
-                'biomass': orm.biomass_types,
-                'individual': orm.individual_types,
-                'percent_cover': orm.percent_cover_types,
-                'project': orm.project_types
+                'taxa_table': orm.taxa_types,
+                'count_table': orm.count_types,
+                'density_table': orm.density_types,
+                'biomass_table': orm.biomass_types,
+                'individual_table': orm.individual_types,
+                'percent_cover_table': orm.percent_cover_types,
+                'project_table': orm.project_types
             }
             self.rawdata = None
             self.metadata_key = None
@@ -1119,7 +1132,6 @@ def MergeToUpload():
                     'Study site levels derived from query and user ' +
                     'do not match the original site levels stored ' +
                     'in the user facade class: ' + str(e))
-
             site_in_proj_table_to_push = site_in_proj_levels_to_push
             site_in_proj_table_to_push.columns = (
                 ['study_site_table_fkey']
@@ -1143,7 +1155,7 @@ def MergeToUpload():
                     site_in_proj_table_to_push.
                     study_site_table_fkey == item, 'sitestartyr'
                 ] = yr_list[0]
-                
+
                 site_in_proj_table_to_push.loc[
                     site_in_proj_table_to_push.
                     study_site_table_fkey == item, 'siteendyr'
@@ -1168,7 +1180,8 @@ def MergeToUpload():
             global_id_uploaded_list = [
                 x[0] for x in global_id_statement.fetchall()]
 
-            if global_id in global_id_uploaded_list:
+
+            if self.metadata_key in global_id_uploaded_list:
                 pass
             else:
                 site_in_proj_table_to_push.to_sql(
@@ -1224,7 +1237,7 @@ def MergeToUpload():
             4) Push taxa_table to database
 
             '''
-            
+
             print('starting taxa table upload')
             orm.replace_numeric_null_with_string(formated_taxa_table)
             print('past orm replace numeric')
@@ -1252,8 +1265,31 @@ def MergeToUpload():
 
             tbl_taxa_merged.fillna('NA', inplace=True)
             orm.convert_types(tbl_taxa_merged, orm.taxa_types)
-            tbl_taxa_merged.to_sql(
-                'taxa_table', orm.conn, if_exists='append', index=False)
+
+            session = self.session
+            site_in_proj_key_query = session.execute(
+                select(
+                    [orm.taxa_table.__table__.c.site_in_project_taxa_key]
+                ).
+                distinct()
+            )
+            session.close()
+
+            check_site_in_proj_keys = DataFrame(site_in_proj_key_query.fetchall())
+            if check_site_in_proj_keys.empty:
+                check_site_in_proj_keys = []
+            else:
+                check_site_in_proj_keys = check_site_in_proj_keys[0].values.tolist()
+
+
+            if all(
+                    x in check_site_in_proj_keys
+                    for x in
+                    siteinprojkeydf['site_in_project_key'].values.tolist()):
+                pass
+            else:
+                tbl_taxa_merged.to_sql(
+                    'taxa_table', orm.conn, if_exists='append', index=False)
 
         def merge_for_datatype_table_upload(
                 self, raw_dataframe,
@@ -1264,15 +1300,22 @@ def MergeToUpload():
                 raw_data_taxa_columns,
                 uploaded_taxa_columns):
 
+            print('start dtype upload')
             orm.replace_numeric_null_with_string(raw_dataframe)
             orm.replace_numeric_null_with_string(formated_dataframe)
+            print('replacing nulls is a pain')
 
             # Step 2) Query taxa_table to get the auto generated
             # primary keys returned. Turn query data into
             # dataframe.
             session = self.session
-            taxa_key_query = select([orm.taxa_table])
-            taxa_key_statement = session.execute(taxa_key_query)
+            taxa_key_statement = session.execute(
+                select([orm.taxa_table]).
+                where(
+                    orm.taxa_table.__table__.c.site_in_project_taxa_key.in_
+                    (siteinprojkeydf['site_in_project_key'].values.tolist())
+                )
+            )
             session.close()
             taxa_key_df = DataFrame(taxa_key_statement.fetchall())
             taxa_key_df.columns = taxa_key_statement.keys()
@@ -1299,6 +1342,9 @@ def MergeToUpload():
                 raw_dataframe, siteinprojkeydf,
                 left_on=self.sitelabel, right_on='study_site_table_fkey',
                 sort=False, how='left')
+
+            raw_data_taxa_columns.append('site_in_project_key')
+            uploaded_taxa_columns.append('site_in_project_taxa_key')
 
             raw_data_taxa_columns.append('site_in_project_key')
             uploaded_taxa_columns.append('site_in_project_taxa_key')
@@ -1366,11 +1412,18 @@ def MergeToUpload():
             tbl_dtype_to_upload.rename(columns={
                 'site_in_project_taxa_key': datatype_key}, inplace=True)
             tbl_dtype_to_upload.fillna('NA', inplace=True)
-            orm.convert_types(
-                tbl_dtype_to_upload, self.table_types[str(formated_dataframe_name)])
+            
             self.formateddata = tbl_dtype_to_upload
             # Step 10) Uploading to the database
             datatype_table = '{}_table'.format(str(formated_dataframe_name))
+
+            print('push raw_before', tbl_dtype_to_upload.columns)
+            print(tbl_dtype_to_upload.dtypes)
+
+            orm.convert_types(tbl_dtype_to_upload, self.table_types[datatype_table])
+            print('push raw_after', tbl_dtype_to_upload.columns)
+            print(tbl_dtype_to_upload.dtypes)
+
             tbl_dtype_to_upload.to_sql(
                 datatype_table,
                 orm.conn, if_exists='append', index=False)
@@ -1385,7 +1438,6 @@ def MergeToUpload():
             Arguments are the column names for 
             the different levels of spatial replication that
             are present (key/value pairs)
-            
             '''
             ##
             # ADD STUDYSTARTYR, STUDYENDYR, SPAT_LEV_UNQ_REPS(1-5),

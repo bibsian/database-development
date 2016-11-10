@@ -103,6 +103,7 @@ def test_site_in_project_key(
     except Exception as e:
         print(str(e))
 
+    project_table['lter_project_fkey'] = facade._valueregister['lter']
     project_table.to_sql(
         'project_table', orm.conn,
         if_exists='append', index=False
