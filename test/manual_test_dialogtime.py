@@ -168,3 +168,7 @@ def test_dialog_site(qtbot, TimeDialog):
     qtbot.addWidget(TimeDialog)
 
     qtbot.stopForInteraction()
+    tdata = TimeDialog.facade.push_tables['timetable']
+    assert (
+        tdata['year_derived'].values.tolist() ==
+        tdata['YEAR'].values.tolist()) is True
