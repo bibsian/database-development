@@ -11,6 +11,7 @@ main_table,project_table,samplingprotocol,datatype
 main_table,project_table,structured,structured_type_1
 main_table,project_table,studystartyr,studystartyr
 main_table,project_table,studyendyr,studyendyr
+main_table,project_table,siteid,lter_proj_fkey
 main_table,project_table,samplefreq,samplefreq
 main_table,project_table,community,community
 main_table,project_table,sp_rep1_ext,spatial_replication_level_1_extent
