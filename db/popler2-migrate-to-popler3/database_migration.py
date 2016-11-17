@@ -1,9 +1,12 @@
-#! /usr/bin/env python
+#!/usr/bin/env python
 from collections import OrderedDict
 from sqlalchemy.sql import *
 import datetime as dt
 import pandas as pd
 import sys,os
+import re
+import config_v3 as ormv3
+import config_v2 as ormv2
 if sys.platform == "darwin":
     rootpath = (
         "/Users/bibsian/Desktop/git/database-development/")
@@ -13,15 +16,12 @@ elif sys.platform == "win32":
         "C:\\Users\MillerLab\\Desktop\\database-development\\")
     end = "\\"
 os.chdir(rootpath)
-import config_v3 as ormv3
-import config as ormv2
 
-
-startTime = dt.datetime.now()
+#startTime = dt.datetime.now()
 
 # Excel file with all migration information (names, etc)
 migration_changes = pd.read_csv(
-    rootpath + end + 'DatabaseConfig' +
+    rootpath + 'db' + end + 'popler2-migrate-to-popler3'+
     end + 'migration_changes.csv'
 )
 # --------------------------------------- #
@@ -66,6 +66,10 @@ study_site_table.to_sql(
 main_table_col_to_migrate_to_project_table = migration_changes[
     migration_changes['table_to'] == 'project_table'][
         'column_from'].values.tolist()
+main_table_col_to_migrate_to_project_table.append('studytype')
+main_table_col_to_migrate_to_project_table.append('studystartyr')
+main_table_col_to_migrate_to_project_table.append('studyendyr')
+
 # Modifying the list to contain sqlalchemy column objects
 main_table_col_to_migrate_to_project_table_sqlobj = [
     column(x) for x in main_table_col_to_migrate_to_project_table
@@ -94,17 +98,64 @@ main_table_statement = ormv2.conn.execute(
 main_table_data = pd.DataFrame(
     main_table_statement.fetchall()
 )
+
 #print(main_table_data)
 main_table_data.columns = main_table_statement.keys()
 main_table_data_distinct = main_table_data.drop_duplicates(
     subset='metarecordid'
 )
-main_table_data_distinct.rename(
-    columns=project_table_dict_name_changes, inplace=True)
 
-main_table_data_distinct.to_sql(
+
+# join main_table to sites to get LTER id
+main_fkey_join = study_site_table[['study_site_key', 'lter_table_fkey']]
+
+main_table_data_merged = pd.merge(
+    main_table_data_distinct, main_fkey_join, how='left',
+    left_on = 'siteid', right_on='study_site_key')
+
+main_table_data_merged.drop(['siteid', 'study_site_key'], axis=1, inplace=True)
+
+main_table_data_merged.rename(
+    columns=project_table_dict_name_changes, inplace=True)
+main_table_data_merged.rename(
+    columns={'lter_table_fkey': 'lter_project_fkey'}, inplace=True)
+
+
+
+main_table_data_merged[['structured_type_1', 'structured_type_2']] = main_table_data_merged[
+    'structured_type_1'].str.split(';', expand=True).fillna('NA')
+main_table_data_merged['structured_type_1_units'] = main_table_data_merged[
+    'structured_type_1'].str.extract('\((.*)\)').fillna('NA')
+main_table_data_merged['structured_type_1'] = main_table_data_merged[
+    'structured_type_1'].str.replace('\s\(.*\)', '')
+
+new_project_table_columns = [
+    'structured_type_2_units',
+    'structured_type_3', 'structured_type_3_units',
+    'spatial_replication_level_5_extent',
+    'spatial_replication_level_5_extent_units',
+    'spatial_replication_level_5_label',
+    'spatial_replication_level_5_number_of_unique_reps',
+    'treatment_type_2', 'treatment_type_3'
+]
+
+for i,value in enumerate(new_project_table_columns):
+    if re.search('_extent$', value) is not None or 'reps' in value:
+        main_table_data_merged[value] = -99999
+    else:
+        main_table_data_merged[value] = 'NA'
+
+# Correcting labels for datatypes
+main_table_data_merged['datatype'] = main_table_data_merged[
+    'datatype'].map(lambda x: 'individual' if 'mark' in x else x)
+main_table_data_merged['datatype'] = main_table_data_merged[
+    'datatype'].map(lambda x: 'count' if 'dist' in x else x)
+main_table_data_merged['datatype'] = main_table_data_merged[
+    'datatype'].map(lambda x: 'percent_cover' if 'per_cover' in x else x)
+
+main_table_data_merged.to_sql(
     'project_table',
-    con = ormv3.engine, if_exists='append', index=False
+    con=ormv3.engine, if_exists='append', index=False
 )
 
 # --------------------------------------- #
@@ -147,7 +198,7 @@ main_table_data.columns = main_table_statement.keys()
 project_table_data = main_table_data.rename(
     columns=site_in_project_table_dict_name_changes
 ).copy()
-#print(project_table_data)
+
 project_table_data.to_sql(
     'site_in_project_table', con=ormv3.engine,
     if_exists='append', index=False
@@ -197,27 +248,32 @@ taxa_table.to_sql(
 
 # --------------------------------------------
 # ----- creating COUNT table filter list -----
-main_table_filer_count_statement = ormv2.conn.execute(
+main_table_filer_statement = ormv2.conn.execute(
     select(
         from_obj=table(
             ormv2.Maintable.__tablename__),
         columns=[
             column('lter_proj_site'),
             column('samplingprotocol')
-        ]).
-    where(
-        column('samplingprotocol').like(
-            'cou%')
-    )
+        ])
 )
-main_table_filter_count_data = pd.DataFrame(
-    main_table_filer_count_statement.fetchall()
+main_table_datatype_filter_data = pd.DataFrame(
+    main_table_filer_statement.fetchall()
 )
-main_table_filter_count_data.columns = (
-    main_table_filer_count_statement.keys())
+main_table_datatype_filter_data.columns = (
+    main_table_filer_statement.keys())
+main_table_datatype_filter_data['samplingprotocol'] = main_table_datatype_filter_data[
+    'samplingprotocol'].map(lambda x: 'individual' if 'mark' in x else x)
+main_table_datatype_filter_data['samplingprotocol'] = main_table_datatype_filter_data[
+    'samplingprotocol'].map(lambda x: 'count' if 'dist' in x else x)
+main_table_datatype_filter_data['samplingprotocol'] = main_table_datatype_filter_data[
+    'samplingprotocol'].map(lambda x: 'percent_cover' if 'per_cover' in x else x)
+
+
 #print(main_table_filter_count_data)
-count_filter = main_table_filter_count_data[
-    'lter_proj_site'].values.tolist()
+count_filter = main_table_datatype_filter_data[
+    main_table_datatype_filter_data['samplingprotocol'] == 'count'][
+        'lter_proj_site'].values.tolist()
 
 # ---------------------------------
 # ----- querying COUNT table  -----
@@ -232,6 +288,7 @@ count_table_data.drop('individ', axis=1, inplace=True)
 
 # Take proposed name changes data and make
 # to a dictionary for chaning column names
+
 count_table_name_changes = migration_changes[
     migration_changes['table_to'] == 'count_table'][
         ['column_from', 'column_to']]
@@ -263,27 +320,9 @@ count_table.to_sql(
 # --------------------------------------- #
 # --------------------------------------------
 # ----- creating BIOMASS table filter list -----
-main_table_filer_biomass_statement = ormv2.conn.execute(
-    select(
-        from_obj=table(
-            ormv2.Maintable.__tablename__),
-        columns=[
-            column('lter_proj_site'),
-            column('samplingprotocol')
-        ]).
-    where(
-        column('samplingprotocol').like(
-            'bio%')
-    )
-)
-main_table_filter_biomass_data = pd.DataFrame(
-    main_table_filer_biomass_statement.fetchall()
-)
-main_table_filter_biomass_data.columns = (
-    main_table_filer_biomass_statement.keys())
-#print(main_table_filter_biomass_data)
-biomass_filter = main_table_filter_biomass_data[
-    'lter_proj_site'].values.tolist()
+biomass_filter = main_table_datatype_filter_data[
+    main_table_datatype_filter_data['samplingprotocol'] == 'biomass'][
+        'lter_proj_site'].values.tolist()
 
 # ---------------------------------
 # ----- querying BIOMASS table  -----
@@ -330,27 +369,9 @@ biomass_table.to_sql(
 # --------------------------------------- #
 # --------------------------------------------
 # ----- creating DENSITY table filter list -----
-main_table_filer_density_statement = ormv2.conn.execute(
-    select(
-        from_obj=table(
-            ormv2.Maintable.__tablename__),
-        columns=[
-            column('lter_proj_site'),
-            column('samplingprotocol')
-        ]).
-    where(
-        column('samplingprotocol').like(
-            'dens%')
-    )
-)
-main_table_filter_density_data = pd.DataFrame(
-    main_table_filer_density_statement.fetchall()
-)
-main_table_filter_density_data.columns = (
-    main_table_filer_density_statement.keys())
-#print(main_table_filter_density_data)
-density_filter = main_table_filter_density_data[
-    'lter_proj_site'].values.tolist()
+density_filter = main_table_datatype_filter_data[
+    main_table_datatype_filter_data['samplingprotocol'] == 'density'][
+        'lter_proj_site'].values.tolist()
 
 # ---------------------------------
 # ----- querying DENSITY table  -----
@@ -396,27 +417,9 @@ density_table.to_sql(
 # --------------------------------------- #
 # --------------------------------------------
 # ----- creating PERCENT_COVER table filter list -----
-main_table_filer_percent_cover_statement = ormv2.conn.execute(
-    select(
-        from_obj=table(
-            ormv2.Maintable.__tablename__),
-        columns=[
-            column('lter_proj_site'),
-            column('samplingprotocol')
-        ]).
-    where(
-        column('samplingprotocol').like(
-            'per%')
-    )
-)
-main_table_filter_percent_cover_data = pd.DataFrame(
-    main_table_filer_percent_cover_statement.fetchall()
-)
-main_table_filter_percent_cover_data.columns = (
-    main_table_filer_percent_cover_statement.keys())
-#print(main_table_filter_percent_cover_data)
-percent_cover_filter = main_table_filter_percent_cover_data[
-    'lter_proj_site'].values.tolist()
+percent_cover_filter = main_table_datatype_filter_data[
+    main_table_datatype_filter_data['samplingprotocol'] == 'percent_cover'][
+        'lter_proj_site'].values.tolist()
 
 # ---------------------------------
 # ----- querying PERCENT_COVER table  -----
@@ -462,27 +465,9 @@ percent_cover_table.to_sql(
 # --------------------------------------- #
 # --------------------------------------------
 # ----- creating INDIVIDUAL table filter list -----
-main_table_filer_individual_statement = ormv2.conn.execute(
-    select(
-        from_obj=table(
-            ormv2.Maintable.__tablename__),
-        columns=[
-            column('lter_proj_site'),
-            column('samplingprotocol')
-        ]).
-    where(
-        column('samplingprotocol').like(
-            'indiv%')
-    )
-)
-main_table_filter_individual_data = pd.DataFrame(
-    main_table_filer_individual_statement.fetchall()
-)
-main_table_filter_individual_data.columns = (
-    main_table_filer_individual_statement.keys())
-#print(main_table_filter_individual_data)
-individual_filter = main_table_filter_individual_data[
-    'lter_proj_site'].values.tolist()
+individual_filter = main_table_datatype_filter_data[
+    main_table_datatype_filter_data['samplingprotocol'] == 'individual'][
+        'lter_proj_site'].values.tolist()
 
 # ---------------------------------
 # ----- querying INDIVIDUAL table  -----
@@ -523,7 +508,7 @@ individual_table.to_sql(
 )
 
 
-endTime = dt.datetime.now() - startTime
-print(endTime)
+#endTime = dt.datetime.now() - startTime
+#print(endTime)
 
 
