@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import abc
 import re
+import weakref
 from pandas import concat, DataFrame
 from poplerGUI.logiclayer import class_helpers as hlp 
 
@@ -770,11 +771,15 @@ class Taxa_Table_Builder(AbstractTableBuilder):
                 colnames=nullcols,
                 dflength=len(unique),
                 nullvalue='NA')
-
             unique = concat(
                 [unique, nullsubset, sitelevel], axis=1)
             uniquesubset_site_list.append(unique)
-        print(uniquesubset_site_list)
+            print('uniquesubset taxa build: ', uniquesubset)
+            print('unique taxa build: ', unique)
+            print('uniquesubset_site_list taxa build: ', uniquesubset_site_list)
+            print('uniquesubset taxa build: ', uniquesubset)
+
+        print('sitelist out of taxa build loop: ', uniquesubset_site_list)
 
         final = uniquesubset_site_list[0]
         for i, item in enumerate(uniquesubset_site_list):
@@ -948,6 +953,7 @@ class Table_Builder_Director:
             raise AttributeError('Incorrect user input class')
 
     def set_builder(self, builder):
+        builder = weakref.proxy(builder)
         self._builder = builder
         try:
             assert self._inputs is not None
