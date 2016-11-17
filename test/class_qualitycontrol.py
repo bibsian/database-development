@@ -92,7 +92,7 @@ class QualityControl(object):
                 'logs'].apply(
                     lambda x: x[
                         re.search('table_', x).
-                        end():re.search('_[0-9]{4}_', x).start()])
+                        end():re.search('_[0-9]{4}_[0-9]{2}_[0-9]{2}.log', x).start()])
         # Extracting the type of log it was/what infor is in it
         df['table'] = df['logs'].apply(
             lambda x: x[
@@ -123,8 +123,11 @@ class QualityControl(object):
                                 x.strip()) for x in obj_list.group().strip().split('to')
                         ]
                         obj_cols = shlex.split(re.search('(\".*\")', ln).group())[0]
-                        self.log_dict[obj_cols] = col_list
-                        local_log_dict[obj_cols] = col_list
+                        if len(col_list) == 2:
+                            self.log_dict[obj_cols] = col_list
+                            local_log_dict[obj_cols] = col_list
+                        else:
+                            pass
                     except Exception as e:
                         print(str(e))
                         pass
@@ -167,6 +170,8 @@ class QualityControl(object):
             for i, s in enumerate(changed):
                 if i == 0 or s == ' ':
                     word = revert[i]
+                    if i == 0:
+                        original_site_list[indexer] = word
                 if s == ' ':
                     indexer += 1
                 elif i > 0:
