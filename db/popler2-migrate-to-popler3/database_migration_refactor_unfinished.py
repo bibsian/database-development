@@ -21,7 +21,7 @@ elif sys.platform == "win32":
 # Popler Version 2 tables & connection
 
 engine_popler_2 = create_engine(
-    'postgresql+psycopg2:///',
+    'postgresql+psycopg2://postgres:demography@localhost/popler',
     echo=False)
 conn_popler_2 = engine_popler_2.connect()
 # Mapping metadata
@@ -58,7 +58,7 @@ class Rawtable(Base_popler_2):
 # Popler Version 3 tables & collections
 
 engine_popler_3 = create_engine(
-    'postgresql+psycopg2:///',
+    'postgresql+psycopg2://postgres:demography@localhost/popler_3',
     echo=False)
 conn_popler_3 = engine_popler_3.connect()
 # Mapping metadata
@@ -251,8 +251,12 @@ project_col_subset = [
     'metalink', 'knbid'
 ]
 
-project_table_to_upload = project_table[project_col_subset].drop_duplicates()
+project_table_to_upload = project_table[project_col_subset].drop_duplicates(
+    subset='metarecordid').copy()
 
+
+change_column_names_and_upload(
+    tablename='project_table', dataframe=project_table_to_upload, dropdupes=False)
 
 # ------------------------------------------------------
 # Step 3: Migrate Maintable records (subset) to site_in_project_table
