@@ -18,7 +18,8 @@ def go():
         ('taxa_table', orm.taxa_table),
         ('site_in_project_table', orm.site_in_project_table),
         ('project_table', orm.project_table),
-        ('study_site_table', orm.study_site_table)]
+        ('study_site_table', orm.study_site_table)
+        ]
     )
     for i, item in enumerate(table_dict):
         delete_statement = table_dict[item].__table__.delete()
