@@ -12,18 +12,6 @@ import datetime as dt
 import logging
 import pandas as pd
 
-__all__ = [
-    'Ltertable', 'Sitetable', 'Maintable', 'Taxatable', 'Rawtable',
-    'Session', 'convert_types', 'sitetypes', 'maintypes', 'taxatypes',
-    'rawtypes']
-
-# Setup logging for program
-date = (str(dt.datetime.now()).split()[0]).replace("-", "_")
-logging.basicConfig(
-    filename='Logs_DbTransactions/database_log_{}.log'.format(date))
-logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
-
-
 # Adapter for numpy datatypes
 def adapt_numpy_int64(numpy_int64):
     ''' Enable postgres to recognize numpy's int64 data type'''
@@ -32,7 +20,7 @@ register_adapter(numpy.int64, adapt_numpy_int64)
 
 engine = create_engine(
     'postgresql+psycopg2:///',
-    echo=True)
+    echo=False)
 conn = engine.connect()
 
 # Mapping metadata
