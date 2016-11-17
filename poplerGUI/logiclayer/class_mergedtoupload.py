@@ -331,7 +331,10 @@ class MergeToUpload(object):
         print('merge class taxa merged: ', tbl_taxa_merged)
 
         tbl_taxa_merged.fillna('NA', inplace=True)
-        orm.convert_types(tbl_taxa_merged, orm.taxa_types)
+        try:
+            orm.convert_types(tbl_taxa_merged, orm.taxa_types)
+        except Exception as e:
+            print('converting issues: ', str(e))
 
         session = self.session
         site_in_proj_key_query = session.execute(
@@ -355,7 +358,14 @@ class MergeToUpload(object):
                 siteinprojkeydf['site_in_project_key'].values.tolist()):
             pass
         else:
-            tbl_taxa_merged.to_sql(
+            taxacolumns = [
+                'site_in_project_taxa_key', 'sppcode', 'kingdom',
+                'subkingdom', 'infrakingdom', 'superdivision', 'division',
+                'subdivision', 'superphylum', 'phylum', 'subphylum',
+                'clss', 'subclass', 'ordr', 'family', 'genus', 'species',
+                'common_name', 'authority'
+            ]
+            tbl_taxa_merged[taxacolumns].to_sql(
                 'taxa_table', orm.conn, if_exists='append', index=False)
 
     def merge_for_datatype_table_upload(
@@ -474,7 +484,7 @@ class MergeToUpload(object):
         # And converting data types
         tbl_dtype_to_upload.rename(columns={
             'taxa_table_key': 'taxa_{}_fkey'.format(str(formated_dataframe_name))}
-            , inplace=True)            
+            , inplace=True)
         datatype_key = 'site_in_project_{}_fkey'.format(str(formated_dataframe_name))
         tbl_dtype_to_upload.rename(columns={
             'site_in_project_taxa_key': datatype_key}, inplace=True)
@@ -485,14 +495,21 @@ class MergeToUpload(object):
 
         print('push raw_before', tbl_dtype_to_upload.columns)
         print(tbl_dtype_to_upload.dtypes)
+        print(self.table_types[datatype_table])
+        try:
+            orm.convert_types(tbl_dtype_to_upload, self.table_types[datatype_table])
+        except Exception as e:
+            print('converting issues: ', str(e))
 
-        orm.convert_types(tbl_dtype_to_upload, self.table_types[datatype_table])
+
         print('push raw_after', tbl_dtype_to_upload.columns)
         print(tbl_dtype_to_upload.dtypes)
-
+        print('this should have worked')
+        
         tbl_dtype_to_upload.to_sql(
             datatype_table,
             orm.conn, if_exists='append', index=False)
+        print('past datatype upload')
 
     def update_project_table(
             self,
