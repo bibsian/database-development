@@ -301,7 +301,8 @@ site_in_project_table = Table(
         'site_in_project_key',
         Integer, primary_key=True),
     Column('study_site_table_fkey', None,
-           ForeignKey('study_site_table.study_site_key')),
+           ForeignKey(
+               'study_site_table.study_site_key')),
 
     Column('project_table_fkey', None,
            ForeignKey('project_table.proj_metadata_key')),
