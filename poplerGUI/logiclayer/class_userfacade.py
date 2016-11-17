@@ -261,7 +261,8 @@ class Facade:
         sitecol = self._inputs['siteinfo'].lnedentry['study_site_key']
         uqsitelevels = self._valueregister['sitelevels']
 
-        director = Table_Builder_Director()           
+        director = Table_Builder_Director()
+        
         builder = self._dbtabledict[tablename]
         director.set_user_input(uniqueinput)
         director.set_globalid(globalid)
@@ -313,7 +314,7 @@ class Facade:
                     self.sitepushed = True
                 except Exception as e:
                     print(str(e))
-                    self._tablelog['study_site_table'].debug(str(e))
+                    #self._tablelog['study_site_table'].debug(str(e))
                     raise ValueError(
                         'Could not push study site table data: ' + str(e)
                     )
@@ -335,7 +336,7 @@ class Facade:
                 self.mainpushed = True
             except Exception as e:
                 print(str(e))
-                self._tablelog['project_table'].debug(str(e))
+                #self._tablelog['project_table'].debug(str(e))
                 raise ValueError(
                     'Could not push project table data: ' + str(e)
                 )
