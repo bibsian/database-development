@@ -46,7 +46,7 @@ from sqlalchemy.orm import relationship
 ###### @@@@@@@@@@@@@ KEY @@@@@@@@@@@@@@@ ##########
 
 engine = create_engine(
-    'postgresql+psycopg2:///',
+    'postgresql+psycopg2://postgres:demography@localhost/popler_3',
     echo=False)
 #engine = create_engine(
 #    'postgresql+psycopg2:///',
@@ -125,7 +125,7 @@ namechange_file = read_csv(
 integrity_check = {}
 data_checker = namedtuple('check', 'id status details')
 
-#z = 13
+metarecords_list = [1,2,3,4]
 
 for z in metarecords_list:
     metadata_dict = {}
