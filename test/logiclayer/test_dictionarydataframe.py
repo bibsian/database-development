@@ -46,34 +46,40 @@ def DictionaryDataframe():
             '''
             actual method that converts column records into strings
             '''
-            try:
-                # Creating a separte dictionary for each column
-                # and adding to list
+            if self.names[0] != '':
                 try:
-                    self.dictstartseq = [
-                        {self.data[self.names].columns[i]:None
-                         for i,item in enumerate(self.names)}]
-                except Exception as e:
-                    self.names = [int(x) for x in self.names]
-                    self.dictstartseq = [
-                        {self.data[self.names].columns[i]:None
-                         for i,item in enumerate(self.names)}]
-            except:
-                raise AttributeError(
-                    'Count not verify column names')
+                    # Creating a separte dictionary for each column
+                    # and adding to list
+                    try:
+                        self.dictstartseq = [
+                            {self.data[self.names].columns[i]:None
+                             for i,item in enumerate(self.names)}]
+                    except Exception as e:
+                        self.names = [int(x) for x in self.names]
+                        self.dictstartseq = [
+                            {self.data[self.names].columns[i]:None
+                             for i,item in enumerate(self.names)}]
+                except:
+                    raise AttributeError(
+                        'Count not verify column names')
 
-            self.dictlist = [
-                (self.dictstartseq[0]).copy()
-                for x in range(self.nrows)]
+                self.dictlist = [
+                    (self.dictstartseq[0]).copy()
+                    for x in range(self.nrows)]
 
-            for col in self.names:
-                for i in range(self.nrows):
-                    self.dictlist[i][col] = str(self.data[col].iloc[i])
+                for col in self.names:
+                    for i in range(self.nrows):
+                        self.dictlist[i][col] = str(self.data[col].iloc[i])
 
-            self.dictdf = DataFrame(
-                {'covariates': self.dictlist})
-            self.dictdf['covariates'] = self.dictdf[
-                'covariates'].astype(str)
+                self.dictdf = DataFrame(
+                    {'covariates': self.dictlist})
+                self.dictdf['covariates'] = self.dictdf[
+                    'covariates'].astype(str)
+            else:
+                self.dictdf = DataFrame(
+                    {'covariates': ['NA' for i in range(self.nrows)]})
+                self.dictdf['covariates'] = self.dictdf[
+                    'covariates'].astype(str)
 
             return self.dictdf
 
@@ -89,9 +95,10 @@ def df():
 
 def test_dictionarydataframe(df, DictionaryDataframe):
 
-    columnstocombine = ['temp', 'blank', 'spelling']
+    columnstocombine = ['']
     test = DictionaryDataframe(df, columnstocombine)
     testdf = test.convert_records()
+    print(testdf)
     assert (isinstance(testdf, DataFrame)) is True
     assert (isinstance(testdf.iloc[0], object)) is True
     testseries = testdf['covariates'].astype(str)

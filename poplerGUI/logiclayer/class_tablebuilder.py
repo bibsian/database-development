@@ -480,6 +480,11 @@ class Study_Site_Table_Builder(AbstractTableBuilder):
         keycols: primary and foreign keys in the table 
         (Typically what are removed from the nullcol list)
         '''
+        acols = list(acols) if acols is not None else acols
+        nullcols = list(nullcols) if acols is not None else nullcols
+        keycols = list(keycols) if keycols is not None else keycols
+        dbcol = list(dbcol) if dbcol is not None else dbcol
+        sitelevels = list(sitelevels) if sitelevels is not None else sitelevels
 
         print('acols before: ', acols)
         print('nullcols before: ', nullcols)
@@ -713,6 +718,12 @@ class Taxa_Table_Builder(AbstractTableBuilder):
             self, dataframe, acols, nullcols, keycols, dbcol,
             globalid, siteid, sitelevels):
 
+        acols = list(acols) if acols is not None else acols
+        nullcols = list(nullcols) if acols is not None else nullcols
+        keycols = list(keycols) if keycols is not None else keycols
+        dbcol = list(dbcol) if dbcol is not None else dbcol
+        sitelevels = list(sitelevels) if sitelevels is not None else sitelevels
+
         try:
             acols = [x.rstrip() for x in acols]
         except Exception as e:
@@ -753,13 +764,17 @@ class Taxa_Table_Builder(AbstractTableBuilder):
         print('DB COLUMN REVISED: ', dbcolrevised)
         uniquesubset_site_list = []
         for i,item in enumerate(sitelevels):                
-            uniquesubset = dataframe[dataframe[siteid]==item]
+            uniquesubset = dataframe[dataframe[siteid]==item].copy()
             try:
-                uniquesubset = uniquesubset[acols]
+                uniquesubset = uniquesubset[acols].copy()
             except Exception as e:
                 print(str(e))
+            for j, rename_item in enumerate(dbcolrevised):
+                uniquesubset.rename(
+                    columns={acols[j]: rename_item},
+                    inplace=True)
 
-            unique = uniquesubset.drop_duplicates()
+            unique = uniquesubset.drop_duplicates().copy()
             unique = unique.reset_index()
             sitelevel = hlp.produce_null_df(
                 ncols=len(unique),
@@ -774,28 +789,19 @@ class Taxa_Table_Builder(AbstractTableBuilder):
             unique = concat(
                 [unique, nullsubset, sitelevel], axis=1)
             uniquesubset_site_list.append(unique)
-            print('uniquesubset taxa build: ', uniquesubset)
-            print('unique taxa build: ', unique)
-            print('uniquesubset_site_list taxa build: ', uniquesubset_site_list)
-            print('uniquesubset taxa build: ', uniquesubset)
-
-        print('sitelist out of taxa build loop: ', uniquesubset_site_list)
 
         final = uniquesubset_site_list[0]
+        print('final before loop: ', final)
         for i, item in enumerate(uniquesubset_site_list):
             if i > 0:
                 final = concat([final, item], ignore_index=True)
             else:
                 pass
-        print('past subsetting sites')
 
-        for i, item in enumerate(dbcolrevised):
-            final.rename(
-                columns={acols[i]: item},
-                inplace=True)
+        print('past subsetting sites')
+        print(final.columns)
         dbcol.append(siteid)
-        print('database columns to subset from taxa build: ', dbcol)
-        return final[dbcol]
+        return final[dbcol].copy()
 
 
 class Observation_Table_Builder(AbstractTableBuilder):
@@ -807,6 +813,12 @@ class Observation_Table_Builder(AbstractTableBuilder):
     def get_dataframe(
             self, dataframe, acols, nullcols, keycols, dbcol,
             globalid, siteid, sitelevels):
+
+        acols = list(acols) if acols is not None else acols
+        nullcols = list(nullcols) if acols is not None else nullcols
+        keycols = list(keycols) if keycols is not None else keycols
+        dbcol = list(dbcol) if dbcol is not None else dbcol
+        sitelevels = list(sitelevels) if sitelevels is not None else sitelevels
 
         [
             '{}_observation'.format(
@@ -822,7 +834,10 @@ class Observation_Table_Builder(AbstractTableBuilder):
         print('obs nullcols: ', nullcols)
 
         if self._inputs.tablename == 'individual_table':
-            acols.remove('')
+            try:
+                acols.remove('')
+            except Exception as e:
+                print('no individual column to remove: ', str(e))
         else:
             pass
 
@@ -1036,6 +1051,11 @@ class UpdaterTableBuilder(AbstractTableBuilder):
             self, dataframe, acols, nullcols, dbcol,
             globalid, siteid, sitelevels):
 
+        acols = list(acols) if acols is not None else acols
+        nullcols = list(nullcols) if acols is not None else nullcols
+        dbcol = list(dbcol) if dbcol is not None else dbcol
+        sitelevels = list(sitelevels) if sitelevels is not None else sitelevels
+
         acols = [x.rstrip() for x in acols]
         nullcols = [x.rstrip() for x in nullcols]
         dbcol = [x.rstrip() for x in dbcol]
@@ -1061,6 +1081,12 @@ class ClimateTableBuilder(AbstractTableBuilder):
     def get_dataframe(
             self, dataframe, acols, nullcols, dbcol,
             globalid, siteid, sitelevels):
+
+        acols = list(acols)
+        nullcols = list(nullcols)
+        keycols = list(keycols)
+        dbcol = list(dbcol)
+        sitelevels = list(sitelevels)
 
         acols = [x.rstrip() for x in acols]
         nullcols = [x.rstrip() for x in nullcols]

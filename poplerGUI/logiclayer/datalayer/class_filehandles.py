@@ -123,8 +123,8 @@ class DataFileOriginator(object):
                         '.txt']['skiprows'],
                     header=self.inputoptions[
                         '.txt']['header'],
-                    error_bad_lines=False,
-                    engine='c'
+                    error_bad_lines=False
+                    #engine='c'
                     )
         except Exception as e:
             print('Could not read in file: ', str(e))
@@ -142,7 +142,8 @@ class DataFileOriginator(object):
             self._data[item].replace(
                 dict(zip(na_vals, ['NaN']*len(na_vals))),
                 inplace=True)
-        self._data.fillna('NA', inplace=True)
+        self._data.fillna('NA',inplace=True)
+
         self._data = self._data[
             self._data.isnull().all(axis=1) != True]
         memento = Memento(dfstate = self._data.copy(),state= self.state)
@@ -154,16 +155,14 @@ class Caretaker(object):
     def __init__(self):
         self._statelogbook = {}
         self._statelist = []
-
     def save(self, memento):
-        '''
+        ''' 
         Saves memento object with a dictionary
         recording the state name and the dataframe state
         '''
         self._statelogbook[
             memento.get_state()] = memento
         self._statelist.append(memento.get_state())
-
     def restore(self):
         '''
         Restores a memento given a state_name
@@ -183,15 +182,16 @@ class Caretaker(object):
             print(str(e))
 
 
+
 class Memento(object):
     '''
-    Memento Class.
+    Memento Class. 
     This simply records the
-    state of the data and gives it to the
+    state of the data and gives it to the 
     FileCaretaker
     '''
     def __init__(self, dfstate, state):
-        self._dfstate = dfstate.copy()
+        self._dfstate = dfstate.copy(deep=True)
         self._state = str(state)
 
     def get_dfstate(self):
@@ -205,11 +205,11 @@ class DataOriginator(object):
     def __init__(self, df, state):
         self._data = df
         self._state = state
-
     def save_to_memento(self):
         memento = Memento(self._data, self._state)
         return memento
-
     def restore_from_memento(self, memento):
         self._data = memento.get_dfstate()
         self._state = memento.get_state()
+
+

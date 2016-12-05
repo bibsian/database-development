@@ -131,7 +131,7 @@ class TimeParse(object):
 
         if len(nulls) > 0:
             nulldf = hlp.produce_null_df(
-                len(nulls), nulls, len(data), 'nan')
+                len(nulls), nulls, len(data), 'NaN')
 
 
         else:

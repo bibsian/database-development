@@ -6,8 +6,7 @@ import sys, os
 import copy
 if sys.platform == "darwin":
     rootpath = (
-        "/Users/bibsian/Desktop/git/database-development/" +
-        "test/")
+        "/Users/bibsian/Desktop/git/database-development/")
     rawpath = (
         "/Users/bibsian/Dropbox/database-development/" +
         "popler_version2/git-repo-revert/poplerGUI/Metadata_and_og_data/")
@@ -15,8 +14,7 @@ if sys.platform == "darwin":
     end = "/"
 elif sys.platform == "win32":
     rootpath = (
-        "C:\\Users\MillerLab\\Desktop\\database-development" +
-        "\\test\\")
+        "C:\\Users\MillerLab\\Desktop\\database-development\\")
     rawpath = (
         "\\Users\\MillerLab\\Dropbox\\database-development\\" +
         "popler_version2\\git-repo-revert\\poplerGUI\\Metadata_and_og_data\\")
@@ -169,7 +167,7 @@ def DataFileOriginator(Memento):
                     dict(zip(na_vals, ['NaN']*len(na_vals))),
                     inplace=True)
             self._data.fillna('NA',inplace=True)
-            print(self._data['FRONDS'])
+
             self._data = self._data[
                 self._data.isnull().all(axis=1) != True]
             memento = Memento(dfstate = self._data.copy(),state= self.state)
@@ -264,12 +262,12 @@ def user_input():
 
 @pytest.fixture
 def real_data():
-    rbtn = {'csv': True, 'xlsx': False, 'txt': False}
+    rbtn = {'csv': False, 'xlsx': False, 'txt': True}
     lned = {
-        'sheet': '', 'delim': '', 'tskip': '', 'bskip': '',
+        'sheet': '', 'delim': '\t', 'tskip': '', 'bskip': '',
         'header': ''
     }
-    fname = (rawpath + 'giant_kelp_all_years_20140908.csv')
+    fname = (rootpath+'data'+end + 'SGS_LTER_Humus_canopyCover.txt')
     user_input = ini.InputHandler(
         name='fileoptions',lnedentry=lned,
         rbtns=rbtn, filename=fname, checks=False)
@@ -287,7 +285,7 @@ def real_data():
 #     originator.restore_from_memento(caretaker.restore())
 #     assert (isinstance(originator._data, DataFrame)) is True
 
-def test_csv_true(
+def test_txt_true(
         real_data, Caretaker,
         DataFileOriginator, DataOriginator, Memento):
     caretaker = Caretaker()
@@ -297,7 +295,8 @@ def test_csv_true(
     caretaker.save(originator_from_file.save_to_memento())
     originator.restore_from_memento(caretaker.restore())
     assert (isinstance(originator._data, DataFrame)) is True
-
+    print(originator._data)
+    assert 0
 
 # 
 # @pytest.fixture
@@ -396,7 +395,7 @@ def test_csv_true(
 #     rbtn = {'csv': False, 'xlsx': False, 'txt': True}
 #     lned = {
 #         'sheet': '', 'delim': '\t', 'tskip': '10', 'bskip': '',
-#         'header': ''
+# ': ''
 #     }
 #     fname = (
 #         rootpath + end + 'Datasets_manual_test' + end +

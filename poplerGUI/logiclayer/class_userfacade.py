@@ -15,7 +15,7 @@ from poplerGUI.logiclayer import class_logconfig as log
 from poplerGUI.logiclayer import class_mergedtoupload as mrg
 from poplerGUI.logiclayer.datalayer import config as orm
 from poplerGUI.logiclayer.datalayer.class_filehandles import (
-    Caretaker, DataFileOriginator, DataOriginator
+    Caretaker, DataFileOriginator, DataOriginator, Memento
 )
 
 if sys.platform == "darwin":
@@ -159,7 +159,7 @@ class Facade:
         else:
             verifier._meta = read_csv((
                 rootpath + end + 'data' + end +
-                'Identified_to_upload.csv'),
+                'Cataloged_Data_Current_sorted.csv'),
                 encoding='iso-8859-11')
 
         try:
@@ -312,6 +312,7 @@ class Facade:
                         'study_site_table',
                         orm.conn, if_exists='append', index=False)
                     self.sitepushed = True
+                    print('PUSHED STUDY')
                 except Exception as e:
                     print(str(e))
                     #self._tablelog['study_site_table'].debug(str(e))
@@ -334,6 +335,7 @@ class Facade:
                     if_exists='append', index=False
                 )
                 self.mainpushed = True
+                print('PUSHED PROJECT')
             except Exception as e:
                 print(str(e))
                 #self._tablelog['project_table'].debug(str(e))

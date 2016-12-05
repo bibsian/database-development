@@ -26,7 +26,8 @@ def adapt_numpy_int64(numpy_int64):
 register_adapter(numpy.int64, adapt_numpy_int64)
 
 engine = create_engine(
-    'postgresql+psycopg2:///',
+    #'postgresql+psycopg2://poplermaster:qmokytmchgh0lDhY@popler.cu3plewsggca.us-west-2.rds.amazonaws.com/popler',
+    'postgresql+psycopg2://postgres:demography@localhost/popler_3',
     echo=False)
 conn = engine.connect()
 # Mapping metadata
@@ -110,14 +111,20 @@ def convert_types(dataframe, types):
                 'spatial_replication_level_3', 'spatial_replication_level_4',
                 'spatial_replication_level_5']:
             try:
-                dataframe[i] = dataframe[i].apply(str).values
+                dataframe.loc[:, i] = dataframe.loc[:, i].apply(str).values
                 print('In CONVERT: ', i ,dataframe.loc[:,i].dtypes)
             except Exception as e:
                 print('string conversion did not work:', i, str(e))
-            dataframe[i] = dataframe[i].astype(object).values
+            dataframe.loc[:, i] = dataframe.loc[:, i].astype(object).values
+
+        if types[i] in ['NUMERIC', 'numeric', 'INTEGER', 'integer']:
+            try:
+                dataframe.loc[:, i] = pd.to_numeric(dataframe.loc[:, i].values, errors='coerce')
+            except Exception as e:
+                print('numeric conversion did not work:', i, str(e))
 
         if re.search('observation', i) is not None or re.search('_extent$', i) is not None or re.search('unique_reps', i) is not None:
-            dataframe[i] = pd.to_numeric(dataframe[i], errors='coerce').values
+            dataframe.loc[:, i] = pd.to_numeric(dataframe.loc[:, i].values, errors='coerce')
 
 
 

@@ -112,7 +112,7 @@ def produce_null_df(ncols, colnames, dflength, nullvalue):
             re.sub(' ', ' ', (str(nullvalue)*dflength)).split())]*
         len(colnames), axis=1)
     allnulls.columns = colnames
-    return allnulls
+    return allnulls.copy()
 
 def check_registration(clss, inputname):
     '''

@@ -871,7 +871,7 @@ def biomass_handle_4_percent_cover():
         ('structured_type_1', ''),
         ('structured_type_2', ''),
         ('structured_type_3', ''),
-        ('treatment_type_1', ''),
+        ('treatment_type_1', 'plot'),
         ('treatment_type_2', ''),
         ('treatment_type_3', ''),
         ('unitobs', 'cover')
@@ -884,7 +884,7 @@ def biomass_handle_4_percent_cover():
         ('structured_type_1', False),
         ('structured_type_2', False),
         ('structured_type_3', False),
-        ('treatment_type_1', False),
+        ('treatment_type_1', True),
         ('treatment_type_2', False),
         ('treatment_type_3', False),
         ('unitobs', True)
@@ -1417,6 +1417,23 @@ def MergeToUpload():
             # Step 10) Uploading to the database
             datatype_table = '{}_table'.format(str(formated_dataframe_name))
 
+            tbl_dtype_to_upload[datatype_obs] = to_numeric(
+                tbl_dtype_to_upload[datatype_obs], errors='coerce'
+            )
+
+            text_cols = [
+                'spatial_replication_level_1', 'spatial_replication_level_2',
+                'spatial_replication_level_3', 'spatial_replication_level_4',
+                'spatial_replication_level_5', 'treatment_type_1',
+                'treatment_type_2', 'treatment_type_3',
+                'structure_type_1', 'structure_type_2', 'structure_type_3'
+            ]
+            tbl_dtype_to_upload[text_cols] = tbl_dtype_to_upload[
+                text_cols].applymap(str)
+            tbl_dtype_to_upload[text_cols] = tbl_dtype_to_upload[
+                text_cols].applymap(lambda x: x.strip())
+
+            
             print('push raw_before', tbl_dtype_to_upload.columns)
             print(tbl_dtype_to_upload.dtypes)
 

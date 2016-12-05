@@ -512,6 +512,14 @@ def Study_Site_Table_Builder(AbstractTableBuilder):
             (Typically what are removed from the nullcol list)
             '''
 
+
+            
+            acols = list(acols) if acols is not None else acols
+            nullcols = list(nullcols) if acols is not None else nullcols
+            keycols = list(keycols) if keycols is not None else keycols
+            dbcol = list(dbcol) if dbcol is not None else dbcol
+            sitelevels = list(sitelevels) if sitelevels is not None else sitelevels
+
             print('acols before: ', acols)
             print('nullcols before: ', nullcols)
             print('dbcol before: ', dbcol)
@@ -750,9 +758,16 @@ def Taxa_Table_Builder(AbstractTableBuilder):
         '''
         dependentdf = None
         def get_dataframe(
-                self, dataframe, acols, nullcols, keycols, dbcol,
+                self, dataframe,
+                acols, nullcols, keycols, dbcol,
                 globalid, siteid, sitelevels):
-            
+
+            acols = list(acols) if acols is not None else acols
+            nullcols = list(nullcols) if acols is not None else nullcols
+            keycols = list(keycols) if keycols is not None else keycols
+            dbcol = list(dbcol) if dbcol is not None else dbcol
+            sitelevels = list(sitelevels) if sitelevels is not None else sitelevels
+
             try:
                 acols = [x.rstrip() for x in acols]
             except Exception as e:
@@ -790,6 +805,7 @@ def Taxa_Table_Builder(AbstractTableBuilder):
             
             dbcolrevised = [x for x in dbcol if x not in nullcols]
             print('DB COLUMN REVISED: ', dbcolrevised)
+
             uniquesubset_site_list = []
             for i,item in enumerate(sitelevels):                
                 uniquesubset = dataframe[dataframe[siteid]==item]
@@ -797,7 +813,10 @@ def Taxa_Table_Builder(AbstractTableBuilder):
                     uniquesubset = uniquesubset[acols]
                 except Exception as e:
                     print(str(e))
-                    
+                for j, rename_item in enumerate(dbcolrevised):
+                    uniquesubset.rename(
+                        columns={acols[j]: rename_item},
+                        inplace=True)
                 unique = uniquesubset.drop_duplicates()
                 unique = unique.reset_index()
                 sitelevel = hlp.produce_null_df(
@@ -823,15 +842,10 @@ def Taxa_Table_Builder(AbstractTableBuilder):
                 else:
                     pass
             print('past subsetting sites')
-
-            for i, item in enumerate(dbcolrevised):
-                final.rename(
-                    columns={acols[i]: item},
-                    inplace=True)
             dbcol.append(siteid)
             print(final)
 
-            return final[dbcol]
+            return final[dbcol].copy()
 
     return Taxa_Table_Builder
 
@@ -851,6 +865,12 @@ def Observation_Table_Builder(AbstractTableBuilder):
                 self, dataframe, acols, nullcols, keycols, dbcol,
                 globalid, siteid, sitelevels):
 
+            acols = list(acols) if acols is not None else acols
+            nullcols = list(nullcols) if acols is not None else nullcols
+            keycols = list(keycols) if keycols is not None else keycols
+            dbcol = list(dbcol) if dbcol is not None else dbcol
+            sitelevels = list(sitelevels) if sitelevels is not None else sitelevels
+
             [
                 '{}_observation'.format(
                     re.sub('_table', '', self._inputs.tablename))
@@ -865,7 +885,10 @@ def Observation_Table_Builder(AbstractTableBuilder):
             print('obs nullcols: ', nullcols)
 
             if self._inputs.tablename == 'individual_table':
-                acols.remove('')
+                try:
+                    acols.remove('')
+                except Exception as e:
+                    print('no individual column to remove: ', str(e))
             else:
                 pass
             
@@ -905,7 +928,6 @@ def Observation_Table_Builder(AbstractTableBuilder):
                 ]
                 [acols.append(x) for x in columns_where_data_is_from_query]
 
-                
             uniquesubset = dataframe[acols]
             print('uniquesub: ', uniquesubset)
             nullsubset = hlp.produce_null_df(
@@ -937,14 +959,15 @@ def Observation_Table_Builder(AbstractTableBuilder):
                 original_column_names_to_change = list(
                     self._inputs.lnedentry.values())
                 original_column_names_to_change.append(siteid)
+
                 for i, item in enumerate(fomated_column_to_change):
                     final.rename(
                         columns={
                             original_column_names_to_change[i]: item},
                         inplace=True)
 
-
                 return final
+
 
             except Exception as e:
                 print(str(e))
@@ -967,6 +990,12 @@ def Site_In_Project_Table_Builder(AbstractTableBuilder):
         def get_dataframe(
                 self, dataframe, acols, nullcols, keycols, dbcol,
                 globalid, siteid, sitelevels):
+
+            acols = list(acols) if acols is not None else acols
+            nullcols = list(nullcols) if acols is not None else nullcols
+            keycols = list(keycols) if keycols is not None else keycols
+            dbcol = list(dbcol) if dbcol is not None else dbcol
+            sitelevels = list(sitelevels) if sitelevels is not None else sitelevels
 
             # Columns that will be updated later in the
             # program
@@ -1121,309 +1150,315 @@ def Table_Builder_Director(Database_Table_Setter):
 # ------------------------------------------------------ #
 # ---------------- Site table build test --------------- #
 # ------------------------------------------------------ #
-
-@pytest.fixture
-def dataset_test_1():
-    return read_csv(
-        rootpath + end + 'test' + end +
-        'Datasets_manual_test/raw_data_test_1.csv')
-
-def test_study_site_table_build(
-        Study_Site_Table_Builder, Table_Builder_Director,
-        site_handle_1_count, dataset_test_1):
-    '''
-    Testing builder class for site table
-    '''
-    facade = face.Facade()
-    facade.input_register(site_handle_1_count)
-    face_input = facade._inputs[site_handle_1_count.name]
-    assert (isinstance(face_input, ini.InputHandler)) is True
-
-    study_site_table_build = Study_Site_Table_Builder()
-    assert (isinstance(
-        study_site_table_build, Study_Site_Table_Builder)) is True
-
-    director = Table_Builder_Director()
-    assert (isinstance(director, Table_Builder_Director)) is True
-    director.set_user_input(face_input)
-    director.set_builder(study_site_table_build)
-    director.set_data(dataset_test_1)
-
-    sitetab = director.get_database_table()
-    showsite = sitetab._availdf
-    assert (isinstance(showsite, DataFrame)) is True
-
-
-
-# ------------------------------------------------------ #
-# ---------------- Project table build test --------------- #
-# ------------------------------------------------------ #
-
-@pytest.fixture
-def metadata_data():
-    return read_csv(
-        rootpath + end + 'data' + end +
-        'Identified_to_upload.csv', encoding='iso-8859-11')
-
-
-def test_project_table_build(
-        Project_Table_Builder, Table_Builder_Director,
-        project_handle_1_count, metadata_data, dataset_test_1):
-
-    sitelevels = dataset_test_1[
-        'site'].drop_duplicates().values.tolist()
-
-    facade = face.Facade()
-    facade.input_register(project_handle_1_count)
-    face_input = facade._inputs[project_handle_1_count.name]
-
-    assert (isinstance(face_input, ini.InputHandler)) is True
-    project_table = Project_Table_Builder()
-    assert (isinstance(project_table, Project_Table_Builder)) is True
-
-    director = Table_Builder_Director()
-    assert (isinstance(director, Table_Builder_Director)) is True
-    director.set_user_input(face_input)
-    director.set_globalid(1)
-    director.set_builder(project_table)
-    director.set_data(metadata_data)
-    director.set_sitelevels(sitelevels)
-    director.set_siteid('site')
-
-    project_table_df = director.get_database_table()
-    show_project_table = project_table_df._availdf
-    print(show_project_table)
-    assert 0
-
-    assert (
-        'control_group' in show_project_table.columns.values.tolist()) is True
-    
-    assert (isinstance(show_project_table, DataFrame)) is True
-    assert (
-        show_project_table['datatype'].drop_duplicates().values.tolist()
-        == ['count']) is True
-    assert (
-        show_project_table['proj_metadata_key'].values.tolist()
-        == [1]) is True
-
-
-
-# ------------------------------------------------------ #
-# ---------------- Taxa table build test --------------- #
-# --------------- Create taxa feature is OFF ----------- #
-# ------------------------------------------------------ #
-
-@pytest.fixture
-def taxadfexpected():
-    taxadfexpected = read_csv(
-        rootpath + end + 'test' +  end +
-        'Datasets_manual_test' + end + 'taxa_table_test.csv')
-    taxadfexpected.fillna('NA', inplace=True)
-    return taxadfexpected
-    
-def test_taxatable_build(
-        Taxa_Table_Builder, Table_Builder_Director, taxa_handle_1_count,
-        dataset_test_1, taxadfexpected):
-    sitelevels = dataset_test_1['site'].drop_duplicates().values.tolist()
-    sitelevels.sort()
-    facade = face.Facade()
-    facade.input_register(taxa_handle_1_count)
-    face_input = facade._inputs[taxa_handle_1_count.name]
-    taxabuilder = Taxa_Table_Builder()
-    assert (isinstance(taxabuilder, Taxa_Table_Builder)) is True
-
-    director = Table_Builder_Director()
-    assert (isinstance(director, Table_Builder_Director)) is True
-    director.set_user_input(face_input)
-    director.set_builder(taxabuilder)
-    director.set_data(dataset_test_1)
-    director.set_globalid(1)
-    director.set_siteid('site')
-    director.set_sitelevels(sitelevels)
-    
-    taxatable = director.get_database_table()
-    showtaxa = taxatable._availdf
-    assert isinstance(showtaxa,DataFrame)    
-
-    testphylum = list(set(showtaxa['phylum'].values.tolist()))
-    testphylum.sort()
-    testorder = list(set(showtaxa['genus'].values.tolist()))
-    testorder.sort()
-    testspecies = list(set(showtaxa['species'].values.tolist()))
-    testspecies.sort()
-
-    
-    taxadfexpected = taxadfexpected[
-        taxadfexpected['metadata_key'] == 1]
-    
-    truephylum = list(set(taxadfexpected['phylum'].values.tolist()))
-    truephylum.sort()
-    trueorder = list(set(taxadfexpected['genus'].values.tolist()))
-    trueorder.sort()
-    truespecies = list(set(taxadfexpected['species'].values.tolist()))
-    truespecies.sort()
-
-    assert (testphylum == truephylum) is True
-    assert (testorder == trueorder) is True    
-    assert (testspecies == truespecies) is True
-
-# ------------------------------------------------------ #
-# ---------------- Taxa table build test --------------- #
-# --------------- Create taxa feature is ON ----------- #
-# ------------------------------------------------------ #
-@pytest.fixture
-def taxa_user_input_create():
-    taxalned = OrderedDict((
-        ('commonname', ''),
-        ('sppcode', ''),
-        ('kingdom', 'Animalia'),
-        ('subkingdom', ''),
-        ('infrakingdom', ''),
-        ('superdivision', ''),
-        ('divsion', ''),
-        ('subdivision', ''),
-        ('superphylum', ''),
-        ('phylum', ''),
-        ('subphylum', ''),
-        ('clss', ''),
-        ('subclass', ''),
-        ('ordr', ''),
-        ('family', ''),
-        ('genus', 'genus'),
-        ('species', 'species')
-    ))
-
-    taxackbox = OrderedDict((
-        ('commonname', False),
-        ('sppcode', False),
-        ('kingdom', True),
-        ('subkingdom', False),
-        ('infrakingdom', False),
-        ('superdivision', False),
-        ('divsion', False),
-        ('subdivision', False),
-        ('superphylum', False),
-        ('phylum', False),
-        ('subphylum', False),
-        ('clss', False),
-        ('subclass', False),
-        ('ordr', False),
-        ('family', False),
-        ('genus', True),
-        ('species', True)
-    ))
-
-    taxacreate = {
-        'taxacreate': True
-    }
-    
-    available = [
-        x for x,y in zip(
-            list(taxalned.keys()), list(
-                taxackbox.values()))
-        if y is True
-    ]
-    
-    taxaini = ini.InputHandler(
-        name='taxainput',
-        tablename='taxa_table',
-        lnedentry= hlp.extract(taxalned, available),
-        checks=taxacreate)
-    return taxaini
-
-def test_taxatable_build_create(
-        Taxa_Table_Builder, Table_Builder_Director,
-        taxa_user_input_create, dataset_test_1,
-        taxadfexpected):
-    sitelevels = dataset_test_1['site'].drop_duplicates().values.tolist()
-    sitelevels.sort()
-    facade = face.Facade()
-    facade.input_register(taxa_user_input_create)
-    face_input = facade._inputs[taxa_user_input_create.name]
-    taxabuilder = Taxa_Table_Builder()
-    assert (isinstance(taxabuilder, Taxa_Table_Builder)) is True
-
-    director = Table_Builder_Director()
-    assert (isinstance(director, Table_Builder_Director)) is True
-    director.set_user_input(face_input)
-    director.set_builder(taxabuilder)
-    director.set_data(dataset_test_1)
-    director.set_globalid(2)
-    director.set_siteid('site')
-    director.set_sitelevels(sitelevels)
-
-    taxatable = director.get_database_table()
-    showtaxa = taxatable._availdf
-    assert isinstance(showtaxa, DataFrame)
-    print(showtaxa)
-    showtaxa['phylum'] = 'Animalia'
-    print(showtaxa)
-    
-    testphylum = list(set(showtaxa['phylum'].values.tolist()))
-    testphylum.sort()
-    testorder = list(set(showtaxa['genus'].values.tolist()))
-    testorder.sort()
-    testspecies = list(set(showtaxa['species'].values.tolist()))
-    testspecies.sort()
-
-    taxadfexpected.loc[:, 'phylum'] = 'Animalia'
-    print('phylum column: ', taxadfexpected['phylum'])
-    taxadfexpected = taxadfexpected[
-        taxadfexpected['metadata_key'] == 1]
-
-    truephylum = list(set(taxadfexpected['phylum'].values.tolist()))
-    truephylum.sort()
-    trueorder = list(set(taxadfexpected['genus'].values.tolist()))
-    trueorder.sort()
-    truespecies = list(set(taxadfexpected['species'].values.tolist()))
-    truespecies.sort()
-
-    assert (testphylum == truephylum) is True
-    assert (testorder == trueorder) is True
-    assert (testspecies == truespecies) is True
-
-
-# ------------------------------------------------------ #
-# ------------ Observation (count) table build test --------------- #
-# ------------------------------------------------------ #
-
-def test_count_table_build(
-        Table_Builder_Director, count_handle_1_count,
-        dataset_test_1, Observation_Table_Builder):
-    sitelevels = dataset_test_1[
-        'site'].drop_duplicates().values.tolist()
-    sitelevels.sort()
-    facade = face.Facade()
-    facade.input_register(count_handle_1_count)
-    face_input = facade._inputs[count_handle_1_count.name]
-    countbuilder = Observation_Table_Builder()
-    assert (isinstance(countbuilder, Observation_Table_Builder)) is True
-
-    director = Table_Builder_Director()
-    assert (isinstance(director, Table_Builder_Director)) is True
-    director.set_user_input(face_input)
-    director.set_builder(countbuilder)
-    director.set_data(dataset_test_1)
-    director.set_globalid(2)
-    director.set_siteid('site')
-    director.set_sitelevels(sitelevels)
-    counttable = director.get_database_table()
-    showcount = counttable._availdf
-    print('finished: ', showcount)
-    counttest = showcount['count_observation'].values.tolist()
-    counttrue = dataset_test_1['count'].values.tolist()
-
-    sitetest = showcount[
-        'spatial_replication_level_1'].values.tolist()
-    sitetrue = dataset_test_1['site'].values.tolist()
-
-    assert (counttest == counttrue) is True
-    assert (sitetest == sitetrue) is True
-
-# ------------------------------------------------------ #
-# ------------ Observation (percentcover) table build test -------- #
-# ------------------------------------------------------ #
-
+# 
+# @pytest.fixture
+# def dataset_test_1():
+#     return read_csv(
+#         rootpath + end + 'test' + end +
+#         'Datasets_manual_test/raw_data_test_1.csv')
+# 
+# def test_study_site_table_build(
+#         Study_Site_Table_Builder, Table_Builder_Director,
+#         site_handle_1_count, dataset_test_1):
+#     '''
+#     Testing builder class for site table
+#     '''
+#     facade = face.Facade()
+#     facade.input_register(site_handle_1_count)
+#     face_input = facade._inputs[site_handle_1_count.name]
+#     assert (isinstance(face_input, ini.InputHandler)) is True
+# 
+#     study_site_table_build = Study_Site_Table_Builder()
+#     assert (isinstance(
+#         study_site_table_build, Study_Site_Table_Builder)) is True
+# 
+#     director = Table_Builder_Director()
+#     assert (isinstance(director, Table_Builder_Director)) is True
+#     director.set_user_input(face_input)
+#     director.set_builder(study_site_table_build)
+#     director.set_data(dataset_test_1)
+# 
+#     sitetab = director.get_database_table()
+#     showsite = sitetab._availdf
+#     assert (isinstance(showsite, DataFrame)) is True
+# 
+# 
+# 
+# # ------------------------------------------------------ #
+# # ---------------- Project table build test --------------- #
+# # ------------------------------------------------------ #
+# 
+# @pytest.fixture
+# def metadata_data():
+#     return read_csv(
+#         rootpath + end + 'data' + end +
+#         'Identified_to_upload.csv', encoding='iso-8859-11')
+# 
+# 
+# def test_project_table_build(
+#         Project_Table_Builder, Table_Builder_Director,
+#         project_handle_1_count, metadata_data, dataset_test_1):
+# 
+#     sitelevels = dataset_test_1[
+#         'site'].drop_duplicates().values.tolist()
+# 
+#     facade = face.Facade()
+#     facade.input_register(project_handle_1_count)
+#     face_input = facade._inputs[project_handle_1_count.name]
+# 
+#     assert (isinstance(face_input, ini.InputHandler)) is True
+#     project_table = Project_Table_Builder()
+#     assert (isinstance(project_table, Project_Table_Builder)) is True
+# 
+#     director = Table_Builder_Director()
+#     assert (isinstance(director, Table_Builder_Director)) is True
+#     director.set_user_input(face_input)
+#     director.set_globalid(1)
+#     director.set_builder(project_table)
+#     director.set_data(metadata_data)
+#     director.set_sitelevels(sitelevels)
+#     director.set_siteid('site')
+# 
+#     project_table_df = director.get_database_table()
+#     show_project_table = project_table_df._availdf
+#     print(show_project_table)
+#     
+# 
+#     assert (
+#         'control_group' in show_project_table.columns.values.tolist()) is True
+#     
+#     assert (isinstance(show_project_table, DataFrame)) is True
+#     assert (
+#         show_project_table['datatype'].drop_duplicates().values.tolist()
+#         == ['count']) is True
+#     assert (
+#         show_project_table['proj_metadata_key'].values.tolist()
+#         == [1]) is True
+# 
+# 
+# 
+# # ------------------------------------------------------ #
+# # ---------------- Taxa table build test --------------- #
+# # --------------- Create taxa feature is OFF ----------- #
+# # ------------------------------------------------------ #
+# 
+# @pytest.fixture
+# def taxadfexpected():
+#     taxadfexpected = read_csv(
+#         rootpath + end + 'test' +  end +
+#         'Datasets_manual_test' + end + 'taxa_table_test.csv')
+#     taxadfexpected.fillna('NA', inplace=True)
+#     return taxadfexpected
+#     
+# def test_taxatable_build(
+#         Taxa_Table_Builder, Table_Builder_Director, taxa_handle_1_count,
+#         dataset_test_1, taxadfexpected):
+#     sitelevels = dataset_test_1['site'].drop_duplicates().values.tolist()
+#     sitelevels.sort()
+#     facade = face.Facade()
+#     facade.input_register(taxa_handle_1_count)
+#     face_input = facade._inputs[taxa_handle_1_count.name]
+#     taxabuilder = Taxa_Table_Builder()
+#     assert (isinstance(taxabuilder, Taxa_Table_Builder)) is True
+# 
+#     director = Table_Builder_Director()
+#     assert (isinstance(director, Table_Builder_Director)) is True
+#     director.set_user_input(face_input)
+#     director.set_builder(taxabuilder)
+#     director.set_data(dataset_test_1)
+#     director.set_globalid(1)
+#     director.set_siteid('site')
+#     director.set_sitelevels(sitelevels)
+#     
+#     taxatable = director.get_database_table()
+#     showtaxa = taxatable._availdf
+#     assert isinstance(showtaxa,DataFrame)    
+# 
+# 
+#     taxatable 
+#     taxatable = director.get_database_table()
+#     showtaxa = taxatable._availdf
+#     print(showtaxa)
+# 
+#     testphylum = list(set(showtaxa['phylum'].values.tolist()))
+#     testphylum.sort()
+#     testorder = list(set(showtaxa['genus'].values.tolist()))
+#     testorder.sort()
+#     testspecies = list(set(showtaxa['species'].values.tolist()))
+#     testspecies.sort()
+# 
+#     
+#     taxadfexpected = taxadfexpected[
+#         taxadfexpected['metadata_key'] == 1]
+#     
+#     truephylum = list(set(taxadfexpected['phylum'].values.tolist()))
+#     truephylum.sort()
+#     trueorder = list(set(taxadfexpected['genus'].values.tolist()))
+#     trueorder.sort()
+#     truespecies = list(set(taxadfexpected['species'].values.tolist()))
+#     truespecies.sort()
+# 
+#     assert (testphylum == truephylum) is True
+#     assert (testorder == trueorder) is True    
+#     assert (testspecies == truespecies) is True
+# 
+# # ------------------------------------------------------ #
+# # ---------------- Taxa table build test --------------- #
+# # --------------- Create taxa feature is ON ----------- #
+# # ------------------------------------------------------ #
+# @pytest.fixture
+# def taxa_user_input_create():
+#     taxalned = OrderedDict((
+#         ('commonname', ''),
+#         ('sppcode', ''),
+#         ('kingdom', 'Animalia'),
+#         ('subkingdom', ''),
+#         ('infrakingdom', ''),
+#         ('superdivision', ''),
+#         ('divsion', ''),
+#         ('subdivision', ''),
+#         ('superphylum', ''),
+#         ('phylum', ''),
+#         ('subphylum', ''),
+#         ('clss', ''),
+#         ('subclass', ''),
+#         ('ordr', ''),
+#         ('family', ''),
+#         ('genus', 'genus'),
+#         ('species', 'species')
+#     ))
+# 
+#     taxackbox = OrderedDict((
+#         ('commonname', False),
+#         ('sppcode', False),
+#         ('kingdom', True),
+#         ('subkingdom', False),
+#         ('infrakingdom', False),
+#         ('superdivision', False),
+#         ('divsion', False),
+#         ('subdivision', False),
+#         ('superphylum', False),
+#         ('phylum', False),
+#         ('subphylum', False),
+#         ('clss', False),
+#         ('subclass', False),
+#         ('ordr', False),
+#         ('family', False),
+#         ('genus', True),
+#         ('species', True)
+#     ))
+# 
+#     taxacreate = {
+#         'taxacreate': True
+#     }
+#     
+#     available = [
+#         x for x,y in zip(
+#             list(taxalned.keys()), list(
+#                 taxackbox.values()))
+#         if y is True
+#     ]
+#     
+#     taxaini = ini.InputHandler(
+#         name='taxainput',
+#         tablename='taxa_table',
+#         lnedentry= hlp.extract(taxalned, available),
+#         checks=taxacreate)
+#     return taxaini
+# 
+# def test_taxatable_build_create(
+#         Taxa_Table_Builder, Table_Builder_Director,
+#         taxa_user_input_create, dataset_test_1,
+#         taxadfexpected):
+#     sitelevels = dataset_test_1['site'].drop_duplicates().values.tolist()
+#     sitelevels.sort()
+#     facade = face.Facade()
+#     facade.input_register(taxa_user_input_create)
+#     face_input = facade._inputs[taxa_user_input_create.name]
+#     taxabuilder = Taxa_Table_Builder()
+#     assert (isinstance(taxabuilder, Taxa_Table_Builder)) is True
+# 
+#     director = Table_Builder_Director()
+#     assert (isinstance(director, Table_Builder_Director)) is True
+#     director.set_user_input(face_input)
+#     director.set_builder(taxabuilder)
+#     director.set_data(dataset_test_1)
+#     director.set_globalid(2)
+#     director.set_siteid('site')
+#     director.set_sitelevels(sitelevels)
+# 
+#     taxatable = director.get_database_table()
+#     showtaxa = taxatable._availdf
+#     assert isinstance(showtaxa, DataFrame)
+#     print(showtaxa)
+#     showtaxa['phylum'] = 'Animalia'
+#     print(showtaxa)
+#     
+#     testphylum = list(set(showtaxa['phylum'].values.tolist()))
+#     testphylum.sort()
+#     testorder = list(set(showtaxa['genus'].values.tolist()))
+#     testorder.sort()
+#     testspecies = list(set(showtaxa['species'].values.tolist()))
+#     testspecies.sort()
+# 
+#     taxadfexpected.loc[:, 'phylum'] = 'Animalia'
+#     print('phylum column: ', taxadfexpected['phylum'])
+#     taxadfexpected = taxadfexpected[
+#         taxadfexpected['metadata_key'] == 1]
+# 
+#     truephylum = list(set(taxadfexpected['phylum'].values.tolist()))
+#     truephylum.sort()
+#     trueorder = list(set(taxadfexpected['genus'].values.tolist()))
+#     trueorder.sort()
+#     truespecies = list(set(taxadfexpected['species'].values.tolist()))
+#     truespecies.sort()
+# 
+#     assert (testphylum == truephylum) is True
+#     assert (testorder == trueorder) is True
+#     assert (testspecies == truespecies) is True
+# 
+# 
+# # ------------------------------------------------------ #
+# # ------------ Observation (count) table build test --------------- #
+# # ------------------------------------------------------ #
+# 
+# def test_count_table_build(
+#         Table_Builder_Director, count_handle_1_count,
+#         dataset_test_1, Observation_Table_Builder):
+#     sitelevels = dataset_test_1[
+#         'site'].drop_duplicates().values.tolist()
+#     sitelevels.sort()
+#     facade = face.Facade()
+#     facade.input_register(count_handle_1_count)
+#     face_input = facade._inputs[count_handle_1_count.name]
+#     countbuilder = Observation_Table_Builder()
+#     assert (isinstance(countbuilder, Observation_Table_Builder)) is True
+# 
+#     director = Table_Builder_Director()
+#     assert (isinstance(director, Table_Builder_Director)) is True
+#     director.set_user_input(face_input)
+#     director.set_builder(countbuilder)
+#     director.set_data(dataset_test_1)
+#     director.set_globalid(2)
+#     director.set_siteid('site')
+#     director.set_sitelevels(sitelevels)
+#     counttable = director.get_database_table()
+#     showcount = counttable._availdf
+#     print('finished: ', showcount)
+#     counttest = showcount['count_observation'].values.tolist()
+#     counttrue = dataset_test_1['count'].values.tolist()
+# 
+#     sitetest = showcount[
+#         'spatial_replication_level_1'].values.tolist()
+#     sitetrue = dataset_test_1['site'].values.tolist()
+# 
+#     assert (counttest == counttrue) is True
+#     assert (sitetest == sitetrue) is True
+# 
+# # ------------------------------------------------------ #
+# # ------------ Observation (percentcover) table build test -------- #
+# # ------------------------------------------------------ #
+# 
 @pytest.fixture
 def dataset_test_4():
     return read_csv(
@@ -1463,7 +1498,8 @@ def test_percent_cover_table_build(
     sitetest = showpercent_cover[
         'spatial_replication_level_1'].values.tolist()
     sitetrue = dataset_test_4['site'].values.tolist()
-
+    print(showpercent_cover.columns)
+    assert 0
     assert (percent_covertest == percent_covertrue) is True
     assert (sitetest == sitetrue) is True
 
@@ -1471,42 +1507,42 @@ def test_percent_cover_table_build(
 # ------------ Observation (individual) table build test -------- #
 # ------------------------------------------------------ #
 
-@pytest.fixture
-def dataset_test_5():
-    return read_csv(
-        rootpath + end + 'test' + end +
-        'Datasets_manual_test/raw_data_test_5.csv')
-
-def test_individual_table_build(
-        Table_Builder_Director, count_handle5,
-        dataset_test_5, Observation_Table_Builder):
-    sitelevels = dataset_test_5[
-        'SITE'].drop_duplicates().values.tolist()
-    sitelevels.sort()
-    facade = face.Facade()
-    facade.input_register(count_handle5)
-    face_input = facade._inputs[count_handle5.name]
-    individualbuilder = Observation_Table_Builder()
-    assert (isinstance(individualbuilder, Observation_Table_Builder)) is True
-
-    director = Table_Builder_Director()
-    assert (isinstance(director, Table_Builder_Director)) is True
-    director.set_user_input(face_input)
-    director.set_builder(individualbuilder)
-    director.set_data(dataset_test_5)
-    director.set_globalid(2)
-    director.set_siteid('SITE')
-    director.set_sitelevels(sitelevels)
-    individualtable = director.get_database_table()
-    showindividual = individualtable._availdf
-    print('finished: ', showindividual)
-
-    check_individual_obs = showindividual[
-        'individual_observation'].drop_duplicates().values.tolist()
-    
-    sitetest = showindividual[
-        'spatial_replication_level_1'].values.tolist()
-    sitetrue = dataset_test_5['SITE'].values.tolist()
-
-    assert (check_individual_obs == [1]) is True
-    assert (sitetest == sitetrue) is True
+# @pytest.fixture
+# def dataset_test_5():
+#     return read_csv(
+#         rootpath + end + 'test' + end +
+#         'Datasets_manual_test/raw_data_test_5.csv')
+# 
+# def test_individual_table_build(
+#         Table_Builder_Director, count_handle5,
+#         dataset_test_5, Observation_Table_Builder):
+#     sitelevels = dataset_test_5[
+#         'SITE'].drop_duplicates().values.tolist()
+#     sitelevels.sort()
+#     facade = face.Facade()
+#     facade.input_register(count_handle5)
+#     face_input = facade._inputs[count_handle5.name]
+#     individualbuilder = Observation_Table_Builder()
+#     assert (isinstance(individualbuilder, Observation_Table_Builder)) is True
+# 
+#     director = Table_Builder_Director()
+#     assert (isinstance(director, Table_Builder_Director)) is True
+#     director.set_user_input(face_input)
+#     director.set_builder(individualbuilder)
+#     director.set_data(dataset_test_5)
+#     director.set_globalid(2)
+#     director.set_siteid('SITE')
+#     director.set_sitelevels(sitelevels)
+#     individualtable = director.get_database_table()
+#     showindividual = individualtable._availdf
+#     print('finished: ', showindividual)
+# 
+#     check_individual_obs = showindividual[
+#         'individual_observation'].drop_duplicates().values.tolist()
+#     
+#     sitetest = showindividual[
+#         'spatial_replication_level_1'].values.tolist()
+#     sitetrue = dataset_test_5['SITE'].values.tolist()
+# 
+#     assert (check_individual_obs == [1]) is True
+#     assert (sitetest == sitetrue) is True
