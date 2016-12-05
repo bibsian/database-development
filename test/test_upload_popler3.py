@@ -219,29 +219,29 @@ def tbl_study_site():
 #
 # ----- Not really a test, more just reseting the database
 #
-def test_drop_records(
-        conn, biomass_table, count_table, density_table,
-        individual_table, percent_cover_table, taxa_table,
-        project_table, site_in_project_table, study_site_table):
-
-    table_dict = OrderedDict([
-        ('biomass_table', biomass_table),
-        ('count_table', count_table),
-        ('density_table', density_table),
-        ('individual_table', individual_table),
-        ('percent_cover_table', percent_cover_table),
-        ('taxa_table', taxa_table),
-        ('site_in_project_table', site_in_project_table),
-        ('project_table', project_table),
-        ('study_site_table', study_site_table)]
-    )
-
-    for i, item in enumerate(table_dict):
-        print(i)
-        print('item', item)
-        delete_statement = table_dict[item].__table__.delete()
-        conn.execute(delete_statement)
-    conn.close()
+# def test_drop_records(
+#         conn, biomass_table, count_table, density_table,
+#         individual_table, percent_cover_table, taxa_table,
+#         project_table, site_in_project_table, study_site_table):
+# 
+#     table_dict = OrderedDict([
+#         ('biomass_table', biomass_table),
+#         ('count_table', count_table),
+#         ('density_table', density_table),
+#         ('individual_table', individual_table),
+#         ('percent_cover_table', percent_cover_table),
+#         ('taxa_table', taxa_table),
+#         ('site_in_project_table', site_in_project_table),
+#         ('project_table', project_table),
+#         ('study_site_table', study_site_table)]
+#     )
+# 
+# in enumerate(table_dict):
+# 
+# tem', item)
+# tatement = table_dict[item].__table__.delete()
+# cute(delete_statement)
+ 
 
 #
 # ----- Test 1: Study site table push ------
