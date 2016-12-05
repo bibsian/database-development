@@ -9,6 +9,9 @@
 
 data/.Rhistory
 /data/RawTestTableModications.R
+data/*
+
+db/popler2-migrate-to-popler3/*
 
 */__pycache__
 */*/__pycache__
