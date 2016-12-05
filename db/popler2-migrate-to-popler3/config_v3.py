@@ -20,7 +20,7 @@ def adapt_numpy_int64(numpy_int64):
 register_adapter(numpy.int64, adapt_numpy_int64)
 
 engine = create_engine(
-    'postgresql+psycopg2:///',
+    'postgresql+psycopg2://---/popler_3',
     echo=True)
 conn = engine.connect()
 # Mapping metadata

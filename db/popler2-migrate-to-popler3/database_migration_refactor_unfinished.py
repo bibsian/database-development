@@ -21,7 +21,7 @@ elif sys.platform == "win32":
 # Popler Version 2 tables & connection
 
 engine_popler_2 = create_engine(
-    'postgresql+psycopg2://postgres:demography@localhost/popler',
+    'postgresql+psycopg2://---/popler',
     echo=False)
 conn_popler_2 = engine_popler_2.connect()
 # Mapping metadata
@@ -58,7 +58,7 @@ class Rawtable(Base_popler_2):
 # Popler Version 3 tables & collections
 
 engine_popler_3 = create_engine(
-    'postgresql+psycopg2://postgres:demography@localhost/popler_3',
+    'postgresql+psycopg2://---/popler_3',
     echo=False)
 conn_popler_3 = engine_popler_3.connect()
 # Mapping metadata
