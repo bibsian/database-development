@@ -2,10 +2,10 @@
 import pytest
 import pytestqt
 from PyQt4 import QtGui
-import sys,os
+import sys, os
 if sys.platform == "darwin":
     rootpath = (
-        "/Users/bibsian/Desktop/git/database-development/")
+        "/Users/bibsian/Desktop/git/database-development")
     end = "/"
 elif sys.platform == "win32":
     rootpath = (
@@ -14,11 +14,11 @@ elif sys.platform == "win32":
 sys.path.append(os.path.realpath(os.path.dirname(
     rootpath)))
 os.chdir(rootpath)
+
+from Views import ui_dialog_covariate as covar
 from poplerGUI import class_inputhandler as ini
 from poplerGUI import class_modelviewpandas as views
 from poplerGUI import ui_logic_preview as tprev
-from Views import ui_dialog_covariate as covar
-
 from poplerGUI.logiclayer import class_userfacade as face
 from poplerGUI.logiclayer import class_helpers as hlp
 from poplerGUI.logiclayer import class_dictionarydataframe as ddf
@@ -76,7 +76,7 @@ def CovarDialog(metahandle, filehandle, sitehandle):
             # reach this phase
             self.facade = face.Facade()
             self.facade.input_register(metahandle)
-            self.facade.meta_verify()
+            #self.facade.meta_verify()
             self.facade.input_register(filehandle)
             self.facade.load_data()
             self.facade.input_register(sitehandle)
@@ -117,15 +117,19 @@ def CovarDialog(metahandle, filehandle, sitehandle):
             self.facade.create_log_record('covartable')
             self._log = self.facade._tablelog['covartable']
 
-            try:
-                self.facade._data[self.covarlned['columns']]
-            except Exception as e:
-                print(str(e))
-                self._log.debug(str(e))
-                self.error.showMessage(
-                    'Column names not valid: Check spacing ' +
-                    'and headers.')
-                raise ValueError('Column names are incorrect')
+            if self.covarlned['columns'][0] == '':
+                print('in pass')
+                pass
+            else:
+                try:
+                    self.facade._data[self.covarlned['columns']]
+                except Exception as e:
+                    print(str(e))
+                    self._log.debug(str(e))
+                    self.error.showMessage(
+                        'Column names not valid: Check spacing ' +
+                        'and headers.')
+                    raise ValueError('Column names are incorrect')
 
             try:
                 self.covardata = ddf.DictionaryDataframe(

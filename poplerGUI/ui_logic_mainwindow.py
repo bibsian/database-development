@@ -2,21 +2,28 @@
 from PyQt4 import QtGui, QtCore
 from pandas import read_csv
 import subprocess
+import psutil
+import time
 
 import sys, os
 if sys.platform == 'darwin':
     os.chdir(
         '/Users/bibsian/Desktop/git/database-development/')
+    rootpath = (
+        "/Users/bibsian/Desktop/git/database-development")
     metapath = (
     	str(os.getcwd()) + 
-    	'/data/Identified_to_upload.csv')
+    	'/data/Cataloged_Data_Current_sorted.csv')
     end = '/'
 elif sys.platform == 'win32':
     os.chdir( 
         'C:\\Users\\MillerLab\\Desktop\\database-development\\')
+    rootpath = (
+        "C:\\Users\MillerLab\\Desktop\\database-development" )
+
     metapath = (
     	str(os.getcwd()) + 
-    	'\\data\\Identified_to_upload.csv')
+    	'\\data\\Cataloged_Data_Current_sorted.csv')
     end = '\\'
 from Views import ui_mainrefactor as mw
 from poplerGUI import ui_logic_session as sesslogic
@@ -35,6 +42,8 @@ from poplerGUI.logiclayer import class_userfacade as face
 from poplerGUI import class_modelviewpandas as view
 from poplerGUI import class_inputhandler as ini
 from poplerGUI.logiclayer import class_helpers as hlp
+from poplerGUI.logiclayer.datalayer.class_filehandles import Memento
+from poplerGUI.logiclayer.datalayer import config as orm
 
 
 class UiMainWindow(QtGui.QMainWindow, mw.Ui_MainWindow):
@@ -112,9 +121,7 @@ class UiMainWindow(QtGui.QMainWindow, mw.Ui_MainWindow):
         self.error = QtGui.QErrorMessage()
         self.message = QtGui.QMessageBox
 
-        metadf = read_csv(
-            rootpath + end + 'data' + end +
-            'Identified_to_upload.csv', encoding='iso-8859-11')
+        metadf = read_csv(metapath, encoding='iso-8859-11')
         metamodel = view.PandasTableModel(
             metadf[
                 [
@@ -315,6 +322,18 @@ class UiMainWindow(QtGui.QMainWindow, mw.Ui_MainWindow):
         self.tblViewMeta.setModel(metamodel)
 
     def end_session(self):
-        self.close()
+        orm.conn.close()
         subprocess.call(
             "python" + " poplerGUI_run_main.py", shell=True)
+        self.close()
+        try:
+            PROCNAME = "python.exe"
+            for proc in psutil.process_iter():
+                if proc.name() == PROCNAME:
+                    proc.kill()
+        except:
+            pass
+
+
+
+

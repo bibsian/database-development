@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import pytest
 import pytestqt
-from pandas import read_sql, DataFrame, concat, read_csv
+from pandas import read_sql, DataFrame, concat, read_csv, to_numeric
 from PyQt4 import QtGui, QtCore
 import sys,os
 if sys.platform == "darwin":
@@ -360,6 +360,20 @@ def MainWindow():
             self.save_data = concat(
                 [self.save_data, lterid_df]
                 , axis=1).reset_index(drop=True)
+
+
+            #Convert types and strip stings
+            numeric_cols = ['lat_study_site', 'lng_study_site']
+            self.save_data[
+                self.save_data.columns.difference(numeric_cols)] = self.save_data[
+                    self.save_data.columns.difference(numeric_cols)].applymap(str)
+            self.save_data[
+                self.save_data.columns.difference(numeric_cols)] = self.save_data[
+                    self.save_data.columns.difference(numeric_cols)].applymap(
+                        lambda x: x.strip())
+            self.save_data[numeric_cols] = to_numeric(
+                self.save_data[numeric_cols], errors='coerce')
+
             print('Pushed dataset: ', self.save_data)
             self.facade.push_tables['study_site_table'] = self.save_data
 
@@ -435,7 +449,7 @@ def MainWindow():
 
             metadf = read_csv(
                 rootpath + end + 'data' + end +
-                'Identified_to_upload.csv', encoding='iso-8859-11')
+                'Cataloged_Data_Current_sorted.csv', encoding='iso-8859-11')
             metamodel = view.PandasTableModel(
                 metadf[
                     ['global_id', 'lter', 'title', 'site_metadata']

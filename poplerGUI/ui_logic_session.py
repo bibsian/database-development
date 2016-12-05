@@ -78,18 +78,19 @@ class SessionDialog(QtGui.QDialog, dsess.Ui_Dialog):
         takes user input and wraps it in a InputHandler class.
         '''
         lned = {
-            'sheet': self.lnedExcelSheet.text().strip(),
-            'delim': self.lnedDelimiter.text().strip(),
-            'tskip': self.lnedSkipTop.text().strip(),
-            'bskip': self.lnedSkipBottom.text().strip()
+            'sheet': str(self.lnedExcelSheet.text().strip()),
+            'delim': str(self.lnedDelimiter.text().strip()),
+            'tskip': str(self.lnedSkipTop.text().strip()),
+            'bskip': str(self.lnedSkipBottom.text().strip()),
+            'header': ''
         }
         rbtn = {
             'csv': self.rbtnCsv.isChecked(),
             'xlsx': self.rbtnExcel.isChecked(),
             'txt': self.rbtnTxt.isChecked()
         }
-        name = QtGui.QFileDialog.getOpenFileName(
-            self, 'Select File')
+        name = str(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select File'))
         headers = self.ckHeader.isChecked()
         self.fileini = ini.InputHandler(
             name='fileoptions', tablename=None,

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import pytest
 import pytestqt
+from pandas import to_numeric
 from PyQt4 import QtCore, QtGui, QtWebKit
 import sys,os
 if sys.platform == "darwin":
@@ -91,7 +92,7 @@ def MainWindow():
                 'delim': self.lnedDelimiter.text().strip(),
                 'tskip': self.lnedSkipTop.text().strip(),
                 'bskip': self.lnedSkipBottom.text().strip(),
-                'header': 
+                'header': ''
             }
             rbtn = {
                 'csv': self.rbtnCsv.isChecked(),
@@ -142,8 +143,6 @@ def MainWindow():
             # Custom signals
             self.dsession.raw_data_model.connect(
                 self.update_data_model)
-            self.dsession.webview_url.connect(
-                self.update_webview)
             
             # actions
             self.actionStart_Session.triggered.connect(

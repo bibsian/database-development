@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 from PyQt4 import QtGui, QtCore
-from pandas import read_sql, DataFrame, concat
+from pandas import read_sql, DataFrame, concat, to_numeric
 from Views import ui_dialog_site as dsite
 from poplerGUI import ui_logic_sitechange as chg
 from poplerGUI import class_inputhandler as ini
@@ -340,6 +340,19 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
         self.save_data = concat(
             [self.save_data, lterid_df]
             , axis=1).reset_index(drop=True)
+        #Convert types and strip stings
+        numeric_cols = ['lat_study_site', 'lng_study_site']
+        self.save_data[
+            self.save_data.columns.difference(numeric_cols)] = self.save_data[
+                self.save_data.columns.difference(numeric_cols)].applymap(str)
+        self.save_data[
+            self.save_data.columns.difference(numeric_cols)] = self.save_data[
+                self.save_data.columns.difference(numeric_cols)].applymap(
+                    lambda x: x.strip())
+        self.save_data[numeric_cols] = to_numeric(
+            self.save_data[numeric_cols], errors='coerce')
+
+
         print('Pushed dataset: ', self.save_data)
         self.facade.push_tables['study_site_table'] = self.save_data
 

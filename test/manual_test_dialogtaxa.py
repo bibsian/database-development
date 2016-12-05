@@ -24,33 +24,32 @@ from poplerGUI.logiclayer import class_userfacade as face
 from poplerGUI.logiclayer.datalayer import config as orm
 
 
-def test_drop_records():
-
-    table_dict = OrderedDict([
-        ('biomass_table', orm.biomass_table),
-        ('count_table', orm.count_table),
-        ('density_table', orm.density_table),
-        ('individual_table', orm.individual_table),
-        ('percent_cover_table', orm.percent_cover_table),
-        ('taxa_accepted_table', orm.taxa_accepted_table),
-        ('taxa_table', orm.taxa_table),
-        ('site_in_project_table', orm.site_in_project_table),
-        ('project_table', orm.project_table),
-        ('study_site_table', orm.study_site_table)]
-    )
-
-    for i, item in enumerate(table_dict):
-        delete_statement = table_dict[item].__table__.delete()
-        orm.conn.execute(delete_statement)
-    orm.conn.close()
+# def test_drop_records():
+# 
+#     table_dict = OrderedDict([
+#         ('biomass_table', orm.biomass_table),
+#         ('count_table', orm.count_table),
+#         ('density_table', orm.density_table),
+#         ('individual_table', orm.individual_table),
+#         ('percent_cover_table', orm.percent_cover_table),
+#         ('taxa_accepted_table', orm.taxa_accepted_table),
+#         ('taxa_table', orm.taxa_table),
+#         ('site_in_project_table', orm.site_in_project_table),
+#         ('project_table', orm.project_table),
+#         ('study_site_table', orm.study_site_table)]
+#     )
+# 
+#     for i, item in enumerate(table_dict):
+#         delete_statement = table_dict[item].__table__.delete()
+#         orm.conn.execute(delete_statement)
+#     orm.conn.close()
 
 @pytest.fixture
 def metahandle():
     lentry = {
-        'globalid': 2,
-        'metaurl': ('http://sbc.lternet.edu/cgi-bin/showDataset' +
-                    '.cgi?docid=knb-lter-sbc.17'),
-        'lter': 'SBC'}
+        'globalid': 79,
+        'metaurl': ('http://hdl.handle.net/10217/85547'),
+        'lter': 'SGS'}
     ckentry = {}
     metainput = ini.InputHandler(
         name='metacheck', tablename=None, lnedentry=lentry,
@@ -60,22 +59,21 @@ def metahandle():
 @pytest.fixture
 def filehandle():
     ckentry = {}
-    rbtn = {'.csv': True, '.txt': False,
+    rbtn = {'.csv': False, '.txt': True,
             '.xlsx': False}
-    lned = {'sheet': '', 'delim': '', 'tskip': '', 'bskip': ''}
+    lned = {'sheet': '', 'delim': '', 'tskip': '', 'bskip': '',
+            'header':''}
     fileinput = ini.InputHandler(
         name='fileoptions',tablename=None, lnedentry=lned,
         rbtns=rbtn, checks=ckentry, session=True,
-        filename=(
-            rootpath + end + 'test' + end +
-            'Datasets_manual_test' + end + 'raw_data_test_1.csv'
-        ))
+        filename=(rootpath+end+'data'+end+'SGS_LTER_Humus_canopyCover.txt'
+    ))
 
     return fileinput
 
 @pytest.fixture
 def sitehandle():
-    lned = {'study_site_key': 'site'}
+    lned = {'study_site_key': 'Block_E_or_W'}
     sitehandle = ini.InputHandler(
         name='siteinfo', lnedentry=lned, tablename='study_site_key')
     return sitehandle
@@ -106,7 +104,7 @@ def TaxaDialog(sitehandle, filehandle, metahandle, TablePreview):
             self.facade.load_data()
             self.facade.input_register(sitehandle)
             sitelevels = self.facade._data[
-                'site'].drop_duplicates().values.tolist()
+                sitehandle.lnedentry['study_site_key']].drop_duplicates().values.tolist()
             self.facade.register_site_levels(sitelevels)
 
             # Place holders for user inputs
@@ -231,6 +229,10 @@ def TaxaDialog(sitehandle, filehandle, metahandle, TablePreview):
                 self.preview.tabviewPreview.setModel(self.taxamodel)
                 self.preview.show()
             elif sender is self.btnSaveClose:
+                # Convert to strings and strip
+                self.taxa_table = self.taxa_table.applymap(str)
+                self.taxa_table = self.taxa_table.applymap(lambda x: x.strip())
+
                 self.facade.push_tables['taxa_table'] = self.taxa_table
                 hlp.write_column_to_log(
                     self.taxalned, self._log, 'taxa_table')

@@ -51,15 +51,19 @@ class CovarDialog(QtGui.QDialog, covar.Ui_Dialog):
         self.facade.create_log_record('covartable')
         self._log = self.facade._tablelog['covartable']
 
-        try:
-            self.facade._data[self.covarlned['columns']]
-        except Exception as e:
-            print(str(e))
-            self._log.debug(str(e))
-            self.error.showMessage(
-                'Column names not valid: Check spacing ' +
-                'and headers.')
-            raise ValueError('Column names are incorrect')
+        if self.covarlned['columns'][0] == '':
+            print('in pass')
+            pass
+        else:
+            try:
+                self.facade._data[self.covarlned['columns']]
+            except Exception as e:
+                print(str(e))
+                self._log.debug(str(e))
+                self.error.showMessage(
+                    'Column names not valid: Check spacing ' +
+                    'and headers.')
+                raise ValueError('Column names are incorrect')
 
         try:
             self.covardata = ddf.DictionaryDataframe(
