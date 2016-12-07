@@ -3,7 +3,7 @@ import datetime as tm
 import re
 import sys
 import os
-from pandas import read_csv
+from pandas import read_csv, to_numeric
 from poplerGUI.logiclayer.class_metaverify import MetaVerifier
 from poplerGUI.logiclayer.class_helpers import check_registration
 from poplerGUI.logiclayer.class_tablebuilder import (
@@ -307,6 +307,19 @@ class Facade:
 
         if study_site_table_df.loc[0, 'study_site_key'] != 'NULL':
             if self.sitepushed is None:
+                study_site_table_numeric_columns = [
+                    'lat_study_site', 'lng_study_site'
+                ]
+                # convert datatype to string/object
+                study_site_table_df[
+                    study_site_table_df.columns.difference(study_site_table_numeric_columns)] = study_site_table_df[
+                        study_site_table_df.columns.difference(study_site_table_numeric_columns)].applymap(str)
+                # Strip strings of leading and trailing whitespace
+                study_site_table_df[
+                    study_site_table_df.columns.difference(study_site_table_numeric_columns)] = study_site_table_df[
+                        study_site_table_df.columns.difference(study_site_table_numeric_columns)].applymap(
+                            lambda x: x.strip())
+
                 try:
                     study_site_table_df.to_sql(
                         'study_site_table',
@@ -329,6 +342,33 @@ class Facade:
         # -------------------------------------- #
         if self.mainpushed is None:
             try:
+                project_table_numeric_columns = [
+                    'studystartyr', 'studyendyr',
+                    'spatial_replication_level_1_extent',
+                    'spatial_replication_level_1_number_of_unique_reps',
+                    'spatial_replication_level_2_extent',
+                    'spatial_replication_level_2_number_of_unique_reps',
+                    'spatial_replication_level_3_extent',
+                    'spatial_replication_level_3_number_of_unique_reps',
+                    'spatial_replication_level_4_extent',
+                    'spatial_replication_level_4_number_of_unique_reps',
+                    'spatial_replication_level_5_extent',
+                    'spatial_replication_level_5_number_of_unique_reps',
+                ]
+                # Converting data types
+
+                project_table_df.loc[
+                    :, project_table_df.columns.difference(project_table_numeric_columns)] = project_table_df.loc[
+                        :, project_table_df.columns.difference(project_table_numeric_columns)].applymap(str).values
+                        # Striping strings
+                project_table_df.loc[
+                    :, project_table_df.columns.difference(project_table_numeric_columns)] = project_table_df.loc[
+                        :, project_table_df.columns.difference(project_table_numeric_columns)].applymap(
+                            lambda x: x.strip()).values
+                project_table_df.loc[:, project_table_numeric_columns] = project_table_df.loc[:, project_table_numeric_columns].apply(
+                    to_numeric, errors='ignore'
+                )
+
                 project_table_df['lter_project_fkey'] = lter
                 project_table_df.to_sql(
                     'project_table', orm.conn,
