@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from collections import OrderedDict
-from pandas import DataFrame, read_csv, Series, read_sql, concat, to_numeric
+from pandas import DataFrame, read_csv, Series, read_sql, concat, to_numeric, set_option
 import pprint as pp
 import sys, os
 if sys.platform == "darwin":
@@ -41,9 +41,11 @@ from sqlalchemy.dialects.postgresql import INTEGER
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
+set_option('display.max_columns', None)
+
 # Pop v2
 engine = create_engine(
-    'postgresql+psycopg2://---/popler_migrate_to_cloud',
+    'postgresql+psycopg2://--/popler_migrate_to_cloud',
     echo=False)
 conn = engine.connect()
 # Mapping metadata
@@ -97,7 +99,6 @@ namechange_file = read_csv(
 
 metarecords_stmt = conn.execute(
     select([Maintable.lter_proj_site, Maintable.metarecordid]).
-    where(and_(Maintable.metarecordid >= 71, Maintable.metarecordid <= 85)).
     order_by(Maintable.lter_proj_site)
 )
 metarecords_df = DataFrame(metarecords_stmt.fetchall())
@@ -105,9 +106,11 @@ metarecords_df.columns = metarecords_stmt.keys()
 metarecords_list = metarecords_df['metarecordid'].drop_duplicates().values.tolist()
 
 metadata_dict = {}
+z=93
 
 for z in metarecords_list:
     try:
+
         meta = qaqc.QualityControl(z)
         site_levels = meta.get_sitelevel_changes(meta.get_log_path('sitetable'))
 
@@ -122,6 +125,7 @@ for z in metarecords_list:
 
         sitecolumn = list(set(main_dict_updated['sp_rep1_label'][1]))[0]
 
+        
         # -------------------------------------------------------------------
         # Begin concatenating data for reload to popler3
         # -------------------------------------------------------------------
@@ -315,6 +319,7 @@ for z in metarecords_list:
         )
         proj_df = DataFrame(list(proj_stmt.fetchone())).transpose()
         proj_df.columns = proj_stmt.keys()
+        
         changes = dict(
             zip(
                 namechange_file[namechange_file[
@@ -323,15 +328,16 @@ for z in metarecords_list:
                     'table_to'] == 'project_table']['column_to'].values.tolist()
                 )
             )
+
         proj_df = proj_df.rename(columns=changes)
-        proj_df.columns
-        
+
         proj_df.drop(
             [
                 'lter_proj_site', 'lter_proj_fkey', 'sitestartyr', 'siteendyr',
                 'totalobs', 'uniquetaxaunits', 'num_treatments',
                 'exp_maintainence', 'trt_label'
             ], axis=1, inplace=True)
+
 
         try:
             proj_df.drop(
@@ -390,7 +396,7 @@ for z in metarecords_list:
         ]
         all_col = proj_df.columns.values.tolist()
         [all_col.append(x) for x in numeric_cols_to_add]
-        proj_df = proj_df.reindex(columns=list(all_col), fill_value='NaN')
+        proj_df = proj_df.reindex(columns=list(all_col), fill_value=None)
 
 
         proj_df['datatype'] = proj_df[
@@ -403,7 +409,6 @@ for z in metarecords_list:
             'datatype'].map(lambda x: 'biomass' if 'biomass' in x else x)
         proj_df['datatype'] = proj_df[
             'datatype'].map(lambda x: 'density' if 'density' in x else x)
-
 
 
         project_table_numeric_columns = [
@@ -421,21 +426,17 @@ for z in metarecords_list:
         ]
         # Converting data types
 
-        proj_df[
-            proj_df.columns.difference(project_table_numeric_columns)] = proj_df[
-                proj_df.columns.difference(project_table_numeric_columns)].applymap(str)
+        proj_df.loc[
+            :, proj_df.columns.difference(project_table_numeric_columns)] = proj_df.loc[
+                :, proj_df.columns.difference(project_table_numeric_columns)].applymap(str).values
                 # Striping strings
-        proj_df[
-            proj_df.columns.difference(project_table_numeric_columns)] = proj_df[
-                proj_df.columns.difference(project_table_numeric_columns)].applymap(
-                    lambda x: x.strip())
-        proj_df[project_table_numeric_columns] = to_numeric(
-            proj_df[project_table_numeric_columns], errors='coerce')
-        
-        try:
-            orm.convert_types(proj_df, orm.project_types)
-        except Exception as e:
-            print(str(e))
+        proj_df.loc[
+            :, proj_df.columns.difference(project_table_numeric_columns)] = proj_df.loc[
+                :, proj_df.columns.difference(project_table_numeric_columns)].applymap(
+                    lambda x: x.strip()).values
+        proj_df.loc[:, project_table_numeric_columns] = proj_df.loc[:, project_table_numeric_columns].apply(
+            to_numeric, errors='ignore'
+        )
 
         facade.push_tables['project_table'] = proj_df
 
@@ -511,15 +512,29 @@ for z in metarecords_list:
         # -------------------
         # Create TIME HANDLE
         # ------------------
+        
         user_timeinputs = dict(
             zip(
                 list(time_dict.keys()), [x[1][0] for x in time_dict.values()]
             )
         )
+
         if 'mspell' not in user_timeinputs.keys():
             user_timeinputs['hms'] = user_timeinputs.pop('mspell')
         else:
             pass
+
+        if 'dayform' not in user_timeinputs.keys():
+            user_timeinputs['dayform'] = 'NULL'
+        if 'monthform' not in user_timeinputs.keys():
+            user_timeinputs['monthform'] = 'NULL'
+        if 'yearform' not in user_timeinputs.keys():
+            user_timeinputs['yearform'] = 'NULL'
+
+        
+        for key, value in user_timeinputs.items():
+            if 'name' in key and value == '':
+                user_timeinputs[key.replace('name', 'form')] = 'NULL'
 
         missing_date_info = list(
             set(['hms', 'jd', 'dayname', 'monthname', 'yearname', 'dayform', 'monthform', 'yearform']) -
@@ -538,8 +553,11 @@ for z in metarecords_list:
             name='timeinfo', tablename='timetable',
             lnedentry=user_timeinputs)
         facade.input_register(timeinput)
+
         timetable = tparse.TimeParse(
             facade._data, timeinput.lnedentry).formater()
+
+        timetable = timetable.apply(to_numeric, errors='coerce')
         timetable_og_cols = timetable.columns.values.tolist()
         timetable.columns = [x+'_derived' for x in timetable_og_cols]
         observation_df = facade._data.copy()
@@ -550,7 +568,6 @@ for z in metarecords_list:
             observation_time_df[date_cols], errors='coerce')
         facade.push_tables['timetable'] = observation_time_df
 
-
         
         # -------------------
         # Create COVAR HANDLE
@@ -558,8 +575,13 @@ for z in metarecords_list:
         try:
             covarlned = {'columns': covar_dict['columns'][1][0]}
         except Exception as e:
-            covarlned = {'columns': []}
-            
+            covarlned = {'columns': ['']}
+
+        if covarlned['columns']:
+            pass
+        else:
+            covarlned['columns'] = ['']
+
         covarinput = ini.InputHandler(
             name='covarinfo', tablename='covartable',
             lnedentry=covarlned
@@ -642,12 +664,25 @@ for z in metarecords_list:
                 )
             )
         rawtable.rename(columns=changes, inplace=True)
+        rawtable.loc[:, rawtable.columns.difference(['level_0', 'index', observation_type])] = rawtable[rawtable.columns.difference(
+            ['level_0', 'index', observation_type])].applymap(str)
+
         
-
-        rawtable[rawtable.columns.difference(['level_0', 'index', observation_type])] = rawtable[rawtable.columns.difference(['level_0', 'index', observation_type])].applymap(str)
-
-        rawtable[observation_type] = to_numeric(
-            rawtable[observation_type], errors='coerce')
+        try:
+            rawtable[observation_type].replace({'NA', -99999}, inplace=True)
+        except Exception as e:
+            print('No NAs to replace:', str(e))
+        try:
+            rawtable[observation_type].replace({'NaN' -99999}, inplace=True)
+        except Exception as e:
+            print('No NaN to replace:', str(e))
+        try:
+            rawtable[observation_type].replace({None, -99999}, inplace=True)
+        except Exception as e:
+            print('No None to replace:', str(e))
+        rawtable[observation_type].fillna(-99999, inplace=True)
+        rawtable.loc[:, observation_type] = rawtable.loc[:, observation_type].apply(
+            to_numeric, errors='coerce')
 
         facade.push_tables[facade._inputs[
             'rawinfo'].tablename] = rawtable
