@@ -147,7 +147,6 @@ def QualityControl():
                     site_level_obj = re.search('\s(\w*)list:\s(.*[^\s+])', ln)
                     if site_level_obj is not None:
                         sitelevels = site_level_obj.group().strip().split(':')
-                        print('sitelevels split: ', sitelevels[1].strip())
                         if sitelevels[1].strip()[0:6] == 'siteid':
                             pass
                         else:
@@ -156,8 +155,7 @@ def QualityControl():
                     else:
                         pass
                 f.close()
-
-            print('PARSED DICTIONARY', self.log_dict['sitelevels_list'])
+            
             site_to = self.log_dict['sitelevels_changed_site_list']
             site_to_list = site_to.split()
             site_from = self.log_dict['sitelevels_list']
@@ -210,12 +208,12 @@ def QualityControl():
     return QualityControl
 
 def test_clss(QualityControl):
-    meta = QualityControl(71)
+    meta = QualityControl(63)
     filename = meta.log_df['original_file'].drop_duplicates().iloc[0]
     print(filename)
     site_levels = meta.get_sitelevel_changes(meta.get_log_path('sitetable'))
     print(site_levels)
-    assert 0
+
     # Creating dictionaries for data from different tables
     site_dict = meta.table_data('sitetable').iloc[0]
     obs_dict = meta.table_data('rawtable').iloc[0]

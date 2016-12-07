@@ -245,15 +245,15 @@ class MergeToUpload(object):
                     site_in_proj_table_to_push.loc[
                         site_in_proj_table_to_push.
                         study_site_table_fkey == item, 'sitestartyr'
-                    ] = 'NaN'
+                    ] = None
                     site_in_proj_table_to_push.loc[
                         site_in_proj_table_to_push.
                         study_site_table_fkey == item, 'siteendyr'
-                    ] = 'NaN'
+                    ] = None
                     site_in_proj_table_to_push.loc[
                         site_in_proj_table_to_push.
                         study_site_table_fkey == item, 'totalobs'
-                    ] = 'NaN'
+                    ] = None
             except Exception as e:
                 print("couldn't update year records")
 
@@ -546,7 +546,35 @@ class MergeToUpload(object):
         print('push raw_after', tbl_dtype_to_upload.columns)
         print(tbl_dtype_to_upload.dtypes)
         print('this should have worked')
-        
+
+
+        other_numerics = [
+            'year', 'month', 'day', datatype_key,
+            'taxa_{}_fkey'.format(str(formated_dataframe_name))
+        ]
+
+        tbl_dtype_to_upload[datatype_obs] = to_numeric(
+            tbl_dtype_to_upload[datatype_obs], errors='coerce'
+        )
+
+        try:
+            tbl_dtype_to_upload[other_numerics].replace({'NA', -99999}, inplace=True)
+        except Exception as e:
+            print('No NAs to replace:', str(e))
+        try:
+            tbl_dtype_to_upload[other_numerics].replace({'NaN' -99999}, inplace=True)
+        except Exception as e:
+            print('No NaN to replace:', str(e))
+        try:
+            tbl_dtype_to_upload[other_numerics].replace({None, -99999}, inplace=True)
+        except Exception as e:
+            print('No None to replace:', str(e))
+        tbl_dtype_to_upload[other_numerics].fillna(-99999, inplace=True)
+
+
+        tbl_dtype_to_upload.loc[:, other_numerics] = tbl_dtype_to_upload.loc[
+            :, other_numerics].apply(to_numeric, errors='coerce')
+
         tbl_dtype_to_upload.to_sql(
             datatype_table,
             orm.conn, if_exists='append', index=False)
