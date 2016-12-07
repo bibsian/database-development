@@ -732,6 +732,7 @@ def test_single_columns(df_all, yearonly, monthonly, dayonly, TimeParse):
     assert isinstance(yearonly, dict)
     assert isinstance(monthonly, dict)
     assert isinstance(dayonly, dict)
+
     ytest = TimeParse(df_all, yearonly)
     yeardf = ytest.formater()
 #    print(yeardf)
