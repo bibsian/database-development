@@ -1,6 +1,7 @@
 import pytest
 from pandas import (
-    merge, concat, DataFrame, read_sql, read_csv, read_excel, read_table
+    merge, concat, DataFrame, read_sql, read_csv, read_excel, read_table,
+    to_numeric
 )
 from sqlalchemy import select, update, column
 from collections import OrderedDict, namedtuple
@@ -77,7 +78,7 @@ def meta_handle_4_percent_cover():
 @pytest.fixture
 def meta_handle5():
     lentry = {
-        'globalid': 6,
+        'globalid': 5,
         'metaurl': ('http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.29'),
         'lter': 'SBC'}
     ckentry = {}
@@ -871,7 +872,7 @@ def biomass_handle_4_percent_cover():
         ('structured_type_1', ''),
         ('structured_type_2', ''),
         ('structured_type_3', ''),
-        ('treatment_type_1', 'plot'),
+        ('treatment_type_1', ''),
         ('treatment_type_2', ''),
         ('treatment_type_3', ''),
         ('unitobs', 'cover')
@@ -884,7 +885,7 @@ def biomass_handle_4_percent_cover():
         ('structured_type_1', False),
         ('structured_type_2', False),
         ('structured_type_3', False),
-        ('treatment_type_1', True),
+        ('treatment_type_1', False),
         ('treatment_type_2', False),
         ('treatment_type_3', False),
         ('unitobs', True)
@@ -1151,22 +1152,36 @@ def MergeToUpload():
                         'year_derived'].values.tolist()
                 yr_list.sort()
                 [yr_all.append(x) for x in yr_list]
-                site_in_proj_table_to_push.loc[
-                    site_in_proj_table_to_push.
-                    study_site_table_fkey == item, 'sitestartyr'
-                ] = yr_list[0]
 
-                site_in_proj_table_to_push.loc[
-                    site_in_proj_table_to_push.
-                    study_site_table_fkey == item, 'siteendyr'
-                ] = yr_list[-1]
-
-                site_in_proj_table_to_push.loc[
-                    site_in_proj_table_to_push.
-                    study_site_table_fkey == item, 'totalobs'
-                ] = len(yr_list)
-            print('Populated site_in_project_table to push')
-            print(site_in_proj_table_to_push)
+                try:
+                    if len(yr_list) >= 2:
+                        site_in_proj_table_to_push.loc[
+                            site_in_proj_table_to_push.
+                            study_site_table_fkey == item, 'sitestartyr'
+                        ] = yr_list[0]
+                        site_in_proj_table_to_push.loc[
+                            site_in_proj_table_to_push.
+                            study_site_table_fkey == item, 'siteendyr'
+                        ] = yr_list[-1]
+                        site_in_proj_table_to_push.loc[
+                            site_in_proj_table_to_push.
+                            study_site_table_fkey == item, 'totalobs'
+                        ] = len(yr_list)
+                    else:
+                        site_in_proj_table_to_push.loc[
+                            site_in_proj_table_to_push.
+                            study_site_table_fkey == item, 'sitestartyr'
+                        ] = None
+                        site_in_proj_table_to_push.loc[
+                            site_in_proj_table_to_push.
+                            study_site_table_fkey == item, 'siteendyr'
+                        ] = None
+                        site_in_proj_table_to_push.loc[
+                            site_in_proj_table_to_push.
+                            study_site_table_fkey == item, 'totalobs'
+                        ] = None
+                except Exception as e:
+                    print("couldn't update year records")
 
             session = self.session
             global_id_site_in_project_query = (
@@ -1362,6 +1377,8 @@ def MergeToUpload():
                 right_on=list(uploaded_taxa_columns),
                 how='left')
 
+            print("PAST MEGERED STEP 5")
+            
             # Step 6) Take the merged original data with all foreign keys,
             # and merged that with the formatted dtype_table based on index
             # values (order or records should not changed from the original data
@@ -1372,6 +1389,8 @@ def MergeToUpload():
                 left_index=True, right_index=True, how='inner',
                 suffixes=('', '_y'))
 
+            print("PAST MEGERED STEP 6")
+            
             # Step 7) List the columns that will be needed to push the
             # dtype table to the database (including foreign keys)
             tbl_dtype_columns_to_upload = [
@@ -1389,38 +1408,50 @@ def MergeToUpload():
                 'year_derived': 'year',
                 'month_derived': 'month',
                 'day_derived': 'day'
-            }            
+            }
+            print('BEFORE MERGE WITH COVARIATES')
+            
             tbl_dtype_columns_to_upload.append(
                 '{}_observation'.format(str(formated_dataframe_name)))
             tbl_dtype_merged_with_all_keys = concat(
                 [tbl_dtype_merged_with_all_keys, covariate_dataframe],
                 axis=1)
-
+            print('ALL KEYS: ', tbl_dtype_merged_with_all_keys.columns)
+            print('COVAR: ', covariate_dataframe.columns)
+            print("PAST MEGERED STEP 7")
+            
             # Step 8) Subsetting the fully merged dtype table data
             tbl_dtype_to_upload = tbl_dtype_merged_with_all_keys[
                 tbl_dtype_columns_to_upload]
             tbl_dtype_to_upload.rename(
                 columns=time_cols_rename, inplace=True
             )
-
+            print('tbl dtype to upload: ', tbl_dtype_to_upload.columns)
+            print("PAST MEGERED STEP 8")
+            
             # Step 9) Renaming columns to reflect that in database table
             # And converting data types
             tbl_dtype_to_upload.rename(columns={
                 'taxa_table_key': 'taxa_{}_fkey'.format(str(formated_dataframe_name))}
-                , inplace=True)            
+                , inplace=True)
             datatype_key = 'site_in_project_{}_fkey'.format(str(formated_dataframe_name))
             tbl_dtype_to_upload.rename(columns={
                 'site_in_project_taxa_key': datatype_key}, inplace=True)
             tbl_dtype_to_upload.fillna('NA', inplace=True)
-            
             self.formateddata = tbl_dtype_to_upload
+            print("PAST MEGERED STEP 9")
+
             # Step 10) Uploading to the database
             datatype_table = '{}_table'.format(str(formated_dataframe_name))
+            datatype_obs = '{}_observation'.format(str(formated_dataframe_name))
+            print('push raw_before', tbl_dtype_to_upload.columns)
 
             tbl_dtype_to_upload[datatype_obs] = to_numeric(
                 tbl_dtype_to_upload[datatype_obs], errors='coerce'
             )
 
+            print("PAST MEGERED STEP 10")
+            
             text_cols = [
                 'spatial_replication_level_1', 'spatial_replication_level_2',
                 'spatial_replication_level_3', 'spatial_replication_level_4',
@@ -1433,17 +1464,46 @@ def MergeToUpload():
             tbl_dtype_to_upload[text_cols] = tbl_dtype_to_upload[
                 text_cols].applymap(lambda x: x.strip())
 
-            
-            print('push raw_before', tbl_dtype_to_upload.columns)
-            print(tbl_dtype_to_upload.dtypes)
+            print("PAST MEGERED STEP 8")
+            try:
+                orm.convert_types(tbl_dtype_to_upload, self.table_types[datatype_table])
+            except Exception as e:
+                print('converting issues: ', str(e))
+            print("PAST MEGERED STEP CONVERT TYPES")
+            print('this should have worked')
 
-            orm.convert_types(tbl_dtype_to_upload, self.table_types[datatype_table])
-            print('push raw_after', tbl_dtype_to_upload.columns)
-            print(tbl_dtype_to_upload.dtypes)
+
+            other_numerics = [
+                'year', 'month', 'day', datatype_key,
+                'taxa_{}_fkey'.format(str(formated_dataframe_name))
+            ]
+
+            tbl_dtype_to_upload[datatype_obs] = to_numeric(
+                tbl_dtype_to_upload[datatype_obs], errors='coerce'
+            )
+
+            try:
+                tbl_dtype_to_upload[other_numerics].replace({'NA', -99999}, inplace=True)
+            except Exception as e:
+                print('No NAs to replace:', str(e))
+            try:
+                tbl_dtype_to_upload[other_numerics].replace({'NaN' -99999}, inplace=True)
+            except Exception as e:
+                print('No NaN to replace:', str(e))
+            try:
+                tbl_dtype_to_upload[other_numerics].replace({None, -99999}, inplace=True)
+            except Exception as e:
+                print('No None to replace:', str(e))
+            tbl_dtype_to_upload[other_numerics].fillna(-99999, inplace=True)
+
+
+            tbl_dtype_to_upload.loc[:, other_numerics] = tbl_dtype_to_upload.loc[
+                :, other_numerics].apply(to_numeric, errors='coerce')
 
             tbl_dtype_to_upload.to_sql(
                 datatype_table,
                 orm.conn, if_exists='append', index=False)
+            print('past datatype upload')
 
         def update_project_table(
                 self,
