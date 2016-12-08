@@ -24,59 +24,6 @@ from poplerGUI.logiclayer import class_userfacade as face
 from poplerGUI.logiclayer.datalayer import config as orm
 
 
-# def test_drop_records():
-# 
-#     table_dict = OrderedDict([
-#         ('biomass_table', orm.biomass_table),
-#         ('count_table', orm.count_table),
-#         ('density_table', orm.density_table),
-#         ('individual_table', orm.individual_table),
-#         ('percent_cover_table', orm.percent_cover_table),
-#         ('taxa_accepted_table', orm.taxa_accepted_table),
-#         ('taxa_table', orm.taxa_table),
-#         ('site_in_project_table', orm.site_in_project_table),
-#         ('project_table', orm.project_table),
-#         ('study_site_table', orm.study_site_table)]
-#     )
-# 
-#     for i, item in enumerate(table_dict):
-#         delete_statement = table_dict[item].__table__.delete()
-#         orm.conn.execute(delete_statement)
-#     orm.conn.close()
-
-@pytest.fixture
-def metahandle():
-    lentry = {
-        'globalid': 79,
-        'metaurl': ('http://hdl.handle.net/10217/85547'),
-        'lter': 'SGS'}
-    ckentry = {}
-    metainput = ini.InputHandler(
-        name='metacheck', tablename=None, lnedentry=lentry,
-        checks=ckentry)
-    return metainput
-
-@pytest.fixture
-def filehandle():
-    ckentry = {}
-    rbtn = {'.csv': False, '.txt': True,
-            '.xlsx': False}
-    lned = {'sheet': '', 'delim': '', 'tskip': '', 'bskip': '',
-            'header':''}
-    fileinput = ini.InputHandler(
-        name='fileoptions',tablename=None, lnedentry=lned,
-        rbtns=rbtn, checks=ckentry, session=True,
-        filename=(rootpath+end+'data'+end+'SGS_LTER_Humus_canopyCover.txt'
-    ))
-
-    return fileinput
-
-@pytest.fixture
-def sitehandle():
-    lned = {'study_site_key': 'Block_E_or_W'}
-    sitehandle = ini.InputHandler(
-        name='siteinfo', lnedentry=lned, tablename='study_site_key')
-    return sitehandle
     
 @pytest.fixture
 def TablePreview():
@@ -88,7 +35,7 @@ def TablePreview():
     return TablePreview
 
 @pytest.fixture
-def TaxaDialog(sitehandle, filehandle, metahandle, TablePreview):
+def TaxaDialog(site_handle_free, file_handle_free, meta_handle_free, TablePreview):
     class TaxaDialog(QtGui.QDialog, uitax.Ui_Dialog):
         def __init__(self, parent=None):
             super().__init__(parent)
@@ -98,13 +45,13 @@ def TaxaDialog(sitehandle, filehandle, metahandle, TablePreview):
             # logged in the computer in order to
             # reach this phase
             self.facade = face.Facade()
-            self.facade.input_register(metahandle)
+            self.facade.input_register(meta_handle_free)
             self.facade.meta_verify()
-            self.facade.input_register(filehandle)
+            self.facade.input_register(file_handle_free)
             self.facade.load_data()
-            self.facade.input_register(sitehandle)
+            self.facade.input_register(site_handle_free)
             sitelevels = self.facade._data[
-                sitehandle.lnedentry['study_site_key']].drop_duplicates().values.tolist()
+                site_handle_free.lnedentry['study_site_key']].drop_duplicates().values.tolist()
             self.facade.register_site_levels(sitelevels)
 
             # Place holders for user inputs
@@ -205,22 +152,19 @@ def TaxaDialog(sitehandle, filehandle, metahandle, TablePreview):
             self.facade.create_log_record('taxa_table')
             self._log = self.facade._tablelog['taxa_table']
 
-            if self.saved is False:
-                try:
-                    print('about to make taxa table')
-                    self.taxadirector = self.facade.make_table(
-                        'taxainfo')
-                    assert self.taxadirector._availdf is not None
+            try:
+                print('about to make taxa table')
+                self.taxadirector = self.facade.make_table(
+                    'taxainfo')
+                assert self.taxadirector._availdf is not None
 
-                except Exception as e:
-                    print(str(e))
-                    self._log.debug(str(e))
-                    self.error.showMessage(
-                        'Column(s) not identified')
-                    raise AttributeError(
-                        'Column(s) not identified: ' + str(e))
-            else:
-                pass
+            except Exception as e:
+                print(str(e))
+                self._log.debug(str(e))
+                self.error.showMessage(
+                    'Column(s) not identified')
+                raise AttributeError(
+                    'Column(s) not identified: ' + str(e))
 
             self.taxa_table = self.taxadirector._availdf.copy()
             self.taxamodel = self.viewEdit(self.taxa_table)

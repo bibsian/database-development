@@ -110,21 +110,18 @@ class TaxaDialog(QtGui.QDialog, uitax.Ui_Dialog):
         self.facade.create_log_record('taxa_table')
         self._log = self.facade._tablelog['taxa_table']
 
-        if self.saved is False:
-            try:
-                print('about to make taxa table')
-                self.taxadirector = self.facade.make_table('taxainfo')
-                assert self.taxadirector._availdf is not None
+        try:
+            print('about to make taxa table')
+            self.taxadirector = self.facade.make_table('taxainfo')
+            assert self.taxadirector._availdf is not None
 
-            except Exception as e:
-                print(str(e))
-                self._log.debug(str(e))
-                self.error.showMessage(
-                    'Column(s) not identified')
-                raise AttributeError(
-                    'Column(s) not identified: ' + str(e))
-        else:
-            pass
+        except Exception as e:
+            print(str(e))
+            self._log.debug(str(e))
+            self.error.showMessage(
+                'Column(s) not identified')
+            raise AttributeError(
+                'Column(s) not identified: ' + str(e))
 
         self.taxa_table = self.taxadirector._availdf.copy()
         self.taxamodel = self.viewEdit(self.taxa_table)
