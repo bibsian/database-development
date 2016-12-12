@@ -8,18 +8,40 @@ import sys, os
 if sys.platform == "darwin":
     rootpath = (
         "/Users/bibsian/Desktop/git/database-development/")
+    gitrepo = (
+        "/Users/bibsian/Dropbox/database-development/" +
+        "popler_version2/git-repo-revert/")
     end = "/"
 elif sys.platform == "win32":
     rootpath = (
         "C:\\Users\MillerLab\\Desktop\\database-development\\")
     end = "\\"
+    gitrepo = (
+        "C:\\Users\MillerLab\\Dropbox\\database-development\\" +
+        "popler_version2\\git-repo-revert\\")
 
 @pytest.fixture 
 def QualityControl():
     class QualityControl(object):
+        
+        root_path = gitrepo
+
         def __init__(self, recordID):
             self.recordID = int(recordID)
             self.log_dict = {}
+
+#        @property
+#        def root_path(self):
+#            if sys.platform == "darwin":
+#                rootpath = (
+#                    "/Users/bibsian/Dropbox/database-development/" +
+#                    "popler_version2/git-repo-revert/")
+#            elif sys.platform == "win32":
+#                rootpath = (
+#                    "C:\\Users\MillerLab\\Dropbox\\database-development\\" +
+#                    "popler_version2\\git-repo-revert\\")
+#
+#                return rootpath
 
         @property
         def log_path(self):
@@ -32,18 +54,6 @@ def QualityControl():
                     self.root_path + 'poplerGUI\\' +
                     'Logs_UI\\')
             return filepath
-
-        @property
-        def root_path(self):
-            if sys.platform == "darwin":
-                rootpath = (
-                    "/Users/bibsian/Dropbox/database-development/" +
-                    "popler_version2/git-repo-revert/")
-            elif sys.platform == "win32":
-                rootpath = (
-                    "C:\\Users\MillerLab\\Dropbox\\database-development\\" +
-                    "popler_version2\\git-repo-revert\\")
-                return rootpath
 
         @property
         def file_path(self):
@@ -208,7 +218,7 @@ def QualityControl():
     return QualityControl
 
 def test_clss(QualityControl):
-    meta = QualityControl(63)
+    meta = QualityControl(1)
     filename = meta.log_df['original_file'].drop_duplicates().iloc[0]
     print(filename)
     site_levels = meta.get_sitelevel_changes(meta.get_log_path('sitetable'))

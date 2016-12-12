@@ -30,7 +30,6 @@ from poplerGUI.logiclayer.datalayer import config as orm
 from poplerGUI.logiclayer.datalayer import class_filehandles as fhdl
 
 
-
 # ------------------------------------------
 # Enging to connect to popler and get 'main_table' data
 # which will become th 'project_table' data
@@ -99,14 +98,15 @@ namechange_file = read_csv(
 
 metarecords_stmt = conn.execute(
     select([Maintable.lter_proj_site, Maintable.metarecordid]).
+    where(and_(Maintable.metarecordid > 58, Maintable.metarecordid < 100)).
     order_by(Maintable.lter_proj_site)
 )
 metarecords_df = DataFrame(metarecords_stmt.fetchall())
 metarecords_df.columns = metarecords_stmt.keys()
 metarecords_list = metarecords_df['metarecordid'].drop_duplicates().values.tolist()
-
 metadata_dict = {}
-z=93
+
+z=73
 
 for z in metarecords_list:
     try:
@@ -253,6 +253,7 @@ for z in metarecords_list:
         else:
             study_site_key = site_dict['siteid'][1]
 
+        pp.pprint(site_dict)
         if 'lat' not in site_dict.keys() and 'lng' not in site_dict.keys():
             site_lat = ['NaN']
             site_lng = ['NaN']
@@ -506,7 +507,6 @@ for z in metarecords_list:
         taxatable = taxa_director._availdf
         taxatable.fillna('NA', inplace=True)
         taxatable = taxatable.applymap(str)
-        taxatable = taxatable.applymap(lambda x: x.strip())
         facade.push_tables['taxa_table'] = taxatable
 
         # -------------------

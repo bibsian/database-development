@@ -85,10 +85,10 @@ def meta_handle5():
     return metainput
 
 @pytest.fixture
-def meta_handle7():
+def meta_handle_free():
     lentry = {
-        'globalid': 7,
-        'metaurl': ('http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.30'),
+        'globalid': 18,
+        'metaurl': ('http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.61'),
         'lter': 'SBC'}
     ckentry = {}
     metainput = ini.InputHandler(
@@ -211,6 +211,23 @@ def file_handle5():
             'raw_data_test_5.csv'))
     return fileinput
 
+@pytest.fixture
+def file_handle_free():
+    ckentry = {}
+    rbtn = {'.csv': True, '.txt': False,
+            '.xlsx': False}
+    lned = {
+        'sheet': '', 'delim': '', 'tskip': '', 'bskip': '',
+        'header': ''}
+    fileinput = ini.InputHandler(
+        name='fileoptions',tablename=None, lnedentry=lned,
+        rbtns=rbtn, checks=ckentry, session=True,
+        filename=(
+            rootpath + end + 'data'+ end  +
+            'sea_otter_sightings.csv'))
+    return fileinput
+
+
 # ------------------------------------------------------ #
 # ---------------- Study site handle --------------- #
 # ----------------------------------------------------- #
@@ -252,6 +269,13 @@ def site_handle_4_percent_cover():
 
 @pytest.fixture
 def site_handle5():
+    lned = {'study_site_key': 'SITE'}
+    sitehandle = ini.InputHandler(
+        name='siteinfo', lnedentry=lned, tablename='study_site_table')
+    return sitehandle
+
+@pytest.fixture
+def site_handle_free():
     lned = {'study_site_key': 'SITE'}
     sitehandle = ini.InputHandler(
         name='siteinfo', lnedentry=lned, tablename='study_site_table')

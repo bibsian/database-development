@@ -1241,7 +1241,7 @@ def Table_Builder_Director(Database_Table_Setter):
 # # ---------------- Taxa table build test --------------- #
 # # --------------- Create taxa feature is OFF ----------- #
 # # ------------------------------------------------------ #
-# 
+
 # @pytest.fixture
 # def taxadfexpected():
 #     taxadfexpected = read_csv(
@@ -1249,7 +1249,7 @@ def Table_Builder_Director(Database_Table_Setter):
 #         'Datasets_manual_test' + end + 'taxa_table_test.csv')
 #     taxadfexpected.fillna('NA', inplace=True)
 #     return taxadfexpected
-#     
+# 
 # def test_taxatable_build(
 #         Taxa_Table_Builder, Table_Builder_Director, taxa_handle_1_count,
 #         dataset_test_1, taxadfexpected):
@@ -1302,10 +1302,11 @@ def Table_Builder_Director(Database_Table_Setter):
 #     assert (testorder == trueorder) is True    
 #     assert (testspecies == truespecies) is True
 # 
-# # ------------------------------------------------------ #
-# # ---------------- Taxa table build test --------------- #
-# # --------------- Create taxa feature is ON ----------- #
-# # ------------------------------------------------------ #
+
+# ------------------------------------------------------ #
+# ---------------- Taxa table build test --------------- #
+# --------------- Create taxa feature is ON ----------- #
+# ------------------------------------------------------ #
 # @pytest.fixture
 # def taxa_user_input_create():
 #     taxalned = OrderedDict((
@@ -1417,7 +1418,7 @@ def Table_Builder_Director(Database_Table_Setter):
 #     assert (testorder == trueorder) is True
 #     assert (testspecies == truespecies) is True
 # 
-# 
+
 # # ------------------------------------------------------ #
 # # ------------ Observation (count) table build test --------------- #
 # # ------------------------------------------------------ #
@@ -1459,50 +1460,50 @@ def Table_Builder_Director(Database_Table_Setter):
 # # ------------ Observation (percentcover) table build test -------- #
 # # ------------------------------------------------------ #
 # 
-@pytest.fixture
-def dataset_test_4():
-    return read_csv(
-        rootpath + end + 'test' + end +
-        'Datasets_manual_test/raw_data_test_4.csv')
-
-def test_percent_cover_table_build(
-        Table_Builder_Director,  biomass_handle_4_percent_cover,
-        dataset_test_4, Observation_Table_Builder):
-    sitelevels = dataset_test_4[
-        'site'].drop_duplicates().values.tolist()
-    sitelevels.sort()
-    facade = face.Facade()
-    facade.input_register(biomass_handle_4_percent_cover)
-    face_input = facade._inputs[biomass_handle_4_percent_cover.name]
-    percent_coverbuilder = Observation_Table_Builder()
-    assert (isinstance(percent_coverbuilder, Observation_Table_Builder)) is True
-
-    director = Table_Builder_Director()
-    assert (isinstance(director, Table_Builder_Director)) is True
-    director.set_user_input(face_input)
-    director.set_builder(percent_coverbuilder)
-    director.set_data(dataset_test_4)
-    director.set_globalid(2)
-    director.set_siteid('site')
-    director.set_sitelevels(sitelevels)
-    percent_covertable = director.get_database_table()
-    showpercent_cover = percent_covertable._availdf
-    print('finished: ', showpercent_cover)
-
-    percent_covertest = showpercent_cover['percent_cover_observation'].values.tolist()
-    percent_covertrue = dataset_test_4['cover'].values.tolist()
-
-    percent_covertest = [float(x) for x in percent_covertest]
-    percent_covertrue = [float(x) for x in percent_covertrue]
-    
-    sitetest = showpercent_cover[
-        'spatial_replication_level_1'].values.tolist()
-    sitetrue = dataset_test_4['site'].values.tolist()
-    print(showpercent_cover.columns)
-    assert 0
-    assert (percent_covertest == percent_covertrue) is True
-    assert (sitetest == sitetrue) is True
-
+# @pytest.fixture
+# def dataset_test_4():
+#     return read_csv(
+#         rootpath + end + 'test' + end +
+#         'Datasets_manual_test/raw_data_test_4.csv')
+# 
+# def test_percent_cover_table_build(
+#         Table_Builder_Director,  biomass_handle_4_percent_cover,
+#         dataset_test_4, Observation_Table_Builder):
+#     sitelevels = dataset_test_4[
+#         'site'].drop_duplicates().values.tolist()
+#     sitelevels.sort()
+#     facade = face.Facade()
+#     facade.input_register(biomass_handle_4_percent_cover)
+#     face_input = facade._inputs[biomass_handle_4_percent_cover.name]
+#     percent_coverbuilder = Observation_Table_Builder()
+#     assert (isinstance(percent_coverbuilder, Observation_Table_Builder)) is True
+# 
+#     director = Table_Builder_Director()
+#     assert (isinstance(director, Table_Builder_Director)) is True
+#     director.set_user_input(face_input)
+#     director.set_builder(percent_coverbuilder)
+#     director.set_data(dataset_test_4)
+#     director.set_globalid(2)
+#     director.set_siteid('site')
+#     director.set_sitelevels(sitelevels)
+#     percent_covertable = director.get_database_table()
+#     showpercent_cover = percent_covertable._availdf
+#     print('finished: ', showpercent_cover)
+# 
+#     percent_covertest = showpercent_cover['percent_cover_observation'].values.tolist()
+#     percent_covertrue = dataset_test_4['cover'].values.tolist()
+# 
+#     percent_covertest = [float(x) for x in percent_covertest]
+#     percent_covertrue = [float(x) for x in percent_covertrue]
+#     
+#     sitetest = showpercent_cover[
+#         'spatial_replication_level_1'].values.tolist()
+#     sitetrue = dataset_test_4['site'].values.tolist()
+#     print(showpercent_cover.columns)
+#     assert 0
+#     assert (percent_covertest == percent_covertrue) is True
+#     assert (sitetest == sitetrue) is True
+# 
 # ------------------------------------------------------ #
 # ------------ Observation (individual) table build test -------- #
 # ------------------------------------------------------ #
@@ -1546,3 +1547,42 @@ def test_percent_cover_table_build(
 # 
 #     assert (check_individual_obs == [1]) is True
 #     assert (sitetest == sitetrue) is True
+
+@pytest.fixture
+def taxa_data_corner_case():
+    taxadfexpected = read_table(
+        (rootpath + end + 'data' +  end + 'sev029_arthropod_02162009_0.txt'),
+        sep=',', skip_blank_lines=True, error_bad_lines=False, engine='c')
+    taxadfexpected.replace({'-888': 'NA'}, inplace=True)
+    taxadfexpected.replace({-888: -99999}, inplace=True)
+
+    return taxadfexpected
+
+def test_taxatable_build(
+        Taxa_Table_Builder, Table_Builder_Director, taxa_handle_corner_case,
+        taxa_data_corner_case):
+    print(taxa_data_corner_case)
+    
+    sitelevels = taxa_data_corner_case['Site'].drop_duplicates().values.tolist()
+    sitelevels.sort()
+    facade = face.Facade()
+    facade.input_register(taxa_handle_corner_case)
+    face_input = facade._inputs[taxa_handle_corner_case.name]
+    taxabuilder = Taxa_Table_Builder()
+    assert (isinstance(taxabuilder, Taxa_Table_Builder)) is True
+
+    director = Table_Builder_Director()
+    assert (isinstance(director, Table_Builder_Director)) is True
+    director.set_user_input(face_input)
+    director.set_builder(taxabuilder)
+    director.set_data(taxa_data_corner_case)
+    director.set_globalid(1)
+    director.set_siteid('Site')
+    director.set_sitelevels(sitelevels)
+    
+    taxatable = director.get_database_table()
+    showtaxa = taxatable._availdf
+    assert isinstance(showtaxa,DataFrame)    
+    print(showtaxa)
+
+    

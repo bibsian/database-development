@@ -99,6 +99,19 @@ def meta_handle7():
         checks=ckentry)
     return metainput
 
+
+@pytest.fixture
+def meta_handle_corner_case():
+    lentry = {
+        'globalid': 54,
+        'metaurl': ('http://sev.lternet.edu/data/sev-29'),
+        'lter': 'SEV'}
+    ckentry = {}
+    metainput = ini.InputHandler(
+        name='metacheck', tablename=None, lnedentry=lentry,
+        checks=ckentry)
+    return metainput
+
 # ------------------------------------------------------ #
 # ---------------- File loader handle --------------- #
 # ------------------------------------------------------ #
@@ -200,6 +213,22 @@ def file_handle5():
             'raw_data_test_5.csv'))
     return fileinput
 
+@pytest.fixture
+def file_handle_corner_case():
+    ckentry = {}
+    rbtn = {'.csv': False, '.txt': True,
+            '.xlsx': False}
+    lned = {
+        'sheet': '', 'delim': ',', 'tskip': '', 'bskip': '',
+        'header': ''}
+    fileinput = ini.InputHandler(
+        name='fileoptions',tablename=None, lnedentry=lned,
+        rbtns=rbtn, checks=ckentry, session=True,
+        filename=(
+            rootpath + end + 'data' +  end + 'sev029_arthropod_02162009_0.txt'))
+    return fileinput
+
+
 # ------------------------------------------------------ #
 # ---------------- Study site handle --------------- #
 # ----------------------------------------------------- #
@@ -242,6 +271,13 @@ def site_handle_4_percent_cover():
 @pytest.fixture
 def site_handle5():
     lned = {'study_site_key': 'SITE'}
+    sitehandle = ini.InputHandler(
+        name='siteinfo', lnedentry=lned, tablename='study_site_table')
+    return sitehandle
+
+@pytest.fixture
+def site_handle_corner_case():
+    lned = {'study_site_key': 'Site'}
     sitehandle = ini.InputHandler(
         name='siteinfo', lnedentry=lned, tablename='study_site_table')
     return sitehandle
@@ -318,6 +354,12 @@ def project_handle_4_percent_cover():
 
 @pytest.fixture
 def project_handle5():
+    main_input = ini.InputHandler(
+        name='maininfo', tablename='project_table')
+    return main_input
+
+@pytest.fixture
+def project_handle_corner_case():
     main_input = ini.InputHandler(
         name='maininfo', tablename='project_table')
     return main_input
@@ -598,6 +640,61 @@ def taxa_handle5():
         checks=taxacreate)
     return taxaini
 
+
+@pytest.fixture
+def taxa_handle_corner_case():
+    taxalned = OrderedDict((
+        ('sppcode', ''),
+        ('kingdom', ''),
+        ('subkingdom', ''),
+        ('infrakingdom', ''),
+        ('superdivision', ''),
+        ('divsion', ''),
+        ('subdivision', ''),
+        ('superphylum', ''),
+        ('phylum', ''),
+        ('subphylum', ''),
+        ('clss', ''),
+        ('subclass', ''),
+        ('ordr', ''),
+        ('family', 'Family'),
+        ('genus', 'Genus'),
+        ('species', 'Species')
+    ))
+    taxackbox = OrderedDict((
+        ('sppcode', False),
+        ('kingdom', False),
+        ('subkingdom', False),
+        ('infrakingdom', False),
+        ('superdivision', False),
+        ('divsion', False),
+        ('subdivision', False),
+        ('superphylum', False),
+        ('phylum', False),
+        ('subphylum', False),
+        ('clss', False),
+        ('subclass', False),
+        ('ordr', False),
+        ('family', True),
+        ('genus', True),
+        ('species', True)
+    ))
+    taxacreate = {
+        'taxacreate': False
+    }    
+    available = [
+        x for x,y in zip(
+            list(taxalned.keys()), list(
+                taxackbox.values()))
+        if y is True
+    ]    
+    taxaini = ini.InputHandler(
+        name='taxainfo',
+        tablename='taxa_table',
+        lnedentry= extract(taxalned, available),
+        checks=taxacreate)
+    return taxaini
+
 # ------------------------------------------------------ #
 # ---------------- time handle --------------- #
 # ------------------------------------------------------ #
@@ -686,6 +783,23 @@ def time_handle5():
         lnedentry= d)
     return timeini
 
+@pytest.fixture
+def time_handle_corner_case():
+    d = {
+        'dayname': 'Day',
+        'dayform': 'dd-mm-YYYY (Any Order)',
+        'monthname': 'Month',
+        'monthform': 'dd-mm-YYYY (Any Order)',
+        'yearname': 'Year',
+        'yearform': 'dd-mm-YYYY (Any Order)',
+        'jd': False,
+        'hms': False
+    }
+    timeini = ini.InputHandler(
+        name='timeinfo', tablename='timetable',
+        lnedentry= d)
+    return timeini
+
 # ------------------------------------------------------ #
 # ---------------- covar handle --------------- #
 # ------------------------------------------------------ #
@@ -730,6 +844,15 @@ def covar_handle_4_percent_cover():
 def covar_handle5():
     covarlned = {'columns': None}    
     covarlned['columns'] = string_to_list('TEMP, TAG')
+    covarini = ini.InputHandler(
+        name='covarinfo', tablename='covartable',
+        lnedentry=covarlned)
+    return covarini
+
+@pytest.fixture
+def covar_handle_corner_case():
+    covarlned = {'columns': None}    
+    covarlned['columns'] = string_to_list('Comments')
     covarini = ini.InputHandler(
         name='covarinfo', tablename='covartable',
         lnedentry=covarlned)
@@ -945,6 +1068,48 @@ def count_handle5():
         checks=obsckbox)
     return countini
 
+
+@pytest.fixture
+def count_handle_corner_case():
+    obslned = OrderedDict((
+        ('spatial_replication_level_2', 'Line'),
+        ('spatial_replication_level_3', 'Trap'),
+        ('spatial_replication_level_4', ''),
+        ('spatial_replication_level_5', ''),
+        ('structured_type_1', ''),
+        ('structured_type_2', ''),
+        ('structured_type_3', ''),
+        ('treatment_type_1', ''),
+        ('treatment_type_2', ''),
+        ('treatment_type_3', ''),
+        ('unitobs', 'Count')
+    ))    
+    obsckbox = OrderedDict((
+        ('spatial_replication_level_2', True),
+        ('spatial_replication_level_3', True),
+        ('spatial_replication_level_4', False),
+        ('spatial_replication_level_5', False),
+        ('structured_type_1', False),
+        ('structured_type_2', False),
+        ('structured_type_3', False),
+        ('treatment_type_1', False),
+        ('treatment_type_2', False),
+        ('treatment_type_3', False),
+        ('unitobs', True)
+    ))
+    available = [
+        x for x,y in zip(
+            list(obslned.keys()), list(
+                obsckbox.values()))
+        if y is True
+    ]
+    countini = ini.InputHandler(
+        name='rawinfo',
+        tablename='count_table',
+        lnedentry=extract(obslned, available),
+        checks=obsckbox)
+    return countini
+
 # ------------------------------------------------------ #
 # ---------------- MergeToUpload Class --------------- #
 # ------------------------------------------------------ #
@@ -1060,7 +1225,8 @@ def MergeToUpload():
                         'study_site_key']).drop_duplicates()
                 site_in_proj_levels_to_push = (
                     site_in_proj_levels_to_push[
-                        site_in_proj_levels_to_push.study_site_key != 'NULL']
+                        site_in_proj_levels_to_push[
+                            'study_site_key'] != 'NULL']
                 )
                 study_site_levels_derived = (
                     site_in_proj_levels_to_push[
@@ -1083,21 +1249,28 @@ def MergeToUpload():
                         len(study_site_table_query_list) <
                         len(study_site_table_list_from_user)
                     )
+                    and
+                    (
+                        len(study_site_table_query_list) != 0
+                    )
             ):
                 print('Study site data is partially stored already')
                 site_in_proj_levels_to_push = concat(
                     [
                         studysitetabledf,
                         study_site_table_query_df
-                    ], axis=0).drop_duplicates()
+                    ], axis=0).drop_duplicates(subset='study_site_key')
+                print('site in proj to push: ', site_in_proj_levels_to_push)
+                print(site_in_proj_levels_to_push.columns)
+
                 site_in_proj_levels_to_push = (
-                    site_in_proj_levels_to_push[
-                        'study_site_key'].drop_duplicates()
+                    site_in_proj_levels_to_push.drop_duplicates(
+                        subset='study_site_key')
                 )
                 site_in_proj_levels_to_push = (
                     site_in_proj_levels_to_push[
-                        site_in_proj_levels_to_push.
-                        study_site_key != 'NULL']
+                        site_in_proj_levels_to_push[
+                            'study_site_key'] != 'NULL']
                 )
                 study_site_levels_derived = (
                     site_in_proj_levels_to_push[
@@ -1113,8 +1286,8 @@ def MergeToUpload():
                     studysitetabledf['study_site_key']).drop_duplicates()
                 site_in_proj_levels_to_push = (
                     site_in_proj_levels_to_push[
-                        site_in_proj_levels_to_push.
-                        study_site_key != 'NULL']
+                        site_in_proj_levels_to_push[
+                            'study_site_key'] != 'NULL']
                 )
                 study_site_levels_derived = (
                     site_in_proj_levels_to_push[
@@ -1123,16 +1296,17 @@ def MergeToUpload():
                 all_site_table_data_not_yet_uploaded = True
                 print(site_in_proj_levels_to_push)
                 print('all_site_table_data_not_yet_uploaded = True')
-            try:
-                print('loaded site levels: ', studysitelevels)
-                print('derived site levels: ', study_site_levels_derived)
-                assert (studysitelevels == study_site_levels_derived)
-            except Exception as e:
-                print(str(e))
-                raise AttributeError(
-                    'Study site levels derived from query and user ' +
-                    'do not match the original site levels stored ' +
-                    'in the user facade class: ' + str(e))
+
+            #try:
+            #    print('loaded site levels: ', studysitelevels)
+            #    print('derived site levels: ', study_site_levels_derived)
+            #    assert (studysitelevels == study_site_levels_derived)
+            #except Exception as e:
+            #    print(str(e))
+            #    raise AttributeError(
+            #        'Study site levels derived from query and user ' +
+            #        'do not match the original site levels stored ' +
+            #        'in the user facade class: ' + str(e))
             site_in_proj_table_to_push = site_in_proj_levels_to_push
             site_in_proj_table_to_push.columns = (
                 ['study_site_table_fkey']
@@ -1305,6 +1479,7 @@ def MergeToUpload():
             else:
                 tbl_taxa_merged.to_sql(
                     'taxa_table', orm.conn, if_exists='append', index=False)
+                print('taxa table uploaded')
 
         def merge_for_datatype_table_upload(
                 self, raw_dataframe,
@@ -1366,6 +1541,7 @@ def MergeToUpload():
 
             print('updated raw data col list: ', raw_dataframe_siteinproj)
             print('update taxa data col list: ', uploaded_taxa_columns)
+
             # Step 5) Merge the original dtype data with the
             # merged taxa_table query to have all foreign keys...
             # taxa and site_project
@@ -1377,6 +1553,9 @@ def MergeToUpload():
                 right_on=list(uploaded_taxa_columns),
                 how='left')
 
+            print(
+                'MERGED ALL DF COLUMN CHECK',
+                dtype_merged_with_taxa_and_siteinproj_key.columns)
             print("PAST MEGERED STEP 5")
             
             # Step 6) Take the merged original data with all foreign keys,
@@ -1496,7 +1675,6 @@ def MergeToUpload():
                 print('No None to replace:', str(e))
             tbl_dtype_to_upload[other_numerics].fillna(-99999, inplace=True)
 
-
             tbl_dtype_to_upload.loc[:, other_numerics] = tbl_dtype_to_upload.loc[
                 :, other_numerics].apply(to_numeric, errors='coerce')
 
@@ -1504,7 +1682,7 @@ def MergeToUpload():
                 datatype_table,
                 orm.conn, if_exists='append', index=False)
             print('past datatype upload')
-
+            
         def update_project_table(
                 self,
                 spatial_rep_columns_from_og_df,

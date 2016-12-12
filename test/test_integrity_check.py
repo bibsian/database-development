@@ -46,7 +46,7 @@ from sqlalchemy.orm import relationship
 ###### @@@@@@@@@@@@@ KEY @@@@@@@@@@@@@@@ ##########
 
 engine = create_engine(
-    'postgresql+psycopg2://postgres:demography@localhost/popler_3',
+    'postgresql+psycopg2://--/popler_3',
     echo=False)
 #engine = create_engine(
 #    'postgresql+psycopg2:///',
