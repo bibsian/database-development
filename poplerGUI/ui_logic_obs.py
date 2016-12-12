@@ -122,8 +122,7 @@ class ObsDialog(QtGui.QDialog, obs.Ui_Dialog):
 
         self.obstable = self.rawdirector._availdf.copy()
         self.obsmodel = self.viewEdit(
-            self.obstable.drop(
-                self.obstable[['index', 'level_0']], axis=1))
+            self.obstable)
         if sender is self.btnPreview:
             self.preview.tabviewPreview.setModel(self.obsmodel)
             self.preview.show()

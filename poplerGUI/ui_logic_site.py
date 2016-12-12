@@ -105,7 +105,10 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
         try:
             self.facade._data[
                 self.siteloc['study_site_key']] = self.facade._data[
-                self.siteloc['study_site_key']].astype(str)
+                    self.siteloc['study_site_key']].astype(str)
+            self.facade._data[
+                self.siteloc['study_site_key']] = self.facade._data[
+                    self.siteloc['study_site_key']].apply(lambda x: x.strip())
         except Exception as e:
             print(str(e))
             self._log.debug(str(e))

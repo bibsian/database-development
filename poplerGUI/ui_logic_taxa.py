@@ -131,8 +131,8 @@ class TaxaDialog(QtGui.QDialog, uitax.Ui_Dialog):
             self.preview.show()
         elif sender is self.btnSaveClose:
             # Convert to strings and strip
-            self.taxa_table = self.taxa_table.applymap(str)
-            self.taxa_table = self.taxa_table.applymap(lambda x: x.strip())
+            #self.taxa_table = self.taxa_table.applymap(str)
+            #self.taxa_table = self.taxa_table.applymap(lambda x: x.strip())
             
             self.facade.push_tables['taxa_table'] = self.taxa_table
             hlp.write_column_to_log(
