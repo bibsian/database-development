@@ -3,7 +3,7 @@ import datetime as tm
 import re
 import sys
 import os
-from pandas import read_csv, to_numeric
+from pandas import read_csv, to_numeric, concat
 from poplerGUI.logiclayer.class_metaverify import MetaVerifier
 from poplerGUI.logiclayer.class_helpers import check_registration
 from poplerGUI.logiclayer.class_tablebuilder import (
@@ -293,8 +293,10 @@ class Facade:
         time_table_df = self.push_tables['timetable']
         print('facade time table: ', time_table_df)
         print('facade time table col: ', time_table_df.columns)
-        observation_table_df = self.push_tables[
-            self._inputs['rawinfo'].tablename]
+        observation_table_df = concat(
+            [time_table_df,self.push_tables[
+                self._inputs['rawinfo'].tablename]], axis=1)
+
         covariate_table_df = self.push_tables['covariates']
         site_levels = self._valueregister['sitelevels']
         print('facade site levels: ', site_levels)
@@ -305,6 +307,17 @@ class Facade:
         # --- Pushing study site table data --- #
         # -------------------------------------- #
 
+        try:
+            assert (study_site_table_df is not None) is True
+            assert (project_table_df is not None) is True
+            assert (taxa_table_df is not None) is True
+            assert (time_table_df is not None) is True
+            assert (observation_table_df is not None) is True
+        except Exception as e:
+            print(str(e))
+            raise ValueError('Not all tables have been made')
+        
+        
         if study_site_table_df.loc[0, 'study_site_key'] != 'NULL':
             if self.sitepushed is None:
                 study_site_table_numeric_columns = [
@@ -328,7 +341,7 @@ class Facade:
                     print('PUSHED STUDY')
                 except Exception as e:
                     print(str(e))
-                    #self._tablelog['study_site_table'].debug(str(e))
+                    self._tablelog['study_site_table'].debug(str(e))
                     raise ValueError(
                         'Could not push study site table data: ' + str(e)
                     )
