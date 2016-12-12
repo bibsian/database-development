@@ -140,15 +140,10 @@ class MergeToUpload(object):
                     [
                         i for i in
                         study_site_table_query_list
-                        if i in
+                        if i not in
                         study_site_table_list_from_user
                     ]
                 ) > 0
-                and
-                (
-                    len(study_site_table_query_list) <
-                    len(study_site_table_list_from_user)
-                )
                 and
                 (
                     len(study_site_table_query_list) != 0
