@@ -1,5 +1,14 @@
 #!/usr/bin/env python
 import sys, os
+if sys.platform == "darwin":
+    rootpath = (
+        "/Users/bibsian/Desktop/git/database-development/")
+    end = "/"
+
+elif sys.platform == "win32":
+    rootpath = (
+        "C:\\Users\MillerLab\\Desktop\\database-development")
+    end = "\\"
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, create_engine, MetaData
 from sqlalchemy import Table, ForeignKey
@@ -13,10 +22,12 @@ import logging
 import pandas as pd
 import re
 
+
 # Setup logging for program
 date = (str(dt.datetime.now()).split()[0]).replace("-", "_")
 logging.basicConfig(
-    filename='db_transactions/database_log_{}.log'.format(date))
+    filename=rootpath+end+'db_transactions/database_log_{}.log'.format(date))
+
 logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
 
 # Adapter for numpy datatypes
@@ -26,8 +37,8 @@ def adapt_numpy_int64(numpy_int64):
 register_adapter(numpy.int64, adapt_numpy_int64)
 
 engine = create_engine(
-    #'postgresql+psycopg2://poplermaster:qmokytmchgh0lDhY@popler.cu3plewsggca.us-west-2.rds.amazonaws.com/popler',
-    'postgresql+psycopg2://postgres:demography@localhost/popler_3',
+    #'postgresql+psycopg2://--/popler',
+    'postgresql+psycopg2://--/popler_3',
     echo=False)
 conn = engine.connect()
 # Mapping metadata
