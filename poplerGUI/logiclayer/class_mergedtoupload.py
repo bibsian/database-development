@@ -384,6 +384,7 @@ class MergeToUpload(object):
                 'clss', 'subclass', 'ordr', 'family', 'genus', 'species',
                 'common_name', 'authority'
             ]
+            tbl_taxa_merged['metadata_taxa_key'] = self.metadata_key
             tbl_taxa_merged[taxacolumns].to_sql(
                 'taxa_table', orm.conn, if_exists='append', index=False)
 
@@ -570,6 +571,9 @@ class MergeToUpload(object):
         tbl_dtype_to_upload.loc[:, other_numerics] = tbl_dtype_to_upload.loc[
             :, other_numerics].apply(to_numeric, errors='coerce')
 
+        metadata_key_column_name = 'metadata_{}_key'.format(
+            formated_dataframe_name)
+        tbl_dtype_to_upload[metadata_key_column_name] = self.metadata_key
         tbl_dtype_to_upload.to_sql(
             datatype_table,
             orm.conn, if_exists='append', index=False)
