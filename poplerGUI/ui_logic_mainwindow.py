@@ -161,6 +161,7 @@ class UiMainWindow(QtGui.QMainWindow, mw.Ui_MainWindow):
         other dialog boxes '''
         self.change_count += 1
 
+        self.facade._data.fillna('NA', inplace=True)
         new_dataframe_state = Memento(
             self.facade._data.copy(),
             '{}_{}'.format(dataframe_state, self.change_count)
