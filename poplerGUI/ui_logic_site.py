@@ -102,8 +102,7 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
         if self.ckCreate.isChecked() is True:
             self.facade._data[self.siteloc[
                 'study_site_key']] = self.siteloc['study_site_key']
-            self.facade._data[self.siteloc[
-                'og_study_site_key']] = self.siteloc['study_site_key']
+            self.facade._data['og_study_site_key'] = self.siteloc['study_site_key']
 
         else:
             pass
