@@ -464,6 +464,13 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_7">
        <item>
+        <widget class="QPushButton" name="btnChange">
+         <property name="text">
+          <string>Change Labels</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QPushButton" name="btnUpdate">
          <property name="enabled">
           <bool>true</bool>
@@ -472,7 +479,7 @@
           <enum>Qt::ClickFocus</enum>
          </property>
          <property name="text">
-          <string>Update Site List</string>
+          <string>Check Database</string>
          </property>
         </widget>
        </item>
@@ -502,7 +509,7 @@
        <item>
         <widget class="QPushButton" name="btnSkip">
          <property name="text">
-          <string>Skip</string>
+          <string>Canel</string>
          </property>
         </widget>
        </item>

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\MillerLab\Desktop\database-development\Views\ui_dialog_site.ui'
+# Form implementation generated from reading ui file '/Users/bibsian/Desktop/git/database-development/Views/ui_dialog_site.ui'
 #
 # Created by: PyQt4 UI code generator 4.11.4
 #
@@ -237,6 +237,9 @@ class Ui_Dialog(object):
         self.verticalLayout_7.addWidget(self.frame)
         self.horizontalLayout_7 = QtGui.QHBoxLayout()
         self.horizontalLayout_7.setObjectName(_fromUtf8("horizontalLayout_7"))
+        self.btnChange = QtGui.QPushButton(Dialog)
+        self.btnChange.setObjectName(_fromUtf8("btnChange"))
+        self.horizontalLayout_7.addWidget(self.btnChange)
         self.btnUpdate = QtGui.QPushButton(Dialog)
         self.btnUpdate.setEnabled(True)
         self.btnUpdate.setFocusPolicy(QtCore.Qt.ClickFocus)
@@ -265,7 +268,8 @@ class Ui_Dialog(object):
         self.ckCreate.setText(_translate("Dialog", "Add Study Site Name", None))
         self.label_2.setText(_translate("Dialog", "Site List", None))
         self.label_3.setText(_translate("Dialog", "Site Database Query", None))
-        self.btnUpdate.setText(_translate("Dialog", "Update Site List", None))
+        self.btnChange.setText(_translate("Dialog", "Change Labels", None))
+        self.btnUpdate.setText(_translate("Dialog", "Check Database", None))
         self.btnSaveClose.setText(_translate("Dialog", "Save && Close", None))
-        self.btnSkip.setText(_translate("Dialog", "Skip", None))
+        self.btnSkip.setText(_translate("Dialog", "Canel", None))
 
