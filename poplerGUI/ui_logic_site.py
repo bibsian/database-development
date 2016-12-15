@@ -32,9 +32,10 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
         # Placeholders:
         # Site Table from Raw data
         # and Site Table after edits
-        self.rawdata = None
+        self.site_table_data_to_upload_to_db = None
         self.sitetabledata = None
-        self.sitelevels = None
+        self.sitelevels_submit_block = None
+        self.sitelevels_change_block = None
         self.sitelevels_updated = None
 
         # Place holder for sqlalchemy Orms
@@ -51,6 +52,7 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
         self.sitetablemodel = None
         self.sitequerymodel = None
         self.querycheck = None
+        self.updated_from_query_matches = False
         # User facade composed from main window
         self.facade = None
         self.lter = None
@@ -73,6 +75,7 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
         self.btnSiteID.clicked.connect(self.submit_change)
         self.btnSaveClose.clicked.connect(self.save_close)
         self.btnSkip.clicked.connect(self.close)
+        self.btnChange.clicked.connect(self.change_site_label)
         self.btnUpdate.clicked.connect(self.update_data)
         self.previous_save = False
 
@@ -99,6 +102,9 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
         if self.ckCreate.isChecked() is True:
             self.facade._data[self.siteloc[
                 'study_site_key']] = self.siteloc['study_site_key']
+            self.facade._data[self.siteloc[
+                'og_study_site_key']] = self.siteloc['study_site_key']
+
         else:
             pass
 
@@ -106,9 +112,8 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
             self.facade._data[
                 self.siteloc['study_site_key']] = self.facade._data[
                     self.siteloc['study_site_key']].astype(str)
-            self.facade._data[
-                self.siteloc['study_site_key']] = self.facade._data[
-                    self.siteloc['study_site_key']].apply(lambda x: x.strip())
+            self.facade._data['og_study_site_key'] = self.facade._data[
+                    self.siteloc['study_site_key']].copy()
         except Exception as e:
             print(str(e))
             self._log.debug(str(e))
@@ -126,53 +131,111 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
         self.facade.input_register(self.siteini)
         self.facade._valueregister['study_site_key'] = self.siteloc[
             'study_site_key']
-        
         self.message.about(self, 'Status', 'Information recorded')
 
         # Making study_site_table
-        if not self.saved:
-            self.sitedirector = self.facade.make_table('siteinfo')
-            self.rawdata = (
-                self.sitedirector._availdf.sort_values(by='study_site_key'))
-        else:
-            self.update()
 
-        # Make table and Register site levels with facade 
+        self.sitedirector = self.facade.make_table('siteinfo')
+        self.site_table_data_to_upload_to_db = (
+            self.sitedirector._availdf)
+
+
         self.facade.register_site_levels(
-            self.rawdata['study_site_key'].drop_duplicates().
-            values.tolist())
-
+            self.facade._data[self.siteloc['study_site_key']].drop_duplicates().values.tolist()
+        )
         # Registing info
-        self.sitelevels = self.facade._valueregister['sitelevels']
+        self.sitelevels_submit_block = self.site_table_data_to_upload_to_db['study_site_key']
         self._log.debug(
-            'sitelevels (submit): ' + ' '.join(self.sitelevels))
+            'sitelevels (submit): ' + ' '.join(self.sitelevels_submit_block))
 
-        if not self.saved:
-            # Setting Table Model View if this dialog box
-            # has NOT been used and information has NOT been stored
-            self.sitetablemodel = self.viewEdit(self.rawdata)
-            self.listviewSiteLabels.setModel(self.sitetablemodel)
-            self.listviewSiteLabels.resizeColumnsToContents()
+        # Setting Table Model View if this dialog box
+        # has NOT been used and information has NOT been stored
+        self.sitetablemodel = self.viewEdit(self.site_table_data_to_upload_to_db.copy())
+        self.listviewSiteLabels.setModel(self.sitetablemodel)
+        self.listviewSiteLabels.resizeColumnsToContents()
+
+
+    def change_site_label(self):
+        ''' Method to facilitate the renaming of site labels that
+        are obvious errors (due to caps, spaces, etc)'''
+        # Handling and log any user changes
+        changed_df = self.sitetablemodel.data(
+            None, QtCore.Qt.UserRole)
+        print('changed site list in change block: ', changed_df)
+        changed_site_list = changed_df[
+            'study_site_key'].values.tolist()
+        self._log.debug(
+            'changed_site_list: ' + ' '.join(changed_site_list))
+        self._log.debug('sitelevels list: ' + ' ' +
+                        ' '.join(self.sitelevels_submit_block))
+
+        if (
+                len(self.sitelevels_submit_block) == len(changed_site_list)
+        ):
+            try:
+
+                print(
+                    'sitelevels before replace: ',
+                    self.facade._data[self.siteloc['study_site_key']].drop_duplicates()
+                )
+
+
+                index = [
+                    i for i,x in
+                    enumerate(self.sitelevels_submit_block) if
+                    x != changed_site_list[i]
+                ]
+
+                change_from = [
+                    self.sitelevels_submit_block[i] for i in index]
+                change_to = [
+                    changed_site_list[i] for i in index]
+
+                change_dictionary = dict(
+                    zip(change_from, change_to))
+
+
+                # Replace labels with new ones
+                self.facade._data[self.siteloc['study_site_key']].replace(
+                    change_dictionary,
+                    inplace=True)
+
+                print(
+                    'sitelevels after replace: ',
+                    self.facade._data[self.siteloc['study_site_key']].drop_duplicates()
+                )
+
+                self.sitedirector = self.facade.make_table('siteinfo')
+                self.site_table_data_to_upload_to_db = (
+                    self.sitedirector._availdf)
+
+                print('checking if update from query matches is T/F')
+                if self.updated_from_query_matches == False:
+                    # Make table and Register site levels with facade
+                    self.facade.register_site_levels(
+                        self.facade._data[self.siteloc[
+                            'study_site_key']].drop_duplicates().values.tolist())
+                else:
+                    pass
+
+                self.sitelevels_submit_block = self.site_table_data_to_upload_to_db[
+                    'study_site_key'].values.tolist()
+                # Adjusting view
+                print('Arriving at view set in change block')
+                self.sitetablemodel = self.viewEdit(
+                    self.site_table_data_to_upload_to_db)
+                self.listviewSiteLabels.setModel(self.sitetablemodel)
+                self.listviewSiteLabels.resizeColumnsToContents()
+
+            except Exception as e:
+                print(str(e))
+                self._log.debug(str(e))
+                self.error.showMessage(
+                    'could not alter levels: ' + str(e))
         else:
-            # Setting table Model View if the dialog box has
-            # been used and info has been saved
-            session = orm.Session()
-            sitecheck = session.query(
-                orm.study_site_table.study_site_key).order_by(
-                    orm.study_site_table.study_site_key)
-            session.close()
-            sitecheckdf = read_sql(
-                sitecheck.statement, sitecheck.session.bind)
-
-            site_in_db = sitecheckdf['study_site_key'].values.tolist()
-            site_in_db['study_site_key'].drop_duplicates(inplace=True)
-            displayed_data = self.rawdata[
-                ~self.siteloc['study_site_key'].isin(
-                    site_in_db)].copy()
-            displayed_data.drop_duplicates(inplace=True)
-            self.sitetablemodel = self.viewEdit(displayed_data)
-            self.listviewSiteLabels.setModel(self.sitetablemodel)
-            self.listviewSiteLabels.resizeColumnsToContents()
+            self.error.showMessage(
+                'Site levels changes cannot be made: Restart site entries.'
+            )
 
     def update_data(self):
         '''
@@ -188,76 +251,56 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
         Note, if the user changes one of the site names, this
         method will account for that before the 'check' begins
         '''
-        # Handling and log any user changes
-        changed_df = self.sitetablemodel.data(
-            None, QtCore.Qt.UserRole)
-        changed_site_list = changed_df[
-            'study_site_key'].drop_duplicates().values.tolist()
-        self._log.debug(
-            'changed_site_list: ' + ' '.join(changed_site_list))
-        self._log.debug('sitelevels list: ' + ' ' +
-                        ' '.join(self.sitelevels))
-        try:
-            for i,item in enumerate(changed_site_list):
-                self.facade._data[self.siteloc['study_site_key']].replace(
-                    {self.sitelevels[i]: item.rstrip()},
-                    inplace=True)
-        except Exception as e:
-            print(str(e))
-            self._log.debug(str(e))
-            self.error.showMessage(
-                'could not alter levels: ' + str(e))
 
         # Query to check is study sites are in db
         session = orm.Session()
         sitecheck = session.query(
             orm.study_site_table.__table__).order_by(
-                orm.study_site_table.study_site_key)
+                orm.study_site_table.study_site_key).filter(
+                    orm.study_site_table.study_site_key.in_(
+                        self.sitelevels_submit_block)
+                )
         session.close()
-        sitecheckdf = read_sql(
+        site_df_from_query = read_sql(
             sitecheck.statement, sitecheck.session.bind)
 
         # Conditionals to make sure that no results were
         # returned or not and sets check object (checker)
-        print('checker df: ', sitecheckdf)
-        if sitecheckdf is not None:
-            if len(sitecheckdf) == 0:
-               checker = True
+        # First conditional is in case the database is empty
+        # and/or query returns None
+        print('checker df: ', site_df_from_query)
+        if site_df_from_query is not None:
+            if site_df_from_query.empty is True:
+                no_site_matches_from_db = True
             else:
                 # If there are matches for study sites
                 # make a list of match names to be promt user
                 # with
-                records_entered = sitecheckdf[
+                no_site_matches_from_db = False
+                site_matches_from_db = site_df_from_query[
                     'study_site_key'].values.tolist()
-                check = [
-                    x for x in
-                    list(set(records_entered)) if
-                    x in changed_site_list]
-                print('check list: ', check)
-                print('test check: ', len(check) == 0)
-                checker = (len(check) == 0)
         else:
-            checker = True
-        print('checker status: ', checker)
+            no_site_matches_from_db = True
+        print('no_site_matches_from_db status: ', no_site_matches_from_db)
 
         # If there are matches and user confirms they
         # are the same site's in the database then accept
         # changes and query site id's again to make sure
         # no more shared study sites are left
-        if checker == True:
-            site_display_df = changed_df.drop_duplicates()
-            print('Site display droped: ', site_display_df)
-            self.sitetablemodel = self.viewEdit(site_display_df)
+        if no_site_matches_from_db == True:
+            self.sitetablemodel = self.viewEdit(
+                self.site_table_data_to_upload_to_db.applymap(str))
             self.listviewSiteLabels.setModel(self.sitetablemodel)
+
         else:
-            check_view = view.PandasTableModel(
-                sitecheckdf[sitecheckdf['study_site_key'].isin(check)])
+            query_matches_view = view.PandasTableModel(
+                site_df_from_query[site_df_from_query['study_site_key'].isin(
+                    site_matches_from_db)])
             self.preview_validate.tabviewPreview.setModel(
-                check_view)
-            self.sitequerymodel = check_view
+                query_matches_view)
+            self.sitequerymodel = query_matches_view
             self.tabviewDbSiteQuery.setModel(self.sitequerymodel)
             self.tabviewDbSiteQuery.resizeColumnsToContents()
-            self.sitelevels = changed_site_list
             self.preview_validate.show()
 
     def validated(self):
@@ -265,37 +308,37 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
         Class to double check study sites after accepting that
         study sites are shared
         '''
+
+        self.preview_validate.close()
         self.preview_validate.close()
 
+        # Queried df
+        site_matches_from_db = self.sitequerymodel.data(
+            None, QtCore.Qt.UserRole)
+        old_site_list = self.sitelevels_submit_block
+        self.sitelevels_updated = [
+            x for x in old_site_list
+            if x not in
+            site_matches_from_db['study_site_key'].values.tolist()]
+        print('site levels in updated block: ', self.sitelevels_updated)
+
+        # Site table view df
         changed_df = self.sitetablemodel.data(
             None, QtCore.Qt.UserRole)
-        changed_site_list = changed_df[
-            'study_site_key'].drop_duplicates().values.tolist()
-        query_match = self.sitequerymodel.data(
-                None, QtCore.Qt.UserRole)
-        site_q_list = query_match['study_site_key'].values.tolist()
-        s_not_in_databaase = [
-            x for x in changed_site_list if x not in site_q_list
-        ]
-        self._log.debug(
-            's_not_in_databaase: ' + ' '.join(s_not_in_databaase))
-
         site_display_df = changed_df[
             changed_df['study_site_key'].isin(
-                s_not_in_databaase)].drop_duplicates()
+                self.sitelevels_updated)].drop_duplicates()
         print('site df (val): ', site_display_df)
         self.sitetablemodel = self.viewEdit(site_display_df)
         self.listviewSiteLabels.setModel(self.sitetablemodel)
         self.listviewSiteLabels.resizeColumnsToContents()
+        self.updated_from_query_matches = True
         self._log.debug(
             'sitelevels (validated block)' + ' '.join(
-                self.sitelevels))
-
-        self.sitelevels = self.sitetablemodel.data(
-            None, QtCore.Qt.UserRole)['study_site_key'].values.tolist()
+                self.sitelevels_submit_block))
         self._log.debug(
-            'sitelevels (updated)' + ' '.join(self.sitelevels))
-        self.querycheck = 'Checked'
+            'sitelevels (updated)' + ' '.join(self.sitelevels_updated))
+
 
     def save_close(self):
         '''
@@ -303,23 +346,14 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
         by the user (matching sites that were accepted by user 
         are removed from the saved table because it will be pushed)
         '''
-        update_message = QtGui.QMessageBox.question(
-            self,'Message', 'Did you update records?',
-            QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
-        if update_message == QtGui.QMessageBox.No:
-            return
-        else:
-            pass
+        self.updated_from_query_matches = False
 
         # Retrieve study_site_table data from user view
-        save_data = self.sitetablemodel.data(
+        self.save_data = self.sitetablemodel.data(
             None, QtCore.Qt.UserRole)
-        self.save_data = save_data.drop_duplicates()
-        print('saved data (initial): ', self.save_data)
-        self.facade.register_site_levels(
-            self.facade._data[
-                self.siteloc[
-                    'study_site_key']].drop_duplicates().values.tolist())
+
+        self.save_query = self.sitequerymodel.data(
+            None, QtCore.Qt.UserRole)
 
         # If there are no site because they are already
         # in the database then create an empty dataframe
@@ -343,6 +377,8 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
         self.save_data = concat(
             [self.save_data, lterid_df]
             , axis=1).reset_index(drop=True)
+
+
         #Convert types and strip stings
         numeric_cols = ['lat_study_site', 'lng_study_site']
         self.save_data[
@@ -354,7 +390,6 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
                     lambda x: x.strip())
         self.save_data[numeric_cols] = to_numeric(
             self.save_data[numeric_cols], errors='coerce')
-
 
         print('Pushed dataset: ', self.save_data)
         self.facade.push_tables['study_site_table'] = self.save_data
@@ -374,18 +409,14 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
 
         # Signal to confim this form has been completed and
         # user can move on to other tables
-        self.site_unlocks.emit('study_site_mod')
-        site_unsorted = self.facade._data[
-            self.siteloc[
-                'study_site_key']].drop_duplicates().values.tolist()
-        site_unsorted.sort()
-        self.sitelevels = site_unsorted
+        self.site_unlocks.emit(self.facade._data)
         self._log.debug(
             'facade site levels' +
             ' '.join(self.facade._valueregister['sitelevels']))
         self._log.debug(
+            'siteleves Query Saved ' +
+            ' '.join(self.save_query['study_site_key'].values.tolist()))
+        self._log.debug(
             'sitelevels (Save Block): ' +
-            ' '.join(self.sitelevels))
-
-        self.saved.append(1)
+            ' '.join(self.save_data['study_site_key'].values.tolist()))
         self.close()
