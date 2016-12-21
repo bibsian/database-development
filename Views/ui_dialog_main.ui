@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>789</width>
-    <height>854</height>
+    <height>851</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -368,6 +368,16 @@
                                 <string>density</string>
                                </property>
                               </item>
+                              <item>
+                               <property name="text">
+                                <string>exclosure</string>
+                               </property>
+                              </item>
+                              <item>
+                               <property name="text">
+                                <string>removal</string>
+                               </property>
+                              </item>
                              </widget>
                             </item>
                            </layout>
@@ -426,6 +436,16 @@
                                 <string>density</string>
                                </property>
                               </item>
+                              <item>
+                               <property name="text">
+                                <string>exclosure</string>
+                               </property>
+                              </item>
+                              <item>
+                               <property name="text">
+                                <string>removal</string>
+                               </property>
+                              </item>
                              </widget>
                             </item>
                            </layout>
@@ -482,6 +502,16 @@
                               <item>
                                <property name="text">
                                 <string>density</string>
+                               </property>
+                              </item>
+                              <item>
+                               <property name="text">
+                                <string>exclosure</string>
+                               </property>
+                              </item>
+                              <item>
+                               <property name="text">
+                                <string>removal</string>
                                </property>
                               </item>
                              </widget>
@@ -641,6 +671,16 @@ Frequency</string>
                           <item>
                            <property name="text">
                             <string>bimonthly</string>
+                           </property>
+                          </item>
+                          <item>
+                           <property name="text">
+                            <string>triennial</string>
+                           </property>
+                          </item>
+                          <item>
+                           <property name="text">
+                            <string>quadrennial</string>
                            </property>
                           </item>
                          </widget>

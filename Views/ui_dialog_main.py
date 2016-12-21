@@ -25,7 +25,7 @@ except AttributeError:
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName(_fromUtf8("Dialog"))
-        Dialog.resize(789, 854)
+        Dialog.resize(789, 851)
         Dialog.setStyleSheet(_fromUtf8(".QLabel{\n"
 "    background: None;\n"
 "    padding: 0px;\n"
@@ -201,6 +201,8 @@ class Ui_Dialog(object):
         self.cboxTreatment1.addItem(_fromUtf8(""))
         self.cboxTreatment1.addItem(_fromUtf8(""))
         self.cboxTreatment1.addItem(_fromUtf8(""))
+        self.cboxTreatment1.addItem(_fromUtf8(""))
+        self.cboxTreatment1.addItem(_fromUtf8(""))
         self.horizontalLayout_23.addWidget(self.cboxTreatment1)
         self.verticalLayout_8.addLayout(self.horizontalLayout_23)
         self.horizontalLayout_24 = QtGui.QHBoxLayout()
@@ -219,6 +221,8 @@ class Ui_Dialog(object):
         self.cboxTreatment2.addItem(_fromUtf8(""))
         self.cboxTreatment2.addItem(_fromUtf8(""))
         self.cboxTreatment2.addItem(_fromUtf8(""))
+        self.cboxTreatment2.addItem(_fromUtf8(""))
+        self.cboxTreatment2.addItem(_fromUtf8(""))
         self.horizontalLayout_24.addWidget(self.cboxTreatment2)
         self.verticalLayout_8.addLayout(self.horizontalLayout_24)
         self.horizontalLayout_25 = QtGui.QHBoxLayout()
@@ -229,6 +233,8 @@ class Ui_Dialog(object):
         self.horizontalLayout_25.addWidget(self.label_19)
         self.cboxTreatment3 = QtGui.QComboBox(self.groupBox_3)
         self.cboxTreatment3.setObjectName(_fromUtf8("cboxTreatment3"))
+        self.cboxTreatment3.addItem(_fromUtf8(""))
+        self.cboxTreatment3.addItem(_fromUtf8(""))
         self.cboxTreatment3.addItem(_fromUtf8(""))
         self.cboxTreatment3.addItem(_fromUtf8(""))
         self.cboxTreatment3.addItem(_fromUtf8(""))
@@ -287,6 +293,8 @@ class Ui_Dialog(object):
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.cboxSamplingfrequency = QtGui.QComboBox(self.groupBox_7)
         self.cboxSamplingfrequency.setObjectName(_fromUtf8("cboxSamplingfrequency"))
+        self.cboxSamplingfrequency.addItem(_fromUtf8(""))
+        self.cboxSamplingfrequency.addItem(_fromUtf8(""))
         self.cboxSamplingfrequency.addItem(_fromUtf8(""))
         self.cboxSamplingfrequency.addItem(_fromUtf8(""))
         self.cboxSamplingfrequency.addItem(_fromUtf8(""))
@@ -645,6 +653,8 @@ class Ui_Dialog(object):
         self.cboxTreatment1.setItemText(5, _translate("Dialog", "fire", None))
         self.cboxTreatment1.setItemText(6, _translate("Dialog", "disturbance", None))
         self.cboxTreatment1.setItemText(7, _translate("Dialog", "density", None))
+        self.cboxTreatment1.setItemText(8, _translate("Dialog", "exclosure", None))
+        self.cboxTreatment1.setItemText(9, _translate("Dialog", "removal", None))
         self.label_18.setText(_translate("Dialog", "Treatment 2", None))
         self.cboxTreatment2.setItemText(0, _translate("Dialog", "NULL", None))
         self.cboxTreatment2.setItemText(1, _translate("Dialog", "resource", None))
@@ -654,6 +664,8 @@ class Ui_Dialog(object):
         self.cboxTreatment2.setItemText(5, _translate("Dialog", "fire", None))
         self.cboxTreatment2.setItemText(6, _translate("Dialog", "disturbance", None))
         self.cboxTreatment2.setItemText(7, _translate("Dialog", "density", None))
+        self.cboxTreatment2.setItemText(8, _translate("Dialog", "exclosure", None))
+        self.cboxTreatment2.setItemText(9, _translate("Dialog", "removal", None))
         self.label_19.setText(_translate("Dialog", "Treatment 3", None))
         self.cboxTreatment3.setItemText(0, _translate("Dialog", "NULL", None))
         self.cboxTreatment3.setItemText(1, _translate("Dialog", "resource", None))
@@ -663,6 +675,8 @@ class Ui_Dialog(object):
         self.cboxTreatment3.setItemText(5, _translate("Dialog", "fire", None))
         self.cboxTreatment3.setItemText(6, _translate("Dialog", "disturbance", None))
         self.cboxTreatment3.setItemText(7, _translate("Dialog", "density", None))
+        self.cboxTreatment3.setItemText(8, _translate("Dialog", "exclosure", None))
+        self.cboxTreatment3.setItemText(9, _translate("Dialog", "removal", None))
         self.label_4.setText(_translate("Dialog", "Community \n"
 "Data", None))
         self.rbtnCommunityyes.setText(_translate("Dialog", "yes", None))
@@ -677,6 +691,8 @@ class Ui_Dialog(object):
         self.cboxSamplingfrequency.setItemText(5, _translate("Dialog", "season:year", None))
         self.cboxSamplingfrequency.setItemText(6, _translate("Dialog", "biennial", None))
         self.cboxSamplingfrequency.setItemText(7, _translate("Dialog", "bimonthly", None))
+        self.cboxSamplingfrequency.setItemText(8, _translate("Dialog", "triennial", None))
+        self.cboxSamplingfrequency.setItemText(9, _translate("Dialog", "quadrennial", None))
         self.label_3.setText(_translate("Dialog", "Data Type \n"
 "Units", None))
         self.label.setText(_translate("Dialog", "Data Type", None))
