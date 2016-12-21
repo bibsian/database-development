@@ -351,9 +351,6 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
         self.save_data = self.sitetablemodel.data(
             None, QtCore.Qt.UserRole)
 
-        self.save_query = self.sitequerymodel.data(
-            None, QtCore.Qt.UserRole)
-
         # If there are no site because they are already
         # in the database then create an empty dataframe
         if len(self.save_data) == 0:
@@ -412,9 +409,6 @@ class SiteDialog(QtGui.QDialog, dsite.Ui_Dialog):
         self._log.debug(
             'facade site levels' +
             ' '.join(self.facade._valueregister['sitelevels']))
-        self._log.debug(
-            'siteleves Query Saved ' +
-            ' '.join(self.save_query['study_site_key'].values.tolist()))
         self._log.debug(
             'sitelevels (Save Block): ' +
             ' '.join(self.save_data['study_site_key'].values.tolist()))
