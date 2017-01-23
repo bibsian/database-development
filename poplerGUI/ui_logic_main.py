@@ -82,6 +82,11 @@ class MainDialog(QtGui.QDialog, dmainw.Ui_Dialog):
                 self.lnedStructure3.text(),
                 self.lnedStructureunits3.text()
             )),
+            ('structured_type_4', self.structure(
+                self.ckStructure4.isChecked(),
+                self.lnedStructure4.text(),
+                self.lnedStructureunits4.text()
+            )),
             ('samplefreq', self.sampfreq(
                 self.cboxSamplingfrequency.currentText() != 'NULL',
                 self.cboxSamplingfrequency.currentText(),

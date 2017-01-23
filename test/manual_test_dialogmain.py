@@ -111,6 +111,11 @@ def MainDialog(meta_handle7, file_handle5, site_handle5, taxa_handle5):
                     self.lnedStructure3.text(),
                     self.lnedStructureunits3.text()
                 )),
+                ('structured_type_4', self.structure(
+                    self.ckStructure4.isChecked(),
+                    self.lnedStructure4.text(),
+                    self.lnedStructureunits4.text()
+                )),
                 ('samplefreq', self.sampfreq(
                     self.cboxSamplingfrequency.currentText() != 'NULL',
                     self.cboxSamplingfrequency.currentText(),
