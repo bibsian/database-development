@@ -119,6 +119,7 @@ def AbstractTableBuilder():
                 'structured_type_1', 'structured_type_1_units',
                 'structured_type_2', 'structured_type_2_units',
                 'structured_type_3', 'structured_type_3_units',
+                'structured_type_4', 'structured_type_4_units',
                 'studystartyr',
                 'studyendyr',
                 'samplefreq',
@@ -180,6 +181,7 @@ def AbstractTableBuilder():
             'columns': [
                 'taxa_table_key',
                 'site_in_project_taxa_key',
+                'common_name',
                 'sppcode',
                 'kingdom',
                 'subkingdom',
@@ -196,7 +198,6 @@ def AbstractTableBuilder():
                 'family',
                 'genus',
                 'species',
-                'common_name',
                 'authority'],
 
             'time': False,
@@ -647,6 +648,8 @@ def Project_Table_Builder(AbstractTableBuilder):
                     'structured_type_2_units': 'NA',
                     'structured_type_3': 'NA',
                     'structured_type_3_units': 'NA',
+                    'structured_type_4': 'NA',
+                    'structured_type_4_units': 'NA',
                     'studystartyr': -99999,
                     'studyendyr': -99999,
                     'samplefreq': dataframe['temp_int'],
@@ -692,6 +695,8 @@ def Project_Table_Builder(AbstractTableBuilder):
                     'structured_type_2_units',
                     'structured_type_3',
                     'structured_type_3_units',
+                    'structured_type_4',
+                    'structured_type_4_units',
                     'studystartyr',
                     'studyendyr',
                     'samplefreq',
@@ -805,7 +810,8 @@ def Taxa_Table_Builder(AbstractTableBuilder):
             
             dbcolrevised = [x for x in dbcol if x not in nullcols]
             print('DB COLUMN REVISED: ', dbcolrevised)
-
+            print('acol', acols)
+            
             uniquesubset_site_list = []
             for i,item in enumerate(sitelevels):                
                 uniquesubset = dataframe[dataframe[siteid]==item]
@@ -1550,9 +1556,8 @@ def Table_Builder_Director(Database_Table_Setter):
 
 @pytest.fixture
 def taxa_data_corner_case():
-    taxadfexpected = read_table(
-        (rootpath + end + 'data' +  end + 'sev029_arthropod_02162009_0.txt'),
-        sep=',', skip_blank_lines=True, error_bad_lines=False, engine='c')
+    taxadfexpected = read_csv(
+        (rootpath + end + 'data' +  end + 'PLT-OTH-1509-Garden_1_0.csv'))
     taxadfexpected.replace({'-888': 'NA'}, inplace=True)
     taxadfexpected.replace({-888: -99999}, inplace=True)
 
@@ -1563,7 +1568,7 @@ def test_taxatable_build(
         taxa_data_corner_case):
     print(taxa_data_corner_case)
     
-    sitelevels = taxa_data_corner_case['Site'].drop_duplicates().values.tolist()
+    sitelevels = taxa_data_corner_case['Location'].drop_duplicates().values.tolist()
     sitelevels.sort()
     facade = face.Facade()
     facade.input_register(taxa_handle_corner_case)
@@ -1577,12 +1582,11 @@ def test_taxatable_build(
     director.set_builder(taxabuilder)
     director.set_data(taxa_data_corner_case)
     director.set_globalid(1)
-    director.set_siteid('Site')
+    director.set_siteid('Location')
     director.set_sitelevels(sitelevels)
     
     taxatable = director.get_database_table()
     showtaxa = taxatable._availdf
     assert isinstance(showtaxa,DataFrame)    
     print(showtaxa)
-
-    
+    assert 0

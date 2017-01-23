@@ -98,6 +98,7 @@ class AbstractTableBuilder(object):
             'structured_type_1', 'structured_type_1_units',
             'structured_type_2', 'structured_type_2_units',
             'structured_type_3', 'structured_type_3_units',
+            'structured_type_4', 'structure_type_4_units',
             'studystartyr',
             'studyendyr',
             'samplefreq',
@@ -159,6 +160,7 @@ class AbstractTableBuilder(object):
         'columns': [
             'taxa_table_key',
             'site_in_project_taxa_key',
+            'common_name',
             'sppcode',
             'kingdom',
             'subkingdom',
@@ -175,7 +177,6 @@ class AbstractTableBuilder(object):
             'family',
             'genus',
             'species',
-            'common_name',
             'authority'],
 
         'time': False,
@@ -609,6 +610,8 @@ class Project_Table_Builder(AbstractTableBuilder):
                 'structured_type_2_units': 'NA',
                 'structured_type_3': 'NA',
                 'structured_type_3_units': 'NA',
+                'structured_type_4': 'NA',
+                'structured_type_4_units': 'NA',
                 'studystartyr': -99999,
                 'studyendyr': -99999,
                 'samplefreq': dataframe['temp_int'],
@@ -654,6 +657,8 @@ class Project_Table_Builder(AbstractTableBuilder):
                 'structured_type_2_units',
                 'structured_type_3',
                 'structured_type_3_units',
+                'structured_type_4',
+                'structured_type_4_units',
                 'studystartyr',
                 'studyendyr',
                 'samplefreq',
@@ -723,7 +728,8 @@ class Taxa_Table_Builder(AbstractTableBuilder):
         keycols = list(keycols) if keycols is not None else keycols
         dbcol = list(dbcol) if dbcol is not None else dbcol
         sitelevels = list(sitelevels) if sitelevels is not None else sitelevels
-
+        dataframe = dataframe
+        
         try:
             acols = [x.rstrip() for x in acols]
         except Exception as e:
