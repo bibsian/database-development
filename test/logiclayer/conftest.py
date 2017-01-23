@@ -103,9 +103,10 @@ def meta_handle7():
 @pytest.fixture
 def meta_handle_corner_case():
     lentry = {
-        'globalid': 54,
-        'metaurl': ('http://sev.lternet.edu/data/sev-29'),
-        'lter': 'SEV'}
+        'globalid': 300,
+        'metaurl': (
+            'http://gce-lter.marsci.uga.edu/public/app/dataset_details.asp?accession=PLT-OTH-1509'),
+        'lter': 'GCE'}
     ckentry = {}
     metainput = ini.InputHandler(
         name='metacheck', tablename=None, lnedentry=lentry,
@@ -216,7 +217,7 @@ def file_handle5():
 @pytest.fixture
 def file_handle_corner_case():
     ckentry = {}
-    rbtn = {'.csv': False, '.txt': True,
+    rbtn = {'.csv': True, '.txt': False,
             '.xlsx': False}
     lned = {
         'sheet': '', 'delim': ',', 'tskip': '', 'bskip': '',
@@ -225,7 +226,7 @@ def file_handle_corner_case():
         name='fileoptions',tablename=None, lnedentry=lned,
         rbtns=rbtn, checks=ckentry, session=True,
         filename=(
-            rootpath + end + 'data' +  end + 'sev029_arthropod_02162009_0.txt'))
+            rootpath + end + 'data' +  end + 'PLT-OTH-1509-Garden_1_0.csv'))
     return fileinput
 
 
@@ -277,7 +278,7 @@ def site_handle5():
 
 @pytest.fixture
 def site_handle_corner_case():
-    lned = {'study_site_key': 'Site'}
+    lned = {'study_site_key': 'Location'}
     sitehandle = ini.InputHandler(
         name='siteinfo', lnedentry=lned, tablename='study_site_table')
     return sitehandle
@@ -644,43 +645,45 @@ def taxa_handle5():
 @pytest.fixture
 def taxa_handle_corner_case():
     taxalned = OrderedDict((
+        ('common_name', ''),
         ('sppcode', ''),
-        ('kingdom', ''),
-        ('subkingdom', ''),
-        ('infrakingdom', ''),
-        ('superdivision', ''),
-        ('divsion', ''),
-        ('subdivision', ''),
+        ('kingdom', 'Kingdom'),
+        ('subkingdom', 'Subkingdom'),
+        ('infrakingdom', 'Infrakingdom'),
+        ('superdivision', 'Superdivision'),
+        ('division', 'Division'),
+        ('subdivision', 'Subdivision'),
         ('superphylum', ''),
         ('phylum', ''),
         ('subphylum', ''),
-        ('clss', ''),
+        ('clss', 'Clss'),
         ('subclass', ''),
-        ('ordr', ''),
+        ('ordr', 'Ordr'),
         ('family', 'Family'),
         ('genus', 'Genus'),
         ('species', 'Species')
     ))
     taxackbox = OrderedDict((
+        ('common_name', False), 
         ('sppcode', False),
-        ('kingdom', False),
-        ('subkingdom', False),
-        ('infrakingdom', False),
-        ('superdivision', False),
-        ('divsion', False),
-        ('subdivision', False),
+        ('kingdom', True),
+        ('subkingdom', True),
+        ('infrakingdom', True),
+        ('superdivision', True),
+        ('division', True),
+        ('subdivision', True),
         ('superphylum', False),
         ('phylum', False),
         ('subphylum', False),
-        ('clss', False),
+        ('clss', True),
         ('subclass', False),
-        ('ordr', False),
+        ('ordr', True),
         ('family', True),
         ('genus', True),
         ('species', True)
     ))
     taxacreate = {
-        'taxacreate': False
+        'taxacreate': True
     }    
     available = [
         x for x,y in zip(
@@ -787,11 +790,11 @@ def time_handle5():
 def time_handle_corner_case():
     d = {
         'dayname': 'Day',
-        'dayform': 'dd-mm-YYYY (Any Order)',
+        'dayform': 'dd',
         'monthname': 'Month',
-        'monthform': 'dd-mm-YYYY (Any Order)',
+        'monthform': 'mm',
         'yearname': 'Year',
-        'yearform': 'dd-mm-YYYY (Any Order)',
+        'yearform': 'YYYY',
         'jd': False,
         'hms': False
     }
@@ -852,7 +855,7 @@ def covar_handle5():
 @pytest.fixture
 def covar_handle_corner_case():
     covarlned = {'columns': None}    
-    covarlned['columns'] = string_to_list('Comments')
+    covarlned['columns'] = string_to_list('Latitude')
     covarini = ini.InputHandler(
         name='covarinfo', tablename='covartable',
         lnedentry=covarlned)
@@ -1106,6 +1109,47 @@ def count_handle_corner_case():
     countini = ini.InputHandler(
         name='rawinfo',
         tablename='count_table',
+        lnedentry=extract(obslned, available),
+        checks=obsckbox)
+    return countini
+
+@pytest.fixture
+def individual_handle_corner_case():
+    obslned = OrderedDict((
+        ('spatial_replication_level_2', ''),
+        ('spatial_replication_level_3', ''),
+        ('spatial_replication_level_4', ''),
+        ('spatial_replication_level_5', ''),
+        ('structured_type_1', 'Plot_number'),
+        ('structured_type_2', 'Plant_height'),
+        ('structured_type_3', ''),
+        ('treatment_type_1', ''),
+        ('treatment_type_2', ''),
+        ('treatment_type_3', ''),
+        ('unitobs', '')
+    ))    
+    obsckbox = OrderedDict((
+        ('spatial_replication_level_2', False),
+        ('spatial_replication_level_3', False),
+        ('spatial_replication_level_4', False),
+        ('spatial_replication_level_5', False),
+        ('structured_type_1', True),
+        ('structured_type_2', True),
+        ('structured_type_3', False),
+        ('treatment_type_1', False),
+        ('treatment_type_2', False),
+        ('treatment_type_3', False),
+        ('unitobs', True)
+    ))
+    available = [
+        x for x,y in zip(
+            list(obslned.keys()), list(
+                obsckbox.values()))
+        if y is True
+    ]
+    countini = ini.InputHandler(
+        name='rawinfo',
+        tablename='individual_table',
         lnedentry=extract(obslned, available),
         checks=obsckbox)
     return countini

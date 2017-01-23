@@ -84,12 +84,25 @@ def meta_handle5():
         checks=ckentry)
     return metainput
 
+
+@pytest.fixture
+def meta_handle7():
+    lentry = {
+        'globalid': 7,
+        'metaurl': ('http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.30'),
+        'lter': 'SBC'}
+    ckentry = {}
+    metainput = ini.InputHandler(
+        name='metacheck', tablename=None, lnedentry=lentry,
+        checks=ckentry)
+    return metainput
+
 @pytest.fixture
 def meta_handle_free():
     lentry = {
-        'globalid': 18,
-        'metaurl': ('http://sbc.lternet.edu/cgi-bin/showDataset.cgi?docid=knb-lter-sbc.61'),
-        'lter': 'SBC'}
+        'globalid': 300,
+        'metaurl': ('http://gce-lter.marsci.uga.edu/public/app/dataset_details.asp?accession=PLT-OTH-1509'),
+        'lter': 'GCE'}
     ckentry = {}
     metainput = ini.InputHandler(
         name='metacheck', tablename=None, lnedentry=lentry,
@@ -224,7 +237,7 @@ def file_handle_free():
         rbtns=rbtn, checks=ckentry, session=True,
         filename=(
             rootpath + end + 'data'+ end  +
-            'sea_otter_sightings.csv'))
+            'PLT-OTH-1509-Garden_1_0.csv'))
     return fileinput
 
 
@@ -276,7 +289,7 @@ def site_handle5():
 
 @pytest.fixture
 def site_handle_free():
-    lned = {'study_site_key': 'SITE'}
+    lned = {'study_site_key': 'Location'}
     sitehandle = ini.InputHandler(
         name='siteinfo', lnedentry=lned, tablename='study_site_table')
     return sitehandle
