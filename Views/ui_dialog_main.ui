@@ -378,6 +378,26 @@
                                 <string>removal</string>
                                </property>
                               </item>
+                              <item>
+                               <property name="text">
+                                <string>pH</string>
+                               </property>
+                              </item>
+                              <item>
+                               <property name="text">
+                                <string>competition</string>
+                               </property>
+                              </item>
+                              <item>
+                               <property name="text">
+                                <string>diversity</string>
+                               </property>
+                              </item>
+                              <item>
+                               <property name="text">
+                                <string>spatial gradient</string>
+                               </property>
+                              </item>
                              </widget>
                             </item>
                            </layout>
@@ -446,6 +466,26 @@
                                 <string>removal</string>
                                </property>
                               </item>
+                              <item>
+                               <property name="text">
+                                <string>pH</string>
+                               </property>
+                              </item>
+                              <item>
+                               <property name="text">
+                                <string>competition</string>
+                               </property>
+                              </item>
+                              <item>
+                               <property name="text">
+                                <string>diversity</string>
+                               </property>
+                              </item>
+                              <item>
+                               <property name="text">
+                                <string>spatial gradient</string>
+                               </property>
+                              </item>
                              </widget>
                             </item>
                            </layout>
@@ -512,6 +552,26 @@
                               <item>
                                <property name="text">
                                 <string>removal</string>
+                               </property>
+                              </item>
+                              <item>
+                               <property name="text">
+                                <string>pH</string>
+                               </property>
+                              </item>
+                              <item>
+                               <property name="text">
+                                <string>competition</string>
+                               </property>
+                              </item>
+                              <item>
+                               <property name="text">
+                                <string>diversity</string>
+                               </property>
+                              </item>
+                              <item>
+                               <property name="text">
+                                <string>spatial gradient</string>
                                </property>
                               </item>
                              </widget>
@@ -683,6 +743,21 @@ Frequency</string>
                             <string>quadrennial</string>
                            </property>
                           </item>
+                          <item>
+                           <property name="text">
+                            <string>quinquennial</string>
+                           </property>
+                          </item>
+                          <item>
+                           <property name="text">
+                            <string>irregular</string>
+                           </property>
+                          </item>
+                          <item>
+                           <property name="text">
+                            <string>NA</string>
+                           </property>
+                          </item>
                          </widget>
                         </item>
                        </layout>
@@ -753,7 +828,7 @@ Units</string>
                         </item>
                         <item>
                          <property name="text">
-                          <string>percent_cover</string>
+                          <string>cover</string>
                          </property>
                         </item>
                         <item>
@@ -806,14 +881,14 @@ Units</string>
                  <property name="title">
                   <string>Organism Structure</string>
                  </property>
-                 <layout class="QHBoxLayout" name="horizontalLayout_26">
+                 <layout class="QHBoxLayout" name="horizontalLayout_31">
                   <property name="margin">
                    <number>5</number>
                   </property>
                   <item>
-                   <layout class="QHBoxLayout" name="horizontalLayout_27">
+                   <layout class="QHBoxLayout" name="horizontalLayout_45">
                     <item>
-                     <spacer name="horizontalSpacer_11">
+                     <spacer name="horizontalSpacer_17">
                       <property name="orientation">
                        <enum>Qt::Horizontal</enum>
                       </property>
@@ -826,17 +901,17 @@ Units</string>
                      </spacer>
                     </item>
                     <item>
-                     <layout class="QVBoxLayout" name="verticalLayout_11">
-                      <property name="spacing">
-                       <number>5</number>
+                     <layout class="QGridLayout" name="gridLayout_5">
+                      <property name="verticalSpacing">
+                       <number>1</number>
                       </property>
-                      <item>
-                       <layout class="QHBoxLayout" name="horizontalLayout_28">
+                      <item row="0" column="0">
+                       <layout class="QHBoxLayout" name="horizontalLayout_50">
                         <property name="spacing">
                          <number>9</number>
                         </property>
                         <item>
-                         <layout class="QHBoxLayout" name="horizontalLayout_31">
+                         <layout class="QHBoxLayout" name="horizontalLayout_51">
                           <property name="spacing">
                            <number>17</number>
                           </property>
@@ -849,6 +924,177 @@ Units</string>
                           </item>
                           <item>
                            <widget class="QLineEdit" name="lnedStructure1"/>
+                          </item>
+                         </layout>
+                        </item>
+                        <item>
+                         <spacer name="horizontalSpacer_19">
+                          <property name="orientation">
+                           <enum>Qt::Horizontal</enum>
+                          </property>
+                          <property name="sizeType">
+                           <enum>QSizePolicy::Preferred</enum>
+                          </property>
+                          <property name="sizeHint" stdset="0">
+                           <size>
+                            <width>70</width>
+                            <height>20</height>
+                           </size>
+                          </property>
+                         </spacer>
+                        </item>
+                        <item>
+                         <layout class="QHBoxLayout" name="horizontalLayout_52">
+                          <property name="spacing">
+                           <number>17</number>
+                          </property>
+                          <property name="rightMargin">
+                           <number>0</number>
+                          </property>
+                          <item>
+                           <widget class="QLabel" name="label_24">
+                            <property name="text">
+                             <string>Units</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QLineEdit" name="lnedStructureunits1"/>
+                          </item>
+                         </layout>
+                        </item>
+                       </layout>
+                      </item>
+                      <item row="1" column="0">
+                       <layout class="QHBoxLayout" name="horizontalLayout_53">
+                        <property name="spacing">
+                         <number>9</number>
+                        </property>
+                        <item>
+                         <layout class="QHBoxLayout" name="horizontalLayout_54">
+                          <property name="spacing">
+                           <number>15</number>
+                          </property>
+                          <item>
+                           <widget class="QCheckBox" name="ckStructure2">
+                            <property name="text">
+                             <string>Structure 2</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QLineEdit" name="lnedStructure2"/>
+                          </item>
+                         </layout>
+                        </item>
+                        <item>
+                         <spacer name="horizontalSpacer_25">
+                          <property name="orientation">
+                           <enum>Qt::Horizontal</enum>
+                          </property>
+                          <property name="sizeType">
+                           <enum>QSizePolicy::Preferred</enum>
+                          </property>
+                          <property name="sizeHint" stdset="0">
+                           <size>
+                            <width>70</width>
+                            <height>20</height>
+                           </size>
+                          </property>
+                         </spacer>
+                        </item>
+                        <item>
+                         <layout class="QHBoxLayout" name="horizontalLayout_55">
+                          <property name="spacing">
+                           <number>15</number>
+                          </property>
+                          <item>
+                           <widget class="QLabel" name="label_28">
+                            <property name="text">
+                             <string>Units</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QLineEdit" name="lnedStructureunits2"/>
+                          </item>
+                         </layout>
+                        </item>
+                       </layout>
+                      </item>
+                      <item row="2" column="0">
+                       <layout class="QHBoxLayout" name="horizontalLayout_56">
+                        <item>
+                         <layout class="QHBoxLayout" name="horizontalLayout_57">
+                          <property name="spacing">
+                           <number>15</number>
+                          </property>
+                          <item>
+                           <widget class="QCheckBox" name="ckStructure3">
+                            <property name="text">
+                             <string>Structure 3</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QLineEdit" name="lnedStructure3"/>
+                          </item>
+                         </layout>
+                        </item>
+                        <item>
+                         <spacer name="horizontalSpacer_26">
+                          <property name="orientation">
+                           <enum>Qt::Horizontal</enum>
+                          </property>
+                          <property name="sizeType">
+                           <enum>QSizePolicy::Preferred</enum>
+                          </property>
+                          <property name="sizeHint" stdset="0">
+                           <size>
+                            <width>70</width>
+                            <height>20</height>
+                           </size>
+                          </property>
+                         </spacer>
+                        </item>
+                        <item>
+                         <layout class="QHBoxLayout" name="horizontalLayout_58">
+                          <property name="spacing">
+                           <number>15</number>
+                          </property>
+                          <item>
+                           <widget class="QLabel" name="label_29">
+                            <property name="text">
+                             <string>Units</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QLineEdit" name="lnedStructureunits3"/>
+                          </item>
+                         </layout>
+                        </item>
+                       </layout>
+                      </item>
+                      <item row="3" column="0">
+                       <layout class="QHBoxLayout" name="horizontalLayout_28">
+                        <property name="spacing">
+                         <number>9</number>
+                        </property>
+                        <item>
+                         <layout class="QHBoxLayout" name="horizontalLayout_32">
+                          <property name="spacing">
+                           <number>17</number>
+                          </property>
+                          <item>
+                           <widget class="QCheckBox" name="ckStructure4">
+                            <property name="text">
+                             <string>Structure 4</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QLineEdit" name="lnedStructure4"/>
                           </item>
                          </layout>
                         </item>
@@ -869,7 +1115,7 @@ Units</string>
                          </spacer>
                         </item>
                         <item>
-                         <layout class="QHBoxLayout" name="horizontalLayout_32">
+                         <layout class="QHBoxLayout" name="horizontalLayout_33">
                           <property name="spacing">
                            <number>17</number>
                           </property>
@@ -884,118 +1130,7 @@ Units</string>
                            </widget>
                           </item>
                           <item>
-                           <widget class="QLineEdit" name="lnedStructureunits1"/>
-                          </item>
-                         </layout>
-                        </item>
-                       </layout>
-                      </item>
-                      <item>
-                       <layout class="QHBoxLayout" name="horizontalLayout_33">
-                        <property name="spacing">
-                         <number>9</number>
-                        </property>
-                        <item>
-                         <layout class="QHBoxLayout" name="horizontalLayout_34">
-                          <property name="spacing">
-                           <number>15</number>
-                          </property>
-                          <item>
-                           <widget class="QCheckBox" name="ckStructure2">
-                            <property name="text">
-                             <string>Structure 2</string>
-                            </property>
-                           </widget>
-                          </item>
-                          <item>
-                           <widget class="QLineEdit" name="lnedStructure2"/>
-                          </item>
-                         </layout>
-                        </item>
-                        <item>
-                         <spacer name="horizontalSpacer_13">
-                          <property name="orientation">
-                           <enum>Qt::Horizontal</enum>
-                          </property>
-                          <property name="sizeType">
-                           <enum>QSizePolicy::Preferred</enum>
-                          </property>
-                          <property name="sizeHint" stdset="0">
-                           <size>
-                            <width>70</width>
-                            <height>20</height>
-                           </size>
-                          </property>
-                         </spacer>
-                        </item>
-                        <item>
-                         <layout class="QHBoxLayout" name="horizontalLayout_35">
-                          <property name="spacing">
-                           <number>15</number>
-                          </property>
-                          <item>
-                           <widget class="QLabel" name="label_23">
-                            <property name="text">
-                             <string>Units</string>
-                            </property>
-                           </widget>
-                          </item>
-                          <item>
-                           <widget class="QLineEdit" name="lnedStructureunits2"/>
-                          </item>
-                         </layout>
-                        </item>
-                       </layout>
-                      </item>
-                      <item>
-                       <layout class="QHBoxLayout" name="horizontalLayout_36">
-                        <item>
-                         <layout class="QHBoxLayout" name="horizontalLayout_37">
-                          <property name="spacing">
-                           <number>15</number>
-                          </property>
-                          <item>
-                           <widget class="QCheckBox" name="ckStructure3">
-                            <property name="text">
-                             <string>Structure 3</string>
-                            </property>
-                           </widget>
-                          </item>
-                          <item>
-                           <widget class="QLineEdit" name="lnedStructure3"/>
-                          </item>
-                         </layout>
-                        </item>
-                        <item>
-                         <spacer name="horizontalSpacer_14">
-                          <property name="orientation">
-                           <enum>Qt::Horizontal</enum>
-                          </property>
-                          <property name="sizeType">
-                           <enum>QSizePolicy::Preferred</enum>
-                          </property>
-                          <property name="sizeHint" stdset="0">
-                           <size>
-                            <width>70</width>
-                            <height>20</height>
-                           </size>
-                          </property>
-                         </spacer>
-                        </item>
-                        <item>
-                         <layout class="QHBoxLayout" name="horizontalLayout_38">
-                          <property name="spacing">
-                           <number>15</number>
-                          </property>
-                          <item>
-                           <widget class="QLabel" name="label_25">
-                            <property name="text">
-                             <string>Units</string>
-                            </property>
-                           </widget>
-                          </item>
-                          <item>
-                           <widget class="QLineEdit" name="lnedStructureunits3"/>
+                           <widget class="QLineEdit" name="lnedStructureunits4"/>
                           </item>
                          </layout>
                         </item>
@@ -1004,7 +1139,7 @@ Units</string>
                      </layout>
                     </item>
                     <item>
-                     <spacer name="horizontalSpacer_17">
+                     <spacer name="horizontalSpacer_27">
                       <property name="orientation">
                        <enum>Qt::Horizontal</enum>
                       </property>
