@@ -19,22 +19,22 @@ from poplerGUI.logiclayer.class_helpers import produce_null_df
 from poplerGUI.logiclayer import class_dictionarydataframe as ddf    
 
 def test_site_in_project_key_number_two(
-        MergeToUpload, site_handle5, file_handle5,
-        meta_handle5, project_handle5, taxa_handle5,
-        time_handle5, count_handle5, covar_handle5):
+        MergeToUpload, site_handle_corner_case, file_handle_corner_case,
+        meta_handle_corner_case, project_handle_corner_case, taxa_handle_corner_case,
+        time_handle_corner_case, individual_handle_corner_case, covar_handle_corner_case):
     facade = face.Facade()
     
-    facade.input_register(meta_handle5)
+    facade.input_register(meta_handle_corner_case)
     facade.meta_verify()
 
-    facade.input_register(file_handle5)
+    facade.input_register(file_handle_corner_case)
     facade.load_data()
 
-    facade.input_register(site_handle5)
+    facade.input_register(site_handle_corner_case)
     sitedirector = facade.make_table('siteinfo')
     study_site_table = sitedirector._availdf
 
-    siteid = site_handle5.lnedentry['study_site_key']
+    siteid = site_handle_corner_case.lnedentry['study_site_key']
     sitelevels = facade._data[
         siteid].drop_duplicates().values.tolist()
     facade.register_site_levels(sitelevels)
@@ -44,7 +44,7 @@ def test_site_in_project_key_number_two(
     print('study_site_table (test): ', study_site_table)
 
     facade.create_log_record('study_site_table')
-    lter = meta_handle5.lnedentry['lter']
+    lter = meta_handle_corner_case.lnedentry['lter']
     ltercol = produce_null_df(1, [
         'lter_table_fkey'], len(study_site_table), lter)
     study_site_table = concat([study_site_table, ltercol], axis=1)
@@ -64,7 +64,7 @@ def test_site_in_project_key_number_two(
     facade.push_tables['study_site_table'] = study_site_table_single_df
 
 
-    facade.input_register(project_handle5)
+    facade.input_register(project_handle_corner_case)
     maindirector = facade.make_table('maininfo')
     project_table = maindirector._availdf.copy().reset_index(drop=True)
     orm.convert_types(project_table, orm.project_types)
@@ -73,7 +73,7 @@ def test_site_in_project_key_number_two(
     facade.create_log_record('project_table')
 
 
-    facade.input_register(taxa_handle5)
+    facade.input_register(taxa_handle_corner_case)
     taxadirector = facade.make_table('taxainfo')
     
     taxa_table = taxadirector._availdf
@@ -84,30 +84,30 @@ def test_site_in_project_key_number_two(
     
     print('taxa columns before time_table: ', taxa_table.columns)
     
-    facade.input_register(time_handle5)
+    facade.input_register(time_handle_corner_case)
     timetable = tparse.TimeParse(
-        facade._data, time_handle5.lnedentry).formater()
+        facade._data, time_handle_corner_case.lnedentry).formater()
     facade.push_tables['timetable'] = timetable
     facade.create_log_record('timetable')
 
     print('taxa columns before count_table: ', taxa_table.columns)
-    facade.input_register(count_handle5)
+    facade.input_register(individual_handle_corner_case)
     rawdirector = facade.make_table('rawinfo')
     rawtable = rawdirector._availdf
     print(rawtable)
-    facade.push_tables[count_handle5.tablename] = rawtable
-    facade.create_log_record(count_handle5.tablename)
+    facade.push_tables[individual_handle_corner_case.tablename] = rawtable
+    facade.create_log_record(individual_handle_corner_case.tablename)
 
     print('taxa columns before covar_table: ', taxa_table.columns)
-    facade.input_register(covar_handle5)
+    facade.input_register(covar_handle_corner_case)
     covartable = ddf.DictionaryDataframe(
         facade._data,
-        covar_handle5.lnedentry['columns']).convert_records()
+        covar_handle_corner_case.lnedentry['columns']).convert_records()
     facade.push_tables['covariates'] = covartable
     facade.create_log_record('covartable')
 
-    facade._valueregister['globalid'] = meta_handle5.lnedentry['globalid']
-    facade._valueregister['lter'] = meta_handle5.lnedentry['lter']
+    facade._valueregister['globalid'] = meta_handle_corner_case.lnedentry['globalid']
+    facade._valueregister['lter'] = meta_handle_corner_case.lnedentry['lter']
     facade._valueregister['siteid'] = siteid
 
     timetable_og_cols = timetable.columns.values.tolist()
