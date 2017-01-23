@@ -97,7 +97,7 @@ def TaxaDialog(site_handle_free, file_handle_free, meta_handle_free, TablePrevie
                 ('infrakingdom', self.lnedInfrakingdom.text().strip()),
                 ('superdivision', self.lnedSuperdivision.text().strip()),
                 ('division', self.lnedDivision.text().strip()),
-                ('subsubdivision', self.lnedSubdivision.text().strip()),
+                ('subdivision', self.lnedSubdivision.text().strip()),
                 ('superphylum', self.lnedSuperphylum.text().strip()),
                 ('phylum', self.lnedPhylum.text().strip()),
                 ('subphylum', self.lnedSubphylum.text().strip()),
@@ -117,7 +117,7 @@ def TaxaDialog(site_handle_free, file_handle_free, meta_handle_free, TablePrevie
                 ('infrakingdom', self.ckInfrakingdom.isChecked()),
                 ('superdivision', self.ckSuperdivision.isChecked()),
                 ('division', self.ckDivision.isChecked()),
-                ('subsubdivision', self.ckSubdivision.isChecked()),
+                ('subdivision', self.ckSubdivision.isChecked()),
                 ('superphylum', self.ckSuperphylum.isChecked()),
                 ('phylum', self.ckPhylum.isChecked()),
                 ('subphylum', self.ckSubphylum.isChecked()),
@@ -151,7 +151,7 @@ def TaxaDialog(site_handle_free, file_handle_free, meta_handle_free, TablePrevie
             self.facade.input_register(self.taxaini)
             self.facade.create_log_record('taxa_table')
             self._log = self.facade._tablelog['taxa_table']
-
+            
             try:
                 print('about to make taxa table')
                 self.taxadirector = self.facade.make_table(
