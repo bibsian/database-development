@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>527</width>
-    <height>212</height>
+    <width>535</width>
+    <height>225</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -111,6 +111,13 @@ Separate names by comma's.</string>
                    </property>
                   </spacer>
                  </item>
+                 <item>
+                  <widget class="QCheckBox" name="ckPaneldata">
+                   <property name="text">
+                    <string>Panel Data</string>
+                   </property>
+                  </widget>
+                 </item>
                 </layout>
                </item>
               </layout>
@@ -130,6 +137,16 @@ Label</string>
                  <item>
                   <property name="text">
                    <string>NULL</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>year</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>taxa_info</string>
                   </property>
                  </item>
                  <item>

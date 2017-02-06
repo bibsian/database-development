@@ -25,7 +25,7 @@ except AttributeError:
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName(_fromUtf8("Dialog"))
-        Dialog.resize(527, 212)
+        Dialog.resize(535, 225)
         Dialog.setStyleSheet(_fromUtf8(".QLabel{\n"
 "    background: None;\n"
 "    padding: 0px;\n"
@@ -100,6 +100,9 @@ class Ui_Dialog(object):
         self.horizontalLayout.addWidget(self.lnedValuecolumns)
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
+        self.ckPaneldata = QtGui.QCheckBox(self.groupBox)
+        self.ckPaneldata.setObjectName(_fromUtf8("ckPaneldata"))
+        self.horizontalLayout.addWidget(self.ckPaneldata)
         self.verticalLayout.addLayout(self.horizontalLayout)
         self.gridLayout.addLayout(self.verticalLayout, 0, 0, 1, 1)
         self.verticalLayout_2 = QtGui.QVBoxLayout()
@@ -109,6 +112,8 @@ class Ui_Dialog(object):
         self.verticalLayout_2.addWidget(self.label_2)
         self.cboxDatatypecolumn = QtGui.QComboBox(self.groupBox)
         self.cboxDatatypecolumn.setObjectName(_fromUtf8("cboxDatatypecolumn"))
+        self.cboxDatatypecolumn.addItem(_fromUtf8(""))
+        self.cboxDatatypecolumn.addItem(_fromUtf8(""))
         self.cboxDatatypecolumn.addItem(_fromUtf8(""))
         self.cboxDatatypecolumn.addItem(_fromUtf8(""))
         self.cboxDatatypecolumn.addItem(_fromUtf8(""))
@@ -150,14 +155,17 @@ class Ui_Dialog(object):
         self.groupBox.setTitle(_translate("Dialog", "Format Data: Wide to Long", None))
         self.label.setText(_translate("Dialog", "Column Names with taxa labels (e.g.species).\n"
 "Separate names by comma\'s.", None))
+        self.ckPaneldata.setText(_translate("Dialog", "Panel Data", None))
         self.label_2.setText(_translate("Dialog", "Datatype Column\n"
 "Label", None))
         self.cboxDatatypecolumn.setItemText(0, _translate("Dialog", "NULL", None))
-        self.cboxDatatypecolumn.setItemText(1, _translate("Dialog", "count", None))
-        self.cboxDatatypecolumn.setItemText(2, _translate("Dialog", "density", None))
-        self.cboxDatatypecolumn.setItemText(3, _translate("Dialog", "biomass", None))
-        self.cboxDatatypecolumn.setItemText(4, _translate("Dialog", "percent_cover", None))
-        self.cboxDatatypecolumn.setItemText(5, _translate("Dialog", "individual", None))
+        self.cboxDatatypecolumn.setItemText(1, _translate("Dialog", "year", None))
+        self.cboxDatatypecolumn.setItemText(2, _translate("Dialog", "taxa_info", None))
+        self.cboxDatatypecolumn.setItemText(3, _translate("Dialog", "count", None))
+        self.cboxDatatypecolumn.setItemText(4, _translate("Dialog", "density", None))
+        self.cboxDatatypecolumn.setItemText(5, _translate("Dialog", "biomass", None))
+        self.cboxDatatypecolumn.setItemText(6, _translate("Dialog", "percent_cover", None))
+        self.cboxDatatypecolumn.setItemText(7, _translate("Dialog", "individual", None))
         self.btnPreview.setText(_translate("Dialog", "Preview", None))
         self.btnSaveClose.setText(_translate("Dialog", "Save && Close", None))
         self.btnCancel.setText(_translate("Dialog", "Cancel", None))
