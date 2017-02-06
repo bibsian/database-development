@@ -1,6 +1,7 @@
 import pytest
 import pytestqt
 from PyQt4 import QtGui, QtCore
+from pandas import wide_to_long
 import sys,os
 if sys.platform == "darwin":
     rootpath = (
@@ -21,7 +22,7 @@ from poplerGUI.logiclayer import class_userfacade as face
 from poplerGUI import class_inputhandler as ini
 
 @pytest.fixture
-def WidetoLongDialog(meta_handle_1_count, file_handle_wide_to_long,
+def WidetoLongDialog(meta_handle_free, file_handle_wide_to_long,
         site_handle_wide_to_long):
     class WidetoLongDialog(QtGui.QDialog, dwidetolong.Ui_Dialog):
         '''
@@ -39,7 +40,7 @@ def WidetoLongDialog(meta_handle_1_count, file_handle_wide_to_long,
                 # logged in the computer in order to
             # reach this phase
             self.facade = face.Facade()
-            self.facade.input_register(meta_handle_1_count)
+            self.facade.input_register(meta_handle_free)
             self.facade.meta_verify()
             self.facade.input_register(file_handle_wide_to_long)
             self.facade.load_data()
@@ -70,11 +71,13 @@ def WidetoLongDialog(meta_handle_1_count, file_handle_wide_to_long,
 
         def submit_change(self):
             sender = self.sender()
+            sender = self.sender()
             self.widetolonglned = {
-                'value_columns':
-                hlp.string_to_list(self.lnedValuecolumns.text()),
-                'datatype_name': self.cboxDatatypecolumn.currentText()
+                'value_columns': hlp.string_to_list(self.lnedValuecolumns.text()),
+                'datatype_name': self.cboxDatatypecolumn.currentText(),
+                'panel_data': self.ckPaneldata.isChecked()
             }
+
             self.widetolongini = ini.InputHandler(
                 name='widetolong',
                 lnedentry=self.widetolonglned
@@ -84,11 +87,19 @@ def WidetoLongDialog(meta_handle_1_count, file_handle_wide_to_long,
             self._log = self.facade._tablelog['widetolong']
 
             try:
-                self.widetolongtable = hlp.wide_to_long(
-                    self.facade._data,
-                    value_columns=self.widetolonglned['value_columns'],
-                    value_column_name=self.widetolonglned['datatype_name']
-                )
+                if self.widetolonglned['panel_data'] is False:
+                    self.widetolongtable = hlp.wide_to_long(
+                        self.facade._data,
+                        value_columns=self.widetolonglned['value_columns'],
+                        value_column_name=self.widetolonglned['datatype_name']
+                    )
+                else:
+                    self.widetolongtable = self.facade._data.copy()
+                    self.widetolongtable['id'] = self.widetolongtable.index
+                    self.widetolongtable = wide_to_long(
+                        self.widetolongtable,
+                        self.widetolonglned['value_columns'],
+                        i="id", j=self.widetolonglned['datatype_name'])
             except Exception as e:
                 print(str(e))
                 self.error.showMessage('Could not melt data: ', str(e))

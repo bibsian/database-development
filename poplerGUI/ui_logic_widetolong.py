@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 from PyQt4 import QtGui, QtCore
 from Views import ui_dialog_widetolong as dwidetolong
+from pandas import wide_to_long
 from poplerGUI import ui_logic_preview as tprev
 from poplerGUI import class_modelviewpandas as view
 from poplerGUI.logiclayer import class_helpers as hlp
@@ -35,23 +36,35 @@ class WidetoLongDialog(QtGui.QDialog, dwidetolong.Ui_Dialog):
     def submit_change(self):
         sender = self.sender()
         self.widetolonglned = {
-            'value_columns':
-            hlp.string_to_list(self.lnedValuecolumns.text()),
-            'datatype_name': self.cboxDatatypecolumn.currentText()
+            'value_columns': hlp.string_to_list(self.lnedValuecolumns.text()),
+            'datatype_name': self.cboxDatatypecolumn.currentText(),
+            'panel_data': self.ckPaneldata.isChecked()
         }
+
+        
         self.widetolongini = ini.InputHandler(
             name='widetolong',
             lnedentry=self.widetolonglned
         )
+
         self.facade.input_register(self.widetolongini)
         self._log = self.facade._tablelog['widetolong']
 
         try:
-            self.widetolongtable = hlp.wide_to_long(
-                self.facade._data,
-                value_columns=self.widetolonglned['value_columns'],
-                value_column_name=self.widetolonglned['datatype_name']
-            )
+            if self.widetolonglned['panel_data'] is False:
+                self.widetolongtable = hlp.wide_to_long(
+                    self.facade._data,
+                    value_columns=self.widetolonglned['value_columns'],
+                    value_column_name=self.widetolonglned['datatype_name']
+                )
+            else:
+                self.widetolongtable = self.facade._data.copy()
+                self.widetolongtable['id'] = self.widetolongtable.index
+                self.widetolongtable = wide_to_long(
+                    self.widetolongtable,
+                    self.widetolonglned['value_columns'],
+                    i="id", j=self.widetolonglned['datatype_name'])
+
         except Exception as e:
             print(str(e))
             self.error.showMessage('Could not melt data: ' + str(e))
