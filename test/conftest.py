@@ -100,8 +100,8 @@ def meta_handle7():
 @pytest.fixture
 def meta_handle_free():
     lentry = {
-        'globalid': 300,
-        'metaurl': ('http://gce-lter.marsci.uga.edu/public/app/dataset_details.asp?accession=PLT-OTH-1509'),
+        'globalid': 312,
+        'metaurl': ('http://gce-lter.marsci.uga.edu/public/app/dataset_details.asp?accession=PLT-GCES-0706'),
         'lter': 'GCE'}
     ckentry = {}
     metainput = ini.InputHandler(
@@ -140,9 +140,10 @@ def file_handle_wide_to_long():
         rbtns=rbtn, checks=ckentry, session=True,
         filename=(
             rootpath + end + 'test' + end + 'Datasets_manual_test' + end +
-            'long_data_test.csv'))
+            'raw_data_test_6_wide_to_long.csv'))
     return fileinput
-    
+
+
 
 @pytest.fixture
 def file_handle_1_count():
@@ -239,6 +240,8 @@ def file_handle_free():
             rootpath + end + 'data'+ end  +
             'PLT-OTH-1509-Garden_1_0.csv'))
     return fileinput
+
+
 
 
 # ------------------------------------------------------ #

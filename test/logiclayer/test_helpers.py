@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 import pytest
-from pandas import concat, DataFrame, read_csv, to_numeric
+from pandas import concat, DataFrame, read_csv, to_numeric, wide_to_long
 from numpy import where
 import re
 import decimal as dc
@@ -20,6 +20,15 @@ from poplerGUI.logiclayer import class_logconfig as log
 from poplerGUI.logiclayer.datalayer import config as orm
 os.chdir(rootpath)
 
+
+def test_wide_to_long_(df_test_6):
+    data = df_test_6
+    data['id'] = data.index
+    new = wide_to_long(
+        data, ["trait", "growth"], i="id", j="year")
+    print(new)
+    assert ("growth" in new.columns.values.tolist()) is True
+    assert ("trait" in new.columns.values.tolist()) is True
 
 
 @pytest.fixture
@@ -75,7 +84,7 @@ def test_nulldf(produce_null_df):
     n = 2
     colnames = ['c1', 'c2']
     dflen = 5
-    # Note null value MUST be folled by space
+    Note null value MUST be folled by space
     null = 'NULL'
 
     testdf = produce_null_df(n, colnames, dflen, null)
@@ -165,7 +174,7 @@ def metadf_og():
             "/meta_file_test.csv")
     elif sys.platform == "win32":
         #=======================#
-        # Paths to data and conversion of files to dataframe
+        #Paths to data and conversion of files to dataframe
         #=======================#
         metapath = (
             rootpath + end + 'test' + end + 'Datasets_manual_test' +
@@ -294,7 +303,7 @@ def test_strip_time(date_strip, strip_time):
     assert isinstance(test, list) is True
 
 def test_strip_time_test5(date_strip_test5, strip_time):
-    # Single columns are going to give back nested list
+    Single columns are going to give back nested list
     test = strip_time(date_strip_test5, ['YEAR'])
     print(test)
     assert isinstance(test, list) is True

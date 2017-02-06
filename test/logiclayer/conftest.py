@@ -2076,3 +2076,10 @@ def df_test_5():
         rootpath + end + 'test' + end + 'Datasets_manual_test' + end +
         'raw_data_test_5.csv'
     )
+
+@pytest.fixture
+def df_test_6():
+    return read_csv(
+        rootpath + end + 'test' + end + 'Datasets_manual_test' + end +
+        'raw_data_test_6_wide_to_long.csv'
+    )
