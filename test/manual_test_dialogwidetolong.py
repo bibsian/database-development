@@ -94,12 +94,15 @@ def WidetoLongDialog(meta_handle_free, file_handle_wide_to_long,
                         value_column_name=self.widetolonglned['datatype_name']
                     )
                 else:
-                    self.widetolongtable = self.facade._data.copy()
-                    self.widetolongtable['id'] = self.widetolongtable.index
+                    temp = self.facade._data.copy()
+                    temp['id'] = temp.index
                     self.widetolongtable = wide_to_long(
-                        self.widetolongtable,
+                        temp,
                         self.widetolonglned['value_columns'],
                         i="id", j=self.widetolonglned['datatype_name'])
+                    self.widetolongtable.reset_index(
+                        level=self.widetolonglned['datatype_name'], inplace=True)
+                    print(self.widetolongtable.columns)
             except Exception as e:
                 print(str(e))
                 self.error.showMessage('Could not melt data: ', str(e))
