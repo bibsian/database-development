@@ -26,12 +26,13 @@ def test_wide_to_long_(df_test_6):
     data['id'] = data.index
     new = wide_to_long(
         data, ["trait", "growth"], i="id", j="year")
-    new.reset_index(level=["year"], inplace=True)
+    new['year'] = new.index.get_level_values("year")
     print(new)
     assert ("growth" in new.columns.values.tolist()) is True
     assert ("trait" in new.columns.values.tolist()) is True
     assert ("year" in new.columns.values.tolist()) is True
-
+    assert ("SITE" in new.columns.values.tolist()) is True
+    new.reset_index(drop=True, inplace=True)
 # @pytest.fixture
 # def check_int():
 #     def check_int(x):
