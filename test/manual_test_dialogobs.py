@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#!/usr/bin/env python
 import pytest
 import pytestqt
 from PyQt4 import QtGui
@@ -25,44 +25,9 @@ from poplerGUI import class_inputhandler as ini
 from poplerGUI.logiclayer import class_userfacade as face
 from poplerGUI.logiclayer import class_helpers as hlp
 
-@pytest.fixture
-def metahandle():
-    lentry = {
-        'globalid': 2,
-        'metaurl': ('http://sbc.lternet.edu/cgi-bin/showDataset' +
-                    '.cgi?docid=knb-lter-sbc.17'),
-        'lter': 'SBC'}
-    ckentry = {}
-    metainput = ini.InputHandler(
-        name='metacheck', tablename=None, lnedentry=lentry,
-        checks=ckentry)
-    return metainput
-
-@pytest.fixture
-def filehandle():
-    ckentry = {}
-    rbtn = {'.csv': True, '.txt': False,
-            '.xlsx': False}
-    lned = {'sheet': '', 'delim': '', 'tskip': '', 'bskip': ''}
-    fileinput = ini.InputHandler(
-        name='fileoptions',tablename=None, lnedentry=lned,
-        rbtns=rbtn, checks=ckentry, session=True,
-        filename=
-        rootpath + end + 'test' + end +
-        'Datasets_manual_test' + end + 
-        'raw_data_test_1.csv')
-
-    return fileinput
-
-@pytest.fixture
-def sitehandle():
-    lned = {'study_site_key': 'site'}
-    sitehandle = ini.InputHandler(
-        name='siteinfo', lnedentry=lned, tablename='study_site_table')
-    return sitehandle
     
 @pytest.fixture
-def ObsDialog(sitehandle, filehandle, metahandle):
+def ObsDialog(site_handle_free, file_handle_free, meta_handle_free):
     class ObsDialog(QtGui.QDialog, obs.Ui_Dialog):
         def __init__(self, parent=None):
             super().__init__(parent)
@@ -72,13 +37,13 @@ def ObsDialog(sitehandle, filehandle, metahandle):
             # logged in the computer in order to
             # reach this phase
             self.facade = face.Facade()
-            self.facade.input_register(metahandle)
+            self.facade.input_register(meta_handle_free)
             self.facade.meta_verify()
-            self.facade.input_register(filehandle)
+            self.facade.input_register(file_handle_free)
             self.facade.load_data()
-            self.facade.input_register(sitehandle)
+            self.facade.input_register(site_handle_free)
             sitelevels = self.facade._data[
-                'site'].drop_duplicates().values.tolist()
+                site_handle_free.lnedentry['study_site_key']].drop_duplicates().values.tolist()
             self.facade.register_site_levels(sitelevels)
 
 
@@ -117,9 +82,10 @@ def ObsDialog(sitehandle, filehandle, metahandle):
                 ('spatial_replication_level_3', self.lnedRep3.text()),
                 ('spatial_replication_level_4', self.lnedRep4.text()),
                 ('spatial_replication_level_5', self.lnedRep5.text()),
-                ('structured_type_1', self.lnedStructure1.text()),
-                ('structured_type_2', self.lnedStructure2.text()),
-                ('structured_type_3', self.lnedStructure3.text()),
+                ('structure_type_1', self.lnedStructure1.text()),
+                ('structure_type_2', self.lnedStructure2.text()),
+                ('structure_type_3', self.lnedStructure3.text()),
+                ('structure_type_4', self.lnedStructure4.text()),
                 ('treatment_type_1', self.lnedTreatment1.text()),
                 ('treatment_type_2', self.lnedTreatment2.text()),
                 ('treatment_type_3', self.lnedTreatment3.text()),
@@ -131,9 +97,10 @@ def ObsDialog(sitehandle, filehandle, metahandle):
                 ('spatial_replication_level_3', self.ckRep3.isChecked()),
                 ('spatial_replication_level_4', self.ckRep4.isChecked()),
                 ('spatial_replication_level_5', self.ckRep5.isChecked()),
-                ('structured_type_1', self.ckStructure1.isChecked()),
-                ('structured_type_2', self.ckStructure2.isChecked()),
-                ('structured_type_3', self.ckStructure3.isChecked()),
+                ('structure_type_1', self.ckStructure1.isChecked()),
+                ('structure_type_2', self.ckStructure2.isChecked()),
+                ('structure_type_3', self.ckStructure3.isChecked()),
+                ('structure_type_4', self.ckStructure4.isChecked()),
                 ('treatment_type_1', self.ckTreatment1.isChecked()),
                 ('treatment_type_2', self.ckTreatment2.isChecked()),
                 ('treatment_type_3', self.ckTreatment3.isChecked()),
