@@ -236,6 +236,7 @@ class AbstractTableBuilder(object):
             'structure_type_1',
             'structure_type_2',
             'structure_type_3',
+            'structure_type_4',
             'count_observation',
             'covariates'
         ],
@@ -267,6 +268,7 @@ class AbstractTableBuilder(object):
             'structure_type_1',
             'structure_type_2',
             'structure_type_3',
+            'structure_type_4',
             'biomass_observation',
             'covariates'
         ],
@@ -298,6 +300,7 @@ class AbstractTableBuilder(object):
             'structure_type_1',
             'structure_type_2',
             'structure_type_3',
+            'structure_type_4',
             'density_observation',
             'covariates'
         ],
@@ -329,6 +332,7 @@ class AbstractTableBuilder(object):
             'structure_type_1',
             'structure_type_2',
             'structure_type_3',
+            'structure_type_4',
             'percent_cover_observation',
             'covariates'
         ],
@@ -360,6 +364,7 @@ class AbstractTableBuilder(object):
             'structure_type_1',
             'structure_type_2',
             'structure_type_3',
+            'structure_type_4',
             'individual_observation',
             'covariates'
         ],

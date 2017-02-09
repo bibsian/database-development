@@ -477,7 +477,7 @@ class MergeToUpload(object):
             'spatial_replication_level_2', 'spatial_replication_level_3',
             'spatial_replication_level_4', 'spatial_replication_level_5',
             'structure_type_1', 'structure_type_2',
-            'structure_type_3',
+            'structure_type_3', 'structure_type_4',
             'treatment_type_1', 'treatment_type_2',
             'treatment_type_3',
             'covariates'
@@ -524,7 +524,8 @@ class MergeToUpload(object):
             'spatial_replication_level_3', 'spatial_replication_level_4',
             'spatial_replication_level_5', 'treatment_type_1',
             'treatment_type_2', 'treatment_type_3',
-            'structure_type_1', 'structure_type_2', 'structure_type_3'
+            'structure_type_1', 'structure_type_2', 'structure_type_3',
+            'structure_type_4'
         ]
         tbl_dtype_to_upload[text_cols] = tbl_dtype_to_upload[
             text_cols].applymap(str)

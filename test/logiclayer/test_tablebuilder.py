@@ -257,6 +257,7 @@ def AbstractTableBuilder():
                 'structure_type_1',
                 'structure_type_2',
                 'structure_type_3',
+                'structure_type_4',
                 'count_observation',
                 'covariates'
             ],
@@ -288,6 +289,7 @@ def AbstractTableBuilder():
                 'structure_type_1',
                 'structure_type_2',
                 'structure_type_3',
+                'structure_type_4',
                 'biomass_observation',
                 'covariates'
             ],
@@ -319,6 +321,7 @@ def AbstractTableBuilder():
                 'structure_type_1',
                 'structure_type_2',
                 'structure_type_3',
+                'structure_type_4',
                 'density_observation',
                 'covariates'
             ],
@@ -350,6 +353,7 @@ def AbstractTableBuilder():
                 'structure_type_1',
                 'structure_type_2',
                 'structure_type_3',
+                'structure_type_4',
                 'percent_cover_observation',
                 'covariates'
             ],
@@ -381,6 +385,7 @@ def AbstractTableBuilder():
                 'structure_type_1',
                 'structure_type_2',
                 'structure_type_3',
+                'structure_type_4',
                 'individual_observation',
                 'covariates'
             ],
@@ -1153,10 +1158,10 @@ def Table_Builder_Director(Database_Table_Setter):
 
     return Table_Builder_Director
 
-# ------------------------------------------------------ #
-# ---------------- Site table build test --------------- #
-# ------------------------------------------------------ #
-# 
+#------------------------------------------------------ #
+#---------------- Site table build test --------------- #
+#------------------------------------------------------ #
+
 # @pytest.fixture
 # def dataset_test_1():
 #     return read_csv(
@@ -1190,9 +1195,9 @@ def Table_Builder_Director(Database_Table_Setter):
 # 
 # 
 # 
-# # ------------------------------------------------------ #
-# # ---------------- Project table build test --------------- #
-# # ------------------------------------------------------ #
+# #------------------------------------------------------ #
+# #---------------- Project table build test --------------- #
+# #------------------------------------------------------ #
 # 
 # @pytest.fixture
 # def metadata_data():
@@ -1243,11 +1248,11 @@ def Table_Builder_Director(Database_Table_Setter):
 # 
 # 
 # 
-# # ------------------------------------------------------ #
-# # ---------------- Taxa table build test --------------- #
-# # --------------- Create taxa feature is OFF ----------- #
-# # ------------------------------------------------------ #
-
+# #------------------------------------------------------ #
+# #---------------- Taxa table build test --------------- #
+# #--------------- Create taxa feature is OFF ----------- #
+# #------------------------------------------------------ #
+# 
 # @pytest.fixture
 # def taxadfexpected():
 #     taxadfexpected = read_csv(
@@ -1308,11 +1313,11 @@ def Table_Builder_Director(Database_Table_Setter):
 #     assert (testorder == trueorder) is True    
 #     assert (testspecies == truespecies) is True
 # 
-
-# ------------------------------------------------------ #
-# ---------------- Taxa table build test --------------- #
-# --------------- Create taxa feature is ON ----------- #
-# ------------------------------------------------------ #
+# 
+# #------------------------------------------------------ #
+# #---------------- Taxa table build test --------------- #
+# #--------------- Create taxa feature is ON ----------- #
+# #------------------------------------------------------ #
 # @pytest.fixture
 # def taxa_user_input_create():
 #     taxalned = OrderedDict((
@@ -1424,10 +1429,10 @@ def Table_Builder_Director(Database_Table_Setter):
 #     assert (testorder == trueorder) is True
 #     assert (testspecies == truespecies) is True
 # 
-
-# # ------------------------------------------------------ #
-# # ------------ Observation (count) table build test --------------- #
-# # ------------------------------------------------------ #
+# 
+# #------------------------------------------------------ #
+# #------------ Observation (count) table build test --------------- #
+# #------------------------------------------------------ #
 # 
 # def test_count_table_build(
 #         Table_Builder_Director, count_handle_1_count,
@@ -1451,6 +1456,7 @@ def Table_Builder_Director(Database_Table_Setter):
 #     director.set_sitelevels(sitelevels)
 #     counttable = director.get_database_table()
 #     showcount = counttable._availdf
+#     assert ('structure_type_4' in showcount.columns) is True
 #     print('finished: ', showcount)
 #     counttest = showcount['count_observation'].values.tolist()
 #     counttrue = dataset_test_1['count'].values.tolist()
@@ -1462,9 +1468,9 @@ def Table_Builder_Director(Database_Table_Setter):
 #     assert (counttest == counttrue) is True
 #     assert (sitetest == sitetrue) is True
 # 
-# # ------------------------------------------------------ #
-# # ------------ Observation (percentcover) table build test -------- #
-# # ------------------------------------------------------ #
+# #------------------------------------------------------ #
+# #------------ Observation (percentcover) table build test -------- #
+# #------------------------------------------------------ #
 # 
 # @pytest.fixture
 # def dataset_test_4():
@@ -1494,6 +1500,7 @@ def Table_Builder_Director(Database_Table_Setter):
 #     director.set_sitelevels(sitelevels)
 #     percent_covertable = director.get_database_table()
 #     showpercent_cover = percent_covertable._availdf
+#     assert ('structure_type_4' in showpercent_cover.columns) is True
 #     print('finished: ', showpercent_cover)
 # 
 #     percent_covertest = showpercent_cover['percent_cover_observation'].values.tolist()
@@ -1506,87 +1513,88 @@ def Table_Builder_Director(Database_Table_Setter):
 #         'spatial_replication_level_1'].values.tolist()
 #     sitetrue = dataset_test_4['site'].values.tolist()
 #     print(showpercent_cover.columns)
-#     assert 0
 #     assert (percent_covertest == percent_covertrue) is True
 #     assert (sitetest == sitetrue) is True
 # 
-# ------------------------------------------------------ #
-# ------------ Observation (individual) table build test -------- #
-# ------------------------------------------------------ #
-
-# @pytest.fixture
-# def dataset_test_5():
-#     return read_csv(
-#         rootpath + end + 'test' + end +
-#         'Datasets_manual_test/raw_data_test_5.csv')
-# 
-# def test_individual_table_build(
-#         Table_Builder_Director, count_handle5,
-#         dataset_test_5, Observation_Table_Builder):
-#     sitelevels = dataset_test_5[
-#         'SITE'].drop_duplicates().values.tolist()
-#     sitelevels.sort()
-#     facade = face.Facade()
-#     facade.input_register(count_handle5)
-#     face_input = facade._inputs[count_handle5.name]
-#     individualbuilder = Observation_Table_Builder()
-#     assert (isinstance(individualbuilder, Observation_Table_Builder)) is True
-# 
-#     director = Table_Builder_Director()
-#     assert (isinstance(director, Table_Builder_Director)) is True
-#     director.set_user_input(face_input)
-#     director.set_builder(individualbuilder)
-#     director.set_data(dataset_test_5)
-#     director.set_globalid(2)
-#     director.set_siteid('SITE')
-#     director.set_sitelevels(sitelevels)
-#     individualtable = director.get_database_table()
-#     showindividual = individualtable._availdf
-#     print('finished: ', showindividual)
-# 
-#     check_individual_obs = showindividual[
-#         'individual_observation'].drop_duplicates().values.tolist()
-#     
-#     sitetest = showindividual[
-#         'spatial_replication_level_1'].values.tolist()
-#     sitetrue = dataset_test_5['SITE'].values.tolist()
-# 
-#     assert (check_individual_obs == [1]) is True
-#     assert (sitetest == sitetrue) is True
+#------------------------------------------------------ #
+#------------ Observation (individual) table build test -------- #
+#------------------------------------------------------ #
 
 @pytest.fixture
-def taxa_data_corner_case():
-    taxadfexpected = read_csv(
-        (rootpath + end + 'data' +  end + 'PLT-OTH-1509-Garden_1_0.csv'))
-    taxadfexpected.replace({'-888': 'NA'}, inplace=True)
-    taxadfexpected.replace({-888: -99999}, inplace=True)
+def dataset_test_5():
+    return read_csv(
+        rootpath + end + 'test' + end +
+        'Datasets_manual_test/raw_data_test_5.csv')
 
-    return taxadfexpected
-
-def test_taxatable_build(
-        Taxa_Table_Builder, Table_Builder_Director, taxa_handle_corner_case,
-        taxa_data_corner_case):
-    print(taxa_data_corner_case)
-    
-    sitelevels = taxa_data_corner_case['Location'].drop_duplicates().values.tolist()
+def test_individual_table_build(
+        Table_Builder_Director, count_handle5,
+        dataset_test_5, Observation_Table_Builder):
+    sitelevels = dataset_test_5[
+        'SITE'].drop_duplicates().values.tolist()
     sitelevels.sort()
     facade = face.Facade()
-    facade.input_register(taxa_handle_corner_case)
-    face_input = facade._inputs[taxa_handle_corner_case.name]
-    taxabuilder = Taxa_Table_Builder()
-    assert (isinstance(taxabuilder, Taxa_Table_Builder)) is True
+    facade.input_register(count_handle5)
+    face_input = facade._inputs[count_handle5.name]
+    individualbuilder = Observation_Table_Builder()
+    assert (isinstance(individualbuilder, Observation_Table_Builder)) is True
 
     director = Table_Builder_Director()
     assert (isinstance(director, Table_Builder_Director)) is True
     director.set_user_input(face_input)
-    director.set_builder(taxabuilder)
-    director.set_data(taxa_data_corner_case)
-    director.set_globalid(1)
-    director.set_siteid('Location')
+    director.set_builder(individualbuilder)
+    director.set_data(dataset_test_5)
+    director.set_globalid(2)
+    director.set_siteid('SITE')
     director.set_sitelevels(sitelevels)
+    individualtable = director.get_database_table()
+    showindividual = individualtable._availdf
+    assert ('structure_type_4' in showindividual.columns) is True
+    assert (showindividual['structure_type_4'].iloc[0] == 'NA') is True
+    print('finished: ', showindividual)
+
+    check_individual_obs = showindividual[
+        'individual_observation'].drop_duplicates().values.tolist()
     
-    taxatable = director.get_database_table()
-    showtaxa = taxatable._availdf
-    assert isinstance(showtaxa,DataFrame)    
-    print(showtaxa)
-    assert 0
+    sitetest = showindividual[
+        'spatial_replication_level_1'].values.tolist()
+    sitetrue = dataset_test_5['SITE'].values.tolist()
+
+    assert (check_individual_obs == [1]) is True
+    assert (sitetest == sitetrue) is True
+
+# @pytest.fixture
+# def taxa_data_corner_case():
+#     taxadfexpected = read_csv(
+#         (rootpath + end + 'data' +  end + 'PLT-OTH-1509-Garden_1_0.csv'))
+#     taxadfexpected.replace({'-888': 'NA'}, inplace=True)
+#     taxadfexpected.replace({-888: -99999}, inplace=True)
+# 
+#     return taxadfexpected
+# 
+# def test_taxatable_build_free(
+#         Taxa_Table_Builder, Table_Builder_Director, taxa_handle_corner_case,
+#         taxa_data_corner_case):
+#     print(taxa_data_corner_case)
+#     
+#     sitelevels = taxa_data_corner_case['Location'].drop_duplicates().values.tolist()
+#     sitelevels.sort()
+#     facade = face.Facade()
+#     facade.input_register(taxa_handle_corner_case)
+#     face_input = facade._inputs[taxa_handle_corner_case.name]
+#     taxabuilder = Taxa_Table_Builder()
+#     assert (isinstance(taxabuilder, Taxa_Table_Builder)) is True
+# 
+#     director = Table_Builder_Director()
+#     assert (isinstance(director, Table_Builder_Director)) is True
+#     director.set_user_input(face_input)
+#     director.set_builder(taxabuilder)
+#     director.set_data(taxa_data_corner_case)
+#     director.set_globalid(1)
+#     director.set_siteid('Location')
+#     director.set_sitelevels(sitelevels)
+#     
+#     taxatable = director.get_database_table()
+#     showtaxa = taxatable._availdf
+#     assert isinstance(showtaxa,DataFrame)    
+#     print(showtaxa)
+#     
