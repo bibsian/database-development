@@ -610,7 +610,11 @@
                         </widget>
                        </item>
                        <item>
-                        <widget class="QLineEdit" name="lnedStructure3"/>
+                        <widget class="QLineEdit" name="lnedStructure3">
+                         <property name="alignment">
+                          <set>Qt::AlignCenter</set>
+                         </property>
+                        </widget>
                        </item>
                       </layout>
                      </item>
@@ -624,7 +628,11 @@
                         </widget>
                        </item>
                        <item>
-                        <widget class="QLineEdit" name="lnedStructure2"/>
+                        <widget class="QLineEdit" name="lnedStructure2">
+                         <property name="alignment">
+                          <set>Qt::AlignCenter</set>
+                         </property>
+                        </widget>
                        </item>
                       </layout>
                      </item>
@@ -681,7 +689,7 @@
                           <enum>Qt::TabFocus</enum>
                          </property>
                          <property name="text">
-                          <string>Structure Type 1</string>
+                          <string>Structure Type 4</string>
                          </property>
                         </widget>
                        </item>
@@ -738,7 +746,11 @@
                         </widget>
                        </item>
                        <item>
-                        <widget class="QLineEdit" name="lnedTreatment1"/>
+                        <widget class="QLineEdit" name="lnedTreatment1">
+                         <property name="alignment">
+                          <set>Qt::AlignCenter</set>
+                         </property>
+                        </widget>
                        </item>
                       </layout>
                      </item>
@@ -752,7 +764,11 @@
                         </widget>
                        </item>
                        <item>
-                        <widget class="QLineEdit" name="lnedTreatment2"/>
+                        <widget class="QLineEdit" name="lnedTreatment2">
+                         <property name="alignment">
+                          <set>Qt::AlignCenter</set>
+                         </property>
+                        </widget>
                        </item>
                       </layout>
                      </item>
@@ -766,7 +782,11 @@
                         </widget>
                        </item>
                        <item>
-                        <widget class="QLineEdit" name="lnedTreatment3"/>
+                        <widget class="QLineEdit" name="lnedTreatment3">
+                         <property name="alignment">
+                          <set>Qt::AlignCenter</set>
+                         </property>
+                        </widget>
                        </item>
                       </layout>
                      </item>
@@ -875,6 +895,8 @@
   <tabstop>lnedStructure2</tabstop>
   <tabstop>ckStructure3</tabstop>
   <tabstop>lnedStructure3</tabstop>
+  <tabstop>ckStructure4</tabstop>
+  <tabstop>lnedStructure4</tabstop>
   <tabstop>ckTreatment1</tabstop>
   <tabstop>lnedTreatment1</tabstop>
   <tabstop>ckTreatment2</tabstop>
