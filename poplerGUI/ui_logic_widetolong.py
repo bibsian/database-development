@@ -48,6 +48,7 @@ class WidetoLongDialog(QtGui.QDialog, dwidetolong.Ui_Dialog):
         )
 
         self.facade.input_register(self.widetolongini)
+        self.facade.create_log_record('widetolong')
         self._log = self.facade._tablelog['widetolong']
 
         try:
@@ -64,9 +65,10 @@ class WidetoLongDialog(QtGui.QDialog, dwidetolong.Ui_Dialog):
                     temp,
                     self.widetolonglned['value_columns'],
                     i="id", j=self.widetolonglned['datatype_name'])
-                self.widetolongtable.reset_index(
-                    level=self.widetolonglned['datatype_name'], inplace=True)
-
+                self.widetolongtable[
+                    self.widetolonglned['datatype_name']] = self.widetolongtable.index.get_level_values(
+                        self.widetolonglned['datatype_name'])
+                self.widetolongtable.reset_index(drop=True, inplace=True)
         except Exception as e:
             print(str(e))
             self.error.showMessage('Could not melt data: ' + str(e))
@@ -86,6 +88,8 @@ class WidetoLongDialog(QtGui.QDialog, dwidetolong.Ui_Dialog):
                 self.widetolongmodel)
             self.preview.show()
         elif sender is self.btnSaveClose:
+            hlp.write_column_to_log(
+                self.widetolonglned, self._log, 'widetolong')
             self.facade._data = self.widetolongtable
             self.update_data.emit('wide_to_long_mod')
             self.close()

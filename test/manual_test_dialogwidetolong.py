@@ -71,7 +71,6 @@ def WidetoLongDialog(meta_handle_free, file_handle_wide_to_long,
 
         def submit_change(self):
             sender = self.sender()
-            sender = self.sender()
             self.widetolonglned = {
                 'value_columns': hlp.string_to_list(self.lnedValuecolumns.text()),
                 'datatype_name': self.cboxDatatypecolumn.currentText(),
@@ -100,9 +99,10 @@ def WidetoLongDialog(meta_handle_free, file_handle_wide_to_long,
                         temp,
                         self.widetolonglned['value_columns'],
                         i="id", j=self.widetolonglned['datatype_name'])
-                    self.widetolongtable.reset_index(
-                        level=self.widetolonglned['datatype_name'], inplace=True)
-                    print(self.widetolongtable.columns)
+                    self.widetolongtable[
+                        self.widetolonglned['datatype_name']] = self.widetolongtable.index.get_level_values(
+                            self.widetolonglned['datatype_name'])
+                    self.widetolongtable.reset_index(drop=True, inplace=True)
             except Exception as e:
                 print(str(e))
                 self.error.showMessage('Could not melt data: ', str(e))
@@ -115,9 +115,6 @@ def WidetoLongDialog(meta_handle_free, file_handle_wide_to_long,
                     'Invalid datatype column: ' + str(e))
                 return
 
-            hlp.write_column_to_log(
-                self.widetolonglned, self._log, 'widetolong')
-
             if sender is self.btnPreview:
                 self.widetolongmodel = view.PandasTableModel(
                     self.widetolongtable)
@@ -125,6 +122,8 @@ def WidetoLongDialog(meta_handle_free, file_handle_wide_to_long,
                     self.widetolongmodel)
                 self.preview.show()
             elif sender is self.btnSaveClose:
+                hlp.write_column_to_log(
+                    self.widetolonglned, self._log, 'widetolong')
                 self.facade._data = self.widetolongtable
                 self.update_data.emit('update')
                 self.close()

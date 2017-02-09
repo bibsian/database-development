@@ -97,7 +97,9 @@ class Facade:
             'addsite': None,
             'widetolong': None,
             'changecolumn': None,
-            'changecell': None
+            'changecell': None,
+            'replacevalue': None,
+            'splitcolumn': None
         }
 
         self._colinputlog = {
