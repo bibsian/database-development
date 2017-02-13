@@ -2,6 +2,9 @@ Population Dynamics Database
 ============================
 This project contains the code for the graphical user interface (GUI) that will populate our open source database (popler). Popler contains aggregated data from numerous ecological studies on population dynamics (plants, animals, algae, etc). Popler will *not* be up to third normal form standards since we want to preserve all temporal and spatial replication within any data; this will allow for more accurate modeling of population dyanimcs through state-space models.
 
+Note, this database will be accessible through R with our upcoming package Popler.
+https://github.com/AldoCompagnoni/popler
+
 # Identifying Data Sources
  The data sources will come from all Long-Term Ecological Resarch (LTER) stations (26 in total). Individual datasets are given a unique id by us for book keeping purposes. See the 'current' folder for a list of datasets that will be uploaded (sorted by our created 'id' number) as of 07/11/16.
  
