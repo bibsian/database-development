@@ -1,6 +1,5 @@
 Population Dynamics Database
 ============================
-
 This project contains the code for the graphical user interface (GUI) that will populate our open source database (popler). Popler contains aggregated data from numerous ecological studies on population dynamics (plants, animals, algae, etc). Popler will *not* be up to third normal form standards since we want to preserve all temporal and spatial replication within any data; this will allow for more accurate modeling of population dyanimcs through state-space models.
 
 # Identifying Data Sources
@@ -38,8 +37,30 @@ Popler has 13 tables.
 
 The popler GUI allows people to format data for uploading to the postgres database in a repeatable, recorded, and standarized fashion. I think this could be turned into a tool to help other scientist create databases that sythensize various independent...but it may need quite a bit more work.
 
-# Repo Folder Structure
 
+# View of the GUI to that helps do the heavy lifting
+Main window displays the current dataset that will be uploaded by the program and list of datasets to upload
+![alt tag](https://raw.githubusercontent.com/bibsian/database-development/master/Views/Views-png/main-display.png)
+
+Site window prompts the user to enter the column for the 'site' level of spatial repliaction (i.e. highest level of spatial replication that data was collected over)- option to enter lat/long and check if sites are already in database
+![alt tag](https://raw.githubusercontent.com/bibsian/database-development/master/Views/Views-png/site-display.png)
+
+Metadata window prompts the user to enter the metadata associated with the current dataset to be uploaded
+![alt tag](https://raw.githubusercontent.com/bibsian/database-development/master/Views/Views-png/metadata-display.png)
+
+Taxa window prompts the user to enter the column(s) with the taxa information associated with the current dataset to be uploaded
+![alt tag](https://raw.githubusercontent.com/bibsian/database-development/master/Views/Views-png/taxa-display.png)
+
+Date-time window prompts the user to enter the date column(s) associated with the current dataset to be uploaded. Can format julian date to month/day/year format
+![alt tag](https://raw.githubusercontent.com/bibsian/database-development/master/Views/Views-png/time-display.png)
+
+Observation window prompts user to enter the column(s) info where observation level data occur (i.e. site/plot/quadrat = spatial replication level 1/2/3, treatments, stage/age/size information, and observation types)
+![alt tag](https://raw.githubusercontent.com/bibsian/database-development/master/Views/Views-png/observation-display.png)
+
+Various manipulation window prompts user to enter column(s) of values to be maniuplated (all changes are recorded in program logs)
+![alt tag](https://raw.githubusercontent.com/bibsian/database-development/master/Views/Views-png/manipulations-displays.png)
+
+# Repo Folder Structure
 UMLDiagrams/*: This folder contains '.dia' files with python class descriptions(an open source UML diagram creator; cross platform). 
 The program architecture is also described within this folder. This has not been updated to reflect the current python classes (as of 7/11/16). Will update when I get a change.
 
@@ -54,3 +75,5 @@ test/*: All unit test for python modules.
 Views/*: All Qt Designer files (*.ui) for the GUI and the python equivalent (ui*.py)
 
 poplerGUI_run_main.py: File to start script. To use this file you must have all python dependencies installed, postgresql installed, and edit the config file (poplerGUI/logiclayer/datalayer/config.py) to contect to a database created on your server/local machine.
+
+
