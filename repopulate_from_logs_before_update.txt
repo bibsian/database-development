@@ -1,8 +1,0 @@
-repopulate fail: metarecord_id 63 --- qaqc parser prob
-repopulate fail: metarecord_id 65 --- qaqc parser prob 
-repopulate fail: metarecord_id 77 --- qaqc parser prob 
-repopulate fail: metarecord_id 78 --- no log for main table update
-repopulate fail: metarecord_id 82 --- need to update log for making site label in GUI
-repopulate fail: metarecord_id 84 --- need to update log for making site label in GUI
-repopulate fail: metarecord_id 85 --- need to update log for making site label in GUI
-repopulate fail: metarecord_id 93 --- site log issue
