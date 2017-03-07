@@ -2,16 +2,7 @@
 from pandas import concat, DataFrame
 import re
 import sys, os
-if sys.platform == "darwin":
-    rootpath = (
-        "/Users/bibsian/Desktop/git/database-development/")
-    end = "/"
 
-elif sys.platform == "win32":
-    rootpath = (
-        "C:\\Users\MillerLab\\Desktop\\database-development")
-    end = "\\"
-os.chdir(rootpath)
 from poplerGUI.logiclayer.datalayer import config as orm
 from poplerGUI.logiclayer import class_userfacade as face
 from poplerGUI.logiclayer import class_timeparse as tparse

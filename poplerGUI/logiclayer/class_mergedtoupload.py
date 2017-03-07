@@ -2,16 +2,6 @@
 from pandas import merge, concat, DataFrame, read_sql, to_numeric
 from sqlalchemy import select, update, column
 import sys, os
-if sys.platform == "darwin":
-    rootpath = (
-        "/Users/bibsian/Desktop/git/database-development/")
-    end = "/"
-
-elif sys.platform == "win32":
-    rootpath = (
-        "C:\\Users\MillerLab\\Desktop\\database-development")
-    end = "\\"
-os.chdir(rootpath)
 from poplerGUI.logiclayer.datalayer import config as orm
 
 

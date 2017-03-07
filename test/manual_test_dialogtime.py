@@ -4,24 +4,18 @@ import pytestqt
 from PyQt4 import QtGui
 from pandas import to_numeric, concat
 import sys,os
-if sys.platform == "darwin":
-    rootpath = (
-        "/Users/bibsian/Desktop/git/database-development/")
-    end = "/"
-elif sys.platform == "win32":
-    rootpath = (
-        "C:\\Users\MillerLab\\Desktop\\database-development")
-    end = "\\"
-sys.path.append(os.path.realpath(os.path.dirname(
-    rootpath)))
-os.chdir(rootpath)
-from poplerGUI import class_inputhandler as ini
+rom poplerGUI import class_inputhandler as ini
 from Views import ui_dialog_time as uitime
 from poplerGUI import ui_logic_preview as tprev
 from poplerGUI import class_modelviewpandas as view
 from poplerGUI.logiclayer import class_userfacade as face
 from poplerGUI.logiclayer import class_timeparse as tmpa
 from poplerGUI.logiclayer import class_helpers as hlp
+rootpath = os.path.dirname(os.path.dirname( __file__ ))
+end = os.path.sep
+sys.path.append(os.path.realpath(os.path.dirname(
+    rootpath)))
+os.chdir(rootpath)
 
 
 @pytest.fixture

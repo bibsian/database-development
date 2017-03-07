@@ -2,21 +2,12 @@
 from pandas import concat
 import re
 import sys, os
-if sys.platform == "darwin":
-    rootpath = (
-        "/Users/bibsian/Desktop/git/database-development/")
-    end = "/"
-
-elif sys.platform == "win32":
-    rootpath = (
-        "C:\\Users\MillerLab\\Desktop\\database-development")
-    end = "\\"
-os.chdir(rootpath)
 from poplerGUI.logiclayer.datalayer import config as orm
 from poplerGUI.logiclayer import class_userfacade as face
 from poplerGUI.logiclayer import class_timeparse as tparse
 from poplerGUI.logiclayer.class_helpers import produce_null_df
 from poplerGUI.logiclayer import class_dictionarydataframe as ddf
+
 
 def test_site_in_project_key(
         MergeToUpload, site_handle_3_biomass, file_handle_3_biomass,

@@ -5,19 +5,12 @@ from numpy import where
 import re
 import decimal as dc
 import sys, os
-if sys.platform == "darwin":
-    rootpath = (
-        "/Users/bibsian/Desktop/git/database-development/")
-    end = "/"
-
-elif sys.platform == "win32":
-    rootpath = (
-        "C:\\Users\MillerLab\\Desktop\\database-development")
-    end = "\\"
-sys.path.append(os.path.realpath(os.path.dirname(
-    rootpath + 'logiclayer' + end)))
 from poplerGUI.logiclayer import class_logconfig as log
 from poplerGUI.logiclayer.datalayer import config as orm
+rootpath = os.path.dirname(os.path.dirname(os.path.dirname( __file__ )))
+end = os.path.sep
+sys.path.append(os.path.realpath(os.path.dirname(
+    rootpath + 'logiclayer' + end)))
 os.chdir(rootpath)
 
 

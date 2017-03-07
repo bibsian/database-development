@@ -5,17 +5,6 @@ from PyQt4 import QtGui, QtCore
 from pandas import read_sql
 from collections import OrderedDict, namedtuple
 import sys, os
-if sys.platform == "darwin":
-    rootpath = (
-        "/Users/bibsian/Desktop/git/database-development/")
-    end = "/"
-elif sys.platform == "win32":
-    rootpath = (
-        "C:\\Users\MillerLab\\Desktop\\database-development")
-    end = "\\"
-sys.path.append(os.path.realpath(os.path.dirname(
-    rootpath)))
-os.chdir(rootpath)
 from Views import ui_dialog_main as dmainw
 from poplerGUI import ui_logic_session as logicsess
 from poplerGUI import ui_logic_site as logicsite
@@ -25,6 +14,11 @@ from poplerGUI import ui_logic_preview as tprev
 from poplerGUI.logiclayer.datalayer import config as orm
 from poplerGUI.logiclayer import class_userfacade as face
 from poplerGUI.logiclayer import class_helpers as hlp
+rootpath = os.path.dirname(os.path.dirname( __file__ ))
+end = os.path.sep
+sys.path.append(os.path.realpath(os.path.dirname(
+    rootpath)))
+os.chdir(rootpath)
 
 @pytest.fixture
 def MainDialog(meta_handle7, file_handle5, site_handle5, taxa_handle5):

@@ -2,20 +2,8 @@
 import pytest
 from pandas import read_csv, DataFrame
 import sys, os
-if sys.platform == "darwin":
-    rootpath = (
-        "/Users/bibsian/Desktop/git/database-development/" +
-        "test/")
-    end = "/"
-
-elif sys.platform == "win32":
-    rootpath = (
-        "C:\\Users\MillerLab\\Desktop\\database-development" +
-        "\\test\\")
-    end = "\\"
-sys.path.append(os.path.realpath(os.path.dirname(
-    rootpath + 'logiclayer' + end)))
-os.chdir(rootpath)
+rootpath = os.path.dirname(os.path.dirname(os.path.dirname( __file__ )))
+end = os.path.sep
 
 @pytest.fixture
 def DictionaryDataframe():
@@ -89,13 +77,13 @@ def DictionaryDataframe():
 @pytest.fixture
 def df():
     return read_csv(
-        rootpath + end +
+        rootpath + end + "test" + end +
         'Datasets_manual_test/raw_data_test_1.csv'
     )
 
 def test_dictionarydataframe(df, DictionaryDataframe):
 
-    columnstocombine = ['']
+    columnstocombine = ['temp', 'blank', 'spelling']
     test = DictionaryDataframe(df, columnstocombine)
     testdf = test.convert_records()
     print(testdf)
@@ -110,3 +98,23 @@ def test_dictionarydataframe(df, DictionaryDataframe):
     assert (
         len(df.columns.values.tolist()) !=
         len(testseries.name)) is True
+        
+
+def test_dictionarydataframe_NA_values(df, DictionaryDataframe):
+
+    columnstocombine = ['']
+    test = DictionaryDataframe(df, columnstocombine)
+    testdf = test.convert_records()
+    print(testdf)
+    assert (isinstance(testdf, DataFrame)) is True
+    assert (isinstance(testdf.iloc[0], object)) is True
+    testseries = testdf['covariates'].astype(str)
+    assert (isinstance(testseries.iloc[0], str)) is True
+    assert ('NA' in testseries.iloc[0]) is True
+    assert (len(df) == len(testseries)) is True
+    assert (
+        len(df.columns.values.tolist()) !=
+        len(testseries.name)) is True
+        
+
+

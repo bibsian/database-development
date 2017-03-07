@@ -5,16 +5,6 @@ from sqlalchemy import select
 import re
 from collections import OrderedDict
 import sys, os
-if sys.platform == "darwin":
-    rootpath = (
-        "/Users/bibsian/Desktop/git/database-development/")
-    end = "/"
-
-elif sys.platform == "win32":
-    rootpath = (
-        "C:\\Users\MillerLab\\Desktop\\database-development")
-    end = "\\"
-os.chdir(rootpath)
 from poplerGUI.logiclayer.datalayer import config as orm
 from poplerGUI.logiclayer import class_userfacade as face
 from poplerGUI import class_inputhandler as ini

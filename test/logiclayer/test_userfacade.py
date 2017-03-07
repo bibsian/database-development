@@ -4,16 +4,6 @@ from collections import namedtuple, OrderedDict
 import datetime as tm
 from pandas import DataFrame, read_csv
 import sys, os
-if sys.platform == "darwin":
-    rootpath = (
-        "/Users/bibsian/Desktop/git/database-development/")
-    end = "/"
-
-elif sys.platform == "win32":
-    rootpath = (
-        "C:\\Users\MillerLab\\Desktop\\database-development")
-    end = "\\"
-
 from poplerGUI.logiclayer.class_metaverify import MetaVerifier
 from poplerGUI.logiclayer.class_helpers import (
     check_registration, extract)
@@ -22,9 +12,12 @@ from poplerGUI.logiclayer.class_tablebuilder import (
     Project_Table_Builder, Taxa_Table_Builder,
     Observation_Table_Builder, UpdaterTableBuilder)
 from poplerGUI.logiclayer import class_logconfig as log
+from poplerGUI.class_inputhandler import InputHandler
+
+rootpath = os.path.dirname(os.path.dirname(os.path.dirname( __file__ )))
+end = os.path.sep
 sys.path.append(os.path.realpath(os.path.dirname(
     rootpath + 'logiclayer' + end)))
-from poplerGUI.class_inputhandler import InputHandler
 
 @pytest.fixture
 def Facade(Caretaker, DataFileOriginator, DataOriginator, Memento):

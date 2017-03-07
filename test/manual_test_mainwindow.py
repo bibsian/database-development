@@ -5,15 +5,6 @@ from PyQt4 import QtGui, QtCore
 from pandas import read_csv
 import subprocess
 import sys,os
-if sys.platform == "darwin":
-    rootpath = (
-        "/Users/bibsian/Desktop/git/database-development")
-    end ="/"
-    
-elif sys.platform == "win32":
-    rootpath = (
-        "C:\\Users\MillerLab\\Desktop\\database-development" )
-    end = "\\"
 from Views import ui_mainrefactor as mw
 from poplerGUI import ui_logic_session as sesslogic
 from poplerGUI import ui_logic_site as sitelogic
@@ -32,6 +23,11 @@ from poplerGUI import class_modelviewpandas as view
 from poplerGUI import class_inputhandler as ini
 from poplerGUI.logiclayer import class_helpers as hlp
 from poplerGUI.logiclayer.datalayer.class_filehandles import Memento
+rootpath = os.path.dirname(os.path.dirname( __file__ ))
+end = os.path.sep
+sys.path.append(os.path.realpath(os.path.dirname(
+    rootpath)))
+os.chdir(rootpath)
 
 
 @pytest.fixture

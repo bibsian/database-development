@@ -2,21 +2,13 @@
 import pytest
 from pandas import read_csv, read_sql
 import sys, os
-if sys.platform == "darwin":
-    rootpath = (
-        "/Users/bibsian/Desktop/git/database-development/" +
-        "test/")
-    end = "/"
-elif sys.platform == "win32":
-    rootpath = (
-        "C:\\Users\MillerLab\\Desktop\\database-development" +
-        "\\test\\")
-    end = "\\"
+from poplerGUI import class_inputhandler as ini
+from poplerGUI.logiclayer.datalayer import config as orm
+rootpath = os.path.dirname(os.path.dirname( __file__ ))
+end = os.path.sep
 sys.path.append(os.path.realpath(os.path.dirname(
     rootpath + 'logiclayer' + end)))
 os.chdir(rootpath)
-from poplerGUI import class_inputhandler as ini
-from poplerGUI.logiclayer.datalayer import config as orm
 
 
 class MetaVerifier(object):

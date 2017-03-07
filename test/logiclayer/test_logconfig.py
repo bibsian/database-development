@@ -6,20 +6,8 @@ import pytest
 import logging
 import logging.config
 import sys, os
-if sys.platform == "darwin":
-    rootpath = (
-        "/Users/bibsian/Desktop/git/database-development/" +
-        "test/")
-    end = "/"
-
-elif sys.platform == "win32":
-    rootpath = (
-        "C:\\Users\MillerLab\\Desktop\\database-development" +
-        "\\test\\")
-    end = "\\"
-sys.path.append(os.path.realpath(os.path.dirname(
-    rootpath + 'logiclayer' + end)))
-os.chdir(rootpath)
+rootpath = os.path.dirname(os.path.dirname(os.path.dirname( __file__ )))
+end = os.path.sep
 
 @pytest.fixture
 def configure_logger():
@@ -56,6 +44,6 @@ def configure_logger():
     return configure_logger
 
 def test_logger(configure_logger):
-    logA = configure_logger('tableformat', 'Logs_UI/1_test.log')
-    logA.info('what info')
+    logA = configure_logger('tableformat', rootpath + end + 'test' + end + 'logiclayer' + end + 'logs' +end+ 'testplaceholder.log')
+    logA.info('This is the unit test output to check the logging configuration')
     logA.debug('debug')

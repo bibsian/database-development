@@ -4,16 +4,12 @@ import pytestqt
 import numpy as np
 import pandas as pd
 import sys
-if sys.platform == "darwin":
-    rootpath = (
-        "/Users/bibsian/Desktop/git/database-development")
-    end = "/"
-
-elif sys.platform == "win32":
-    rootpath = (
-        "C:\\Users\MillerLab\\Desktop\\database-development")
-    end = "\\"
 from Views import ui_dialog_table_preview as uiprev
+rootpath = os.path.dirname(os.path.dirname( __file__ ))
+end = os.path.sep
+sys.path.append(os.path.realpath(os.path.dirname(
+    rootpath)))
+os.chdir(rootpath)
 
 
 

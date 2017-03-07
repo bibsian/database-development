@@ -9,24 +9,11 @@ import pprint as pp
 import ast
 import shlex
 import sys, os
-if sys.platform == "darwin":
-    rootpath = (
-        "/Users/bibsian/Desktop/git/database-development/")
-    filepath = (
-        "/Users/bibsian/Dropbox/database-development/" +
-        "popler_version2/git-repo-revert/"
-    )
-    end = "/"
-elif sys.platform == "win32":
-    rootpath = (
-        "C:\\Users\MillerLab\\Desktop\\database-development\\")
-    filepath = (
-        "C:\\Users\MillerLab\\Dropbox\\database-development\\" +
-        "popler_version2\\git-repo-revert\\"
-    )
-    end = "\\"
-os.chdir(rootpath)
 from test import class_qualitycontrol as qaqc
+rootpath = os.path.dirname(os.path.dirname( __file__ ))
+end = os.path.sep
+os.chdir(rootpath)
+
 
 # -----------------------------------
 # Setting up connections to databases

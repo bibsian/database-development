@@ -17,15 +17,9 @@ from poplerGUI.logiclayer.datalayer import config as orm
 from poplerGUI.logiclayer.datalayer.class_filehandles import (
     Caretaker, DataFileOriginator, DataOriginator, Memento
 )
+rootpath = os.path.dirname(os.path.dirname(os.path.dirname( __file__ )))
+end = os.path.sep
 
-if sys.platform == "darwin":
-    rootpath = (
-        "/Users/bibsian/Desktop/git/database-development/")
-    end = "/"
-elif sys.platform == "win32":
-    rootpath = (
-        "C:\\Users\MillerLab\\Desktop\\database-development")
-    end = "\\"
 all = ['Facade']
 
 

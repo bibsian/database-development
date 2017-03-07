@@ -4,25 +4,12 @@ from pandas import read_csv, read_excel, read_table, DataFrame
 from collections import namedtuple
 import sys, os
 import copy
-if sys.platform == "darwin":
-    rootpath = (
-        "/Users/bibsian/Desktop/git/database-development/")
-    rawpath = (
-        "/Users/bibsian/Dropbox/database-development/" +
-        "popler_version2/git-repo-revert/poplerGUI/Metadata_and_og_data/")
+from poplerGUI import class_inputhandler as ini
 
-    end = "/"
-elif sys.platform == "win32":
-    rootpath = (
-        "C:\\Users\MillerLab\\Desktop\\database-development\\")
-    rawpath = (
-        "\\Users\\MillerLab\\Dropbox\\database-development\\" +
-        "popler_version2\\git-repo-revert\\poplerGUI\\Metadata_and_og_data\\")
-
-    end = "\\"
+rootpath = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname( __file__ ))))
+end = os.path.sep
 sys.path.append(os.path.realpath(os.path.dirname(
     rootpath + 'logiclayer' + end)))
-from poplerGUI import class_inputhandler as ini
 os.chdir(rootpath)
 
 @pytest.fixture
@@ -267,7 +254,7 @@ def real_data():
         'sheet': '', 'delim': '\t', 'tskip': '', 'bskip': '',
         'header': ''
     }
-    fname = (rootpath+'data'+end + 'SGS_LTER_Humus_canopyCover.txt')
+    fname = (rootpath + end +'data'+end + 'SGS_LTER_Humus_canopyCover.txt')
     user_input = ini.InputHandler(
         name='fileoptions',lnedentry=lned,
         rbtns=rbtn, filename=fname, checks=False)
@@ -296,7 +283,6 @@ def test_txt_true(
     originator.restore_from_memento(caretaker.restore())
     assert (isinstance(originator._data, DataFrame)) is True
     print(originator._data)
-    assert 0
 
 # 
 # @pytest.fixture

@@ -2,17 +2,11 @@
 import pytest
 from pandas import melt, DataFrame, read_csv
 import sys, os
-if sys.platform == "darwin":
-    rootpath = (
-        "/Users/bibsian/Desktop/git/database-development")
-    end = "/"
-
-elif sys.platform == "win32":
-    rootpath = (
-        "C:\\Users\MillerLab\\Desktop\\database-development")
-    end = "\\"
 from poplerGUI.logiclayer import class_helpers as hlp
-    
+
+rootpath = os.path.dirname(os.path.dirname(os.path.dirname( __file__ )))
+end = os.path.sep
+
 @pytest.fixture
 def df_long():
     return read_csv(

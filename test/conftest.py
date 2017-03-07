@@ -3,21 +3,14 @@ from pandas import merge, concat, DataFrame, read_sql
 from sqlalchemy import select, update, column
 from collections import OrderedDict, namedtuple
 import os, sys
-if sys.platform == "darwin":
-    rootpath = (
-        "/Users/bibsian/Desktop/git/database-development/")
-    end = "/"
-
-elif sys.platform == "win32":
-    rootpath = (
-        "C:\\Users\MillerLab\\Desktop\\database-development")
-    end = "\\"
-os.chdir(rootpath)
 from poplerGUI.logiclayer.datalayer import config as orm
 from poplerGUI import class_inputhandler as ini
 from poplerGUI.logiclayer.class_helpers import (
     string_to_list, extract
     )
+rootpath = os.path.dirname(os.path.dirname( __file__ ))
+end = os.path.sep
+os.chdir(rootpath)
 
 
 # --- Fixtures to use across all test in this folder --- #

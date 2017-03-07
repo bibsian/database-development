@@ -3,16 +3,6 @@ import pytest
 from pandas import concat
 import re
 import sys, os
-if sys.platform == "darwin":
-    rootpath = (
-        "/Users/bibsian/Desktop/git/database-development/")
-    end = "/"
-
-elif sys.platform == "win32":
-    rootpath = (
-        "C:\\Users\MillerLab\\Desktop\\database-development")
-    end = "\\"
-os.chdir(rootpath)
 from collections import OrderedDict
 from poplerGUI.logiclayer import class_userfacade as face
 from poplerGUI.logiclayer.class_helpers import (
@@ -23,27 +13,31 @@ from poplerGUI.logiclayer import class_mergedtoupload as mrg
 from poplerGUI import class_inputhandler as ini
 from poplerGUI.logiclayer import class_timeparse as tparse
 from poplerGUI.logiclayer import class_dictionarydataframe as ddf
+rootpath = os.path.dirname(os.path.dirname(os.path.dirname( __file__ )))
+end = os.path.sep
+os.chdir(rootpath)
 
-def test_drop_records():
 
-    table_dict = OrderedDict([
-        ('biomass_table', orm.biomass_table),
-        ('count_table', orm.count_table),
-        ('density_table', orm.density_table),
-        ('individual_table', orm.individual_table),
-        ('percent_cover_table', orm.percent_cover_table),
-        ('taxa_table', orm.taxa_table),
-        ('site_in_project_table', orm.site_in_project_table),
-        ('project_table', orm.project_table),
-        ('study_site_table', orm.study_site_table)]
-    )
-
-    for i, item in enumerate(table_dict):
-        print(i)
-        print('item', item)
-        delete_statement = table_dict[item].__table__.delete()
-        
-        orm.conn.execute(delete_statement)
+#def test_drop_records():
+#
+#    table_dict = OrderedDict([
+#        ('biomass_table', orm.biomass_table),
+#        ('count_table', orm.count_table),
+#       ('density_table', orm.density_table),
+#        ('individual_table', orm.individual_table),
+#        ('percent_cover_table', orm.percent_cover_table),
+#        ('taxa_table', orm.taxa_table),
+#        ('site_in_project_table', orm.site_in_project_table),
+#        ('project_table', orm.project_table),
+#        ('study_site_table', orm.study_site_table)]
+#    )
+#
+#    for i, item in enumerate(table_dict):
+#        print(i)
+#        print('item', item)
+#        delete_statement = table_dict[item].__table__.delete()
+#        
+#        orm.conn.execute(delete_statement)
 
 
 @pytest.fixture

@@ -4,18 +4,12 @@ from itertools import chain
 from pandas import (
     DataFrame, concat, read_csv, to_datetime, read_table, to_datetime)
 import sys, os
-if sys.platform == "darwin":
-    rootpath = (
-        "/Users/bibsian/Desktop/git/database-development/")
-    end = "/"
-
-elif sys.platform == "win32":
-    rootpath = (
-        "C:\\Users\MillerLab\\Desktop\\database-development")
-    end = "\\"
+from poplerGUI.logiclayer import class_helpers as hlp
+rootpath = os.path.dirname(os.path.dirname(os.path.dirname( __file__ )))
+end = os.path.sep
 sys.path.append(os.path.realpath(os.path.dirname(
     rootpath + 'logiclayer' + end)))
-from poplerGUI.logiclayer import class_helpers as hlp
+
 os.chdir(rootpath)
 
 # -----------

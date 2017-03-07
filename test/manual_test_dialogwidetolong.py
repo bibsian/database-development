@@ -3,23 +3,17 @@ import pytestqt
 from PyQt4 import QtGui, QtCore
 from pandas import wide_to_long
 import sys,os
-if sys.platform == "darwin":
-    rootpath = (
-        "/Users/bibsian/Desktop/git/database-development/")
-    end = '/'
-elif sys.platform == "win32":
-    rootpath = (
-        "C:\\Users\MillerLab\\Desktop\\database-development\\")
-    end = '\\'
-sys.path.append(os.path.realpath(os.path.dirname(
-    rootpath)))
-os.chdir(rootpath)
 from Views import ui_dialog_widetolong as dwidetolong
 from poplerGUI import ui_logic_preview as tprev
 from poplerGUI import class_modelviewpandas as view
 from poplerGUI.logiclayer import class_helpers as hlp
 from poplerGUI.logiclayer import class_userfacade as face
 from poplerGUI import class_inputhandler as ini
+rootpath = os.path.dirname(os.path.dirname( __file__ ))
+end = os.path.sep
+sys.path.append(os.path.realpath(os.path.dirname(
+    rootpath)))
+os.chdir(rootpath)
 
 @pytest.fixture
 def WidetoLongDialog(meta_handle_free, file_handle_wide_to_long,

@@ -4,21 +4,14 @@ import pytestqt
 from pandas import to_numeric
 from PyQt4 import QtCore, QtGui, QtWebKit
 import sys,os
-if sys.platform == "darwin":
-    rootpath = (
-        "/Users/bibsian/Desktop/git/database-development/" +
-        "test/")
-elif sys.platform == "win32":
-    rootpath = (
-        "C:\\Users\MillerLab\\Desktop\\database-development" +
-        "\\test\\")
-os.chdir(rootpath)
-
 from Views import ui_mainrefactor as mw
 from Views import ui_dialog_session as dsess
 from poplerGUI import class_inputhandler as ini
 from poplerGUI.logiclayer import class_userfacade as face
 from poplerGUI import class_modelviewpandas as view
+rootpath = os.path.dirname(os.path.dirname( __file__ ))
+end = os.path.sep
+os.chdir(rootpath)
 
 
 @pytest.fixture

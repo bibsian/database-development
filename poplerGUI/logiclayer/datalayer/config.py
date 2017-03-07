@@ -1,14 +1,5 @@
 #!/usr/bin/env python
 import sys, os
-if sys.platform == "darwin":
-    rootpath = (
-        "/Users/bibsian/Desktop/git/database-development/")
-    end = "/"
-
-elif sys.platform == "win32":
-    rootpath = (
-        "C:\\Users\MillerLab\\Desktop\\database-development")
-    end = "\\"
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, create_engine, MetaData
 from sqlalchemy import Table, ForeignKey
@@ -22,12 +13,20 @@ import logging
 import pandas as pd
 import re
 
+rootpath = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname( __file__ ))))
+end = os.path.sep
+transaction_path = rootpath + end + 'db_transactions'
+logpath = rootpath + end + 'logs'
+
+if not os.path.exists(transaction_path):
+    os.makedirs(transaction_path)
+if not os.path.exists(logpath):
+    os.makedirs(logpath)
+
 
 # Setup logging for program
 date = (str(dt.datetime.now()).split()[0]).replace("-", "_")
-logging.basicConfig(
-    filename=rootpath+end+'db_transactions/database_log_{}.log'.format(date))
-
+logging.basicConfig(filename=rootpath + end + 'db_transactions/database_log_{}.log'.format(date))
 logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
 
 # Adapter for numpy datatypes
@@ -36,9 +35,9 @@ def adapt_numpy_int64(numpy_int64):
     return AsIs(numpy_int64)
 register_adapter(numpy.int64, adapt_numpy_int64)
 
+# Creating database engin
 engine = create_engine(
-    #'postgresql+psycopg2://--/popler',
-    'postgresql+psycopg2:///popler_3',
+    'postgresql+psycopg2://postgres:demography@localhost/popler_test',
     echo=False)
 conn = engine.connect()
 # Mapping metadata
@@ -71,7 +70,6 @@ class taxa_table(base):
         'percent_cover_table', cascade="delete, delete-orphan")
     individual = relationship(
         'individual_table', cascade="delete, delete-orphan")
-
 class taxa_accepted_table(base):
     __table__ = Table('taxa_accepted_table', metadata, autoload=True)
 class count_table(base):
@@ -85,7 +83,7 @@ class percent_cover_table(base):
 class individual_table(base):
     __table__ = Table('individual_table', metadata, autoload=True)
 
-
+# Session maker to perform transactions
 Session = sessionmaker(bind=engine, autoflush=False)
 
 # Helper Functions
@@ -98,6 +96,7 @@ def find_types(tbl, name):
             tbl.__table__.c[name].type)
     return dictname
 
+# Getting datatypes from database to perform checks prior to uploading
 study_site_types = find_types(study_site_table, 'study_site')
 project_types = find_types(project_table, 'project')
 taxa_types = find_types(taxa_table, 'taxa')
@@ -107,7 +106,6 @@ biomass_types = find_types(biomass_table, 'biomass')
 density_types = find_types(density_table, 'density')
 percent_cover_types = find_types(percent_cover_table, 'percent_cover')
 individual_types = find_types(individual_table, 'individual')
-
 
 def convert_types(dataframe, types):
     '''
@@ -136,7 +134,6 @@ def convert_types(dataframe, types):
 
         if re.search('observation', i) is not None or re.search('_extent$', i) is not None or re.search('unique_reps', i) is not None:
             dataframe.loc[:, i] = pd.to_numeric(dataframe.loc[:, i].values, errors='coerce')
-
 
 
 def replace_numeric_null_with_string(dataframe):

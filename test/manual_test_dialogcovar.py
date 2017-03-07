@@ -3,18 +3,6 @@ import pytest
 import pytestqt
 from PyQt4 import QtGui
 import sys, os
-if sys.platform == "darwin":
-    rootpath = (
-        "/Users/bibsian/Desktop/git/database-development")
-    end = "/"
-elif sys.platform == "win32":
-    rootpath = (
-        "C:\\Users\MillerLab\\Desktop\\database-development")
-    end = "\\"
-sys.path.append(os.path.realpath(os.path.dirname(
-    rootpath)))
-os.chdir(rootpath)
-
 from Views import ui_dialog_covariate as covar
 from poplerGUI import class_inputhandler as ini
 from poplerGUI import class_modelviewpandas as views
@@ -22,6 +10,11 @@ from poplerGUI import ui_logic_preview as tprev
 from poplerGUI.logiclayer import class_userfacade as face
 from poplerGUI.logiclayer import class_helpers as hlp
 from poplerGUI.logiclayer import class_dictionarydataframe as ddf
+rootpath = os.path.dirname(os.path.dirname( __file__ ))
+end = os.path.sep
+sys.path.append(os.path.realpath(os.path.dirname(
+    rootpath)))
+os.chdir(rootpath)
 
 @pytest.fixture
 def metahandle():

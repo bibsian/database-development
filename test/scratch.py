@@ -6,18 +6,11 @@ from sqlalchemy.orm import sessionmaker
 import pandas as pd
 import pprint as pp
 import sys, os
-if sys.platform == "darwin":
-    rootpath = (
-        "/Users/bibsian/Desktop/git/database-development/")
-    end = "/"
-
-elif sys.platform == "win32":
-    rootpath = (
-        "C:\\Users\MillerLab\\Desktop\\database-development\\")
-    end = "\\"
-os.chdir(rootpath)
 from poplerGUI.logiclayer.datalayer import config as orm
 from poplerGUI.logiclayer import class_helpers as hlp
+rootpath = os.path.dirname(os.path.dirname( __file__ ))
+end = os.path.sep
+os.chdir(rootpath)
 
 obslned = OrderedDict((
     ('spatial_replication_level_2', 'transect'),

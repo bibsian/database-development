@@ -4,27 +4,7 @@ from pandas import read_csv
 import subprocess
 import psutil
 import time
-
 import sys, os
-if sys.platform == 'darwin':
-    os.chdir(
-        '/Users/bibsian/Desktop/git/database-development/')
-    rootpath = (
-        "/Users/bibsian/Desktop/git/database-development")
-    metapath = (
-    	str(os.getcwd()) + 
-    	'/data/Cataloged_Data_Current_sorted.csv')
-    end = '/'
-elif sys.platform == 'win32':
-    os.chdir( 
-        'C:\\Users\\MillerLab\\Desktop\\database-development\\')
-    rootpath = (
-        "C:\\Users\MillerLab\\Desktop\\database-development" )
-
-    metapath = (
-    	str(os.getcwd()) + 
-    	'\\data\\Cataloged_Data_Current_sorted.csv')
-    end = '\\'
 from Views import ui_mainrefactor as mw
 from poplerGUI import ui_logic_session as sesslogic
 from poplerGUI import ui_logic_site as sitelogic
@@ -44,6 +24,10 @@ from poplerGUI import class_inputhandler as ini
 from poplerGUI.logiclayer import class_helpers as hlp
 from poplerGUI.logiclayer.datalayer.class_filehandles import Memento
 from poplerGUI.logiclayer.datalayer import config as orm
+
+rootpath = os.path.dirname(os.path.dirname( __file__ ))
+end = os.path.sep
+metapath = rootpath + end + 'data' + end + 'Cataloged_Data_Current_sorted.csv'
 
 
 class UiMainWindow(QtGui.QMainWindow, mw.Ui_MainWindow):

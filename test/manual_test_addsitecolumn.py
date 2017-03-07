@@ -4,19 +4,17 @@ import pytestqt
 from PyQt4 import QtGui, QtCore
 from collections import OrderedDict
 import sys,os
-if sys.platform == "darwin":
-    rootpath = (
-        "/Users/bibsian/Desktop/git/database-development/")
-elif sys.platform == "win32":
-    rootpath = (
-        "C:\\Users\MillerLab\\Desktop\\database-development\\")
-sys.path.append(os.path.realpath(os.path.dirname(
-    rootpath)))
-os.chdir(rootpath)
 from poplerGUI import class_inputhandler as ini
 from Views import ui_dialog_addsitecolumn as addcol
 from poplerGUI.logiclayer import class_userfacade as face
 from poplerGUI.logiclayer import class_helpers as hlp
+
+rootpath = os.path.dirname(os.path.dirname( __file__ ))
+end = os.path.sep
+sys.path.append(os.path.realpath(os.path.dirname(
+    rootpath)))
+os.chdir(rootpath)
+
 
 
 @pytest.fixture

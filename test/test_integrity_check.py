@@ -5,23 +5,6 @@ from pandas import (
     to_datetime)
 import pprint as pp
 import sys, os
-if sys.platform == "darwin":
-    rootpath = (
-        "/Users/bibsian/Desktop/git/database-development/")
-    filepath = (
-        "/Users/bibsian/Dropbox/database-development/" +
-        "popler_version2/git-repo-revert/"
-    )
-    end = "/"
-elif sys.platform == "win32":
-    rootpath = (
-        "C:\\Users\MillerLab\\Desktop\\database-development\\")
-    filepath = (
-        "C:\\Users\MillerLab\\Dropbox\\database-development\\" +
-        "popler_version2\\git-repo-revert\\"
-    )
-    end = "\\"
-os.chdir(rootpath)
 from test import class_qualitycontrol as qaqc
 from poplerGUI import class_inputhandler as ini
 from poplerGUI.logiclayer import class_userfacade as face
@@ -29,6 +12,10 @@ from poplerGUI.logiclayer import class_helpers as hlp
 from poplerGUI.logiclayer import class_timeparse as tparse
 from poplerGUI.logiclayer import class_dictionarydataframe as ddf
 from poplerGUI.logiclayer.datalayer import class_filehandles as fhdl
+rootpath = os.path.dirname(os.path.dirname( __file__ ))
+end = os.path.sep
+os.chdir(rootpath)
+
 
 # ------------------------------------------
 # Enging to connect to popler and get 'main_table' data

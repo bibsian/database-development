@@ -1,16 +1,9 @@
 import pytest
 from pandas import read_csv, Series, concat
-import sys
-if sys.platform == "darwin":
-    rootpath = (
-        "/Users/bibsian/Desktop/git/database-development")
-    end = "/"
-
-elif sys.platform == "win32":
-    rootpath = (
-        "C:\\Users\MillerLab\\Desktop\\database-development")
-    end = "\\"
+import sys, os
 from poplerGUI.logiclayer import class_helpers as hlp
+rootpath = os.path.dirname(os.path.dirname(os.path.dirname( __file__ )))
+end = os.path.sep
 
 
 @pytest.fixture
