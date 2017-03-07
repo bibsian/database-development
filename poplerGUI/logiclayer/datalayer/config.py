@@ -37,7 +37,7 @@ register_adapter(numpy.int64, adapt_numpy_int64)
 
 # Creating database engin
 engine = create_engine(
-    'postgresql+psycopg2://postgres:demography@localhost/popler_test',
+    'postgresql+psycopg2://--/popler_test',
     echo=False)
 conn = engine.connect()
 # Mapping metadata
