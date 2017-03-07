@@ -27,7 +27,7 @@ from poplerGUI.logiclayer.datalayer import config as orm
 
 rootpath = os.path.dirname(os.path.dirname( __file__ ))
 end = os.path.sep
-metapath = rootpath + end + 'data' + end + 'Cataloged_Data_Current_sorted.csv'
+metapath = rootpath + end + 'Cataloged_Data_Current_sorted.csv'
 
 
 class UiMainWindow(QtGui.QMainWindow, mw.Ui_MainWindow):

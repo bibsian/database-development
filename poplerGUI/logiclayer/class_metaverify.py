@@ -1,7 +1,10 @@
 #!/usr/bin/env python
-import sys
+import sys, os
 from pandas import read_csv, read_sql
 from poplerGUI.logiclayer.datalayer import config as orm
+rootpath = os.path.dirname(os.path.dirname(os.path.dirname( __file__ )))
+end = os.path.sep
+metapath = rootpath + end + 'Cataloged_Data_Current_sorted.csv'
 
 __all__ = ['MetaVerifier']
 
@@ -16,16 +19,6 @@ class MetaVerifier(object):
     lterloc: string
     metaurl: string
     """
-
-    if sys.platform == "darwin":
-        metapath = (
-        "/Users/bibsian/Desktop/git/database-development/data/" +
-        "Cataloged_Data_Current_sorted.csv")
-
-    elif sys.platform == "win32":
-        metapath = (
-        "C:\\Users\MillerLab\\Desktop\\database-development" +
-        "\\data\\Cataloged_Data_Current_sorted.csv")
         
     _meta = read_csv(metapath, encoding='iso-8859-11')
 
