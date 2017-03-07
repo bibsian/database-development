@@ -44,6 +44,6 @@ def configure_logger():
     return configure_logger
 
 def test_logger(configure_logger):
-    logA = configure_logger('tableformat', rootpath + end + 'test' + end + 'logiclayer' + end + 'logs' +end+ 'testplaceholder.log')
+    logA = configure_logger('tableformat', rootpath + end + 'logs' +end+ 'testplaceholder.log')
     logA.info('This is the unit test output to check the logging configuration')
     logA.debug('debug')
