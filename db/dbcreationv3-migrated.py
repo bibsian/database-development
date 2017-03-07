@@ -212,10 +212,14 @@ project_table = Table(
     Column('structured_type_2_units',  VARCHAR(50)),
     Column('structured_type_3',  VARCHAR(50)),
     Column('structured_type_3_units',  VARCHAR(50)),
+    Column('structured_type_4',  VARCHAR(50)),
+    Column('structured_type_4_units',  VARCHAR(50)),
+
     
     Column('studystartyr', NUMERIC),
     Column('studyendyr', NUMERIC),
-
+    Column('duration_years', Integer),
+    
     # META: This column relates to the frequency of sampling
     # i.e. seasonal, monthly, month:yr, season:yr, daily, etc.
     Column('samplefreq', TEXT),
@@ -284,7 +288,7 @@ project_table = Table(
     # Columns relating to author, metadata, other sources
     Column('authors', TEXT),
     Column('authors_contact', VARCHAR(200)),
-    Column('metalink', VARCHAR(200)),
+    Column('metalink', TEXT),
     Column('knbid', VARCHAR(200)))
 
 
@@ -295,6 +299,7 @@ project_table = Table(
 # This is in case there is a project that does not give a specific
 # 'siteid' that can be used in the schema and to ensure that
 # any site data entered comes from
+
 site_in_project_table = Table(
     'site_in_project_table', metadata,
     Column(
@@ -352,7 +357,8 @@ taxa_table = Table(
     Column('genus', VARCHAR(100)),
     Column('species', VARCHAR(100)),
     Column('common_name', VARCHAR(100)),
-    Column('authority', VARCHAR(100)))
+    Column('authority', VARCHAR(100)),
+    Column('metadata_taxa_key', Integer))
 
 taxa_accepted_table = Table(
     'taxa_accepted_table', metadata,
@@ -402,8 +408,11 @@ count_table = Table(
     Column('structure_type_1', VARCHAR(200)),
     Column('structure_type_2', VARCHAR(200)),
     Column('structure_type_3', VARCHAR(200)),
+    Column('structure_type_4', VARCHAR(50)),
     Column('count_observation', NUMERIC),
-    Column('covariates', TEXT))
+    Column('covariates', TEXT),
+    Column('metadata_count_key', Integer))
+
 
 # Biomass Table
 biomass_table = Table(
@@ -427,8 +436,11 @@ biomass_table = Table(
     Column('structure_type_1', VARCHAR(200)),
     Column('structure_type_2', VARCHAR(200)),
     Column('structure_type_3', VARCHAR(200)),
+    Column('structure_type_4', VARCHAR(50)),
     Column('biomass_observation', NUMERIC),
-    Column('covariates', TEXT))
+    Column('covariates', TEXT),
+    Column('metadata_biomass_key', Integer))
+
 
 # Density Table
 density_table = Table(
@@ -452,8 +464,10 @@ density_table = Table(
     Column('structure_type_1', VARCHAR(200)),
     Column('structure_type_2', VARCHAR(200)),
     Column('structure_type_3', VARCHAR(200)),
+    Column('structure_type_4', VARCHAR(50)),
     Column('density_observation', NUMERIC),
-    Column('covariates', TEXT))
+    Column('covariates', TEXT),
+    Column('metadata_density_key', Integer))
 
 # Percent Cover Table
 percent_cover_table = Table(
@@ -477,11 +491,13 @@ percent_cover_table = Table(
     Column('structure_type_1', VARCHAR(200)),
     Column('structure_type_2', VARCHAR(200)),
     Column('structure_type_3', VARCHAR(200)),
+    Column('structure_type_4', VARCHAR(50)),
     Column('percent_cover_observation', NUMERIC),
-    Column('covariates', TEXT))
+    Column('covariates', TEXT),
+    Column('metadata_percent_cover_key', Integer))
 
 
-# Percent Cover Table
+# Individual Table
 individual_table = Table(
     'individual_table', metadata,
     Column('individual_table_key', Integer, primary_key=True),
@@ -503,8 +519,10 @@ individual_table = Table(
     Column('structure_type_1', VARCHAR(200)),
     Column('structure_type_2', VARCHAR(200)),
     Column('structure_type_3', VARCHAR(200)),
+    Column('structure_type_4', VARCHAR(50)),
     Column('individual_observation', NUMERIC),
-    Column('covariates', TEXT))
+    Column('covariates', TEXT),
+    Column('metadata_individual_key', Integer))
 
 
 # This command takes all the information that was stored in the
