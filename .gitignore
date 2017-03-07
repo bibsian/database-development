@@ -102,3 +102,7 @@ test/Dataset_manual_test/raw_data_test_6.csv
 test/logiclayer/Logs_DbTransactions/*
 test/logiclayer/Logs_UI/*
 test/logiclayer/scratch.py
+
+*.sh
+*.bat
+
