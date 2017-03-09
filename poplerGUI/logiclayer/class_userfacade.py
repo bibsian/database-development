@@ -17,11 +17,16 @@ from poplerGUI.logiclayer.datalayer import config as orm
 from poplerGUI.logiclayer.datalayer.class_filehandles import (
     Caretaker, DataFileOriginator, DataOriginator, Memento
 )
-rootpath = os.path.dirname(os.path.dirname(os.path.dirname( __file__ )))
-end = os.path.sep
+
+if getattr(sys, 'frozen', False):
+	# we are running in a bundle
+	rootpath = os.path.dirname(sys.executable)
+
+else:
+	# we are running in a normal Python environment
+	rootpath = os.path.dirname(os.path.dirname(os.path.dirname( __file__ )))
 
 all = ['Facade']
-
 
 class Facade:
     '''
@@ -153,9 +158,8 @@ class Facade:
         if self._inputs['metacheck'].verify is None:
             pass
         else:
-            verifier._meta = read_csv((
-                rootpath + end + 'data' + end +
-                'Cataloged_Data_Current_sorted.csv'),
+            verifier._meta = read_csv(os.path.join(
+                rootpath, 'Cataloged_Data_Current_sorted.csv'),
                 encoding='iso-8859-11')
 
         try:
@@ -235,8 +239,8 @@ class Facade:
                 'Global ID and data file not set')
 
         self._tablelog[tablename] =(
-            log.configure_logger('tableformat',(
-                'logs/{}_{}_{}_{}.log'.format(
+            log.configure_logger('tableformat', os.path.join(
+                rootpath, 'logs', '{}_{}_{}_{}.log'.format(
                     globalid, tablename,filename,dt))))
 
     def make_table(self, inputname):
