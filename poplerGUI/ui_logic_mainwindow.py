@@ -25,9 +25,9 @@ from poplerGUI.logiclayer import class_helpers as hlp
 from poplerGUI.logiclayer.datalayer.class_filehandles import Memento
 from poplerGUI.logiclayer.datalayer import config as orm
 
+
 rootpath = os.path.dirname(os.path.dirname( __file__ ))
-end = os.path.sep
-metapath = rootpath + end + 'Cataloged_Data_Current_sorted.csv'
+metapath = os.path.join(rootpath, 'Cataloged_Data_Current_sorted.csv')
 
 
 class UiMainWindow(QtGui.QMainWindow, mw.Ui_MainWindow):
