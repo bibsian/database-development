@@ -12,11 +12,19 @@ import datetime as dt
 import logging
 import pandas as pd
 import re
-
 rootpath = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname( __file__ ))))
 end = os.path.sep
-transaction_path = rootpath + end + 'db_transactions'
-logpath = rootpath + end + 'logs'
+
+if getattr(sys, 'frozen', False):
+	# we are running in a bundle
+	transaction_path = os.path.join(os.path.dirname(sys.executable), 'db_transactions')
+	logpath = os.path.join(os.path.dirname(sys.executable), 'logs')
+
+else:
+	# we are running in a normal Python environment
+	transaction_path = os.path.join(rootpath, 'db_transactions')
+	logpath = os.path.join(rootpath, 'logs')
+
 
 if not os.path.exists(transaction_path):
     os.makedirs(transaction_path)
@@ -26,7 +34,7 @@ if not os.path.exists(logpath):
 
 # Setup logging for program
 date = (str(dt.datetime.now()).split()[0]).replace("-", "_")
-logging.basicConfig(filename=rootpath + end + 'db_transactions/database_log_{}.log'.format(date))
+logging.basicConfig(filename= os.path.join(transaction_path, 'database_log_{}.log'.format(date)))
 logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
 
 # Adapter for numpy datatypes
@@ -37,7 +45,7 @@ register_adapter(numpy.int64, adapt_numpy_int64)
 
 # Creating database engin
 engine = create_engine(
-    'postgresql+psycopg2://--/popler_test',
+    'postgresql+psycopg2://--/--',
     echo=False)
 conn = engine.connect()
 # Mapping metadata
