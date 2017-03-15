@@ -1,4 +1,5 @@
 import pytest
+import io
 from pandas import (
     merge, concat, DataFrame, read_sql, read_csv, read_excel, read_table,
     to_numeric
@@ -103,10 +104,10 @@ def meta_handle7():
 @pytest.fixture
 def meta_handle_corner_case():
     lentry = {
-        'globalid': 300,
+        'globalid': 700,
         'metaurl': (
-            'http://gce-lter.marsci.uga.edu/public/app/dataset_details.asp?accession=PLT-OTH-1509'),
-        'lter': 'GCE'}
+            'http://jornada.nmsu.edu/content/smes-vegetation-quadrat-data'),
+        'lter': 'JRN'}
     ckentry = {}
     metainput = ini.InputHandler(
         name='metacheck', tablename=None, lnedentry=lentry,
@@ -226,7 +227,9 @@ def file_handle_corner_case():
         name='fileoptions',tablename=None, lnedentry=lned,
         rbtns=rbtn, checks=ckentry, session=True,
         filename=(
-            rootpath + end + 'data' +  end + 'PLT-OTH-1509-Garden_1_0.csv'))
+            rootpath + end +
+            'data' +  end + 'jrn-data' + end +
+            'JornadaStudy_086_smes_plant_cover_quad_data.csv'))
     return fileinput
 
 
@@ -278,7 +281,7 @@ def site_handle5():
 
 @pytest.fixture
 def site_handle_corner_case():
-    lned = {'study_site_key': 'Location'}
+    lned = {'study_site_key': 'site'}
     sitehandle = ini.InputHandler(
         name='siteinfo', lnedentry=lned, tablename='study_site_table')
     return sitehandle
@@ -361,8 +364,51 @@ def project_handle5():
 
 @pytest.fixture
 def project_handle_corner_case():
+    studytype = namedtuple('studytype', 'checked entry unit')
+    # derived
+    derived = namedtuple('derived', 'checked entry unit')
+    # treatments
+    treatments = namedtuple('treatments', 'checked entry unit')
+    # Contacts: author, contact email
+    contacts = namedtuple('contacts', 'checked entry unit')
+    # Community
+    community = namedtuple('community', 'checked entry unit')
+    # SamplingFreq
+    sampfreq = namedtuple('sampfreq', 'checked entry unit')
+    # Datatype/units
+    dtype = namedtuple('dtype', 'checked entry unit')
+    # organism structure
+    structure = namedtuple('structure', 'checked entry unit')
+    # Spatial extent
+    ext = namedtuple('spatial_ext', 'checked entry unit')
+
+    form_dict = OrderedDict((
+        ('samplingunits', dtype(True, 'percentage', None)),
+        ('datatype', dtype(True, 'cover', None)),
+        ('structured_type_1', structure(True, 'size', 'cm (max height)')),
+        ('structured_type_2', structure(True, 'status', 'nominal (alive or dead)')),
+        ('structured_type_3', structure(False, '', '')),
+        ('samplefreq', sampfreq(True, 'season:year', None)),
+        ('studytype', studytype(True, 'exp', None)),
+        ('community', community(True, True, None)),
+        ('spatial_replication_level_1_extent', ext(True, '0.5', 'km2')),
+        ('spatial_replication_level_2_extent', ext(False, '', '')),
+        ('spatial_replication_level_3_extent', ext(True, '1296', 'm2')),
+        ('spatial_replication_level_4_extent', ext(True, '1', 'm2')),
+        ('spatial_replication_level_5_extent', ext(False, '', '')),
+        ('treatment_type_1', treatments(True, 'exclosure', None)),
+        ('treatment_type_2', treatments(False, 'NULL', None)),
+        ('treatment_type_3', treatments(False, 'NULL', None)),
+        ('control_group', treatments(True, 'C', None)),
+        ('derived', derived(True, 'no', None)),
+        ('authors', contacts(True, 'Brandon Bestelmeyer', None)),
+        ('authors_contact', contacts(True, 'brandon.bestelmeyer@ars.usda.gov', None))
+    ))
+    
     main_input = ini.InputHandler(
-        name='maininfo', tablename='project_table')
+        name='maininfo', tablename='project_table',
+        lnedentry=form_dict)
+
     return main_input
 
 # ------------------------------------------------------ #
@@ -646,41 +692,41 @@ def taxa_handle5():
 def taxa_handle_corner_case():
     taxalned = OrderedDict((
         ('common_name', ''),
-        ('sppcode', ''),
-        ('kingdom', 'Kingdom'),
-        ('subkingdom', 'Subkingdom'),
-        ('infrakingdom', 'Infrakingdom'),
-        ('superdivision', 'Superdivision'),
-        ('division', 'Division'),
-        ('subdivision', 'Subdivision'),
+        ('sppcode', 'spp'),
+        ('kingdom', ''),
+        ('subkingdom', ''),
+        ('infrakingdom', ''),
+        ('superdivision', ''),
+        ('division', ''),
+        ('subdivision', ''),
         ('superphylum', ''),
         ('phylum', ''),
         ('subphylum', ''),
-        ('clss', 'Clss'),
+        ('clss', ''),
         ('subclass', ''),
-        ('ordr', 'Ordr'),
-        ('family', 'Family'),
-        ('genus', 'Genus'),
-        ('species', 'Species')
+        ('ordr', ''),
+        ('family', ''),
+        ('genus', ''),
+        ('species', '')
     ))
     taxackbox = OrderedDict((
         ('common_name', False), 
-        ('sppcode', False),
-        ('kingdom', True),
-        ('subkingdom', True),
-        ('infrakingdom', True),
-        ('superdivision', True),
-        ('division', True),
-        ('subdivision', True),
+        ('sppcode', True),
+        ('kingdom', False),
+        ('subkingdom', False),
+        ('infrakingdom', False),
+        ('superdivision', False),
+        ('division', False),
+        ('subdivision', False),
         ('superphylum', False),
         ('phylum', False),
         ('subphylum', False),
-        ('clss', True),
+        ('clss', False),
         ('subclass', False),
-        ('ordr', True),
-        ('family', True),
-        ('genus', True),
-        ('species', True)
+        ('ordr', False),
+        ('family', False),
+        ('genus', False),
+        ('species', False)
     ))
     taxacreate = {
         'taxacreate': True
@@ -789,12 +835,12 @@ def time_handle5():
 @pytest.fixture
 def time_handle_corner_case():
     d = {
-        'dayname': 'Day',
-        'dayform': 'dd',
-        'monthname': 'Month',
-        'monthform': 'mm',
-        'yearname': 'Year',
-        'yearform': 'YYYY',
+        'dayname': 'date',
+        'dayform': 'dd-mm-YYYY (Any Order)',
+        'monthname': 'date',
+        'monthform': 'dd-mm-YYYY (Any Order)',
+        'yearname': 'date',
+        'yearform': 'dd-mm-YYYY (Any Order)',
         'jd': False,
         'hms': False
     }
@@ -855,7 +901,7 @@ def covar_handle5():
 @pytest.fixture
 def covar_handle_corner_case():
     covarlned = {'columns': None}    
-    covarlned['columns'] = string_to_list('Latitude')
+    covarlned['columns'] = string_to_list('id,comment_code,season,type,keyfield,datasetid,POINT_X,POINT_Y,table_id,layer_id')
     covarini = ini.InputHandler(
         name='covarinfo', tablename='covartable',
         lnedentry=covarlned)
@@ -1164,6 +1210,93 @@ def individual_handle_corner_case():
     countini = ini.InputHandler(
         name='rawinfo',
         tablename='individual_table',
+        lnedentry=extract(obslned, available),
+        checks=obsckbox)
+    return countini
+
+@pytest.fixture
+def individual_handle_corner_case():
+    obslned = OrderedDict((
+        ('spatial_replication_level_2', ''),
+        ('spatial_replication_level_3', ''),
+        ('spatial_replication_level_4', ''),
+        ('spatial_replication_level_5', ''),
+        ('structure_type_1', 'Plot_number'),
+        ('structure_type_2', 'Plant_height'),
+        ('structure_type_3', ''),
+        ('structure_type_4', ''),
+        ('treatment_type_1', ''),
+        ('treatment_type_2', ''),
+        ('treatment_type_3', ''),
+        ('unitobs', '')
+    ))    
+    obsckbox = OrderedDict((
+        ('spatial_replication_level_2', False),
+        ('spatial_replication_level_3', False),
+        ('spatial_replication_level_4', False),
+        ('spatial_replication_level_5', False),
+        ('structure_type_1', True),
+        ('structure_type_2', True),
+        ('structure_type_3', False),
+        ('structure_type_4', False),
+        ('treatment_type_1', False),
+        ('treatment_type_2', False),
+        ('treatment_type_3', False),
+        ('unitobs', True)
+    ))
+    available = [
+        x for x,y in zip(
+            list(obslned.keys()), list(
+                obsckbox.values()))
+        if y is True
+    ]
+    countini = ini.InputHandler(
+        name='rawinfo',
+        tablename='individual_table',
+        lnedentry=extract(obslned, available),
+        checks=obsckbox)
+    return countini
+
+
+@pytest.fixture
+def percent_cover_handle_corner_case():
+    obslned = OrderedDict((
+        ('spatial_replication_level_2', 'block'),
+        ('spatial_replication_level_3', 'plot'),
+        ('spatial_replication_level_4', 'quad'),
+        ('spatial_replication_level_5', ''),
+        ('structure_type_1', 'height'),
+        ('structure_type_2', 'condition'),
+        ('structure_type_3', ''),
+        ('structure_type_4', ''),
+        ('treatment_type_1', 'treatment'),
+        ('treatment_type_2', ''),
+        ('treatment_type_3', ''),
+        ('unitobs', 'cover')
+    ))    
+    obsckbox = OrderedDict((
+        ('spatial_replication_level_2', True),
+        ('spatial_replication_level_3', True),
+        ('spatial_replication_level_4', True),
+        ('spatial_replication_level_5', False),
+        ('structure_type_1', True),
+        ('structure_type_2', True),
+        ('structure_type_3', False),
+        ('structure_type_4', False),
+        ('treatment_type_1', True),
+        ('treatment_type_2', False),
+        ('treatment_type_3', False),
+        ('unitobs', True)
+    ))
+    available = [
+        x for x,y in zip(
+            list(obslned.keys()), list(
+                obsckbox.values()))
+        if y is True
+    ]
+    countini = ini.InputHandler(
+        name='rawinfo',
+        tablename='percent_cover_table',
         lnedentry=extract(obslned, available),
         checks=obsckbox)
     return countini
@@ -1689,6 +1822,7 @@ def MergeToUpload():
             # Step 10) Uploading to the database
             datatype_table = '{}_table'.format(str(formated_dataframe_name))
             datatype_obs = '{}_observation'.format(str(formated_dataframe_name))
+            datatype_taxa_key_column = 'taxa_{}_fkey'.format(str(formated_dataframe_name))
             print('push raw_before', tbl_dtype_to_upload.columns)
 
             tbl_dtype_to_upload[datatype_obs] = to_numeric(
@@ -1742,15 +1876,32 @@ def MergeToUpload():
                 print('No None to replace:', str(e))
             tbl_dtype_to_upload[other_numerics].fillna(-99999, inplace=True)
 
+            
             tbl_dtype_to_upload.loc[:, other_numerics] = tbl_dtype_to_upload.loc[
                 :, other_numerics].apply(to_numeric, errors='coerce')
 
             metadata_key_column_name = 'metadata_{}_key'.format(
                 formated_dataframe_name)
             tbl_dtype_to_upload[metadata_key_column_name] = self.metadata_key
-            tbl_dtype_to_upload.to_sql(
-                datatype_table,
-                orm.conn, if_exists='append', index=False)
+
+            # Attempting direct copy_from to copy_to commands
+            # with stringIO (should be faster than pandas)
+            # text buffer            
+            sql_datatype_columns = tbl_dtype_to_upload.columns.values.tolist()
+            s_buf = io.StringIO()
+            tbl_dtype_to_upload.to_csv(s_buf, index=False, sep="\t")
+            s_buf.seek(0)
+            session = orm.Session()
+            cur = session.connection().connection.cursor()
+            copy_sql_statement = "COPY {}({}) FROM STDIN WITH CSV HEADER DELIMITER AS '\t'".format(
+                datatype_table, ", ".join(sql_datatype_columns))
+            cur.copy_expert(copy_sql_statement, s_buf)
+            session.commit()
+            session.close()
+            
+            #tbl_dtype_to_upload.to_sql(
+            #    datatype_table,
+            #    orm.conn, if_exists='append', index=False)
             print('past datatype upload')
             
         def update_project_table(

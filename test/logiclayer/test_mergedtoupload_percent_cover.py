@@ -9,38 +9,46 @@ from poplerGUI.logiclayer.class_helpers import produce_null_df
 from poplerGUI.logiclayer import class_dictionarydataframe as ddf
 
 def test_site_in_project_key(
-        MergeToUpload, site_handle_4_percent_cover, file_handle_4_percent_cover,
-        meta_handle_4_percent_cover, project_handle_4_percent_cover, taxa_handle_4_percent_cover,
-        time_handle_4_percent_cover, biomass_handle_4_percent_cover, covar_handle_4_percent_cover):
+        MergeToUpload, site_handle_corner_case, file_handle_corner_case,
+        meta_handle_corner_case, project_handle_corner_case, taxa_handle_corner_case,
+        time_handle_corner_case, percent_cover_handle_corner_case, covar_handle_corner_case):
     facade = face.Facade()
 
-    facade.input_register(meta_handle_4_percent_cover)
+    facade.input_register(meta_handle_corner_case)
     facade.meta_verify()
 
-    facade.input_register(file_handle_4_percent_cover)
+    facade.input_register(file_handle_corner_case)
     facade.load_data()
 
-    facade.input_register(site_handle_4_percent_cover)
+    siteid = site_handle_corner_case.lnedentry['study_site_key']
+
+    facade._data[siteid].replace(
+        {
+            'C': 'site_jrn_zone_creosotebush',
+            'G': 'site_jrn_zone_grassland'
+        }, inplace=True)
+    
+    facade.input_register(site_handle_corner_case)
     sitedirector = facade.make_table('siteinfo')
     study_site_table = sitedirector._availdf
 
     print('study_site_table (test): ', study_site_table)
 
     facade.create_log_record('study_site_table')
-    lter = meta_handle_4_percent_cover.lnedentry['lter']
+    lter = meta_handle_corner_case.lnedentry['lter']
     ltercol = produce_null_df(1, [
         'lter_table_fkey'], len(study_site_table), lter)
     study_site_table = concat([study_site_table, ltercol], axis=1)
     print('study_site_table: ', study_site_table)
     facade.push_tables['study_site_table'] = study_site_table
     
-    siteid = site_handle_4_percent_cover.lnedentry['study_site_key']
+
     sitelevels = facade._data[
         siteid].drop_duplicates().values.tolist()
     facade.register_site_levels(sitelevels)
     facade._valueregister['siteid'] = siteid
 
-    facade.input_register(project_handle_4_percent_cover)
+    facade.input_register(project_handle_corner_case)
     maindirector = facade.make_table('maininfo')
     project_table = maindirector._availdf.copy().reset_index(drop=True)
     orm.convert_types(project_table, orm.project_types)
@@ -48,34 +56,34 @@ def test_site_in_project_key(
     facade.push_tables['project_table'] = project_table
     facade.create_log_record('project_table')
     
-    facade.input_register(taxa_handle_4_percent_cover)
+    facade.input_register(taxa_handle_corner_case)
     taxadirector = facade.make_table('taxainfo')
     taxa_table = taxadirector._availdf
     facade.push_tables['taxa_table'] = taxa_table
     facade.create_log_record('taxa_table')
     
-    facade.input_register(time_handle_4_percent_cover)
+    facade.input_register(time_handle_corner_case)
     timetable = tparse.TimeParse(
-        facade._data, time_handle_4_percent_cover.lnedentry).formater()
+        facade._data, time_handle_corner_case.lnedentry).formater()
     facade.push_tables['timetable'] = timetable
     facade.create_log_record('timetable')
 
-    facade.input_register(biomass_handle_4_percent_cover)
+    facade.input_register(percent_cover_handle_corner_case)
     rawdirector = facade.make_table('rawinfo')
     rawtable = rawdirector._availdf
     print(rawtable)
-    facade.push_tables[biomass_handle_4_percent_cover.tablename] = rawtable
-    facade.create_log_record(biomass_handle_4_percent_cover.tablename)
+    facade.push_tables[percent_cover_handle_corner_case.tablename] = rawtable
+    facade.create_log_record(percent_cover_handle_corner_case.tablename)
 
-    facade.input_register(covar_handle_4_percent_cover)
+    facade.input_register(covar_handle_corner_case)
     covartable = ddf.DictionaryDataframe(
         facade._data,
-        covar_handle_4_percent_cover.lnedentry['columns']).convert_records()
+        covar_handle_corner_case.lnedentry['columns']).convert_records()
     facade.push_tables['covariates'] = covartable
     facade.create_log_record('covartable')
 
-    facade._valueregister['globalid'] = meta_handle_4_percent_cover.lnedentry['globalid']
-    facade._valueregister['lter'] = meta_handle_4_percent_cover.lnedentry['lter']
+    facade._valueregister['globalid'] = meta_handle_corner_case.lnedentry['globalid']
+    facade._valueregister['lter'] = meta_handle_corner_case.lnedentry['lter']
     facade._valueregister['siteid'] = siteid
 
     timetable_og_cols = timetable.columns.values.tolist()
@@ -86,12 +94,12 @@ def test_site_in_project_key(
     print('merge class obs_time columns: ', observation_time_df.columns)
     print('merge class project table: ', project_table)
     
-    try:
-        study_site_table.to_sql(
-            'study_site_table',
-            orm.conn, if_exists='append', index=False)
-    except Exception as e:
-        print('Sites in db: ', str(e))
+#    try:
+#        study_site_table.to_sql(
+#            'study_site_table',
+#            orm.conn, if_exists='append', index=False)
+#    except Exception as e:
+#        print('Sites in db: ', str(e))
     project_table['lter_project_fkey'] = facade._valueregister['lter']
     project_table.to_sql(
         'project_table', orm.conn,

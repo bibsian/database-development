@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 from pandas import merge, concat, DataFrame, read_sql, to_numeric
 from sqlalchemy import select, update, column
+import io
 import sys, os
 from poplerGUI.logiclayer.datalayer import config as orm
-
 
 class MergeToUpload(object):
     '''
@@ -565,9 +565,26 @@ class MergeToUpload(object):
         metadata_key_column_name = 'metadata_{}_key'.format(
             formated_dataframe_name)
         tbl_dtype_to_upload[metadata_key_column_name] = int(self.metadata_key)
-        tbl_dtype_to_upload.to_sql(
-            datatype_table,
-            orm.conn, if_exists='append', index=False)
+
+        # Attempting direct copy_from to copy_to commands
+        # with stringIO (should be faster than pandas)
+        # text buffer            
+        sql_datatype_columns = tbl_dtype_to_upload.columns.values.tolist()
+        s_buf = io.StringIO()
+        tbl_dtype_to_upload.to_csv(s_buf, index=False, sep="\t")
+        s_buf.seek(0)
+        session = orm.Session()
+        cur = session.connection().connection.cursor()
+        copy_sql_statement = "COPY {}({}) FROM STDIN WITH CSV HEADER DELIMITER AS '\t'".format(
+            datatype_table, ", ".join(sql_datatype_columns))
+        cur.copy_expert(copy_sql_statement, s_buf)
+        session.commit()
+        session.close()
+
+        #tbl_dtype_to_upload.to_sql(
+        #    datatype_table,
+        #    orm.conn, if_exists='append', index=False, chunksize=1000)
+
         print('past datatype upload')
 
     def update_project_table(
