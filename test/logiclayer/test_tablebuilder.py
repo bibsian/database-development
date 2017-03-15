@@ -1020,6 +1020,113 @@ def Site_In_Project_Table_Builder(AbstractTableBuilder):
 
     return Site_In_Project_Table_Builder 
 
+
+#----------------------------------------------------
+#------------- Abiotic Table Builder ------------- #
+#--------------------------------------------------
+@pytest.fixture
+def Abiotic_Table_Builder(AbstractTableBuilder):
+    class Abiotic_Table_Builder(AbstractTableBuilder):
+        '''
+        Concrete table builder implementation: Site
+        Note, no get methods because there is no
+        alternate informatoin needed
+        '''
+        dependentdf = None
+        def get_dataframe(
+                self, dataframe,
+                acols, nullcols, keycols, dbcol,
+                globalid, siteid, sitelevels):
+
+            acols = list(acols) if acols is not None else acols
+            nullcols = list(nullcols) if acols is not None else nullcols
+            keycols = list(keycols) if keycols is not None else keycols
+            dbcol = list(dbcol) if dbcol is not None else dbcol
+            sitelevels = list(sitelevels) if sitelevels is not None else sitelevels
+
+            try:
+                acols = [x.rstrip() for x in acols]
+            except Exception as e:
+                acols = [int(x) for x in acols]
+                uniquesubset = dataframe[acols]
+                print(str(e))
+
+            try:
+                [dbcol.remove(x) for x in keycols]
+            except Exception as e:
+                print(str(e))
+            
+            try:
+                [nullcols.remove(x) for x in keycols]
+            except Exception as e:
+                print(str(e))
+
+
+            print('SELF INPUTS: ', self._inputs.checks)
+            print('AVAILABLE COLUMNS: ', acols)
+            print('DB COLUMNS: ', dbcol)
+            print('NULL COLUMNS: ', nullcols)
+            print('DF COLUMNS: ', dataframe.columns.values.tolist())
+
+            if self._inputs.checks['abioticcreate'] is True:
+                dfcol = dataframe.columns.values.tolist()
+                columns_create = [x for x in acols if x not in dfcol]
+                print('CREATE :', columns_create)
+                for i in columns_create:
+                    dataframe.loc[:, i] = i
+                print('DF COLUMNS (added): ', dataframe.columns.values.tolist())
+
+            else:
+                pass
+            
+            dbcolrevised = [x for x in dbcol if x not in nullcols]
+            print('DB COLUMN REVISED: ', dbcolrevised)
+            print('acol', acols)
+            
+            uniquesubset_site_list = []
+            for i,item in enumerate(sitelevels):                
+                uniquesubset = dataframe[dataframe[siteid]==item]
+                try:
+                    uniquesubset = uniquesubset[acols]
+                except Exception as e:
+                    print(str(e))
+                for j, rename_item in enumerate(dbcolrevised):
+                    uniquesubset.rename(
+                        columns={acols[j]: rename_item},
+                        inplace=True)
+                unique = uniquesubset.drop_duplicates()
+                unique = unique.reset_index()
+                sitelevel = hlp.produce_null_df(
+                    ncols=len(unique),
+                    colnames=[siteid],
+                    dflength=len(unique),
+                    nullvalue=item)
+                nullsubset = hlp.produce_null_df(
+                    ncols=len(nullcols),
+                    colnames=nullcols,
+                    dflength=len(unique),
+                    nullvalue='NA')
+
+                unique = concat(
+                    [unique, nullsubset, sitelevel], axis=1)
+                uniquesubset_site_list.append(unique)
+            print(uniquesubset_site_list)
+
+            final = uniquesubset_site_list[0]
+            for i, item in enumerate(uniquesubset_site_list):
+                if i > 0:
+                    final = concat([final, item], ignore_index=True)
+                else:
+                    pass
+            print('past subsetting sites')
+            dbcol.append(siteid)
+            print(final)
+
+            return final[dbcol].copy()
+
+    return Abiotic_Table_Builder
+
+
 # ------------------------------------------------------ #
 # ---------------- Data base table setter --------------- #
 # ------------------------------------------------------ #
