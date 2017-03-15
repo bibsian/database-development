@@ -224,9 +224,8 @@ QTableView{
    <addaction name="separator"/>
    <addaction name="actionCovariates"/>
    <addaction name="separator"/>
-   <addaction name="actionClimateSiteTable"/>
-   <addaction name="separator"/>
    <addaction name="actionClimateRawTable"/>
+   <addaction name="separator"/>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -234,7 +233,7 @@ QTableView{
      <x>0</x>
      <y>0</y>
      <width>984</width>
-     <height>31</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -272,11 +271,26 @@ QTableView{
      <string>Database</string>
     </property>
     <addaction name="actionCommit"/>
+    <addaction name="actionCommit_Climate"/>
+   </widget>
+   <widget class="QMenu" name="menuDatetime">
+    <property name="title">
+     <string>Datetime</string>
+    </property>
+    <addaction name="actionParse_Local_2"/>
+   </widget>
+   <widget class="QMenu" name="menuAggregate">
+    <property name="title">
+     <string>Aggregate</string>
+    </property>
+    <addaction name="actionGroup_By"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
    <addaction name="menuSplit"/>
    <addaction name="menuDatabase"/>
+   <addaction name="menuDatetime"/>
+   <addaction name="menuAggregate"/>
   </widget>
   <action name="actionStart_Session">
    <property name="text">
@@ -359,20 +373,6 @@ QTableView{
     </font>
    </property>
   </action>
-  <action name="actionClimateSiteTable">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="text">
-    <string>Climate Sites</string>
-   </property>
-   <property name="font">
-    <font>
-     <weight>75</weight>
-     <bold>true</bold>
-    </font>
-   </property>
-  </action>
   <action name="actionClimateRawTable">
    <property name="enabled">
     <bool>false</bool>
@@ -425,7 +425,7 @@ QTableView{
   </action>
   <action name="actionCommit">
    <property name="text">
-    <string>Commit</string>
+    <string>Commit Population Data</string>
    </property>
   </action>
   <action name="actionNot_implemented">
@@ -480,6 +480,36 @@ QTableView{
   <action name="actionCombine_Columns">
    <property name="text">
     <string>Combine Columns</string>
+   </property>
+  </action>
+  <action name="actionParse_Local">
+   <property name="text">
+    <string>Parse Local</string>
+   </property>
+  </action>
+  <action name="actionParse_UTC">
+   <property name="text">
+    <string>Parse UTC</string>
+   </property>
+  </action>
+  <action name="actionParse_Local_2">
+   <property name="text">
+    <string>Parse Timestamp</string>
+   </property>
+  </action>
+  <action name="actionParse_UTC_2">
+   <property name="text">
+    <string>Parse UTC</string>
+   </property>
+  </action>
+  <action name="actionGroup_By">
+   <property name="text">
+    <string>Group By</string>
+   </property>
+  </action>
+  <action name="actionCommit_Climate">
+   <property name="text">
+    <string>Commit Climate</string>
    </property>
   </action>
  </widget>
