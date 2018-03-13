@@ -41,7 +41,7 @@ Popler has 13 tables.
 The popler GUI allows people to format data for uploading to the postgres database in a repeatable, recorded, and standarized fashion. I think this could be turned into a tool to help other scientist create databases that sythensize various independent...but it may need quite a bit more work.
 
 
-# View of the GUI to that helps do the heavy lifting
+# View of the GUI that helps do the heavy lifting
 Main window displays the current dataset that will be uploaded by the program and list of datasets to upload
 ![alt tag](https://raw.githubusercontent.com/bibsian/database-development/master/Views/Views-png/main-display.png)
 
