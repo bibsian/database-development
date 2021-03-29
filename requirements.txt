@@ -18,7 +18,7 @@ psutil==5.0.0
 psycopg2==2.6.1
 py==1.4.31
 pyflakes==1.0.0
-Pygments==2.1
+Pygments==2.7.4
 pytest==2.9.1
 pytest-cov==2.2.1
 pytest-qt==1.11.0
